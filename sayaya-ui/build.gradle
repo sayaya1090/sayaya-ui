@@ -1,0 +1,78 @@
+apply plugin: 'java'
+apply plugin: 'gwt-base'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+group = 'net.sayaya'
+archivesBaseName = 'ui'
+version = "0.1"
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compileOnly('com.google.gwt:gwt-user:2.8.2')
+	compileOnly('com.google.gwt:gwt-dev:2.8.2')
+}
+
+buildscript {
+	repositories {
+		jcenter()
+		mavenCentral()
+		maven {
+			url new File(rootProject.projectDir.parentFile, 'repo').toURI()
+		}
+	}
+	dependencies {
+		classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
+	}
+}
+
+compileJava {
+	options.incremental = true
+}
+
+gwt {
+	gwtVersion='2.8.2'
+	eclipse.addGwtContainer = false;
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from tasks.javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+    file("build/libs/${archivesBaseName}-${version}.jar.asc")
+    file("build/libs/${archivesBaseName}-${version}-javadoc.jar.asc")
+    file("build/libs/${archivesBaseName}-${version}-sources.jar.asc")
+}
+
+jar {
+    from sourceSets.main.allJava
+    manifest {
+        attributes 'Implementation-Title': archivesBaseName,
+                   'Implementation-Version': version
+    }
+}
+
+sourceSets {
+   main {
+        java {
+            srcDir 'src'
+        }
+        
+        resources {
+        	srcDir 'src'
+        }
+	}
+}

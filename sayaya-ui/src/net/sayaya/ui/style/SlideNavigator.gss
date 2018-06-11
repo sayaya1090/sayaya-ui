@@ -1,0 +1,28 @@
+.leftbar {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
+	position: relative;
+	width: 100%;
+	display: table;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+.foot {
+	display: table-row;
+	vertical-align: bottom;
+	height: 1px;
+}
+
+.trapezoid {
+	border-bottom: 6px solid transparent;
+	border-top: 6px solid transparent;
+	border-left: 15px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
+	width: 0px;
+	height: 27px;
+	cursor: pointer;
+}

@@ -1,0 +1,159 @@
+.icon {
+	display: inline-block;
+	font-family: 'Font Awesome 5 Pro' !important;
+	speak: none;
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.light {
+	font-weight: 300;
+}
+
+.regular {
+	font-weight: 400;
+}
+
+.solid {
+	font-weight: 900;
+}
+
+.align-center:before {
+	content: "\f037";
+}
+.align-justify:before {
+	content: "\f039";
+}
+.box:before {
+  content: "\f466";
+}
+.box-check:before {
+  content: "\f467";
+}
+.caret-circle-down:before {
+	content: "\f32d";
+}
+.caret-circle-left:before {
+	content: "\f32e";
+}
+.caret-circle-right:before {
+	content: "\f330";
+}
+.caret-circle-up:before {
+	content: "\f331";
+}
+.caret-down:before {
+	content: "\f0d7";
+}
+.caret-left:before {
+	content: "\f0d9";
+}
+.caret-right:before {
+	content: "\f0da";
+}
+.caret-up:before {
+	content: "\f0d8";
+}
+.caret-square-down:before {
+	content: "\f150";
+}
+.caret-square-left:before {
+	content: "\f191";
+}
+.caret-square-right:before {
+	content: "\f152";
+}
+.caret-square-up:before {
+	content: "\f151";
+}
+.check:before {
+	content: "\f00c";
+}
+.check-circle:before {
+	content: "\f058";
+}
+.check-square:before {
+	content: "\f14a";
+}
+.chevron-double-down:before {
+	content: "\f322";
+}
+.chevron-double-left:before {
+	content: "\f323";
+}
+.chevron-double-right:before {
+	content: "\f324";
+}
+.chevron-double-up:before {
+	content: "\f325";
+}
+.chevron-down:before {
+	content: "\f078";
+}
+.chevron-left:before {
+	content: "\f053";
+}
+.chevron-right:before {
+	content: "\f054";
+}
+.chevron-up:before {
+	content: "\f077";
+}
+.cloud-download:before {
+	content: "\f0ed";
+}
+.cloud-download-alt:before {
+	content: "\f381";
+}
+.file:before {
+	content: "\f15b";
+}
+.file-alt:before {
+	content: "\f15c";
+}
+.file-plus:before {
+	content: "\f319";
+}
+.pencil:before {
+	content: "\f040";
+}
+.plus:before {
+	content: "\f067";
+}
+.plus-circle:before {
+	content: "\f055";
+}
+.save:before {
+	content: "\f0c7";
+}
+.search:before {
+	content: "\f002";
+}
+.sign-in:before {
+	content: "\f090";
+}
+.sign-in-alt:before {
+	content: "\f2f6";
+}
+.sign-out:before {
+	content: "\f08b";
+}
+.sign-out-alt:before {
+	content: "\f2f5";
+}
+.square:before {
+	content: "\f0c8";
+}
+.times:before {
+	content: "\f00d";
+}
+.times-circle:before {
+	content: "\f057";
+}
+.times-square:before {
+	content: "\f2d3";
+}
+.user-circle:before {
+	content: "\f2bd";
+}

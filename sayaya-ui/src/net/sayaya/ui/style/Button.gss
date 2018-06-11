@@ -1,0 +1,109 @@
+.flat {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	font-family: 'Noto Sans KR', sans-serif;
+	font-weight: bold;
+	min-width: 8em;
+	background-color: transparent;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
+	border: 0px hidden;
+	border-radius: 3px;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	outline-style: none;
+	padding: 0.5em;
+}
+
+.flat:hover:enabled {
+	animation-duration: 0.4s;
+	animation-name: fi;
+	animation-fill-mode: forwards;
+}
+
+@keyframes fi {
+	from {
+		background-color: transparent;
+	}
+	to {
+		background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()+44");
+	}
+}
+
+.flat:disabled {
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText3()");
+}
+
+.rised {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	font-family: 'Noto Sans KR', sans-serif;
+	font-weight: bold;
+	min-width: 8em;
+	background-color: #FFFFFF;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
+	box-shadow : 0px 3px 3px rgba(0,0,0,0.16), 0px 3px 3px rgba(0,0,0,0.23);
+	border: 0px hidden;
+	border-radius: 3px;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	padding: 0.5em;
+}
+
+.rised:hover:enabled {
+	animation-duration: 0.4s;
+	animation-name: elevation;
+	animation-fill-mode: forwards;
+}
+
+.rised:disabled {
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText3()");
+	box-shadow : 0 0;
+}
+
+@keyframes elevation {
+	from {
+		box-shadow : 0px 3px 3px rgba(0,0,0,0.16), 0px 3px 3px rgba(0,0,0,0.23);
+	}
+	to {
+		box-shadow : 0px 10px 10px rgba(0,0,0,0.19), 0px 6px 3px rgba(0,0,0,0.23);
+	}
+}
+
+.contained {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	font-family: 'Noto Sans KR', sans-serif;
+	font-weight: bold;
+	min-width: 8em;
+	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
+	box-shadow : 0px 3px 3px rgba(0,0,0,0.16), 0px 3px 3px rgba(0,0,0,0.23);
+	color: #FFFFFF;
+	border: 0px hidden;
+	border-radius: 3px;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	outline-style: none;
+	padding: 0.5em;
+}
+
+.contained:hover:enabled {
+	animation-duration: 0.4s;
+	animation-name: elevation;
+	animation-fill-mode: forwards;
+}
+
+.contained:disabled {
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText3()");
+}

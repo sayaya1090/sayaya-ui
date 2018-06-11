@@ -1,0 +1,16 @@
+.label {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	font-family: 'Noto Sans KR', sans-serif;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
+}
+
+.numeric {
+	text-align: right;
+	padding-right: 0.5em;
+}

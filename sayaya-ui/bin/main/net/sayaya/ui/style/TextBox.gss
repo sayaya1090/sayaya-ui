@@ -1,0 +1,50 @@
+.textbox {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	font-family: 'Noto Sans KR', sans-serif;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
+	border: 1px solid transparent;
+	border-bottom: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText3()");
+	outline-style: none;
+}
+
+.textbox:focus {
+	border-bottom: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+}
+
+.textbox:disabled {
+	background-color: transparent;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText3()");
+	border-bottom: 1px dotted eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText3()");
+}
+
+.textarea {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	font-family: 'Noto Sans KR', sans-serif;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
+	border: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText3()");
+	outline-style: none;
+	resize: none;
+}
+
+.textarea:focus {
+	border: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+}
+
+.textarea:disabled {
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText3()");
+	border: 1px solid transparent;
+}
+
+.placeholder {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	font-family: 'Noto Sans KR', sans-serif;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText3()");
+}
