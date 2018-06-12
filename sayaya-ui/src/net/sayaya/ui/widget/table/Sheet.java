@@ -6,6 +6,7 @@ import java.util.Date;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.layout.client.Layout.AnimationCallback;
 import com.google.gwt.layout.client.Layout.Layer;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -64,13 +65,26 @@ public abstract class Sheet<T> extends ResizeComposite implements ProvidesResize
 					// Image cast = (Image)value;
 				} else if(value instanceof Boolean) {
 					Boolean cast = (Boolean)value;
-					CheckBox check = new CheckBox(22).setValue(cast).setEnabled(!columnInfo.isReadOnly());
-					td.appendChild(check.getElement());
+					CheckBox check = new CheckBox(22).setValue(cast, true);
+					Element elem = check.getElement();
+					columnInfo.setReadOnly(true);
+					Event.setEventListener(td, evt->{
+						evt.preventDefault();
+						if(evt.getTypeInt() == Event.ONCLICK) {
+							boolean current = instance.getSettings().getData()[row].get(prop);
+							instance.getSettings().getData()[row].put(prop, !current);
+							td.removeAllChildren();
+							td.appendChild(check.setValue(!current, true).getElement());
+						}
+					});
+					Event.sinkEvents(td, Event.ONCLICK);
+					td.appendChild(elem);
 					td.setAttribute("align", "center");
 				}
 				return td;
 			});
 		}
+		
 		setting.setColumns(columns);
 		return this;
 	}

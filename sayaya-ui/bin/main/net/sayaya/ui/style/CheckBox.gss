@@ -6,5 +6,12 @@
 	-moz-user-select: none;
 	-o-user-select: none;
 	user-select: none;
+	line-height: normal;
 	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+}
+
+.square {
+	line-height: normal;
+	font-weight: lighter;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
 }

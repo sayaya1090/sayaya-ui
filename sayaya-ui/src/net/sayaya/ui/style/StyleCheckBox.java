@@ -11,6 +11,7 @@ public class StyleCheckBox {
 		
 		public static interface Style extends CssResource {
 			String check();
+			String square();
 		}
 	}
 	private static final CheckBoxResource RESOURCE =  GWT.create(CheckBoxResource.class);

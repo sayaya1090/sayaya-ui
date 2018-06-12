@@ -16,12 +16,12 @@ public abstract class Button<B extends Button<B>> extends Composite implements H
 	}
 	
 	public B setValue(String text) {
-		widget.setText(text!=null?text.toUpperCase():null);
+		widget.setText(text);
 		return (B)this;
 	}
 	
 	public B setText(String text) {
-		widget.setText(text!=null?text.toUpperCase():null);
+		widget.setText(text);
 		return (B)this;
 	}
 	

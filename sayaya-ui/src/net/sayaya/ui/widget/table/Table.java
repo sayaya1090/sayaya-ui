@@ -65,7 +65,7 @@ public abstract class Table<T> extends ResizeComposite implements ProvidesResize
 					// Image cast = (Image)value;
 				} else if(value instanceof Boolean) {
 					Boolean cast = (Boolean)value;
-					CheckBox check = new CheckBox(22).setValue(cast).setEnabled(!columnInfo.isReadOnly());
+					CheckBox check = new CheckBox(22).setValue(cast, true).setEnabled(!columnInfo.isReadOnly());
 					td.appendChild(check.getElement());
 					td.setAttribute("align", "center");
 				}

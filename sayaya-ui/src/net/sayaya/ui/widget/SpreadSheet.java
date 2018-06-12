@@ -695,6 +695,8 @@ public final class SpreadSheet extends ResizeComposite {
 		private boolean formulas;
 		@JsProperty(name="preventOverflow")
 		private String preventOverflow;
+		@JsProperty(name="disableVisualSelection")
+		private boolean disableVisualSelection;
 		@JsProperty(name="colWidths")
 		private ColWidths colWidths;
 		@JsProperty(name="afterDocumentKeyDown")
@@ -940,8 +942,8 @@ public final class SpreadSheet extends ResizeComposite {
 		public SheetSetting setColumns(ColumnInfo... columns) {
 			this.columns = columns;
 			List<String> headers = Arrays.stream(columns)
-				.map(col->col.getData())
-				.collect(Collectors.toList());
+			.map(col->col.getData())
+			.collect(Collectors.toList());
 			String[] arr = new String[headers.size()];
 			headers.toArray(arr);
 			setColHeaders(arr);
@@ -964,7 +966,7 @@ public final class SpreadSheet extends ResizeComposite {
 			this.preventOverflow = "horizontal";
 			return this;
 		}
-		
+
 		@JsOverlay
 		public Change getChange() {
 			return change;

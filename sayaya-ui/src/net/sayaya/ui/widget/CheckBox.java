@@ -37,9 +37,7 @@ public class CheckBox extends Composite implements InputBase<Boolean, CheckBox> 
 		style(this);
 		setSize(size+"px", size+"px");
 		icon.getElement().getStyle().setFontSize(size-4, Unit.PX);
-		icon.getElement().getStyle().setProperty("lineHeight", "normal");
 		square.getElement().getStyle().setFontSize(size, Unit.PX);
-		square.getElement().getStyle().setProperty("lineHeight", "normal");
 		layout.addDomHandler(evt->{if(enabled) setValue(!value);}, ClickEvent.getType());
 		layout.setWidgetTopBottom(icon, 2, Unit.PX, 2, Unit.PX);
 		layout.setWidgetLeftRight(icon, 2, Unit.PX, 2, Unit.PX);
@@ -49,13 +47,23 @@ public class CheckBox extends Composite implements InputBase<Boolean, CheckBox> 
 	@Override
 	public CheckBox style(CheckBox w) {
 		icon.addStyleName(StyleCheckBox.GSS.check());
+		square.addStyleName(StyleCheckBox.GSS.square());
 		return this;
 	}
 
 	@Override
 	public CheckBox setValue(Boolean value) {
-		if(value) check.run(80);
-		else uncheck.run(80);
+		return setValue(value, false);
+	}
+	
+	public CheckBox setValue(Boolean value, boolean immediate) {
+		if(value) {
+			if(immediate) check.run(0);
+			else check.run(80);
+		} else {
+			if(immediate) uncheck.run(0);
+			else uncheck.run(0);
+		}
 		this.value = value;
 		return this;
 	}
