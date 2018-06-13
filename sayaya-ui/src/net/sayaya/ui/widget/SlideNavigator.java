@@ -84,6 +84,7 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 		knockerIcon.removeStyleName(Icon.GSS.caretRight());
 		knockerIcon.addStyleName(Icon.GSS.caretLeft());
 		foot.setVisible(true);
+		children.removeIf(child->!child.isAttached());
 		children.stream().forEach(item->item.onResize(state));
 		STORAGE.setItem(MENU_STATE_KEY, "0");
 	}
@@ -99,6 +100,7 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 		knockerIcon.removeStyleName(Icon.GSS.caretLeft());
 		knockerIcon.addStyleName(Icon.GSS.caretRight());
 		foot.setVisible(false);
+		children.removeIf(child->!child.isAttached());
 		children.stream().forEach(item->item.onResize(state));
 		STORAGE.setItem(MENU_STATE_KEY, "1");
 	}

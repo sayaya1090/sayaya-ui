@@ -1,7 +1,6 @@
 package net.sayaya.ui.widget;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
@@ -24,9 +23,9 @@ public class Breadcrumb extends Composite {
 	}
 	public Breadcrumb(Widget splitter) {
 		initWidget(layout);
+		setStyleName(StyleBreadcrumb.GSS.breadcrumb());
 		splitter.addStyleName(StyleBreadcrumb.GSS.splitter());
 		this.splitter = (Element) splitter.getElement().cloneNode(true);
-		layout.getElement().getStyle().setDisplay(Display.FLEX);
 	}
 	
 	public Breadcrumb add(Place<?> place) {

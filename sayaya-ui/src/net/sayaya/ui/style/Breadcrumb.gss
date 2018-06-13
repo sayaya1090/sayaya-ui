@@ -1,3 +1,9 @@
+.breadcrumb {
+	display: flex;
+	margin-top: 5px;
+	margin-bottm: 5px;
+}
+
 .splitter {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
@@ -10,12 +16,18 @@
 }
 
 .item {
-	margin-left: 2em;
-	margin-right: 2em;
 	cursor: pointer;
 	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText2()");
 }
 
 .item:hover {
 	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+}
+
+.item:not(:first-child) {
+	margin-left: 2em;
+}
+
+.item:not(:last-child) {
+	margin-right: 2em;
 }

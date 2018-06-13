@@ -10,6 +10,7 @@ public class StyleBreadcrumb {
 		Style style();
 		
 		public static interface Style extends CssResource {
+			String breadcrumb();
 			String item();
 			String splitter();
 		}
