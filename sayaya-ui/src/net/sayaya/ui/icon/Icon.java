@@ -109,6 +109,7 @@ public class Icon extends HTML {
 			String fileAlt();
 			@CssResource.ClassName("file-plus")
 			String filePlus();
+			String home();
 			@CssResource.ClassName("pencil")
 			String pencil();
 			@CssResource.ClassName("plus")

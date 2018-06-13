@@ -3,6 +3,7 @@ package net.sayaya.ui.widget.table;
 import java.util.Arrays;
 import java.util.Date;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.layout.client.Layout.AnimationCallback;
 import com.google.gwt.layout.client.Layout.Layer;
@@ -57,6 +58,8 @@ public abstract class Sheet<T> extends ResizeComposite implements ProvidesResize
 					td.addClassName(StyleLabel.GSS.numeric());
 					Number cast = (Number)value;
 					td.setInnerHTML(cast.toString());
+					columnInfo.setType("numeric").setAllowEmpty(true).setAllowInvalid(false);
+					if(columnInfo.getFormat()==null) columnInfo.setFormat("0");
 				} else if(value instanceof Date) {
 					td.addClassName(StyleLabel.GSS.label());
 					Date cast = (Date)value;
@@ -67,7 +70,6 @@ public abstract class Sheet<T> extends ResizeComposite implements ProvidesResize
 					Boolean cast = (Boolean)value;
 					CheckBox check = new CheckBox(22).setValue(cast, true);
 					Element elem = check.getElement();
-					columnInfo.setReadOnly(true);
 					Event.setEventListener(td, evt->{
 						evt.preventDefault();
 						if(evt.getTypeInt() == Event.ONCLICK) {
@@ -80,6 +82,7 @@ public abstract class Sheet<T> extends ResizeComposite implements ProvidesResize
 					Event.sinkEvents(td, Event.ONCLICK);
 					td.appendChild(elem);
 					td.setAttribute("align", "center");
+					columnInfo.setReadOnly(true);
 				}
 				return td;
 			});
