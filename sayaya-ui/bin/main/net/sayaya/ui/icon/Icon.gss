@@ -115,6 +115,9 @@
 .file-plus:before {
 	content: "\f319";
 }
+.home:before {
+	content: "\f015";
+}
 .pencil:before {
 	content: "\f040";
 }
