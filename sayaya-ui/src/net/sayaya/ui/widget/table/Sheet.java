@@ -3,7 +3,6 @@ package net.sayaya.ui.widget.table;
 import java.util.Arrays;
 import java.util.Date;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.layout.client.Layout.AnimationCallback;
 import com.google.gwt.layout.client.Layout.Layer;
