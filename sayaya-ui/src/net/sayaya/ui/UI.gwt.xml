@@ -17,6 +17,8 @@
 	<source path="style"/>
 	<source path="widget"/>
 	
+	<source path="regacy" />
+	
 	<set-property name="gwt.logging.logLevel" value="ALL"/>
 	<set-configuration-property name="CssResource.enableGss" value="TRUE" />
 	<set-configuration-property name="xsiframe.failIfScriptTag" value="FALSE"/>

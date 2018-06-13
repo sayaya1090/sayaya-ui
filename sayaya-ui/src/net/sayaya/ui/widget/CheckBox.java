@@ -41,11 +41,11 @@ public class CheckBox extends Composite implements InputBase<Boolean, CheckBox> 
 		layout.addDomHandler(evt->{if(enabled) setValue(!value);}, ClickEvent.getType());
 		layout.setWidgetTopBottom(icon, 2, Unit.PX, 2, Unit.PX);
 		layout.setWidgetLeftRight(icon, 2, Unit.PX, 2, Unit.PX);
-		layout.getElement().getStyle().setOverflow(Overflow.AUTO);
 	}
 
 	@Override
 	public CheckBox style(CheckBox w) {
+		layout.setStyleName(StyleCheckBox.GSS.layout());
 		icon.addStyleName(StyleCheckBox.GSS.check());
 		square.addStyleName(StyleCheckBox.GSS.square());
 		return this;

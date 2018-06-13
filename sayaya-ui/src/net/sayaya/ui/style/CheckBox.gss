@@ -1,3 +1,7 @@
+.layout {
+	overflow: hidden;
+	cursor: pointer;
+}
 .check {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;

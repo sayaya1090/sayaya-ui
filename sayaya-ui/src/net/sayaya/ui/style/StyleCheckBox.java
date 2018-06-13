@@ -10,6 +10,7 @@ public class StyleCheckBox {
 		Style style();
 		
 		public static interface Style extends CssResource {
+			String layout();
 			String check();
 			String square();
 		}
