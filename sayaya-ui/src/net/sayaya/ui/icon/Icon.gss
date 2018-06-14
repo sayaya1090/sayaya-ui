@@ -26,10 +26,13 @@
 	content: "\f039";
 }
 .box:before {
-  content: "\f466";
+	content: "\f466";
 }
 .box-check:before {
-  content: "\f467";
+	content: "\f467";
+}
+.boxes:before {
+	content: "\f468";
 }
 .caret-circle-down:before {
 	content: "\f32d";
@@ -115,6 +118,9 @@
 .file-plus:before {
 	content: "\f319";
 }
+.hand-holding-box:before {
+	content: "\f47b";
+}
 .home:before {
 	content: "\f015";
 }
@@ -145,8 +151,17 @@
 .sign-out-alt:before {
 	content: "\f2f5";
 }
+.sitemap:before {
+	content: "\f0e8";
+}
 .square:before {
 	content: "\f0c8";
+}
+.tag:before {
+	content: "\f02b";
+}
+.tags:before {
+	content: "\f02c";
 }
 .times:before {
 	content: "\f00d";

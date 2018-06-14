@@ -1,7 +1,7 @@
 .breadcrumb {
-	display: flex;
+	display: block;
 	margin-top: 5px;
-	margin-bottm: 5px;
+	margin-bottom: 5px;
 }
 
 .splitter {
@@ -30,4 +30,10 @@
 
 .item:not(:last-child) {
 	margin-right: 2em;
+}
+
+.anchor {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	font-family: 'Noto Sans KR', sans-serif;
 }

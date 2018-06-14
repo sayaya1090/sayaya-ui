@@ -49,10 +49,10 @@ public class Icon extends HTML {
 			String alignCenter();
 			@CssResource.ClassName("align-justify")
 			String alignJustify();
-			@CssResource.ClassName("box")
 			String box();
 			@CssResource.ClassName("box-check")
 			String boxCheck();
+			String boxes();
 			@CssResource.ClassName("caret-circle-down")
 			String caretCircleDown();
 			@CssResource.ClassName("caret-circle-left")
@@ -109,6 +109,8 @@ public class Icon extends HTML {
 			String fileAlt();
 			@CssResource.ClassName("file-plus")
 			String filePlus();
+			@CssResource.ClassName("hand-holding-box")
+			String handHoldingBox();
 			String home();
 			@CssResource.ClassName("pencil")
 			String pencil();
@@ -128,7 +130,10 @@ public class Icon extends HTML {
 			String signoOut();
 			@CssResource.ClassName("sign-out-alt")
 			String signoOutAlt();
+			String sitemap();
 			String square();
+			String tag();
+			String tags();
 			@CssResource.ClassName("times")
 			String times();
 			@CssResource.ClassName("times-circle")

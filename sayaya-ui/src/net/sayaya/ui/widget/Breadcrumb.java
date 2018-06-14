@@ -35,6 +35,7 @@ public class Breadcrumb extends Composite {
 	
 	public Breadcrumb add(Place<?> place, String label) {
 		Anchor anchor = new Anchor();
+		anchor.setStyleName(StyleBreadcrumb.GSS.anchor());
 		anchor.setText(label);
 		anchor.setHref("#");
 		add(place, anchor);

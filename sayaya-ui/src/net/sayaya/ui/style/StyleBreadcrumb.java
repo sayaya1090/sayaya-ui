@@ -13,6 +13,7 @@ public class StyleBreadcrumb {
 			String breadcrumb();
 			String item();
 			String splitter();
+			String anchor();
 		}
 	}
 	private static final BreadcrumbResource RESOURCE =  GWT.create(BreadcrumbResource.class);
