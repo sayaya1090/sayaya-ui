@@ -1,6 +1,5 @@
 package net.sayaya.ui.widget;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Composite;
 
 import net.sayaya.ui.handler.HasStyle;

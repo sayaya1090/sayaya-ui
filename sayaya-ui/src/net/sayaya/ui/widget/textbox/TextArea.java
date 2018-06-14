@@ -1,5 +1,7 @@
 package net.sayaya.ui.widget.textbox;
 
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 
 import net.sayaya.ui.style.StyleTextBox;
@@ -44,5 +46,10 @@ public class TextArea extends Composite implements InputBase<String, TextArea> {
 	public TextArea setEnabled(boolean enabled) {
 		widget.setEnabled(enabled);
 		return this;
+	}
+	
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+		return widget.addValueChangeHandler(handler);
 	}
 }

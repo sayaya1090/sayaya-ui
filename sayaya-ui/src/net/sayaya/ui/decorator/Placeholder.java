@@ -7,13 +7,15 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import net.sayaya.ui.style.StyleTextBox;
 import net.sayaya.ui.style.color.Palette;
-import net.sayaya.ui.widget.Label;
 import net.sayaya.ui.widget.InputBase;
+import net.sayaya.ui.widget.Label;
 
 public class Placeholder {
 	public static <T> TextBoxDecoratorPlaceholder<T> decorate(InputBase<T, ?> widget, double fontSize, String placeholder) {
@@ -125,6 +127,11 @@ public class Placeholder {
 		public TextBoxDecoratorPlaceholder<T> setEnabled(boolean enabled) {
 			widget.setEnabled(enabled);
 			return this;
+		}
+
+		@Override
+		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
+			return widget.addValueChangeHandler(handler);
 		}
 	}
 }

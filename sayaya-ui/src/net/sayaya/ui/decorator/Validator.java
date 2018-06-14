@@ -2,6 +2,8 @@ package net.sayaya.ui.decorator;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 
@@ -76,6 +78,11 @@ public class Validator {
 		public TextBoxDecoratorValidator<T> setEnabled(boolean enabled) {
 			widget.setEnabled(enabled);
 			return this;
+		}
+		
+		@Override
+		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
+			return widget.addValueChangeHandler(handler);
 		}
 	}
 }

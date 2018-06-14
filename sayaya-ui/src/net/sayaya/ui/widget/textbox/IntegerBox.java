@@ -1,7 +1,6 @@
 package net.sayaya.ui.widget.textbox;
 
-import com.google.gwt.event.dom.client.DomEvent.Type;
-import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 
@@ -25,10 +24,6 @@ public class IntegerBox extends Composite implements InputBase<Integer, IntegerB
 		w.setStyleName(StyleTextBox.GSS.textbox());
 		w.addStyleName(StyleLabel.GSS.numeric());
 		return this;
-	}
-	
-	public <H extends EventHandler> HandlerRegistration addHandler(H handler, Type<H> type) {
-		return widget.addDomHandler(handler, type);
 	}
 
 	@Override
@@ -56,5 +51,10 @@ public class IntegerBox extends Composite implements InputBase<Integer, IntegerB
 	public IntegerBox setEnabled(boolean enabled) {
 		widget.setEnabled(enabled);
 		return this;
+	}
+	
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Integer> handler) {
+		return widget.addValueChangeHandler(handler);
 	}
 }

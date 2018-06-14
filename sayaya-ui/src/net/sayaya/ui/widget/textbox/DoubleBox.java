@@ -1,7 +1,6 @@
 package net.sayaya.ui.widget.textbox;
 
-import com.google.gwt.event.dom.client.DomEvent.Type;
-import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 
@@ -9,9 +8,9 @@ import net.sayaya.ui.style.StyleLabel;
 import net.sayaya.ui.style.StyleTextBox;
 import net.sayaya.ui.widget.InputBase;
 
-public class NumberBox extends Composite implements InputBase<Number, NumberBox> {
+public class DoubleBox extends Composite implements InputBase<Double, DoubleBox> {
 	private final com.google.gwt.user.client.ui.DoubleBox widget;
-	public NumberBox() {
+	public DoubleBox() {
 		widget = new com.google.gwt.user.client.ui.DoubleBox();
 		initWidget(widget);
 		widget.addKeyPressHandler(evt->{
@@ -23,31 +22,27 @@ public class NumberBox extends Composite implements InputBase<Number, NumberBox>
 	}
 
 	@Override
-	public NumberBox style(NumberBox w) {
+	public DoubleBox style(DoubleBox w) {
 		w.setStyleName(StyleTextBox.GSS.textbox());
 		w.addStyleName(StyleLabel.GSS.numeric());
 		return this;
 	}
-	
-	public <H extends EventHandler> HandlerRegistration addHandler(H handler, Type<H> type) {
-		return widget.addDomHandler(handler, type);
-	}
 
 	@Override
-	public NumberBox setValue(Number value) {
+	public DoubleBox setValue(Double value) {
 		if(value==null) widget.setValue(null);
 		else widget.setValue(value.doubleValue());
 		return this;
 	}
 	
-	public NumberBox setValue(Number value, boolean fireEvent) {
+	public DoubleBox setValue(Double value, boolean fireEvent) {
 		if(value==null) widget.setValue(null, fireEvent);
 		else widget.setValue(value.doubleValue(), fireEvent);
 		return this;
 	}
 
 	@Override
-	public Number getValue() {
+	public Double getValue() {
 		return widget.getValue();
 	}
 
@@ -57,8 +52,13 @@ public class NumberBox extends Composite implements InputBase<Number, NumberBox>
 	}
 	
 	@Override
-	public NumberBox setEnabled(boolean enabled) {
+	public DoubleBox setEnabled(boolean enabled) {
 		widget.setEnabled(enabled);
 		return this;
+	}
+	
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Double> handler) {
+		return widget.addValueChangeHandler(handler);
 	}
 }

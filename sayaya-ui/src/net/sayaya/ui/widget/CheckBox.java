@@ -1,9 +1,14 @@
 package net.sayaya.ui.widget;
 
 import com.google.gwt.animation.client.Animation;
-import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.LayoutPanel;
 
@@ -11,6 +16,7 @@ import net.sayaya.ui.icon.Icon;
 import net.sayaya.ui.style.StyleCheckBox;
 
 public class CheckBox extends Composite implements InputBase<Boolean, CheckBox> {
+	private final EventBus bus = new SimpleEventBus();
 	private final Icon icon = Icon.create(Icon.GSS.check());
 	private final Icon square = Icon.create(Icon.GSS.square());
 	private final LayoutPanel layout = new LayoutPanel();
@@ -41,6 +47,12 @@ public class CheckBox extends Composite implements InputBase<Boolean, CheckBox> 
 		layout.addDomHandler(evt->{if(enabled) setValue(!value);}, ClickEvent.getType());
 		layout.setWidgetTopBottom(icon, 2, Unit.PX, 2, Unit.PX);
 		layout.setWidgetLeftRight(icon, 2, Unit.PX, 2, Unit.PX);
+	}
+	
+	@Override
+	public void fireEvent(GwtEvent<?> event) {
+		if(event instanceof ValueChangeEvent) bus.fireEvent(event);
+		else super.fireEvent(event);
 	}
 
 	@Override
@@ -83,5 +95,10 @@ public class CheckBox extends Composite implements InputBase<Boolean, CheckBox> 
 		this.enabled = enabled;
 		square.setVisible(enabled);
 		return this;
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Boolean> handler) {
+		return bus.addHandler(ValueChangeEvent.getType(), handler);
 	}
 }
