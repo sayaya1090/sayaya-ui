@@ -1,5 +1,8 @@
 package net.sayaya.ui.style.color;
 
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
+
 public class Palette {
 	private final static Palette instance = new Palette();
 
@@ -7,16 +10,10 @@ public class Palette {
 	private String color1;
 	// Accent Color
 	private String color2;
-	private String color3;
-	private String color4;
-	private String color5;
-	
 	private String colorText1 = "rgba(0, 0, 0, 0.87)";
 	private String colorText2 = "rgba(0, 0, 0, 0.54)";
 	private String colorText3 = "rgba(0, 0, 0, 0.38)";
-	
 	private String colorDevider = "rgba(0, 0, 0, 0.12)";
-	
 	private String colorSafe = Color.Emerald;
 	private String colorWarn = Color.Mimosa;
 	private String colorError = Color.Crimson;
@@ -74,26 +71,32 @@ public class Palette {
 		this.color2 = color2;
 		return this;
 	}
-	public String getColor3() {
-		return color3;
-	}
-	public Palette setColor3(String color3) {
-		this.color3 = color3;
-		return this;
-	}
-	public String getColor4() {
-		return color4;
-	}
-	public Palette setColor4(String color4) {
-		this.color4 = color4;
-		return this;
-	}
-	public String getColor5() {
-		return color5;
-	}
-	public Palette setColor5(String color5) {
-		this.color5 = color5;
-		return this;
+	private final static String RGB = "^rgb\\(((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))\\,((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))\\,((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))\\)$";
+	private final static String HEX = "^#([0-9A-Fa-z]{2})([0-9A-Fa-z]{2})([0-9A-Fa-z]{2})$";
+	private final static RegExp RGB_REGEXP = RegExp.compile(RGB, "i");
+	private final static RegExp HEX_REGEXP = RegExp.compile(HEX, "i");
+	public static String toRGBA(String color, double alpha) {
+		color = color.replace(" ", "");
+		MatchResult matcher = RGB_REGEXP.exec(color);
+		if(matcher!=null) {
+			String red = matcher.getGroup(1);
+			String green = matcher.getGroup(2);
+			String blue = matcher.getGroup(3);
+			return "rgba(" + red + "," + green + "," + blue + "," + alpha + ")";
+		}
+		
+		matcher = HEX_REGEXP.exec(color);
+		if(matcher!=null) {
+			String red = matcher.getGroup(1);
+			String green = matcher.getGroup(2);
+			String blue = matcher.getGroup(3);
+			int r = Integer.parseInt(red, 16);
+			int g = Integer.parseInt(green, 16);
+			int b = Integer.parseInt(blue, 16);
+			return "rgba(" + r + "," + g + "," + b + "," + alpha + ")";
+		}
+		
+		return null;
 	}
 	public String getColorText1() {
 		return colorText1;
