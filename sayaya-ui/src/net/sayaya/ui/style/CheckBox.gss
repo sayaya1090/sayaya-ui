@@ -15,7 +15,6 @@
 }
 
 .square {
-	line-height: normal;
-	font-weight: lighter;
-	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	border: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	border-radius: 2px;
 }

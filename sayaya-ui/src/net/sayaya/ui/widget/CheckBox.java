@@ -11,14 +11,16 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 import net.sayaya.ui.icon.Icon;
 import net.sayaya.ui.style.StyleCheckBox;
+import net.sayaya.ui.widget.InputBase;
 
 public class CheckBox extends Composite implements InputBase<Boolean, CheckBox> {
 	private final EventBus bus = new SimpleEventBus();
 	private final Icon icon = Icon.create(Icon.GSS.check());
-	private final Icon square = Icon.create(Icon.GSS.square());
+	private final SimplePanel square = new SimplePanel();
 	private final LayoutPanel layout = new LayoutPanel();
 	private boolean enabled = true;
 	private boolean value = false;
@@ -38,15 +40,14 @@ public class CheckBox extends Composite implements InputBase<Boolean, CheckBox> 
 	};
 	public CheckBox(int size) {
 		initWidget(layout);
-		layout.add(icon);
 		layout.add(square);
+		square.add(icon);
 		style(this);
 		setSize(size+"px", size+"px");
-		icon.getElement().getStyle().setFontSize(size-4, Unit.PX);
-		square.getElement().getStyle().setFontSize(size, Unit.PX);
+		icon.getElement().getStyle().setFontSize(size-2, Unit.PX);
+		square.getElement().getStyle().setFontSize(size-2, Unit.PX);
+		square.getElement().getStyle().setLineHeight(size-2, Unit.PX);
 		layout.addDomHandler(evt->{if(enabled) setValue(!value);}, ClickEvent.getType());
-		layout.setWidgetTopBottom(icon, 2, Unit.PX, 2, Unit.PX);
-		layout.setWidgetLeftRight(icon, 2, Unit.PX, 2, Unit.PX);
 	}
 	
 	@Override

@@ -2,6 +2,7 @@ package net.sayaya.ui.decorator;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.user.client.Window;
@@ -44,6 +45,7 @@ public class Tooltip {
 		}, MouseOverEvent.getType());
 		
 		widget.asWidget().addDomHandler(evt->label.setVisible(false), MouseOutEvent.getType());
+		widget.asWidget().addDomHandler(evt->label.setVisible(false), ClickEvent.getType());
 		return widget;
 	}
 	

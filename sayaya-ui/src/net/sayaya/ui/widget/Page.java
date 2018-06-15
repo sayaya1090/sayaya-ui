@@ -124,7 +124,7 @@ public class Page extends Composite implements HasValue<net.sayaya.ui.dto.Page>,
 	public Page setTotal(Long total) {
 		this.total = total;
 		totalLabel.setText("of " + total);
-		pageMaxLabel.setText("of " + (Math.ceil(total/value.getLimit())+1));
+		pageMaxLabel.setText("of " + (Math.ceil((total-1)/value.getLimit())+1));
 		idx2Label.setText(String.valueOf(Math.min(total, value.getOffset()+value.getLimit())));
 		if(value.getOffset()>=total-value.getLimit()) {
 			next.setEnabled(false);
@@ -144,7 +144,7 @@ public class Page extends Composite implements HasValue<net.sayaya.ui.dto.Page>,
 		value.setLimit(show);
 		pageBox.setText(String.valueOf(Math.ceil((value.getOffset()+1)/(double)show)));
 		showBox.setValue(show);
-		pageMaxLabel.setText("of " + (Math.ceil(total/(double)show)+1));
+		pageMaxLabel.setText("of " + (Math.ceil((total-1)/(double)show)+1));
 		idx2Label.setText(String.valueOf(Math.min(total, value.getOffset()+show)));
 		if(value.getOffset()>=total-value.getLimit()) {
 			next.setEnabled(false);

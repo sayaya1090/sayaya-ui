@@ -1,16 +1,13 @@
 package net.sayaya.ui.widget.table;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.layout.client.Layout.AnimationCallback;
 import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -24,7 +21,7 @@ import net.sayaya.ui.widget.SpreadSheet.Data;
 import net.sayaya.ui.widget.SpreadSheet.SheetSetting;
 import net.sayaya.ui.widget.SpreadSheet.SpreadSheetTable;
 
-public abstract class Table<T> extends ResizeComposite implements ProvidesResize, AnimationCallback {
+public abstract class Table<T> extends ResizeComposite implements TableBase<T> {
 	private final SheetSetting setting = new SheetSetting()
 	.setRowHeaders(false)
 	.setAutoColSize(true)
@@ -42,6 +39,7 @@ public abstract class Table<T> extends ResizeComposite implements ProvidesResize
 		initWidget(container);
 	}
 	
+	@Override
 	public Table<T> setColumns(ColumnInfo[] columns) {
 		for(ColumnInfo c: columns) {
 			c.setReadOnly(true);
@@ -92,15 +90,15 @@ public abstract class Table<T> extends ResizeComposite implements ProvidesResize
 		if(child instanceof SpreadSheet) ((SpreadSheet)child).render();
 	}
 	
+	@Override
 	public final void update() {
 		sheet.update(setting);
 	}
 	
-	protected abstract Data parse(T data);
-	public final Table<T> setValues(@SuppressWarnings("unchecked") T... values) {
+	@Override
+	public final Table<T> setValues(Data... data) {
 		container.clear();
-		if(values!=null && values.length > 0) {
-			Data[] data = Arrays.stream(values).map(value->parse(value)).toArray(Data[]::new);
+		if(data!=null && data.length > 0) {
 			setting.setData(data).setMaxRows(Math.max(1, data.length));
 			sheet = new SpreadSheet(setting);
 			container.add(sheet);
