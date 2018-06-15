@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
 
+import net.sayaya.ui.decorator.Tooltip;
 import net.sayaya.ui.handler.HasValue;
 import net.sayaya.ui.icon.Icon;
 import net.sayaya.ui.style.StylePage;
@@ -22,12 +23,12 @@ import net.sayaya.ui.widget.button.ButtonFlat;
 public class Page extends Composite implements HasValue<net.sayaya.ui.dto.Page>, HasValueChangeHandlers<net.sayaya.ui.dto.Page> {
 	private final EventBus bus = new SimpleEventBus();
 	private final FlowPanel layout = new FlowPanel();
-	private final ButtonFlat first = new ButtonFlat().setValue(Icon.create(Icon.GSS.chevronDoubleLeft()));
-	private final ButtonFlat prev = new ButtonFlat().setValue(Icon.create(Icon.GSS.caretLeft()));
-	private final ButtonFlat next = new ButtonFlat().setValue(Icon.create(Icon.GSS.caretRight()));
-	private final ButtonFlat last = new ButtonFlat().setValue(Icon.create(Icon.GSS.chevronDoubleRight()));
-	private final IntegerBox showBox = new IntegerBox();
-	private final IntegerBox pageBox = new IntegerBox();
+	private final ButtonFlat first = Tooltip.decorate(new ButtonFlat().setValue(Icon.create(Icon.GSS.chevronDoubleLeft())), "Go to 1st page");
+	private final ButtonFlat prev = Tooltip.decorate(new ButtonFlat().setValue(Icon.create(Icon.GSS.caretLeft())), "Prev page");
+	private final ButtonFlat next = Tooltip.decorate(new ButtonFlat().setValue(Icon.create(Icon.GSS.caretRight())), "Next page");
+	private final ButtonFlat last = Tooltip.decorate(new ButtonFlat().setValue(Icon.create(Icon.GSS.chevronDoubleRight())), "Go to last page");
+	private final IntegerBox showBox = Tooltip.decorate(new IntegerBox(), "Page size");
+	private final IntegerBox pageBox = Tooltip.decorate(new IntegerBox(), "# Page");
 	private final net.sayaya.ui.dto.Page value = new net.sayaya.ui.dto.Page().setLimit(1).setOffset(0L);
 	private Long total = 0L;
 	private Label pageLabel = new Label("Page");

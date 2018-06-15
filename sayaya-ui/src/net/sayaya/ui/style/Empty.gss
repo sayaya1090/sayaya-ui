@@ -1,7 +1,7 @@
 .empty {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
-	background-color: rgba(190, 200, 209, 0.25);
+	background-color: rgb(255, 255, 255);
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;

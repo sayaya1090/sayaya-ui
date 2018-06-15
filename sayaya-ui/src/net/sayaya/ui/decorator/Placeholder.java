@@ -18,10 +18,10 @@ import net.sayaya.ui.widget.InputBase;
 import net.sayaya.ui.widget.Label;
 
 public class Placeholder {
-	public static <T> TextBoxDecoratorPlaceholder<T> decorate(InputBase<T, ?> widget, double fontSize, String placeholder) {
-		return new TextBoxDecoratorPlaceholder<T>(widget, fontSize, placeholder);
+	public static <T> InputBaseDecoratorPlaceholder<T> decorate(InputBase<T, ?> widget, double fontSize, String placeholder) {
+		return new InputBaseDecoratorPlaceholder<T>(widget, fontSize, placeholder);
 	}
-	public final static class TextBoxDecoratorPlaceholder<T> extends Composite implements InputBase<T, TextBoxDecoratorPlaceholder<T>> {
+	public final static class InputBaseDecoratorPlaceholder<T> extends Composite implements InputBase<T, InputBaseDecoratorPlaceholder<T>> {
 		private final FlowPanel layout = new FlowPanel();
 		private final InputBase<T, ?> widget;
 		private final Label label = new Label();
@@ -45,7 +45,7 @@ public class Placeholder {
 				label.getElement().getStyle().setFontSize(fs, Unit.PX);
 			}
 		};
-		private TextBoxDecoratorPlaceholder(InputBase<T, ?> w, double fontSize, String placeholder) {
+		private InputBaseDecoratorPlaceholder(InputBase<T, ?> w, double fontSize, String placeholder) {
 			initWidget(layout);
 			widget = w;
 			label.setValue(placeholder);
@@ -92,7 +92,7 @@ public class Placeholder {
 		}
 		
 		@Override
-		public TextBoxDecoratorPlaceholder<T> style(TextBoxDecoratorPlaceholder<T> widet) {
+		public InputBaseDecoratorPlaceholder<T> style(InputBaseDecoratorPlaceholder<T> widet) {
 			label.setStyleName(StyleTextBox.GSS.placeholder());
 			label.getElement().getStyle().setLeft(3, Unit.PX);
 			label.getElement().getStyle().setColor(Palette.getInstance().getColorText3());
@@ -106,7 +106,7 @@ public class Placeholder {
 		}
 
 		@Override
-		public TextBoxDecoratorPlaceholder<T> setValue(T value) {
+		public InputBaseDecoratorPlaceholder<T> setValue(T value) {
 			widget.setValue(value);
 			if(widget.isEmpty()) show.run(0);
 			else hide.run(0);
@@ -124,7 +124,7 @@ public class Placeholder {
 		}
 
 		@Override
-		public TextBoxDecoratorPlaceholder<T> setEnabled(boolean enabled) {
+		public InputBaseDecoratorPlaceholder<T> setEnabled(boolean enabled) {
 			widget.setEnabled(enabled);
 			return this;
 		}

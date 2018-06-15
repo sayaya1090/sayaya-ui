@@ -1,4 +1,4 @@
-package net.sayaya.ui.decorator;
+package net.sayaya.ui.widget;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Unit;
@@ -24,11 +24,9 @@ public class Tooltip {
 			int cw = Window.getClientWidth();
 			int deltaY = 0;
 			if(top > cw/2) {
-				deltaY = -25;
-				label.addStyleName(StyleTooltip.GSS.fadein2());
+				deltaY = -5;
 			} else {
 				deltaY = widget.asWidget().getOffsetHeight()+5;
-				label.addStyleName(StyleTooltip.GSS.fadein1());
 			}
 			label.getElement().getStyle().setTop(widget.asWidget().getAbsoluteTop()+deltaY, Unit.PX);
 			label.setVisible(true);
@@ -38,7 +36,7 @@ public class Tooltip {
 				int lw = label.getElement().getOffsetWidth();
 				double pos = left+(ww-lw)/2.0;
 				if(pos+lw > cw) pos = cw-lw-5;
-				else if(pos < 5) pos = 5;
+				
 				label.getElement().getStyle().setLeft(pos, Unit.PX);
 			});
 		}, MouseOverEvent.getType());
