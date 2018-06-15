@@ -1,0 +1,63 @@
+.page {
+	display: flex;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.item {
+	font-size: 12px;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+}
+
+.item:first-child {
+	margin-left: 1em;
+}
+
+.item:last-child {
+	margin-left: 1em;
+}
+
+.icon-button {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    min-width: 3em !important;
+}
+
+.label {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	font-family: 'Noto Sans KR', sans-serif;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	line-height: 28px;
+}
+
+.box {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	font-family: 'Noto Sans KR', sans-serif;
+	border: 1px solid transparent;
+	border-bottom: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	outline-style: none;
+	
+	width: 4em;
+	text-align: right;
+	padding-right: 0.2em;
+	height: 28px;
+	background-color: transparent;
+}
+
+.box:focus {
+	border-bottom: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+}
+
+.box:disabled {
+	background-color: transparent;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText3()");
+	border-bottom: 1px dotted eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+}
