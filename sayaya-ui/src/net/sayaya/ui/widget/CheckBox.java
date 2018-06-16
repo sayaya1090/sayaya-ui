@@ -1,6 +1,7 @@
 package net.sayaya.ui.widget;
 
 import com.google.gwt.animation.client.Animation;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -59,6 +60,7 @@ public class CheckBox extends Composite implements InputBase<Boolean, CheckBox> 
 	@Override
 	public CheckBox style(CheckBox w) {
 		layout.setStyleName(StyleCheckBox.GSS.layout());
+		layout.getWidgetContainerElement(square).getStyle().setOverflow(Overflow.VISIBLE);
 		icon.addStyleName(StyleCheckBox.GSS.check());
 		square.addStyleName(StyleCheckBox.GSS.square());
 		return this;
@@ -78,6 +80,7 @@ public class CheckBox extends Composite implements InputBase<Boolean, CheckBox> 
 			else uncheck.run(0);
 		}
 		this.value = value;
+		getElement().setAttribute("value", String.valueOf(value));
 		return this;
 	}
 

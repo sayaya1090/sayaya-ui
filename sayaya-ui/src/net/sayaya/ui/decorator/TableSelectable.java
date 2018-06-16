@@ -1,13 +1,14 @@
 package net.sayaya.ui.decorator;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.function.Function;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -39,8 +40,7 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 	static final class TableSelectableImpl<T> extends ResizeComposite implements TableSelectable<T> {
 		private final TableBase<T> base;
 		private final Function<Data, T> mapper;
-		private final String checkHeaderId = DOM.createUniqueId();
-		private final ColumnInfo columnCheckbox = new ColumnInfo().setData("<div id='" + checkHeaderId + "'></div>").setRenderer((SpreadSheetTable instance, Element td, int row, int col, String prop, Object value, ColumnInfo columnInfo)->{
+		private final ColumnInfo columnCheckbox = new ColumnInfo().setData("\t").setRenderer((SpreadSheetTable instance, Element td, int row, int col, String prop, Object value, ColumnInfo columnInfo)->{
 			td.removeAllChildren();
 			if(value == null) td.setInnerHTML("");
 			Boolean cast = (Boolean)value;
@@ -70,6 +70,18 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 			td.appendChild(elem);
 			td.setAttribute("align", "center");
 			columnInfo.setReadOnly(true);
+			
+			Scheduler.get().scheduleDeferred(()->{
+				if(cast) {
+					for(int i = 0; i < instance.countCols(); ++i) {
+						Element elem2 = instance.getCell(row, i, true);
+						if(elem2!=null) elem2.addClassName(StyleChart.GSS.selectedRow());
+					}
+				} else for(int i = 0; i < instance.countCols(); ++i) {
+					Element elem2 = instance.getCell(row, i, true);
+					if(elem2!=null) elem2.removeClassName(StyleChart.GSS.selectedRow());
+				}
+			});
 			return td;
 		});
 		private final Element checkAll = DOM.createDiv();
@@ -78,45 +90,24 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 		private TableSelectableImpl(TableBase<T> base, Function<Data, T> mapper) {
 			this.base = base;
 			this.mapper = mapper;
-			base.getSetting().setManualColumnMove(false);
-			base.getSetting().setManualColumnResize(false);
 			initWidget(base.asWidget());
 			style();
-			DOM.setEventListener(checkAll, evt->{
-				if(evt.getTypeInt() == Event.ONCLICK) {
-					evt.preventDefault();
-					boolean value = !tmp.getValue();
-					tmp.setValue(value);
-					for(Data data: getSetting().getData()) data.put(columnCheckbox.getData(), value);
-					checkAll.removeAllChildren();
-					checkAll.appendChild(tmp.getElement());
-					SelectionChangeEvent.fire(this);
-					update();
-				}
-			});
 			checkAll.appendChild(tmp.getElement());
-			DOM.sinkEvents(checkAll, Event.ONCLICK);
-			checkAll.getStyle().setVisibility(Visibility.HIDDEN);
-			
-			base.getSetting().setAfterRender(isForced->{
-				Element checkHeader = DOM.getElementById(checkHeaderId);
-				if(checkHeader!=null) checkHeader.appendChild(checkAll);
-				try {
-					for(int i = 0; i < getTable().countRows(); ++i)
-						if((boolean) getSetting().getData()[i].get(columnCheckbox.getData()))
-							Arrays.stream(getTable().getCells(i, false)).filter(Objects::nonNull).forEach(elem->elem.addClassName(StyleChart.GSS.selectedRow()));
-				} catch(Exception e) {}
-			});
 		}
 		
+		private final String checkId = DOM.createUniqueId();
 		private void style() {
-			checkAll.getStyle().setPosition(Position.RELATIVE);
-			checkAll.getStyle().setLeft(-3, Unit.PX);
-			checkAll.getStyle().setTop(6, Unit.PX);
-			checkAll.getStyle().setWidth(20, Unit.PX);
-			checkAll.getStyle().setHeight(20, Unit.PX);
-			checkAll.getStyle().setZIndex(999);
-			checkAll.getStyle().setBackgroundColor("#FFFFFF");
+			checkAll.getStyle().setDisplay(Display.BLOCK);
+			checkAll.getStyle().setTextAlign(TextAlign.CENTER);
+			tmp.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
+			tmp.getElement().getStyle().setTop(6, Unit.PX);
+			tmp.getElement().getStyle().setLeft(0, Unit.PX);
+			Element square = tmp.getElement().getChild(1).getChild(0).cast();
+			square.getStyle().setBackgroundColor("#FFFFFF");
+			square.getStyle().setWidth(20, Unit.PX);
+			square.getStyle().setHeight(20, Unit.PX);
+			Element check = square.getChild(0).cast();
+			check.setId(checkId);
 		}
 		
 		@Override
@@ -134,6 +125,8 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 			proxy[0] = columnCheckbox;
 			for(int i = 0; i < columns.length; ++i) proxy[i+1] = columns[i];
 			base.setColumns(proxy);
+			String[] headers = base.getSetting().getColHeaders();
+			headers[0] = checkAll.getString();
 			return this;
 		}
 
@@ -153,20 +146,43 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 		}
 
 		@Override
-		public Data parse(T data) {
-			return base.parse(data).put("<div id='\" + checkHeaderId + \"'></div>", false);
+		public Data parse(T value) {
+			if(value == null) return new Data();
+			Data data = base.parse(value).put(columnCheckbox.getData(), false);
+			return data;
 		}
 
 		@Override
 		public TableSelectable<T> setValues(Data... values) {
 			Arrays.stream(values).forEach(value->value.put(columnCheckbox.getData(), false));
+			updateCheckbox(false);
 			base.setValues(values);
-			tmp.setValue(false);
-			if(values!=null && values.length > 0) checkAll.getStyle().setVisibility(Visibility.VISIBLE);
-			else checkAll.getStyle().setVisibility(Visibility.HIDDEN);
+			
+			DOM.setEventListener(getTable().getElement(), evt->{
+				if(evt.getTypeInt() == Event.ONCLICK) {
+					evt.preventDefault();
+					Element target = Element.as(((NativeEvent) evt).getEventTarget());
+					if(checkId.equals(target.getId())) {
+						boolean value = !tmp.getValue();
+						for(Data data: getSetting().getData()) data.put(columnCheckbox.getData(), value);
+						updateCheckbox(value);
+						update();
+						SelectionChangeEvent.fire(this);
+					}
+				}
+			});
+			DOM.sinkEvents(getTable().getElement(), Event.ONCLICK);
 			return this;
 		}
-
+		
+		private void updateCheckbox(boolean value) {
+			tmp.setValue(value, true);
+			checkAll.removeAllChildren();
+			checkAll.appendChild(tmp.getElement());
+			String[] headers = base.getSetting().getColHeaders();
+			headers[0] = checkAll.getString();
+		}
+		
 		@Override
 		public void onAnimationComplete() {
 			base.onAnimationComplete();
