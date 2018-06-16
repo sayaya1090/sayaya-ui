@@ -67,6 +67,26 @@ public final class SpreadSheet extends ResizeComposite {
 		return table.countRows();
 	}
 	
+	public int countCols() {
+		return table.countCols();
+	}
+	
+	public boolean selectColumns(int start, int end) {
+		return table.selectColumns(start, end);
+	}
+	
+	public boolean selectColumn(int start) {
+		return table.selectColumns(start);
+	}
+	
+	public boolean selectRows(int start, int end) {
+		return table.selectRows(start, end);
+	}
+	
+	public boolean selectRow(int start) {
+		return table.selectRows(start);
+	}
+	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name="Handsontable")	
 	public final static class SpreadSheetTable {
 		public SpreadSheetTable(Element element, SheetSetting setting) {};
@@ -74,6 +94,11 @@ public final class SpreadSheet extends ResizeComposite {
 		public native void updateSettings(SheetSetting setting);
 		public native SheetSetting getSettings();
 		public native int countRows();
+		public native int countCols();
+		public native boolean selectColumns(int start, int end);
+		public native boolean selectColumns(int start);
+		public native boolean selectRows(int start, int end);
+		public native boolean selectRows(int start);
 		public native Element getCell(int row, int col, boolean topmost);
 	}
 	

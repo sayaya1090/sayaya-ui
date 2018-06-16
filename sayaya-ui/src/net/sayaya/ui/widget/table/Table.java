@@ -74,8 +74,14 @@ public abstract class Table<T> extends ResizeComposite implements TableBase<T> {
 		return this;
 	}
 
+	@Override
 	public final SheetSetting getSetting() {
 		return setting;
+	}
+	
+	@Override
+	public final SpreadSheet getTable() {
+		return sheet;
 	}
 	
 	@Override

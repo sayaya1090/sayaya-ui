@@ -95,6 +95,11 @@ public abstract class Sheet<T> extends ResizeComposite implements TableBase<T> {
 	}
 	
 	@Override
+	public final SpreadSheet getTable() {
+		return sheet;
+	}
+	
+	@Override
 	public final void onLayout(Layer layer, double progress) {
 		container.setVisible(false);
 	}

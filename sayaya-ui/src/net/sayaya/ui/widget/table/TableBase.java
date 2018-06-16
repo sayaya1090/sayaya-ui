@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.RequiresResize;
 
+import net.sayaya.ui.widget.SpreadSheet;
 import net.sayaya.ui.widget.SpreadSheet.ColumnInfo;
 import net.sayaya.ui.widget.SpreadSheet.Data;
 import net.sayaya.ui.widget.SpreadSheet.SheetSetting;
@@ -23,4 +24,5 @@ public interface TableBase<T> extends IsWidget, RequiresResize, ProvidesResize, 
 			return setValues(data);
 		} else return setValues(new Data[] {});
 	}
+	SpreadSheet getTable();
 }

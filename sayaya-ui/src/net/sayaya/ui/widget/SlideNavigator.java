@@ -23,6 +23,7 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 	private final static String MENU_STATE_KEY = "sayaya-ui-menu-collapse";
 	private final FlowPanel layout = new FlowPanel();
 	private final SplitLayoutPanel parent;
+	private final AnimationCallback callback;
 	private final SimplePanel knocker = new SimplePanel();
 	private final Icon knockerIcon = Icon.create(Icon.GSS.caretLeft());
 	private final FlowPanel foot = new FlowPanel();
@@ -32,14 +33,15 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 	}
 
 	private State state = "1".equals(STORAGE.getItem(MENU_STATE_KEY))?State.COLLAPSE:State.EXPAND;
-	public SlideNavigator(SplitLayoutPanel parent) {
+	public SlideNavigator(SplitLayoutPanel parent, AnimationCallback callback) {
 		this.parent = parent;
+		this.callback = callback;
 		initWidget(layout);
 		layout();
 		style();
 		knocker.addDomHandler(evt->{
-			if(state == State.EXPAND) close();
-			else if(state == State.COLLAPSE) open();
+			if(state == State.EXPAND) close(callback);
+			else if(state == State.COLLAPSE) open(callback);
 		}, ClickEvent.getType());
 		
 		addAttachHandler(evt->{
@@ -65,7 +67,7 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 	public SlideNavigator add(MenuItem item) {
 		layout.add(item);
 		children.add(item);
-		item.addClickHandler(evt->open());
+		item.addClickHandler(evt->open(callback));
 		return this;
 	}
 
@@ -73,9 +75,7 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 	public void onResize() {
 	}
 	
-	public void open() {
-		open(null);
-	}
+	
 	public void open(AnimationCallback callback) {
 		parent.setWidgetSize(this, 250);
 		knocker.getElement().getStyle().setLeft(250, Unit.PX);
@@ -89,9 +89,7 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 		STORAGE.setItem(MENU_STATE_KEY, "0");
 	}
 	
-	public void close() {
-		close(null);
-	}
+
 	public void close(AnimationCallback callback) {
 		parent.setWidgetSize(this, 60);
 		knocker.getElement().getStyle().setLeft(60, Unit.PX);
