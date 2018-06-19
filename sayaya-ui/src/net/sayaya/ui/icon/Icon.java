@@ -99,6 +99,11 @@ public class Icon extends HTML {
 			String chevronRight();
 			@CssResource.ClassName("chevron-up")
 			String chevronUp();
+			String clipboard();
+			@CssResource.ClassName("clipboard-check")
+			String clipboardCheck();
+			@CssResource.ClassName("clipboard-list")
+			String clipboardList();
 			@CssResource.ClassName("cloud-download")
 			String cloudDownload();
 			@CssResource.ClassName("cloud-download-alt")
@@ -112,6 +117,7 @@ public class Icon extends HTML {
 			@CssResource.ClassName("hand-holding-box")
 			String handHoldingBox();
 			String home();
+			String paste();
 			@CssResource.ClassName("pencil")
 			String pencil();
 			@CssResource.ClassName("plus")
@@ -122,6 +128,15 @@ public class Icon extends HTML {
 			String save();
 			@CssResource.ClassName("search")
 			String search();
+			String share();
+			@CssResource.ClassName("share-all")
+			String shareAll();
+			@CssResource.ClassName("share-alt")
+			String shareAlt();
+			@CssResource.ClassName("share-square")
+			String shareSquare();
+			@CssResource.ClassName("share-alt-square")
+			String shareAltSquare();
 			@CssResource.ClassName("sign-in")
 			String signoIn();
 			@CssResource.ClassName("sign-in-alt")
@@ -134,6 +149,9 @@ public class Icon extends HTML {
 			String square();
 			String tag();
 			String tags();
+			String trash();
+			@CssResource.ClassName("trash-alt")
+			String trashAlt();
 			@CssResource.ClassName("times")
 			String times();
 			@CssResource.ClassName("times-circle")

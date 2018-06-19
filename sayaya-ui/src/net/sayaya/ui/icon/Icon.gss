@@ -103,6 +103,15 @@
 .chevron-up:before {
 	content: "\f077";
 }
+.clipboard:before {
+	content: "\f328";
+}
+.clipboard-check:before {
+	content: "\f46c";
+}
+.clipboard-list:before {
+	content: "\f46d";
+}
 .cloud-download:before {
 	content: "\f0ed";
 }
@@ -124,6 +133,9 @@
 .home:before {
 	content: "\f015";
 }
+.paste:before {
+	content: "\f0ea";
+}
 .pencil:before {
 	content: "\f040";
 }
@@ -138,6 +150,21 @@
 }
 .search:before {
 	content: "\f002";
+}
+.share:before {
+	content: "\f064";
+}
+.share-all:before {
+	content: "\f367";
+}
+.share-alt:before {
+	content: "\f1e0";
+}
+.share-square:before {
+	content: "\f14d";
+}
+.share-alt-square:before {
+	content: "\f1e1";
 }
 .sign-in:before {
 	content: "\f090";
@@ -162,6 +189,12 @@
 }
 .tags:before {
 	content: "\f02c";
+}
+.trash:before {
+	content: "\f1f8";
+}
+.trash-alt:before {
+	content: "\f2ed";
 }
 .times:before {
 	content: "\f00d";
