@@ -311,7 +311,7 @@ public final class SpreadSheet extends ResizeComposite {
 								if(!columnInfo.isReadOnly() && ("dropdown".equals(type) || "autocomplete".equals(type))) {
 									renderer.render(instance, td, row, col, prop, tested, columnInfo);
 									DivElement arrow = Document.get().createDivElement();
-									arrow.setInnerHTML("?–¼");
+									arrow.setInnerHTML("â–¼");
 									arrow.setClassName("htAutocompleteArrow");
 									td.appendChild(arrow);
 								} else renderer.render(instance, td, row, col, prop, tested, columnInfo);
@@ -323,7 +323,7 @@ public final class SpreadSheet extends ResizeComposite {
 						if(!columnInfo.isReadOnly() && ("dropdown".equals(type) || "autocomplete".equals(type))) {
 							renderer.render(instance, td, row, col, prop, null, columnInfo);
 							DivElement arrow = Document.get().createDivElement();
-							arrow.setInnerHTML("?–¼");
+							arrow.setInnerHTML("â–¼");
 							arrow.setClassName("htAutocompleteArrow");
 							td.appendChild(arrow);
 						} else renderer.render(instance, td, row, col, prop, null, columnInfo);
@@ -332,7 +332,7 @@ public final class SpreadSheet extends ResizeComposite {
 					if(!columnInfo.isReadOnly() && ("dropdown".equals(type) || "autocomplete".equals(type))) {
 						renderer.render(instance, td, row, col, prop, value, columnInfo);
 						DivElement arrow = Document.get().createDivElement();
-						arrow.setInnerHTML("?–¼");
+						arrow.setInnerHTML("â–¼");
 						arrow.setClassName("htAutocompleteArrow");
 						td.appendChild(arrow);
 					} else renderer.render(instance, td, row, col, prop, value, columnInfo);
