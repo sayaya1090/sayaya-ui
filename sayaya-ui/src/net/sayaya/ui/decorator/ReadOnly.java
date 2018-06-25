@@ -1,5 +1,8 @@
 package net.sayaya.ui.decorator;
 
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+
 import net.sayaya.ui.handler.HasValueWidget;
 
 public class ReadOnly {
@@ -25,8 +28,12 @@ public class ReadOnly {
 
 		@Override
 		public boolean isEmpty() {
-			// TODO Auto-generated method stub
-			return false;
+			return widget.isEmpty();
+		}
+
+		@Override
+		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
+			return widget.addValueChangeHandler(handler);
 		}
 	}
 }
