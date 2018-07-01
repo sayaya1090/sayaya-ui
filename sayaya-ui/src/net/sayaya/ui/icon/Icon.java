@@ -108,6 +108,8 @@ public class Icon extends HTML {
 			String cloudDownload();
 			@CssResource.ClassName("cloud-download-alt")
 			String cloudDownloadAlt();
+			String cog();
+			String cogs();
 			@CssResource.ClassName("file")
 			String file();
 			@CssResource.ClassName("file-alt")
@@ -160,6 +162,7 @@ public class Icon extends HTML {
 			String timesSquare();
 			@CssResource.ClassName("user-circle")
 			String userCircle();
+			String wranch();
 		}
 	}
 }
