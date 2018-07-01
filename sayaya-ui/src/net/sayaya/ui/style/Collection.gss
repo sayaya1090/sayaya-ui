@@ -1,0 +1,23 @@
+.collection {
+	display: block;
+	list-style-type: none;
+	-webkit-margin-before: 1em;
+	-webkit-margin-after: 1em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	-webkit-padding-start: 0px;
+	border: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+}
+
+.collection li {
+	border-bottom: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	list-style-type: none;
+}
+
+.collection li table {
+	width: 100%;
+	padding-left: 1.5em;
+	padding-right: 1.5em;
+	padding-top: 0.6em;
+	padding-bottom: 0.6em;
+}

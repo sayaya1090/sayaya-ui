@@ -12,10 +12,14 @@ import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.RequiresResize;
+import com.google.gwt.user.client.ui.Widget;
 
 import net.sayaya.ui.handler.HasValueWidget;
+import net.sayaya.ui.style.StyleCollection;
 
 public class Collection extends ComplexPanel implements RequiresResize, ProvidesResize, AnimationCallback {
 	private final UListElement elem = Document.get().createULElement();
@@ -31,13 +35,13 @@ public class Collection extends ComplexPanel implements RequiresResize, Provides
 	}
 	
 	private void style() {
-		
+		setStyleName(StyleCollection.GSS.collection());
 	}
 	
 	public Collection add(CollectionItem item) {
 		LIElement li = Document.get().createLIElement();
 		elem.appendChild(li);
-        super.add(item, li); 
+        super.add(item, li);
 		return this;
 	}
 	
@@ -70,29 +74,50 @@ public class Collection extends ComplexPanel implements RequiresResize, Provides
 		private final FlexTable table = new FlexTable();
 		public CollectionItem() {
 			initWidget(table);
-			layout();
-			style();
 		}
 		
-		private void layout() {
-			
-		}
-		
-		private void style() {
-			
+		public CollectionItem add(Widget widget) {
+			table.setWidget(table.getRowCount(), 0, widget);
+			return this;
 		}
 		
 		@Override
 		public void onAnimationComplete() {
-			
+			for(int i = 0; i < table.getRowCount(); ++i) {
+				for(int j = 0; j < table.getCellCount(i); ++j) {
+					Widget child = table.getWidget(i, j);
+					if(child instanceof AnimationCallback) {
+						AnimationCallback cast = (AnimationCallback)child;
+						cast.onAnimationComplete();
+					}
+				}
+			}
 		}
+		
 		@Override
 		public void onLayout(Layer layer, double progress) {
-			
+			for(int i = 0; i < table.getRowCount(); ++i) {
+				for(int j = 0; j < table.getCellCount(i); ++j) {
+					Widget child = table.getWidget(i, j);
+					if(child instanceof AnimationCallback) {
+						AnimationCallback cast = (AnimationCallback)child;
+						cast.onLayout(layer, progress);
+					}
+				}
+			}
 		}
+		
 		@Override
 		public void onResize() {
-			
+			for(int i = 0; i < table.getRowCount(); ++i) {
+				for(int j = 0; j < table.getCellCount(i); ++j) {
+					Widget child = table.getWidget(i, j);
+					if(child instanceof RequiresResize) {
+						RequiresResize cast = (RequiresResize)child;
+						cast.onResize();
+					}
+				}
+			}
 		}
 	}
 	
@@ -106,11 +131,20 @@ public class Collection extends ComplexPanel implements RequiresResize, Provides
 		}
 		
 		private void layout() {
-			
+			super.table.setWidget(0, 1, controller);
+			super.table.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_RIGHT);
+			super.table.getFlexCellFormatter().setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_MIDDLE);
 		}
 		
 		private void style() {
 			
+		}
+		
+		@Override
+		public CollectionItemHasValue<T> add(Widget widget) {
+			super.add(widget);
+			super.table.getFlexCellFormatter().setRowSpan(0, 1, super.table.getRowCount());
+			return this;
 		}
 		
 		@Override
