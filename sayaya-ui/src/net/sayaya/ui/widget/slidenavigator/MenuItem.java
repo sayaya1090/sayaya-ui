@@ -113,7 +113,7 @@ public final class MenuItem extends FlexTable implements ProvidesResize, HasClic
 	public MenuItem clearItem() {
 		children.clear();
 		childContainer.clear();
-		removeRow(1);
+		if(getRowCount() > 1) removeRow(1);
 		return this;
 	}
 	

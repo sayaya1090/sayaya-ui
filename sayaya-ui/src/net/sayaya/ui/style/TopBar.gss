@@ -3,8 +3,7 @@
 	-webkit-font-smoothing: antialiased;
 	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
 	position: relative;
-	height: 100%;
-	display: table;
+	display: flex;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;

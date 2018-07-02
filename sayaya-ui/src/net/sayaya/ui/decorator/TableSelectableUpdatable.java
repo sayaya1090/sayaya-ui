@@ -1,6 +1,6 @@
 package net.sayaya.ui.decorator;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -14,14 +14,14 @@ import net.sayaya.ui.widget.SpreadSheet.Data;
 import net.sayaya.ui.widget.SpreadSheet.SheetSetting;
 import net.sayaya.ui.widget.table.TableBase;
 
-public interface TableSelectableUpdatable<T> extends TableSelectable<T>, TableUpdatable<T> {
-	public static <T> TableSelectableUpdatable<T> decorate(TableBase<T> widget, Function<Data, T> mapper) {
+public interface TableSelectableUpdatable<T> extends TableSelectable<T>, TableUpdatable<T, T> {
+	public static <T> TableSelectableUpdatable<T> decorate(TableBase<T> widget, BiFunction<Integer, Data, T> mapper) {
 		return new TableSelectableUpdatableImpl<T>(widget, mapper);
 	}
 	static final class TableSelectableUpdatableImpl<T> extends ResizeComposite implements TableSelectableUpdatable<T> {
 		private final TableSelectable<T> selectable;
-		private final TableUpdatable<T> updatable;
-		public TableSelectableUpdatableImpl(TableBase<T> base, Function<Data, T> mapper) {
+		private final TableUpdatable<T, T> updatable;
+		public TableSelectableUpdatableImpl(TableBase<T> base, BiFunction<Integer, Data, T> mapper) {
 			selectable = TableSelectable.decorate(base, mapper);
 			updatable = TableUpdatable.decorate(selectable, mapper);
 			initWidget(updatable.asWidget());

@@ -1,7 +1,8 @@
 package net.sayaya.ui.decorator;
 
 import java.util.Arrays;
-import java.util.function.Function;
+import java.util.function.BiFunction;
+import java.util.stream.IntStream;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
@@ -31,7 +32,7 @@ import net.sayaya.ui.widget.SpreadSheet.SpreadSheetTable;
 import net.sayaya.ui.widget.table.TableBase;
 
 public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHandlers {
-	public static <T> TableSelectable<T> decorate(TableBase<T> widget, Function<Data, T> mapper) {
+	public static <T> TableSelectable<T> decorate(TableBase<T> widget, BiFunction<Integer, Data, T> mapper) {
 		return new TableSelectableImpl<T>(widget, mapper);
 	}
 	
@@ -39,7 +40,7 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 	
 	static final class TableSelectableImpl<T> extends ResizeComposite implements TableSelectable<T> {
 		private final TableBase<T> base;
-		private final Function<Data, T> mapper;
+		private final BiFunction<Integer, Data, T> mapper;
 		private final ColumnInfo columnCheckbox = new ColumnInfo().setData("\t").setRenderer((SpreadSheetTable instance, Element td, int row, int col, String prop, Object value, ColumnInfo columnInfo)->{
 			td.removeAllChildren();
 			if(value == null) td.setInnerHTML("");
@@ -87,7 +88,7 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 		private final Element checkAll = DOM.createDiv();
 		private final CheckBox tmp = new CheckBox(22).setValue(false, true);
 		private final EventBus bus = new SimpleEventBus();
-		private TableSelectableImpl(TableBase<T> base, Function<Data, T> mapper) {
+		private TableSelectableImpl(TableBase<T> base, BiFunction<Integer, Data, T> mapper) {
 			this.base = base;
 			this.mapper = mapper;
 			initWidget(base.asWidget());
@@ -113,10 +114,14 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 		@Override
 		@SuppressWarnings("unchecked")
 		public T[] getSelected() {
-			return (T[]) Arrays.stream(getSetting().getData())
-			.filter(data->data.get(columnCheckbox.getData()))
-			.map(data->mapper.apply(data))
-			.toArray(Object[]::new);
+			Data[] data = getSetting().getData();
+			return (T[]) IntStream.range(0, data.length).filter(i->{
+				Data datum = data[i];
+				return datum.get(columnCheckbox.getData());
+			}).mapToObj(i->{
+				Data datum = data[i];
+				return mapper.apply(i, datum);
+			}).toArray(Object[]::new);
 		}
 		
 		@Override

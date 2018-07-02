@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import net.sayaya.ui.icon.Icon;
 import net.sayaya.ui.place.Place;
@@ -46,8 +47,10 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 		
 		addAttachHandler(evt->{
 			if(!evt.isAttached()) return;
-			parent.addWest(knocker, 16);
-			parent.getWidgetContainerElement(knocker).getStyle().setTop(40, Unit.PX);
+			else if(!knocker.isAttached()) {
+				parent.addWest(knocker, 16);
+				parent.getWidgetContainerElement(knocker).getStyle().setTop(40, Unit.PX);
+			}
 		});
 	}
 	
@@ -70,11 +73,15 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 		item.addClickHandler(evt->open(callback));
 		return this;
 	}
+	
+	public SlideNavigator add(Widget widget) {
+		layout.add(widget);
+		return this;
+	}
 
 	@Override
 	public void onResize() {
 	}
-	
 	
 	public void open(AnimationCallback callback) {
 		parent.setWidgetSize(this, 250);
@@ -125,5 +132,11 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 		}
 		children.stream().forEach(item->item.setPlace(state, place));
 		return this;
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		knocker.setVisible(visible);
 	}
 }

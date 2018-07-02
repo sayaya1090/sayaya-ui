@@ -25,6 +25,7 @@
 	width: 0px;
 	height: 27px;
 	cursor: pointer;
+	top: 16px !important;
 }
 
 .knocker-icon {
@@ -91,6 +92,7 @@
 	overflow: hidden;
 	box-shadow: inset 1px 3px 6px rgba(0,0,0,0.23),
 				inset 0px 0px 2px rgba(255,255,255,1.0); 
+	background-color: #000000DD;
 }
 
 .item-sub {
@@ -107,7 +109,7 @@
 }
 
 .item-sub-selected {
-	color: #FFFFFF;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
 	font-weight: bolder;
 }
 
