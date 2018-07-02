@@ -17,6 +17,8 @@ public abstract class Place<T extends Place<T>> extends com.google.gwt.place.sha
 		return isInstanceOf(cast);
 	}
 	public abstract boolean isInstanceOf(T other);
-	public abstract boolean equals(T other);
+	public boolean equals(T other) {
+		return false;
+	}
 	public abstract String toString();
 }
