@@ -38,6 +38,7 @@ public class Breadcrumb extends Composite {
 		anchor.setStyleName(StyleBreadcrumb.GSS.anchor());
 		anchor.setText(label);
 		anchor.setHref("#");
+		anchor.getElement().setAttribute("onClick", "evt->{evt.preventDefault(); return false;}");
 		add(place, anchor);
 		return this;
 	}
@@ -45,7 +46,10 @@ public class Breadcrumb extends Composite {
 	public Breadcrumb add(Place<?> place, Widget label) {
 		if(layout.getWidgetCount() > 0) layout.getElement().appendChild(splitter.cloneNode(true));
 		layout.add(label);
-		label.addDomHandler(evt->Presenter.go(place), ClickEvent.getType());
+		label.addDomHandler(evt->{
+			evt.preventDefault();
+			Presenter.go(place);
+		}, ClickEvent.getType());
 		label.addStyleName(StyleBreadcrumb.GSS.item());
 		return this;
 	}

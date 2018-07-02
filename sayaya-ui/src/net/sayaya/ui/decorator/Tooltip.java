@@ -46,6 +46,10 @@ public class Tooltip {
 		
 		widget.asWidget().addDomHandler(evt->label.setVisible(false), MouseOutEvent.getType());
 		widget.asWidget().addDomHandler(evt->label.setVisible(false), ClickEvent.getType());
+		widget.asWidget().addAttachHandler(evt->{
+			if(evt.isAttached()) return;
+			RootPanel.get().remove(label);
+		});
 		return widget;
 	}
 	

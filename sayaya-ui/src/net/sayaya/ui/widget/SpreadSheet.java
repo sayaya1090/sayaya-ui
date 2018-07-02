@@ -44,7 +44,7 @@ public final class SpreadSheet extends ResizeComposite {
 	}
 	
 	public SpreadSheet render() {
-		table.render();
+		if(table!=null) table.render();
 		return this;
 	}
 	

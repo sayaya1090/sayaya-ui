@@ -129,7 +129,7 @@ public final class MenuItem extends FlexTable implements ProvidesResize, HasClic
 	
 	public void setPlace(State state, Place<?> place) {
 		if(place == null) isSelected = false;
-		else if(place.equals(this.place)) isSelected = true;
+		else if(place.isInstanceOf(this.place)) isSelected = true;
 		else isSelected = false;
 		if(state == State.COLLAPSE) {
 			label.setVisible(false);
