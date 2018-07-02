@@ -6,12 +6,18 @@
 	-webkit-margin-start: 0px;
 	-webkit-margin-end: 0px;
 	-webkit-padding-start: 0px;
-	border: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	overflow: auto;
 }
 
 .collection li {
 	border-bottom: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	border-left: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	border-right: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
 	list-style-type: none;
+}
+
+.collection li:first-child {
+	border-top: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
 }
 
 .collection li table {
