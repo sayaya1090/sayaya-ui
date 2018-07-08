@@ -37,7 +37,7 @@
 }
 
 .dialog-box .dialogMiddleCenter table tbody tr:first-child td {
-	padding: 8px 24px;
+	padding: 8px;
 }
 
 @external 'control';

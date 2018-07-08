@@ -36,6 +36,11 @@ public final class TextBox extends Composite implements InputBase<String, TextBo
 	public String getValue() {
 		return widget.getValue();
 	}
+	
+	@Override
+	public boolean isEnabled() {
+		return widget.isEnabled();
+	}
 
 	@Override
 	public boolean isEmpty() {

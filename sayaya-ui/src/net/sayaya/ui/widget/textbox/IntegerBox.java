@@ -54,6 +54,11 @@ public class IntegerBox extends Composite implements InputBase<Integer, IntegerB
 	}
 	
 	@Override
+	public boolean isEnabled() {
+		return widget.isEnabled();
+	}
+	
+	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Integer> handler) {
 		return widget.addValueChangeHandler(handler);
 	}

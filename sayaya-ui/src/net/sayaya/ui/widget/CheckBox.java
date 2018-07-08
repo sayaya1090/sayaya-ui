@@ -100,6 +100,11 @@ public class CheckBox extends Composite implements InputBase<Boolean, CheckBox> 
 		square.setVisible(enabled);
 		return this;
 	}
+	
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Boolean> handler) {

@@ -28,16 +28,15 @@ public class Validator {
 		private TextBoxDecoratorValidator(InputBase<T, ?> w, double fontSize, Validation<T> validator) {
 			initWidget(layout);
 			widget = w;
-			label.setValue("test");
 			this.validator = validator;
 			layout();
 			label.getElement().getStyle().setFontSize(fontSize*0.75, Unit.PX);
 			widget.asWidget().getElement().getStyle().setFontSize(fontSize, Unit.PX);
 			style(this);
-			
 			widget.asWidget().addDomHandler(evt->{
 				validator.validate(widget.getValue(), label);
 			}, ChangeEvent.getType());
+			validator.validate(widget.getValue(), label);
 		}
 		
 		private final void layout() {
@@ -78,6 +77,11 @@ public class Validator {
 		public TextBoxDecoratorValidator<T> setEnabled(boolean enabled) {
 			widget.setEnabled(enabled);
 			return this;
+		}
+		
+		@Override
+		public boolean isEnabled() {
+			return widget.isEnabled();
 		}
 		
 		@Override

@@ -128,6 +128,11 @@ public class Placeholder {
 			widget.setEnabled(enabled);
 			return this;
 		}
+		
+		@Override
+		public boolean isEnabled() {
+			return widget.isEnabled();
+		}
 
 		@Override
 		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {

@@ -36,6 +36,11 @@ public class TextArea extends Composite implements InputBase<String, TextArea> {
 	public String getValue() {
 		return widget.getValue();
 	}
+	
+	@Override
+	public boolean isEnabled() {
+		return widget.isEnabled();
+	}
 
 	@Override
 	public boolean isEmpty() {

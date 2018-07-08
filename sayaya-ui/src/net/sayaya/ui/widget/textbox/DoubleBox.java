@@ -58,6 +58,11 @@ public class DoubleBox extends Composite implements InputBase<Double, DoubleBox>
 	}
 	
 	@Override
+	public boolean isEnabled() {
+		return widget.isEnabled();
+	}
+	
+	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Double> handler) {
 		return widget.addValueChangeHandler(handler);
 	}
