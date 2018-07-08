@@ -77,6 +77,10 @@ public class Icon extends HTML {
 			String caretSquareRight();
 			@CssResource.ClassName("caret-square-up")
 			String caretSquareUp();
+			@CssResource.ClassName("cart-arrow-down")
+			String cartArrowDown();
+			@CssResource.ClassName("cart-plus")
+			String cartPlus();
 			@CssResource.ClassName("check")
 			String check();
 			@CssResource.ClassName("check-circle")
@@ -116,6 +120,7 @@ public class Icon extends HTML {
 			String fileAlt();
 			@CssResource.ClassName("file-plus")
 			String filePlus();
+			String globe();
 			@CssResource.ClassName("hand-holding-box")
 			String handHoldingBox();
 			String home();
@@ -139,6 +144,12 @@ public class Icon extends HTML {
 			String shareSquare();
 			@CssResource.ClassName("share-alt-square")
 			String shareAltSquare();
+			@CssResource.ClassName("shopping-bag")
+			String shoppingBag();
+			@CssResource.ClassName("shopping-basket")
+			String shoppingBasket();
+			@CssResource.ClassName("shopping-cart")
+			String shoppingCart();
 			@CssResource.ClassName("sign-in")
 			String signoIn();
 			@CssResource.ClassName("sign-in-alt")

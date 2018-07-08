@@ -1,0 +1,93 @@
+.dialog-box {
+	z-index: 100;
+	border-radius: 2px;
+	box-shadow: rgba(0, 0, 0, 0.26) 0px 5px 10px 5px;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+@external Caption;
+.dialog-box .Caption {
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
+	background-color: white;
+	padding: 10px 10px 10px 15px;
+	cursor: default;
+	font-family: 'Noto Sans KR';
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	text-shadow: rgba(0,0,0,.01) 0 0 1px;
+	font-size: 20px;
+	font-weight: bold;
+	border: 0px hidden;
+	border-bottom: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	min-width: 10em;
+}
+
+@external 'dialog*';
+.dialog-box .dialogContent {
+}
+.dialog-box .dialogMiddleCenter {
+	background: white;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+.dialog-box .dialogMiddleCenter table tbody tr:first-child td {
+	padding: 8px 24px;
+}
+
+@external 'control';
+.dialog-box .dialogMiddleCenter .control {
+	padding: 8px 24px;
+	border-top: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+}
+
+.dialog-box .dialogBottomCenter {
+	border-top: 0px hidden;
+}
+.dialog-box .dialogMiddleLeft {
+	border-right: 0px hidden;
+}
+.dialog-box .dialogMiddleRight {
+	border-left: 0px hidden;
+}
+.dialog-box .dialogTopLeftInner {
+	
+}
+.dialog-box .dialogTopRightInner {
+	
+}
+.dialog-box .dialogBottomLeftInner {
+	
+}
+.dialog-box .dialogBottomRightInner {
+	
+}
+.dialog-box .dialogTopLeft {
+	border-right: 0px hidden;
+}
+.dialog-box .dialogTopRight {
+	border-left: 0px hidden;
+}
+.dialog-box .dialogBottomLeft {
+	border-right: 0px hidden;
+}
+.dialog-box .dialogBottomRight {
+	border-left: 0px hidden;
+}
+
+.overlay {
+	position: fixed;
+	z-index: 1000;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
+	background-color: eval("net.sayaya.ui.style.color.Color.BlackOnyx");
+	opacity: 0.75;
+}

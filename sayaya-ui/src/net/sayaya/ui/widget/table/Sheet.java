@@ -2,6 +2,7 @@ package net.sayaya.ui.widget.table;
 
 import java.util.Date;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Event;
@@ -55,8 +56,6 @@ public abstract class Sheet<T> extends ResizeComposite implements TableBase<T> {
 					td.addClassName(StyleLabel.GSS.numeric());
 					Number cast = (Number)value;
 					td.setInnerHTML(cast.toString());
-					columnInfo.setType("numeric").setAllowEmpty(true).setAllowInvalid(false);
-					if(columnInfo.getFormat()==null) columnInfo.setFormat("0");
 				} else if(value instanceof Date) {
 					td.addClassName(StyleLabel.GSS.label());
 					Date cast = (Date)value;

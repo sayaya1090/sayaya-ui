@@ -70,6 +70,12 @@
 .caret-square-up:before {
 	content: "\f151";
 }
+.cart-arrow-down:before {
+	content: "\f218";
+}
+.cart-plus:before {
+	content: "\f217";
+}
 .check:before {
 	content: "\f00c";
 }
@@ -133,6 +139,9 @@
 .file-plus:before {
 	content: "\f319";
 }
+.globe:before {
+	content: "\f0ac";
+}
 .hand-holding-box:before {
 	content: "\f47b";
 }
@@ -171,6 +180,15 @@
 }
 .share-alt-square:before {
 	content: "\f1e1";
+}
+.shopping-bag:before {
+	content: "\f290";
+}
+.shopping-basket:before {
+	content: "\f291";
+}
+.shopping-cart:before {
+	content: "\f07a";
 }
 .sign-in:before {
 	content: "\f090";
