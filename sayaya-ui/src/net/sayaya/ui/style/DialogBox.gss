@@ -13,16 +13,15 @@
 .dialog-box .Caption {
 	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
 	background-color: white;
-	padding: 10px 10px 10px 15px;
+	padding: 10px 10px 10px 22px;
 	cursor: default;
 	font-family: 'Noto Sans KR';
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	text-shadow: rgba(0,0,0,.01) 0 0 1px;
-	font-size: 20px;
-	font-weight: bold;
+	font-size: 1.2em;
+	font-weight: 300;
 	border: 0px hidden;
-	border-bottom: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 	min-width: 10em;
