@@ -2,17 +2,17 @@ package net.sayaya.ui.widget.textbox;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.RichTextArea.Formatter;
 
 import net.sayaya.ui.style.StyleTextBox;
 import net.sayaya.ui.widget.InputBase;
 
-public class RichTextArea extends ResizeComposite implements InputBase<String, RichTextArea> {
+public class RichTextArea extends LayoutPanel implements InputBase<String, RichTextArea> {
 	private final com.google.gwt.user.client.ui.RichTextArea widget;
 	public RichTextArea() {
 		widget = new com.google.gwt.user.client.ui.RichTextArea();
-		initWidget(widget);
+		add(widget);
 		style(this);
 	}
 
