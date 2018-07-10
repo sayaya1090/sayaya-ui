@@ -1,0 +1,182 @@
+@external handsontable, htNoFrame, htRowHeaders current, listbox, ht__highlight, htAutocompleteArrow, htFiltersActive, zeroclipboard-is-hover
+, htContextMenu, changeType, ht_clone_top_left_corner, htDropdownMenu, htUIMultipleSelect, htItemWrapper, htCore
+, htUIInput, htUIButton, htUIButtonOK
+, htFiltersConditionsMenu;
+.sheet {
+	
+}
+
+.sheet .handsontable th {
+	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
+	color: #FFFFFF;
+	font-size: 13px;
+	font-weight: bold;
+	font-family: "Noto Sans KR";
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	cursor: pointer;
+	padding-left: 15px !important;
+	padding-right: 15px !important;
+	border-bottom: 1px solid #D4D7DA !important;
+	border-left: 0px hidden;
+	border-right: 0px hidden;
+}
+
+.sheet .handsontable .htNoFrame+td, .handsontable .htNoFrame+th, .handsontable.htRowHeaders thead tr th:nth-child(2), .handsontable td:first-of-type, .handsontable th:first-child, .handsontable th:nth-child(2) {
+    border-left: 0px hidden;
+    border-right: 0px hidden;
+}
+
+.sheet .ht_clone_top_left_corner thead tr th:nth-last-child(2) {
+	border-right: 0px hidden;
+}
+
+.sheet .handsontable tr:first-child td, .handsontable tr:first-child th {
+
+}
+
+.sheet .handsontable th:last-child {
+	border-right: 0px hidden;
+}
+
+.sheet .handsontable tbody tr:nth-child(2n+1) td {
+	background-color: rgba(240, 240, 240, 0.8);
+}
+
+.sheet .handsontable tbody tr:nth-child(2n+1) th {
+	background-color: rgba(240, 240, 240, 0.8);
+	color: #5E6275;
+}
+
+.sheet .handsontable tbody tr:nth-child(2n) td {
+	background-color: #FFFFFF;
+}
+
+.sheet .handsontable tbody tr:nth-child(2n) th {
+	background-color: #FFFFFF;
+	color: #5E6275;
+}
+
+.sheet .handsontable tbody th.ht__highlight, .handsontable thead th.ht__highlight {
+	background-color: rgba(200, 200, 200, 0.5) !important;
+	color: #5E6275;
+}
+
+.sheet .handsontable .changeType {
+	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
+	border-radius: 2px;
+	border: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
+	color: #FFFFFF;
+	margin: 8px 1px 0px 5px;
+}
+
+.sheet .handsontable .changeType:hover {
+	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+	border: 1px solid #FFFFFF;
+	color: #FFFFFF;
+}
+
+.sheet .handsontable .htFiltersActive .changeType {
+	background-color: #FFFFFF;
+	color: #0D47A1;
+}
+
+.sheet .handsontable tbody th.ht__highlight,
+.sheet .handsontable thead th.ht__highlight {
+	background-color: rgba(200, 200, 200, 0.5);
+	color: #5E6275;
+}
+
+.sheet .handsontable tbody th.ht__highlight,
+.sheet .handsontable thead th.ht__highlight {
+	background-color: rgba(200, 200, 200, 0.5);
+	color: #5E6275;
+}
+
+.sheet .handsontable .htAutocompleteArrow {
+	float: right;
+	font-size: 10px;
+	color: #777;
+	cursor: default;
+	width: 16px;
+	text-align: center;
+}
+
+.sheet .handsontable td .htAutocompleteArrow:hover {
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+}
+
+.sheet .handsontable.listbox tr td {
+	font-family: "Noto Sans KR";
+	font-size: 11px;
+}
+
+.sheet .handsontable tr th {
+	line-height: 32px;
+}
+
+.sheet .handsontable tr td {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 15px;
+	padding-right: 15px;
+	border-bottom: 1px solid #D4D7DA;
+	border-left: 0px hidden;
+	border-right: 0px hidden;
+}
+
+.sheet .htContextMenu table tbody tr td {
+	font-family: 'Noto Sans KR';
+	background: #FFFFFF !important;
+	border-width: 0;
+	padding: 4px 6px 0 6px;
+	cursor: pointer;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.sheet .htContextMenu table tbody tr td.current, .htContextMenu table tbody tr td.zeroclipboard-is-hover {
+	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()") !important;
+	color: #36D3DB;
+	box-shadow : 0px 10px 10px rgba(0,0,0,0.19), 0px 6px 3px rgba(0,0,0,0.23);
+}
+
+.htDropdownMenu table tbody tr td .htItemWrapper {
+	font-family: 'Noto Sans KR';
+	font-size: 11px;
+}
+
+.htDropdownMenu table.htCore {
+	border: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	box-shadow : 0px 10px 10px rgba(0,0,0,0.19), 0px 6px 3px rgba(0,0,0,0.23);
+}
+
+.handsontable .htUIMultipleSelect .handsontable .htCore {
+	border: none;
+	box-shadow: none;
+}
+
+.htFiltersConditionsMenu table tbody tr td .htItemWrapper {
+	font-family: 'Noto Sans KR';
+	font-size: 11px;
+}
+
+.handsontable .htUIInput.htUIButton input {
+	font-family: 'Noto Sans KR';
+	font-size: 11px;
+	cursor: pointer;
+	font-weight: bold;
+	height: 19px;
+	min-width: 42px;
+}
+
+.handsontable .htUIInput.htUIButtonOK input:hover {
+	border-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+}
+
+.handsontable .htUIInput.htUIButtonOK input {
+	font-family: 'Noto Sans KR';
+	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
+}

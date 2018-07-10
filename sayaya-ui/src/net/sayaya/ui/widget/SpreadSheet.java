@@ -20,6 +20,7 @@ import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
 import jsinterop.annotations.JsType;
 import net.sayaya.ui.style.StyleChart;
+import net.sayaya.ui.style.StyleSheet;
 
 public final class SpreadSheet extends ResizeComposite {
 	private final LayoutPanel contents = new LayoutPanel();
@@ -28,6 +29,7 @@ public final class SpreadSheet extends ResizeComposite {
 	public SpreadSheet(SheetSetting setting) {
 		this.setting = setting;
 		initWidget(contents);
+		setStyleName(StyleSheet.GSS.sheet());
 		contents.addAttachHandler(evt->{
 			table = new SpreadSheetTable(contents.getElement(), setting);
 		});
@@ -311,7 +313,7 @@ public final class SpreadSheet extends ResizeComposite {
 								if(!columnInfo.isReadOnly() && ("dropdown".equals(type) || "autocomplete".equals(type))) {
 									renderer.render(instance, td, row, col, prop, tested, columnInfo);
 									DivElement arrow = Document.get().createDivElement();
-									arrow.setInnerHTML("¡å");
+									arrow.setInnerHTML("â–¼");
 									arrow.setClassName("htAutocompleteArrow");
 									td.appendChild(arrow);
 								} else renderer.render(instance, td, row, col, prop, tested, columnInfo);
@@ -323,7 +325,7 @@ public final class SpreadSheet extends ResizeComposite {
 						if(!columnInfo.isReadOnly() && ("dropdown".equals(type) || "autocomplete".equals(type))) {
 							renderer.render(instance, td, row, col, prop, null, columnInfo);
 							DivElement arrow = Document.get().createDivElement();
-							arrow.setInnerHTML("¡å");
+							arrow.setInnerHTML("â–¼");
 							arrow.setClassName("htAutocompleteArrow");
 							td.appendChild(arrow);
 						} else renderer.render(instance, td, row, col, prop, null, columnInfo);
@@ -332,7 +334,7 @@ public final class SpreadSheet extends ResizeComposite {
 					if(!columnInfo.isReadOnly() && ("dropdown".equals(type) || "autocomplete".equals(type))) {
 						renderer.render(instance, td, row, col, prop, value, columnInfo);
 						DivElement arrow = Document.get().createDivElement();
-						arrow.setInnerHTML("¡å");
+						arrow.setInnerHTML("â–¼");
 						arrow.setClassName("htAutocompleteArrow");
 						td.appendChild(arrow);
 					} else renderer.render(instance, td, row, col, prop, value, columnInfo);
@@ -678,6 +680,8 @@ public final class SpreadSheet extends ResizeComposite {
 	public final static class SheetSetting {
 		@JsProperty(name="data")
 		private Data[] data;
+		@JsProperty(name="licenseKey")
+		private String licenseKey;
 		@JsProperty(name="stretchH")
 		private String stretchH;
 		@JsProperty(name="width")
@@ -752,10 +756,21 @@ public final class SpreadSheet extends ResizeComposite {
 			push(data, item);
 			return data;
 		}
-
+		
 		@JsOverlay
 		public SheetSetting setData(Data[] data) {
 			this.data = data;
+			return this;
+		}
+
+		@JsOverlay
+		public String getLicenseKey() {
+			return licenseKey;
+		}
+
+		@JsOverlay
+		public SheetSetting setLicenseKey(String licenseKey) {
+			this.licenseKey = licenseKey;
 			return this;
 		}
 
