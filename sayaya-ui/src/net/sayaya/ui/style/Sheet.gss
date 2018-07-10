@@ -64,7 +64,7 @@
 
 .sheet .handsontable .changeType {
 	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
-	border-radius: 2px;
+	border-radius: 3px;
 	border: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
 	color: #FFFFFF;
 	margin: 8px 1px 0px 5px;
@@ -78,7 +78,7 @@
 
 .sheet .handsontable .htFiltersActive .changeType {
 	background-color: #FFFFFF;
-	color: #0D47A1;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
 }
 
 .sheet .handsontable tbody th.ht__highlight,
@@ -123,6 +123,7 @@
 	border-bottom: 1px solid #D4D7DA;
 	border-left: 0px hidden;
 	border-right: 0px hidden;
+	white-space: nowrap;
 }
 
 .sheet .htContextMenu table tbody tr td {
