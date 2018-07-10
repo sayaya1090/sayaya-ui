@@ -13,6 +13,9 @@ public class StyleButton {
 			String flat();
 			String rised();
 			String contained();
+			String toggle();
+			@CssResource.ClassName("toggle-true")
+			String toggleTrue();
 		}
 	}
 	private static final ButtonResource RESOURCE =  GWT.create(ButtonResource.class);

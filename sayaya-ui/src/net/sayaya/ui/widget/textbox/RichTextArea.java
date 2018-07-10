@@ -1,24 +1,27 @@
 package net.sayaya.ui.widget.textbox;
 
+import com.google.gwt.event.dom.client.HasMouseUpHandlers;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.RichTextArea.Formatter;
 
 import net.sayaya.ui.style.StyleTextBox;
 import net.sayaya.ui.widget.InputBase;
 
-public class RichTextArea extends LayoutPanel implements InputBase<String, RichTextArea> {
+public class RichTextArea extends Composite implements InputBase<String, RichTextArea>, RequiresResize, HasMouseUpHandlers {
 	private final com.google.gwt.user.client.ui.RichTextArea widget;
 	public RichTextArea() {
 		widget = new com.google.gwt.user.client.ui.RichTextArea();
-		add(widget);
+		initWidget(widget);
 		style(this);
 	}
 
 	@Override
 	public RichTextArea style(RichTextArea w) {
-		w.setStyleName(StyleTextBox.GSS.textarea());
+		w.widget.setStyleName(StyleTextBox.GSS.textarea());
 		return this;
 	}
 
@@ -56,5 +59,15 @@ public class RichTextArea extends LayoutPanel implements InputBase<String, RichT
 	
 	public Formatter getFormatter() {
 		return widget.getFormatter();
+	}
+
+	@Override
+	public void onResize() {
+		
+	}
+
+	@Override
+	public HandlerRegistration addMouseUpHandler(MouseUpHandler handler) {
+		return widget.addMouseUpHandler(handler);
 	}
 }
