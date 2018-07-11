@@ -157,6 +157,8 @@ public final class SpreadSheet extends ResizeComposite {
 		private boolean allowEmpty;
 		@JsProperty(name="editor")
 		private PrototypeEditor<?> editor;
+		@JsProperty(name="filter")
+		private boolean filter;
 		@JsOverlay
 		public String getData() {
 			return data;
@@ -374,10 +376,18 @@ public final class SpreadSheet extends ResizeComposite {
 		public PrototypeEditor<?> getEditor() {
 			return editor;
 		}
-
 		@JsOverlay
 		public ColumnInfo setEditor(PrototypeEditor<?> editor) {
 			this.editor = editor;
+			return this;
+		}
+		@JsOverlay
+		public boolean isFilter() {
+			return filter;
+		}
+		@JsOverlay
+		public ColumnInfo setFilter(boolean filter) {
+			this.filter = filter;
 			return this;
 		}
 	}
@@ -465,6 +475,11 @@ public final class SpreadSheet extends ResizeComposite {
 	@JsFunction
 	public static interface AfterSelection {
 		void apply(int startRow, int startCol, int endRow, int endCol);
+	}
+	
+	@JsFunction
+	public static interface AfterGetColHeader {
+		void apply(int col, Element th);
 	}
 	
 	@JsFunction
@@ -709,7 +724,7 @@ public final class SpreadSheet extends ResizeComposite {
 		@JsProperty(name="contextMenu")
 		private Object contextMenu;
 		@JsProperty(name="dropdownMenu")
-		private boolean dropdownMenu;
+		private Object dropdownMenu;
 		@JsProperty(name="filters")
 		private boolean filters;
 		@JsProperty(name="autoRowSize")
@@ -744,6 +759,8 @@ public final class SpreadSheet extends ResizeComposite {
 		private AfterOnCellMouseDown afterOnCellMouseDown;
 		@JsProperty(name="afterSelection")
 		private AfterSelection afterSelection;
+		@JsProperty(name="afterGetColHeader")
+		private AfterGetColHeader afterGetColHeader;
 		
 		@JsOverlay
 		public Data[] getData() {
@@ -930,12 +947,18 @@ public final class SpreadSheet extends ResizeComposite {
 		}
 
 		@JsOverlay
-		public boolean isDropdownMenu() {
-			return dropdownMenu;
+		public <T> T getDropdownMenu() {
+			return (T)dropdownMenu;
 		}
 
 		@JsOverlay
 		public SheetSetting setDropdownMenu(boolean dropdownMenu) {
+			this.dropdownMenu = dropdownMenu;
+			return this;
+		}
+		
+		@JsOverlay
+		public SheetSetting setDropdownMenu(String... dropdownMenu) {
 			this.dropdownMenu = dropdownMenu;
 			return this;
 		}
@@ -1092,6 +1115,17 @@ public final class SpreadSheet extends ResizeComposite {
 		@JsOverlay
 		public SheetSetting setAfterSelection(AfterSelection afterSelection) {
 			this.afterSelection = afterSelection;
+			return this;
+		}
+
+		@JsOverlay
+		public AfterGetColHeader getAfterGetColHeader() {
+			return afterGetColHeader;
+		}
+
+		@JsOverlay
+		public SheetSetting setAfterGetColHeader(AfterGetColHeader afterGetColHeader) {
+			this.afterGetColHeader = afterGetColHeader;
 			return this;
 		}
 	}

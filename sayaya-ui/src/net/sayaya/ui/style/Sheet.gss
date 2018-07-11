@@ -164,20 +164,53 @@
 }
 
 .handsontable .htUIInput.htUIButton input {
-	font-family: 'Noto Sans KR';
-	font-size: 11px;
-	cursor: pointer;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	font-family: 'Noto Sans KR', sans-serif;
 	font-weight: bold;
-	height: 19px;
-	min-width: 42px;
+	text-transform: uppercase;
+	min-width: 8em;
+	background-color: transparent;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
+	border: 0px hidden;
+	border-radius: 3px;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	outline-style: none;
+	padding: 0.5em;
+	letter-spacing: 1px;
 }
 
-.handsontable .htUIInput.htUIButtonOK input:hover {
-	border-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+.handsontable .htUIInput.htUIButton input:hover:enabled {
+	animation-duration: 0.4s;
+	animation-name: fi2;
+	animation-fill-mode: forwards;
 }
 
-.handsontable .htUIInput.htUIButtonOK input {
-	font-family: 'Noto Sans KR';
-	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
-	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
+.handsontable .htUIInput.htUIButtonOK input:hover:enabled {
+	animation-duration: 0.4s;
+	animation-name: fi;
+	animation-fill-mode: forwards;
+}
+
+@keyframes fi {
+	from {
+		background-color: transparent;
+	}
+	to {
+		background-color: eval("net.sayaya.ui.style.color.Palette.toRGBA(net.sayaya.ui.style.color.Palette.getInstance().getColor1(), 0.25)");
+	}
+}
+
+@keyframes fi2 {
+	from {
+		background-color: transparent;
+	}
+	to {
+		background-color: eval("net.sayaya.ui.style.color.Palette.toRGBA(net.sayaya.ui.style.color.Palette.getInstance().getColorError(), 0.25)");
+	}
 }

@@ -28,7 +28,7 @@ public abstract class Table<T> extends ResizeComposite implements TableBase<T> {
 	.setAutoRowSize(false)
 	.setManualColumnMove(true)
 	.setManualColumnResize(true)
-	.setDropdownMenu(true)
+	.setDropdownMenu("filter_by_value", "filter_action_bar")
 	.setFilters(true)
 	.setData(new Data[] {})
 	.setStretchH("all");
@@ -37,6 +37,9 @@ public abstract class Table<T> extends ResizeComposite implements TableBase<T> {
 	
 	public Table() {
 		initWidget(container);
+		setting.setAfterGetColHeader((col, th)->{
+			if(!setting.getColumns()[col].isFilter()) th.getChild(0).getChild(0).removeFromParent();
+		});
 	}
 	
 	@Override
