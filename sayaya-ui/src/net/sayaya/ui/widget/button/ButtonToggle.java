@@ -37,6 +37,7 @@ public class ButtonToggle extends Button<ButtonToggle> implements HasValue<Boole
 		this.value = value;
 		if(value) addStyleName(StyleButton.GSS.toggleTrue());
 		else removeStyleName(StyleButton.GSS.toggleTrue());
+		ValueChangeEvent.fire(this, value);
 		return this;
 	}
 
