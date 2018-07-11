@@ -13,7 +13,7 @@ public class StyleButton {
 			String flat();
 			String rised();
 			String contained();
-			String toggle();
+			String icon();
 			@CssResource.ClassName("toggle-true")
 			String toggleTrue();
 		}

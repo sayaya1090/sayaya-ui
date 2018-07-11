@@ -114,7 +114,7 @@
 	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText3()");
 }
 
-.toggle {
+.icon {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	min-width: 3em;
@@ -132,7 +132,7 @@
 	letter-spacing: 1px;
 }
 
-.toggle:hover:enabled {
+.icon:hover:enabled {
 	background-color: rgba(0, 0, 0, 0.05);
 }
 
@@ -146,17 +146,17 @@
 	background-color: rgba(0, 0, 0, 0.15);
 }
 
-.toggle:first-of-type {
+.icon:first-of-type {
 	border-top-left-radius: 3px;
 	border-bottom-left-radius: 3px;
 }
 
-.toggle:last-of-type {
+.icon:last-of-type {
 	border-right: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
 	border-top-right-radius: 3px;
 	border-bottom-right-radius: 3px;
 }
 
-.toggle:disabled {
+.icon:disabled {
 	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
 }

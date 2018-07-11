@@ -49,6 +49,11 @@ public class Icon extends HTML {
 			String alignCenter();
 			@CssResource.ClassName("align-justify")
 			String alignJustify();
+			@CssResource.ClassName("align-left")
+			String alignLeft();
+			@CssResource.ClassName("align-right")
+			String alignRight();
+			String bold();
 			String box();
 			@CssResource.ClassName("box-check")
 			String boxCheck();
@@ -108,32 +113,78 @@ public class Icon extends HTML {
 			String clipboardCheck();
 			@CssResource.ClassName("clipboard-list")
 			String clipboardList();
+			String clone();
 			@CssResource.ClassName("cloud-download")
 			String cloudDownload();
 			@CssResource.ClassName("cloud-download-alt")
 			String cloudDownloadAlt();
 			String cog();
 			String cogs();
+			String columns();
+			String copy();
+			String cut();
+			String edit();
+			String eraser();
 			@CssResource.ClassName("file")
 			String file();
 			@CssResource.ClassName("file-alt")
 			String fileAlt();
 			@CssResource.ClassName("file-plus")
 			String filePlus();
+			String font();
+			String glasses();
 			String globe();
+			String h1();
+			String h2();
+			String h3();
 			@CssResource.ClassName("hand-holding-box")
 			String handHoldingBox();
+			String heading();
+			String highlighter();
 			String home();
+			@CssResource.ClassName("i-cursor")
+			String iCursor();
+			String indent();
+			String italic();
+			String link();
+			String list();
+			@CssResource.ClassName("list-alt")
+			String listAlt();
+			@CssResource.ClassName("list-ol")
+			String listOl();
+			@CssResource.ClassName("list-ul")
+			String listUl();
+			@CssResource.ClassName("marker")
+			String marker();
+			String outdent();
+			@CssResource.ClassName("paper-plane")
+			String paperPlane();
+			String paperclip();
+			String paragraph();
 			String paste();
-			@CssResource.ClassName("pencil")
+			String pen();
+			@CssResource.ClassName("pen-alt")
+			String penAlt();
+			@CssResource.ClassName("pen-fancy")
+			String penFancy();
+			@CssResource.ClassName("pen-nib")
+			String penNib();
 			String pencil();
-			@CssResource.ClassName("plus")
 			String plus();
 			@CssResource.ClassName("plus-circle")
 			String plusCircle();
-			@CssResource.ClassName("save")
+			String print();
+			@CssResource.ClassName("quote-left")
+			String quoteLeft();
+			@CssResource.ClassName("quote-right")
+			String quoteRight();
+			String redo();
+			@CssResource.ClassName("redo-alt")
+			String redoAlt();
+			String reply();
+			@CssResource.ClassName("reply-alt")
+			String replyAlt();
 			String save();
-			@CssResource.ClassName("search")
 			String search();
 			String share();
 			@CssResource.ClassName("share-all")
@@ -160,8 +211,25 @@ public class Icon extends HTML {
 			String signoOutAlt();
 			String sitemap();
 			String square();
+			String strikethrough();
+			String subscript();
+			String superscript();
+			String sync();
+			@CssResource.ClassName("sync-alt")
+			String syncAlt();
+			String table();
 			String tag();
 			String tags();
+			String tasks();
+			@CssResource.ClassName("text-height")
+			String textHeight();
+			@CssResource.ClassName("text-width")
+			String textWidth();
+			String th();
+			@CssResource.ClassName("th-large")
+			String thLarge();
+			@CssResource.ClassName("th-list")
+			String thList();
 			String trash();
 			@CssResource.ClassName("trash-alt")
 			String trashAlt();
@@ -171,6 +239,11 @@ public class Icon extends HTML {
 			String timesCircle();
 			@CssResource.ClassName("times-square")
 			String timesSquare();
+			String underline();
+			String undo();
+			@CssResource.ClassName("undo-alt")
+			String undoAlt();
+			String unlink();
 			@CssResource.ClassName("user-circle")
 			String userCircle();
 			String wranch();

@@ -25,6 +25,15 @@
 .align-justify:before {
 	content: "\f039";
 }
+.align-left:before {
+	content: "\f036";
+}
+.align-right:before {
+	content: "\f038";
+}
+.bold:before {
+	content: "\f032";
+}
 .box:before {
 	content: "\f466";
 }
@@ -118,6 +127,9 @@
 .clipboard-list:before {
 	content: "\f46d";
 }
+.clone:before {
+	content: "\f24d";
+}
 .cloud-download:before {
 	content: "\f0ed";
 }
@@ -130,6 +142,21 @@
 .cogs:before {
 	content: "\f085";	
 }
+.columns:before {
+	content: "\f0db";	
+}
+.copy:before {
+	content: "\f0c5";	
+}
+.cut:before {
+	content: "\f0c4";	
+}
+.edit:before {
+	content: "\f044";	
+}
+.eraser:before {
+	content: "\f12d";	
+}
 .file:before {
 	content: "\f15b";
 }
@@ -139,17 +166,92 @@
 .file-plus:before {
 	content: "\f319";
 }
+.font:before {
+	content: "\f031";
+}
+.glasses:before {
+	content: "\f530";
+}
 .globe:before {
 	content: "\f0ac";
+}
+.h1:before {
+	content: "\f313";
+}
+.h2:before {
+	content: "\f314";
+}
+.h3:before {
+	content: "\f315";
 }
 .hand-holding-box:before {
 	content: "\f47b";
 }
+.heading:before {
+	content: "\f1dc";
+}
+.highlighter:before {
+	content: "\f591";
+}
 .home:before {
 	content: "\f015";
 }
+.i-cursor:before {
+	content: "\f246";
+}
+.indent:before {
+	content: "\f03c";
+}
+.italic:before {
+	content: "\f033";
+}
+.link:before {
+	content: "\f0c1";
+}
+.list:before {
+	content: "\f03a";
+}
+.list-alt:before {
+	content: "\f022";
+}
+.list-ol:before {
+	content: "\f0cb";
+}
+.list-ul:before {
+	content: "\f0ca";
+}
+.marker:before {
+	content: "\f5a1";
+}
+.outdent:before {
+	content: "\f03b";
+}
+.paper-plane:before {
+	content: "\f1d8";
+}
+.paperclip:before {
+	content: "\f0c6";
+}
+.paragraph:before {
+	content: "\f1dd";
+}
 .paste:before {
 	content: "\f0ea";
+}
+.paste:before {
+	content: "\f0ea";
+}
+.pen:before {
+	content: "\f304";
+}
+.pen-alt:before {
+	content: "\f305";
+}
+.pen-fancy:before {
+	content: "\f5ac";
+}
+.pen-nib:before {
+	content: "\f5ad";
 }
 .pencil:before {
 	content: "\f040";
@@ -159,6 +261,27 @@
 }
 .plus-circle:before {
 	content: "\f055";
+}
+.print:before {
+	content: "\f02f";
+}
+.quote-left:before {
+	content: "\f10d";
+}
+.quote-right:before {
+	content: "\f10e";
+}
+.redo:before {
+	content: "\f01e";
+}
+.redo-alt:before {
+	content: "\f2f9";
+}
+.reply:before {
+	content: "\f3e5";
+}
+.reply-alt:before {
+	content: "\f122";
 }
 .save:before {
 	content: "\f0c7";
@@ -208,11 +331,47 @@
 .square:before {
 	content: "\f0c8";
 }
+.strikethrough:before {
+	content: "\f0cc";
+}
+.subscript:before {
+	content: "\f12c";
+}
+.superscript:before {
+	content: "\f12b";
+}
+.sync:before {
+	content: "\f021";
+}
+.sync-alt:before {
+	content: "\f2f1";
+}
+.table:before {
+	content: "\f0ce";
+}
 .tag:before {
 	content: "\f02b";
 }
 .tags:before {
 	content: "\f02c";
+}
+.tasks:before {
+	content: "\f0ae";
+}
+.text-height:before {
+	content: "\f034";
+}
+.text-width:before {
+	content: "\f035";
+}
+.th:before {
+	content: "\f00a";
+}
+.th-large:before {
+	content: "\f009";
+}
+.th-list:before {
+	content: "\f00b";
 }
 .trash:before {
 	content: "\f1f8";
@@ -228,6 +387,18 @@
 }
 .times-square:before {
 	content: "\f2d3";
+}
+.underline:before {
+	content: "\f0cd";
+}
+.undo:before {
+	content: "\f0e2";
+}
+.undo-alt:before {
+	content: "\f2ea";
+}
+.unlink:before {
+	content: "\f127";
 }
 .user-circle:before {
 	content: "\f2bd";
