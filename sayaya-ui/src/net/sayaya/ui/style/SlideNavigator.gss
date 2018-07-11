@@ -86,13 +86,13 @@
 
 .item-container {
 	position: relative;
-	left: -15px;
+	left: -18px;
 	width: 300px;
 	display: block;
 	overflow: hidden;
 	box-shadow: inset 1px 3px 6px rgba(0,0,0,0.23),
 				inset 0px 0px 2px rgba(255,255,255,1.0); 
-	background-color: #00000033;
+	background-color: #00000099;
 }
 
 .item-sub {

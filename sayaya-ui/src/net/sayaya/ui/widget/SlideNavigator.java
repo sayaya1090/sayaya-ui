@@ -50,6 +50,7 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 			else if(!knocker.isAttached()) {
 				parent.addWest(knocker, 16);
 				parent.getWidgetContainerElement(knocker).getStyle().setTop(40, Unit.PX);
+				parent.getWidgetContainerElement(knocker).getStyle().setProperty("boxShadow", "rgba(0, 0, 0, 0.23) 3px 3px 6px inset");
 			}
 		});
 	}
