@@ -51,7 +51,7 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 				evt.preventDefault();
 				if(evt.getTypeInt() == Event.ONCLICK) {
 					boolean current = instance.getSettings().getData()[row].get(prop);
-					instance.getSettings().getData()[row].put(prop, !current);
+					instance.getSettings().getData()[row].setOrigin(prop, !current);
 					td.removeAllChildren();
 					td.appendChild(check.setValue(!current).getElement());
 					if(!current) {
@@ -153,13 +153,13 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 		@Override
 		public Data parse(T value) {
 			if(value == null) return new Data();
-			Data data = base.parse(value).put(columnCheckbox.getData(), false);
+			Data data = base.parse(value).setOrigin(columnCheckbox.getData(), false);
 			return data;
 		}
 
 		@Override
 		public TableSelectable<T> setValues(Data... values) {
-			Arrays.stream(values).forEach(value->value.put(columnCheckbox.getData(), false));
+			Arrays.stream(values).forEach(value->value.setOrigin(columnCheckbox.getData(), false));
 			updateCheckbox(false);
 			base.setValues(values);
 			
@@ -169,7 +169,7 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 					Element target = Element.as(((NativeEvent) evt).getEventTarget());
 					if(checkId.equals(target.getId())) {
 						boolean value = !tmp.getValue();
-						for(Data data: getSetting().getData()) data.put(columnCheckbox.getData(), value);
+						for(Data data: getSetting().getData()) data.setOrigin(columnCheckbox.getData(), value);
 						updateCheckbox(value);
 						update();
 						SelectionChangeEvent.fire(this);

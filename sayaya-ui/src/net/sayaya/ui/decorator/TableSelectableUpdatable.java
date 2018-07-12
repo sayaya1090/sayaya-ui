@@ -1,5 +1,6 @@
 package net.sayaya.ui.decorator;
 
+import java.util.List;
 import java.util.function.BiFunction;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -69,7 +70,7 @@ public interface TableSelectableUpdatable<T> extends TableSelectable<T>, TableUp
 			return selectable.addSelectionChangeHandler(handler);
 		}
 		@Override
-		public T[] getUpdated() {
+		public List<T> getUpdated() {
 			return updatable.getUpdated();
 		}
 		@Override

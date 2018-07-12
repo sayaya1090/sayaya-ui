@@ -411,6 +411,7 @@ public final class SpreadSheet extends ResizeComposite {
 		public Data setOrigin(String key, Object item) {
 			if(origin == null) origin = new Object();
 			SpreadSheet.put(origin, key, item);
+			SpreadSheet.put(this, key, item);
 			return this;
 		}
 		

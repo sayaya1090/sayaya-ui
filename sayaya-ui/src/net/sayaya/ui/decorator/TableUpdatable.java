@@ -27,7 +27,7 @@ public interface TableUpdatable<T, U> extends TableBase<T>, HasValueChangeHandle
 		return new TableUpdatableImpl<T, U>(widget, mapper);
 	}
 	
-	U[] getUpdated();
+	List<U> getUpdated();
 	
 	static final class TableUpdatableImpl<T, U> extends ResizeComposite implements TableUpdatable<T, U> {
 		private final TableBase<T> base;
@@ -40,18 +40,18 @@ public interface TableUpdatable<T, U> extends TableBase<T>, HasValueChangeHandle
 		}
 		
 		@Override
-		@SuppressWarnings("unchecked")
-		public U[] getUpdated() {
+		public List<U> getUpdated() {
 			List<String> headers = Arrays.stream(base.getSetting().getColumns()).map(c->c.getData()).collect(Collectors.toList());
 			Data[] data = getSetting().getData();
-			return (U[]) IntStream.range(0, data.length).filter(i->{
+			return IntStream.range(0, data.length).filter(i->{
 				Data datum = data[i];
 				for(String header: headers) if(datum.isChanged(header)) return true;
 				return false;
 			}).mapToObj(i->{
 				Data datum = data[i];
-				return mapper.apply(i, datum);
-			}).toArray(Object[]::new);
+				U obj = mapper.apply(i, datum);
+				return obj;
+			}).collect(Collectors.toList());
 		}
 		
 		@Override
