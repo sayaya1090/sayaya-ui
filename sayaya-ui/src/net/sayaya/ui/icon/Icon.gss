@@ -157,6 +157,18 @@
 .eraser:before {
 	content: "\f12d";	
 }
+.exclamation:before {
+	content: "\f12a";	
+}
+.exclamation-triangle:before {
+	content: "\f071";	
+}
+.exclamation-square:before {
+	content: "\f321";	
+}
+.exclamation-circle:before {
+	content: "\f06a";	
+}
 .file:before {
 	content: "\f15b";
 }
@@ -201,6 +213,15 @@
 }
 .indent:before {
 	content: "\f03c";
+}
+.info:before {
+	content: "\f129";	
+}
+.info-square:before {
+	content: "\f30f";	
+}
+.info-circle:before {
+	content: "\f05a";	
 }
 .italic:before {
 	content: "\f033";

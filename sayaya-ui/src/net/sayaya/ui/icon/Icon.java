@@ -125,6 +125,13 @@ public class Icon extends HTML {
 			String cut();
 			String edit();
 			String eraser();
+			String exclamation();
+			@CssResource.ClassName("exclamation-triangle")
+			String exclamationTriangle();
+			@CssResource.ClassName("exclamation-square")
+			String exclamationSquare();
+			@CssResource.ClassName("exclamation-circle")
+			String exclamationCircle();
 			@CssResource.ClassName("file")
 			String file();
 			@CssResource.ClassName("file-alt")
@@ -145,6 +152,11 @@ public class Icon extends HTML {
 			@CssResource.ClassName("i-cursor")
 			String iCursor();
 			String indent();
+			String info();
+			@CssResource.ClassName("info-square")
+			String infoSquare();
+			@CssResource.ClassName("info-circle")
+			String infoCircle();
 			String italic();
 			String link();
 			String list();
