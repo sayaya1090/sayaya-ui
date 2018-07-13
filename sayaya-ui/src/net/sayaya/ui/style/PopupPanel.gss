@@ -1,3 +1,74 @@
 .popup {
-	
+	z-index: 100;
+	display: block;
+	border-radius: 2px;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
+	background-color: white;
+	border: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	box-shadow: 0px 3px 3px rgba(0,0,0,0.16);
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	margin-left: 10px;
+}
+
+.item {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	background-color: transparent;
+	font-family: 'Noto Sans KR',sans-serif;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
+	border: 0px hidden;
+	font-weight: 300;
+	font-size: 12px;
+	line-height: 12px;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	outline-style: none;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	padding-left: 10px;
+	min-width: 140px;
+	text-align: left;
+	display: list-item;
+}
+
+.item:hover:enabled {
+	animation-duration: 0.4s;
+	animation-name: fi;
+	animation-fill-mode: forwards;
+	font-weight: bold;
+}
+
+.item-hover {
+	background-color: eval("net.sayaya.ui.style.color.Palette.toRGBA(net.sayaya.ui.style.color.Palette.getInstance().getColor1(), 0.25)");
+	font-weight: bold;
+}
+
+@keyframes fi {
+	from {
+		background-color: transparent;
+	}
+	to {
+		background-color: eval("net.sayaya.ui.style.color.Palette.toRGBA(net.sayaya.ui.style.color.Palette.getInstance().getColor1(), 0.25)");
+	}
+}
+
+.item:disabled {
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText3()");
+}
+
+.label {
+	position: relative;
+	left: 18px;
+}
+
+.icon {
+	position: absolute;
 }

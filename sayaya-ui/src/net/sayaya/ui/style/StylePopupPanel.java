@@ -11,6 +11,11 @@ public class StylePopupPanel {
 		
 		public static interface Style extends CssResource {
 			String popup();
+			String item();
+			@CssResource.ClassName("item-hover")
+			String itemHover();
+			String label();
+			String icon();
 		}
 	}
 	private static final PopupPanelResource RESOURCE =  GWT.create(PopupPanelResource.class);
