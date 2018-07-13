@@ -121,7 +121,10 @@ public final class MenuItem extends FlexTable implements ProvidesResize, HasClic
 		if(isSelected) {
 			if(!this.isSelected) open.run(200);
 		} else {
-			if(this.isSelected) close.run(1);
+			if(this.isSelected) {
+				if(childContainer.isAttached()) childContainer.setHeight("0px");
+				removeStyleName(StyleSlideNavigator.GSS.itemSelected());
+			}
 			removeStyleName(StyleSlideNavigator.GSS.itemSelectedClose());
 		}
 		this.isSelected = isSelected;
@@ -134,13 +137,19 @@ public final class MenuItem extends FlexTable implements ProvidesResize, HasClic
 		if(state == State.COLLAPSE) {
 			label.setVisible(false);
 			if(isSelected) {
-				close.run(1);
+				if(childContainer.isAttached()) childContainer.setHeight("0px");
+				removeStyleName(StyleSlideNavigator.GSS.itemSelected());
 				addStyleName(StyleSlideNavigator.GSS.itemSelectedClose());
 			}
 		} else {
 			label.setVisible(true);
 			if(isSelected) {
-				open.run(1);
+				if(childContainer.isAttached()) {
+					childContainer.setHeight("auto");
+					int height=childContainer.getOffsetHeight();
+					childContainer.setHeight(height + "px");
+				} else if(isSelected) addStyleName(StyleSlideNavigator.GSS.itemSelectedClose());
+				addStyleName(StyleSlideNavigator.GSS.itemSelected());
 				removeStyleName(StyleSlideNavigator.GSS.itemSelectedClose());
 				children.stream().forEach(child->child.setPlace(place));
 			}

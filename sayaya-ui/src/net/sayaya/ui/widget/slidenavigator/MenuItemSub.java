@@ -45,7 +45,7 @@ public class MenuItemSub extends Composite {
 	}
 	
 	void setPlace(Place<?> place) {
-		if(place.equals(this.place)) setSelect(true);
+		if(place.isInstanceOf(this.place)) setSelect(true);
 		else setSelect(false);
 	}
 }

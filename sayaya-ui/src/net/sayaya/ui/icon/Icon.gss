@@ -169,6 +169,9 @@
 .exclamation-circle:before {
 	content: "\f06a";	
 }
+.eye-dropper:before {
+	content: "\f1fb";	
+}
 .file:before {
 	content: "\f15b";
 }

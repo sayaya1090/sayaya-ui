@@ -108,6 +108,7 @@ public abstract class Sheet<T> extends ResizeComposite implements TableBase<T> {
 	@Override
 	public final void onAnimationComplete() {
 		container.setVisible(true);
+		if(container.getWidgetCount() <= 0) return;
 		Widget child = container.getWidget(0);
 		if(child instanceof SpreadSheet) ((SpreadSheet)child).render();
 	}

@@ -37,6 +37,7 @@
 	min-width: 140px;
 	text-align: left;
 	display: list-item;
+	white-space: nowrap;
 }
 
 .item:hover:enabled {

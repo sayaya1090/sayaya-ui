@@ -18,6 +18,7 @@ public class SimpleLayoutPanel extends com.google.gwt.user.client.ui.SimpleLayou
 		else {
 			this.w = w;
 			add(w);
+			w.asWidget().getElement().getParentElement().getStyle().setOverflow(Overflow.VISIBLE);
 		}
 	}
 

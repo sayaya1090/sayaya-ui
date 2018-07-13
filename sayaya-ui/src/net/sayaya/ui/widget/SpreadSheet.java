@@ -947,6 +947,7 @@ public final class SpreadSheet extends ResizeComposite {
 			return this;
 		}
 
+		@SuppressWarnings("unchecked")
 		@JsOverlay
 		public <T> T getDropdownMenu() {
 			return (T)dropdownMenu;

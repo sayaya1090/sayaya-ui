@@ -71,7 +71,7 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 	public SlideNavigator add(MenuItem item) {
 		layout.add(item);
 		children.add(item);
-		item.addClickHandler(evt->open(callback));
+		item.addClickHandler(evt->{if(state == State.COLLAPSE) open(callback);});
 		return this;
 	}
 	

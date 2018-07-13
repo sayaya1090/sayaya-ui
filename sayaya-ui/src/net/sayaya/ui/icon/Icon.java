@@ -18,13 +18,23 @@ public class Icon extends HTML {
 		return new Icon(gss);
 	}
 	private String code = null;
-	public Icon(String icon) {
+	public Icon() {
 		setStyleName(Resource.instance.style().icon());
-		addStyleName(icon);
-		addAttachHandler(evt->{
-			if(!evt.isAttached()) return;
-			Scheduler.get().scheduleDeferred(()->code = getCode(getElement()).replace("\"", ""));
-		});
+	}
+	public Icon(String icon) {
+		this();
+		setIcon(icon);
+	}
+	
+	public Icon setIcon(String icon) {
+		if(icon!=null) {
+			addStyleName(icon);
+			addAttachHandler(evt->{
+				if(!evt.isAttached()) return;
+				Scheduler.get().scheduleDeferred(()->code = getCode(getElement()).replace("\"", ""));
+			});
+		}
+		return this;
 	}
 	
 	public String getCode() {
@@ -132,6 +142,8 @@ public class Icon extends HTML {
 			String exclamationSquare();
 			@CssResource.ClassName("exclamation-circle")
 			String exclamationCircle();
+			@CssResource.ClassName("eye-dropper")
+			String eyeDropper();
 			@CssResource.ClassName("file")
 			String file();
 			@CssResource.ClassName("file-alt")

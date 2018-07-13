@@ -81,7 +81,7 @@ public class PopupPanel extends Composite {
 		return this;
 	}
 	
-	public PopupPanel add(String label) {
+	public SubMenu add(String label) {
 		SubMenu item = new SubMenu(label);
 		item.addMouseOverHandler(evt->{
 			children.stream().filter(child->child!=item).forEach(child->child.release());
@@ -89,10 +89,10 @@ public class PopupPanel extends Composite {
 		layout.add(item);
 		children.add(item);
 		item.child.parent = this;
-		return item.child;
+		return item;
 	}
 	
-	public PopupPanel add(Icon icon, String label) {
+	public SubMenu add(Icon icon, String label) {
 		SubMenu item = new SubMenu(icon, label);
 		item.addMouseOverHandler(evt->{
 			children.stream().filter(child->child!=item).forEach(child->child.release());
@@ -100,7 +100,7 @@ public class PopupPanel extends Composite {
 		layout.add(item);
 		children.add(item);
 		item.child.parent = this;
-		return item.child;
+		return item;
 	}
 	
 	public static PopupPanel create(DomEvent<?> evt) {
@@ -154,6 +154,7 @@ public class PopupPanel extends Composite {
 		private final Label label = new Label();
 		private final PopupPanel child = new PopupPanel();
 		private final Icon next = Icon.create(Icon.GSS.caretRight());
+		private Supplier<Boolean> chkEnable = ()->true;
 		public SubMenu(Icon icon, String label) {
 			super();
 			layout.getElement().getStyle().setDisplay(Display.FLEX);
@@ -169,7 +170,11 @@ public class PopupPanel extends Composite {
 				addStyleName(StylePopupPanel.GSS.itemHover());
 				child.container.setPopupPosition(this.getElement().getAbsoluteLeft()+this.getElement().getOffsetWidth()-9, this.getElement().getAbsoluteTop()-1);
 				child.show();
-			});			
+			});
+			addAttachHandler(evt->{if(evt.isAttached()) {
+				if(chkEnable.get()) setEnabled(true);
+				else setEnabled(false);
+			}});
 		}
 		
 		public SubMenu(String label) {
@@ -186,6 +191,10 @@ public class PopupPanel extends Composite {
 				child.container.setPopupPosition(this.getElement().getAbsoluteLeft()+this.getElement().getOffsetWidth()-10, this.getElement().getAbsoluteTop()-1);
 				child.show();
 			});
+			addAttachHandler(evt->{if(evt.isAttached()) {
+				if(chkEnable.get()) setEnabled(true);
+				else setEnabled(false);
+			}});
 		}
 		
 		@Override
@@ -198,6 +207,15 @@ public class PopupPanel extends Composite {
 			if(child.container.isShowing()) child.container.hide();
 			child.children.stream().forEach(child->child.release());
 			removeStyleName(StylePopupPanel.GSS.itemHover());
+		}
+		
+		public SubMenu setChkEnabled(Supplier<Boolean> chkEnable) {
+			this.chkEnable = chkEnable;
+			return this;
+		}
+		
+		public PopupPanel create() {
+			return child;
 		}
 	}
 }

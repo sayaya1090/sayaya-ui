@@ -8,7 +8,6 @@ public class StylePopupPanel {
 	public interface PopupPanelResource extends ClientBundle {
 		@Source("PopupPanel.gss")
 		Style style();
-		
 		public static interface Style extends CssResource {
 			String popup();
 			String item();
