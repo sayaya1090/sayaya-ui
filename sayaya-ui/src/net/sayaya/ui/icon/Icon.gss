@@ -43,6 +43,30 @@
 .boxes:before {
 	content: "\f468";
 }
+.calendar:before {
+	content: "\f133";
+}
+.calendar-alt:before {
+	content: "\f073";
+}
+.calendar-check:before {
+	content: "\f274";
+}
+.calendar-edit:before {
+	content: "\f333";
+}
+.calendar-exclamation:before {
+	content: "\f334";
+}
+.calendar-minus:before {
+	content: "\f272";
+}		
+.calendar-plus:before {
+	content: "\f271";
+}
+.calendar-times:before {
+	content: "\f273";
+}		
 .caret-circle-down:before {
 	content: "\f32d";
 }

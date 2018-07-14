@@ -21,4 +21,8 @@ public class Label extends Composite implements HasStyle<Label> {
 		widget.setText(text);
 		return this;
 	}
+	
+	public String getValue() {
+		return widget.getText();
+	}
 }

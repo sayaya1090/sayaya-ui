@@ -9,7 +9,7 @@ public abstract class Place<T extends Place<T>> extends com.google.gwt.place.sha
 		T cast = (T) other;
 		return equals(cast);
 	}
-	public final boolean isInstanceOf(Object other) {
+	public boolean isInstanceOf(Object other) {
 		if(other == null) return false;
 		if(other.getClass() != getClass()) return false;
 		@SuppressWarnings("unchecked")

@@ -68,6 +68,21 @@ public class Icon extends HTML {
 			@CssResource.ClassName("box-check")
 			String boxCheck();
 			String boxes();
+			String calendar();
+			@CssResource.ClassName("calendar-alt")
+			String calendarAlt();
+			@CssResource.ClassName("calendar-check")
+			String calendarCheck();
+			@CssResource.ClassName("calendar-edit")
+			String calendarEdit();
+			@CssResource.ClassName("calendar-exclamation")
+			String calendarExclamation();
+			@CssResource.ClassName("calendar-minus")
+			String calendarMinus();
+			@CssResource.ClassName("calendar-plus")
+			String calendarPlus();
+			@CssResource.ClassName("calendar-times")
+			String calendarTimes();
 			@CssResource.ClassName("caret-circle-down")
 			String caretCircleDown();
 			@CssResource.ClassName("caret-circle-left")
