@@ -139,5 +139,12 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		knocker.setVisible(visible);
+		if(visible) {
+			parent.getWidgetContainerElement(knocker).getStyle().setProperty("boxShadow", "rgba(0, 0, 0, 0.23) 3px 3px 6px inset");
+			parent.setWidgetSize(knocker, 16);
+		} else {
+			parent.getWidgetContainerElement(knocker).getStyle().setProperty("boxShadow", "none");
+			parent.setWidgetSize(knocker, 0);
+		}
 	}
 }

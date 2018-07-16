@@ -762,7 +762,6 @@ public final class SpreadSheet extends ResizeComposite {
 		private AfterSelection afterSelection;
 		@JsProperty(name="afterGetColHeader")
 		private AfterGetColHeader afterGetColHeader;
-		
 		@JsOverlay
 		public Data[] getData() {
 			return data;
