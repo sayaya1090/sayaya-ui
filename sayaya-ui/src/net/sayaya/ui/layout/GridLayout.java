@@ -1,12 +1,14 @@
 package net.sayaya.ui.layout;
 
+import com.google.gwt.layout.client.Layout.AnimationCallback;
+import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class GridLayout extends Composite implements RequiresResize {
+public class GridLayout extends Composite implements RequiresResize, AnimationCallback {
 	private final FlowPanel layout = new FlowPanel();
 	public GridLayout() {
 		initWidget(layout);
@@ -30,6 +32,16 @@ public class GridLayout extends Composite implements RequiresResize {
 
 	@Override
 	public void onResize() {
+		
+	}
+	
+	@Override
+	public void onAnimationComplete() {
+		
+	}
+
+	@Override
+	public void onLayout(Layer layer, double progress) {
 		
 	}
 	
