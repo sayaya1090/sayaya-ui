@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -22,25 +23,25 @@ import net.sayaya.ui.widget.SpreadSheet.Data;
 import net.sayaya.ui.widget.SpreadSheet.SheetSetting;
 import net.sayaya.ui.widget.table.TableBase;
 
-public interface TableUpdatable<T, U> extends TableBase<T>, HasValueChangeHandlers<U> {
-	public static <T, U> TableUpdatable<T, U> decorate(TableBase<T> widget, BiFunction<Integer, Data, U> mapper) {
-		return new TableUpdatableImpl<T, U>(widget, mapper);
+public interface TableUpdatable<T> extends TableBase<T>, HasValueChangeHandlers<T> {
+	public static <T> TableUpdatable<T> decorate(TableBase<T> widget, BiFunction<Integer, Data, T> mapper) {
+		return new TableUpdatableImpl<T>(widget, mapper);
 	}
 	
-	List<U> getUpdated();
+	Stream<T> getUpdated();
 	
-	static final class TableUpdatableImpl<T, U> extends ResizeComposite implements TableUpdatable<T, U> {
+	static final class TableUpdatableImpl<T> extends ResizeComposite implements TableUpdatable<T> {
 		private final TableBase<T> base;
-		private final BiFunction<Integer, Data, U> mapper;
+		private final BiFunction<Integer, Data, T> mapper;
 		private final EventBus bus = new SimpleEventBus();
-		private TableUpdatableImpl(TableBase<T> base, BiFunction<Integer, Data, U> mapper) {
+		private TableUpdatableImpl(TableBase<T> base, BiFunction<Integer, Data, T> mapper) {
 			this.base = base;
 			this.mapper = mapper;
 			initWidget(base.asWidget());
 		}
 		
 		@Override
-		public List<U> getUpdated() {
+		public Stream<T> getUpdated() {
 			List<String> headers = Arrays.stream(base.getSetting().getColumns()).map(c->c.getData()).collect(Collectors.toList());
 			Data[] data = getSetting().getData();
 			return IntStream.range(0, data.length).filter(i->{
@@ -49,13 +50,13 @@ public interface TableUpdatable<T, U> extends TableBase<T>, HasValueChangeHandle
 				return false;
 			}).mapToObj(i->{
 				Data datum = data[i];
-				U obj = mapper.apply(i, datum);
+				T obj = mapper.apply(i, datum);
 				return obj;
-			}).collect(Collectors.toList());
+			});
 		}
 		
 		@Override
-		public TableUpdatable<T, U> setColumns(ColumnInfo[] columns) {
+		public TableUpdatable<T> setColumns(ColumnInfo[] columns) {
 			base.setColumns(columns);
 			return this;
 		}
@@ -81,7 +82,7 @@ public interface TableUpdatable<T, U> extends TableBase<T>, HasValueChangeHandle
 		}
 
 		@Override
-		public TableUpdatable<T, U> setValues(Data... values) {
+		public TableUpdatable<T> setValues(Data... values) {
 			base.setValues(values);
 			return this;
 		}
@@ -97,7 +98,7 @@ public interface TableUpdatable<T, U> extends TableBase<T>, HasValueChangeHandle
 		}
 
 		@Override
-		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<U> handler) {
+		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
 			return bus.addHandler(ValueChangeEvent.getType(), handler);
 		}
 		

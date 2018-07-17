@@ -456,6 +456,11 @@ public final class SpreadSheet extends ResizeComposite {
 	}
 	
 	@JsFunction
+	public static interface ChangeProxy {
+		void change(int row, String prop, String old, String next, String source);
+	}
+	
+	@JsFunction
 	public static interface Renderer {
 		Element render(SpreadSheetTable instance, Element td, int row, int col, String prop, Object value, ColumnInfo columnInfo);
 		@JsOverlay
@@ -751,7 +756,7 @@ public final class SpreadSheet extends ResizeComposite {
 		@JsProperty(name="beforeChange")
 		private Change beforeChange;
 		@JsProperty(name="afterChange")
-		private Change change;
+		private Change afterChange;
 		@JsProperty(name="afterInit")
 		private AfterInit afterInit;
 		@JsProperty(name="afterRender")
@@ -1032,13 +1037,40 @@ public final class SpreadSheet extends ResizeComposite {
 		}
 
 		@JsOverlay
-		public Change getChange() {
-			return change;
+		public Change getAfterChange() {
+			return afterChange;
 		}
 
 		@JsOverlay
-		public SheetSetting setChange(Change change) {
-			this.change = change;
+		public SheetSetting setAfterChange(Change change) {
+			this.afterChange = change;
+			return this;
+		}
+		
+		@JsOverlay
+		public SheetSetting setAfterChange(ChangeProxy change) {
+			this.afterChange = (changes, source)->{
+				if(changes!=null) for(String[] ch: changes) if(ch!=null) change.change(Integer.parseInt(ch[0]), ch[1], ch[2], ch[3], source);
+			};
+			return this;
+		}
+		
+		@JsOverlay
+		public Change getBeforeChange() {
+			return beforeChange;
+		}
+
+		@JsOverlay
+		public SheetSetting setBeforeChange(Change change) {
+			this.beforeChange = change;
+			return this;
+		}
+		
+		@JsOverlay
+		public SheetSetting setBeforerChange(ChangeProxy change) {
+			this.beforeChange = (changes, source)->{
+				if(changes!=null) for(String[] ch: changes) if(ch!=null) change.change(Integer.parseInt(ch[0]), ch[1], ch[2], ch[3], source);
+			};
 			return this;
 		}
 

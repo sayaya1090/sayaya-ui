@@ -1,5 +1,6 @@
 package net.sayaya.ui.widget.table;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import com.google.gwt.dom.client.Element;
@@ -103,6 +104,19 @@ public abstract class Table<T> extends ResizeComposite implements TableBase<T> {
 	@Override
 	public final void update() {
 		sheet.update(setting);
+	}
+	
+	private T[] values = null;
+	public final Table<T> setValues(@SuppressWarnings("unchecked") T... values) {
+		this.values = values;
+		if(values!=null && values.length > 0) {
+			Data[] data = Arrays.stream(values).map(value->parse(value)).toArray(Data[]::new);
+			return setValues(data);
+		} else return setValues(new Data[] {});
+	}
+	
+	public final T[] getValues() {
+		return values;
 	}
 	
 	@Override
