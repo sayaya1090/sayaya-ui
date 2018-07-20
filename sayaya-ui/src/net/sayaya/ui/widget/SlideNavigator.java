@@ -4,6 +4,13 @@ import java.util.LinkedList;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.layout.client.Layout.AnimationCallback;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.user.client.ui.Composite;
@@ -19,9 +26,10 @@ import net.sayaya.ui.place.Place;
 import net.sayaya.ui.style.StyleSlideNavigator;
 import net.sayaya.ui.widget.slidenavigator.MenuItem;
 
-public final class SlideNavigator extends Composite implements ProvidesResize, RequiresResize {
+public final class SlideNavigator extends Composite implements ProvidesResize, RequiresResize, HasValueChangeHandlers<Boolean> {
 	private final static Storage STORAGE = Storage.getLocalStorageIfSupported();
 	private final static String MENU_STATE_KEY = "sayaya-ui-menu-collapse";
+	private final EventBus bus = new SimpleEventBus();
 	private final FlowPanel layout = new FlowPanel();
 	private final SplitLayoutPanel parent;
 	private final AnimationCallback callback;
@@ -89,6 +97,7 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 		knocker.getElement().getStyle().setLeft(250, Unit.PX);
 		parent.animate(80, callback);
 		state = State.EXPAND;
+		ValueChangeEvent.fire(this, true);
 		knockerIcon.removeStyleName(Icon.GSS.caretRight());
 		knockerIcon.addStyleName(Icon.GSS.caretLeft());
 		foot.setVisible(true);
@@ -103,6 +112,7 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 		knocker.getElement().getStyle().setLeft(60, Unit.PX);
 		parent.animate(80, callback);
 		state = State.COLLAPSE;
+		ValueChangeEvent.fire(this, false);
 		knockerIcon.removeStyleName(Icon.GSS.caretLeft());
 		knockerIcon.addStyleName(Icon.GSS.caretRight());
 		foot.setVisible(false);
@@ -146,5 +156,16 @@ public final class SlideNavigator extends Composite implements ProvidesResize, R
 			parent.getWidgetContainerElement(knocker).getStyle().setProperty("boxShadow", "none");
 			parent.setWidgetSize(knocker, 0);
 		}
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Boolean> handler) {
+		return bus.addHandler(ValueChangeEvent.getType(), handler);
+	}
+	
+	@Override
+	public void fireEvent(GwtEvent<?> event) {
+		if(event instanceof ValueChangeEvent) bus.fireEvent(event);
+		else super.fireEvent(event);
 	}
 }
