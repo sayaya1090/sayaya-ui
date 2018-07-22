@@ -7,6 +7,7 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 
@@ -24,7 +25,11 @@ public class PopupPanel extends Composite {
 	private PopupPanel(DomEvent<?> evt) {
 		this();
 		container.setPopupPosition(evt.getNativeEvent().getClientX()-10, evt.getNativeEvent().getClientY()-10);
-		container.getElement().getStyle().setZIndex(Integer.MAX_VALUE);
+	}
+	
+	private PopupPanel(Event evt) {
+		this();
+		container.setPopupPosition(evt.getClientX()-10, evt.getClientY()-10);
 	}
 	
 	private PopupPanel() {
@@ -36,6 +41,7 @@ public class PopupPanel extends Composite {
 
 	private void style() {
 		setStyleName(StylePopupPanel.GSS.popup());
+		container.getElement().getStyle().setZIndex(Integer.MAX_VALUE);
 	}
 	
 	public PopupPanel show() {
@@ -105,6 +111,10 @@ public class PopupPanel extends Composite {
 	}
 	
 	public static PopupPanel create(DomEvent<?> evt) {
+		return new PopupPanel(evt);
+	}
+
+	public static PopupPanel create(Event evt) {
 		return new PopupPanel(evt);
 	}
 	

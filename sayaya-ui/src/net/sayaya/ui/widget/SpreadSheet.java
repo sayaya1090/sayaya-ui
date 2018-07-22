@@ -498,6 +498,16 @@ public final class SpreadSheet extends ResizeComposite {
 		void apply(Event event);
 	}
 	
+	@JsFunction
+	public static interface BeforeColumnMove {
+		void apply(int[] targets, int dest);
+	}
+	
+	@JsFunction
+	public static interface AfterColumnMove {
+		void apply(int[] targets, int dest);
+	}
+	
 	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
 	public final static class Coordinator {
 		@JsProperty(name="row")
@@ -767,6 +777,10 @@ public final class SpreadSheet extends ResizeComposite {
 		private AfterSelection afterSelection;
 		@JsProperty(name="afterGetColHeader")
 		private AfterGetColHeader afterGetColHeader;
+		@JsProperty(name="beforeColumnMove")
+		private BeforeColumnMove beforeColumnMove;
+		@JsProperty(name="afterColumnMove")
+		private AfterColumnMove afterColumnMove;
 		@JsOverlay
 		public Data[] getData() {
 			return data;
@@ -1159,6 +1173,18 @@ public final class SpreadSheet extends ResizeComposite {
 		@JsOverlay
 		public SheetSetting setAfterGetColHeader(AfterGetColHeader afterGetColHeader) {
 			this.afterGetColHeader = afterGetColHeader;
+			return this;
+		}
+		
+		@JsOverlay
+		public SheetSetting setBeforeColumnMove(BeforeColumnMove beforeColumnMove) {
+			this.beforeColumnMove = beforeColumnMove;
+			return this;
+		}
+		
+		@JsOverlay
+		public SheetSetting setAfterColumnMove(AfterColumnMove afterColumnMove) {
+			this.afterColumnMove = afterColumnMove;
 			return this;
 		}
 	}

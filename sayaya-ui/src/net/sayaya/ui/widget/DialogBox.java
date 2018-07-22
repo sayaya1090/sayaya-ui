@@ -1,5 +1,9 @@
 package net.sayaya.ui.widget;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
@@ -13,6 +17,7 @@ import net.sayaya.ui.style.StyleDialogBox;
 import net.sayaya.ui.widget.Button;
 
 public class DialogBox extends com.google.gwt.user.client.ui.DialogBox {
+	private final static Set<DialogBox> INSTANCES = new HashSet<>();
 	private final Element overlay = DOM.createDiv();
 	private final VerticalPanel layout = new VerticalPanel();
 	private final FlowPanel control = new FlowPanel();
@@ -43,5 +48,24 @@ public class DialogBox extends com.google.gwt.user.client.ui.DialogBox {
 		setModal(true);
 		setAnimationEnabled(true);
 		setAnimationType(AnimationType.CENTER);
+	}
+	
+	private DialogBox parent = null;
+	@Override
+	public void show() {
+		for(DialogBox other: INSTANCES) if(other!=this && other.isVisible()) {
+			other.setVisible(false);
+			parent = other;
+			break;
+		}
+		super.show();
+		INSTANCES.add(this);
+	}
+	
+	@Override
+	public void hide() {
+		INSTANCES.remove(this);
+		super.hide();
+		if(parent!=null) parent.setVisible(true);
 	}
 }

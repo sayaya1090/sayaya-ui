@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.HTML;
@@ -42,6 +43,18 @@ public abstract class Sheet<T> extends ResizeComposite implements TableBase<T> {
 		setting.setAfterGetColHeader((col, th)->{
 			if(!setting.getColumns()[col].isFilter()) th.getChild(0).getChild(0).removeFromParent();
 		});
+	}
+	
+	public Element[] getHeader() {
+		NodeList<Element> elems = sheet.getElement().getElementsByTagName("th");
+		Element[] array = new Element[elems.getLength()/2];
+		for(int i = elems.getLength()/2; i < elems.getLength(); ++i) array[i-elems.getLength()/2] = elems.getItem(i).getFirstChildElement();
+		return array;
+	}
+	
+	public Element getBody() {
+		NodeList<Element> elems = sheet.getElement().getElementsByTagName("tbody");
+		return elems.getItem(0);
 	}
 	
 	@Override

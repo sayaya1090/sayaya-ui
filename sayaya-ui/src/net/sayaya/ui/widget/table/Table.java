@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -34,13 +35,25 @@ public abstract class Table<T> extends ResizeComposite implements TableBase<T> {
 	.setData(new Data[] {})
 	.setStretchH("all");
 	private final LayoutPanel container = new LayoutPanel();
-	private SpreadSheet sheet;
+	private final SpreadSheet sheet = new SpreadSheet(setting);
 	
 	public Table() {
 		initWidget(container);
 		setting.setAfterGetColHeader((col, th)->{
 			if(!setting.getColumns()[col].isFilter()) th.getChild(0).getChild(0).removeFromParent();
 		});
+	}
+	
+	public Element[] getHeader() {
+		NodeList<Element> elems = sheet.getElement().getElementsByTagName("th");
+		Element[] array = new Element[elems.getLength()/2];
+		for(int i = elems.getLength()/2; i < elems.getLength(); ++i) array[i-elems.getLength()/2] = elems.getItem(i).getFirstChildElement();
+		return array;
+	}
+	
+	public Element getBody() {
+		NodeList<Element> elems = sheet.getElement().getElementsByTagName("tbody");
+		return elems.getItem(0);
 	}
 	
 	@Override
@@ -124,7 +137,6 @@ public abstract class Table<T> extends ResizeComposite implements TableBase<T> {
 		container.clear();
 		if(data!=null && data.length > 0) {
 			setting.setData(data).setMaxRows(Math.max(1, data.length));
-			sheet = new SpreadSheet(setting);
 			container.add(sheet);
 			sheet.update(setting);
 		} else {
