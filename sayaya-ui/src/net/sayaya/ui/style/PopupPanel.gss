@@ -1,5 +1,4 @@
 .popup {
-	z-index: 100;
 	display: block;
 	border-radius: 2px;
 	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");

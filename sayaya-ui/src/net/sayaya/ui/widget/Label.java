@@ -6,7 +6,11 @@ import net.sayaya.ui.handler.HasStyle;
 import net.sayaya.ui.style.StyleLabel;
 
 public class Label extends Composite implements HasStyle<Label> {
-	private final com.google.gwt.user.client.ui.Label widget = new com.google.gwt.user.client.ui.Label();
+	private final com.google.gwt.user.client.ui.HTML widget = new com.google.gwt.user.client.ui.HTML();
+	public Label(String label) {
+		this();
+		setValue(label);
+	}
 	public Label() {
 		initWidget(widget);
 		style(this);
@@ -18,7 +22,7 @@ public class Label extends Composite implements HasStyle<Label> {
 	}
 	
 	public Label setValue(String text) {
-		widget.setText(text);
+		widget.setHTML(text);
 		return this;
 	}
 	

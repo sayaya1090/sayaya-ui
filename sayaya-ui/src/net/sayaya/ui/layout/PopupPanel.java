@@ -24,6 +24,7 @@ public class PopupPanel extends Composite {
 	private PopupPanel(DomEvent<?> evt) {
 		this();
 		container.setPopupPosition(evt.getNativeEvent().getClientX()-10, evt.getNativeEvent().getClientY()-10);
+		container.getElement().getStyle().setZIndex(Integer.MAX_VALUE);
 	}
 	
 	private PopupPanel() {
