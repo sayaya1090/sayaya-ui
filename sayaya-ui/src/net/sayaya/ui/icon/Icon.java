@@ -98,7 +98,7 @@ public class Icon extends HTML {
 			@CssResource.ClassName("caret-circle-right")
 			String caretCircleRight();
 			@CssResource.ClassName("caret-circle-up")
-			String caretUp();
+			String caretCircleUp();
 			@CssResource.ClassName("caret-down")
 			String caretDown();
 			@CssResource.ClassName("caret-left")
@@ -106,7 +106,7 @@ public class Icon extends HTML {
 			@CssResource.ClassName("caret-right")
 			String caretRight();
 			@CssResource.ClassName("caret-up")
-			String caretCircleUp();
+			String caretUp();
 			@CssResource.ClassName("caret-square-down")
 			String caretSquareDown();
 			@CssResource.ClassName("caret-square-left")
