@@ -47,7 +47,7 @@ public abstract class Table<T> extends ResizeComposite implements TableBase<T> {
 	public Element[] getHeader() {
 		NodeList<Element> elems = sheet.getElement().getElementsByTagName("th");
 		Element[] array = new Element[elems.getLength()/2];
-		for(int i = elems.getLength()/2; i < elems.getLength(); ++i) array[i-elems.getLength()/2] = elems.getItem(i).getFirstChildElement();
+		for(int i = 0; i < elems.getLength()/2; ++i) array[i] = elems.getItem(i).getFirstChildElement();
 		return array;
 	}
 	

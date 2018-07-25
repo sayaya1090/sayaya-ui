@@ -63,6 +63,14 @@ public class Icon extends HTML {
 			String alignLeft();
 			@CssResource.ClassName("align-right")
 			String alignRight();
+			String at();
+			String atlas();
+			String atom();
+			@CssResource.ClassName("atom-alt")
+			String atomAlt();
+			String award();
+			String ban();
+			String barcode();
 			String bold();
 			String box();
 			@CssResource.ClassName("box-check")

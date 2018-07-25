@@ -31,6 +31,27 @@
 .align-right:before {
 	content: "\f038";
 }
+.at:before {
+	content: "\f1fa";
+}
+.atlas:before {
+	content: "\f558";
+}
+.atom:before {
+	content: "\f5d2";
+}
+.atom-alt:before {
+	content: "\f5d3";
+}
+.award:before {
+	content: "\f559"
+}
+.ban:before {
+	content: "\f05e";
+}
+.barcode:before {
+	content: "\f02a"
+}
 .bold:before {
 	content: "\f032";
 }
