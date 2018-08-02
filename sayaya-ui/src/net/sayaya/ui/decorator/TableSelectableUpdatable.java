@@ -77,5 +77,10 @@ public interface TableSelectableUpdatable<T> extends TableSelectable<T>, TableUp
 		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
 			return updatable.addValueChangeHandler(handler);
 		}
+		@Override
+		public TableSelectableUpdatableImpl<T> setSelected(int row, boolean select) {
+			selectable.setSelected(row, select);
+			return this;
+		}
 	}
 }

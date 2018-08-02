@@ -36,6 +36,7 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 		return new TableSelectableImpl<T>(widget, mapper);
 	}
 	
+	TableSelectable<T> setSelected(int row, boolean select);
 	T[] getSelected();
 	
 	static final class TableSelectableImpl<T> extends ResizeComposite implements TableSelectable<T> {
@@ -109,6 +110,12 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 			square.getStyle().setHeight(20, Unit.PX);
 			Element check = square.getChild(0).cast();
 			check.setId(checkId);
+		}
+		
+		@Override
+		public TableSelectable<T> setSelected(int row, boolean select) {
+			getSetting().getData()[row].put(columnCheckbox.getData(), select);
+			return this;
 		}
 		
 		@Override
