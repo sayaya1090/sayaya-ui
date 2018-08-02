@@ -22,9 +22,10 @@ public class Tooltip {
 		label.setVisible(false);
 		widget.asWidget().addDomHandler(evt->{
 			int top = widget.asWidget().getElement().getAbsoluteTop();
+			int ch = Window.getClientHeight();
 			int cw = Window.getClientWidth();
 			int deltaY = 0;
-			if(top > cw/2) {
+			if(top < ch/2) {
 				deltaY = -25;
 				label.addStyleName(StyleTooltip.GSS.fadein2());
 			} else {

@@ -115,6 +115,20 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 		@Override
 		public TableSelectable<T> setSelected(int row, boolean select) {
 			getSetting().getData()[row].put(columnCheckbox.getData(), select);
+			
+			Element td = getTable().getCell(row, 0, true);
+			CheckBox check = new CheckBox(22).setValue(select, true);
+			td.removeAllChildren();
+			td.appendChild(check.getElement());
+			if(select) {
+				for(int i = 0; i < getTable().countCols(); ++i) {
+					Element elem2 = getTable().getCell(row, i, true);
+					if(elem2!=null) elem2.addClassName(StyleChart.GSS.selectedRow());
+				}
+			} else for(int i = 0; i < getTable().countCols(); ++i) {
+				Element elem2 = getTable().getCell(row, i, true);
+				if(elem2!=null) elem2.removeClassName(StyleChart.GSS.selectedRow());
+			}
 			return this;
 		}
 		

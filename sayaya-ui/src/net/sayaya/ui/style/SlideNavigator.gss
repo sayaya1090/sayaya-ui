@@ -109,8 +109,26 @@
 	background-color: rgba(255, 255, 255, 0.1);
 }
 
+
+.item-sub:hover {
+	animation-duration: 0.2s;
+	animation-name: isfi;
+	animation-fill-mode: forwards;
+}
+
+@keyframes isfi {
+	from {
+		color: #FFFFFF88;
+		background-color: transparent;
+	}
+	to {
+		color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+}
+
 .item-sub-selected {
-	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()") !important;
 	font-weight: bolder;
 }
 
