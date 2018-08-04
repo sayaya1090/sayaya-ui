@@ -13,6 +13,7 @@
 	<source path="dto"/>
 	<source path="handler"/>
 	<source path="icon"/>
+	<source path="icon2"/>
 	<source path="layout"/>
 	<source path="place"/>
 	<source path="style"/>
