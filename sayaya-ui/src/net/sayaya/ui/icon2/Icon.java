@@ -13,7 +13,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.sayaya.ui.handler.Callback;
-import net.sayaya.ui.icon2.Snap.Path;
 import net.sayaya.ui.style.color.Palette;
 
 public class Icon extends Widget {
@@ -59,6 +58,7 @@ public class Icon extends Widget {
 	
 	private void style() {
 		setStyleName(GSS.icon());
+		color = Palette.getInstance().getColorText1();
 	}
 	
 	@Override
@@ -71,57 +71,63 @@ public class Icon extends Widget {
 		if(!initialized) return;
 		if(target == REGULAR_SYMBOLS) return;
 		else target = REGULAR_SYMBOLS;
-		append(svg, target.get(name), id, color);
 	}
 	
 	private void setBold() {
 		if(!initialized) return;
 		if(target == SOLID_SYMBOLS) return;
 		else target = SOLID_SYMBOLS;
-		append(svg, target.get(name), id, color);
 	}
 	
 	private void setLight() {
 		if(!initialized) return;
 		if(target == LIGHT_SYMBOLS) return;
 		else target = LIGHT_SYMBOLS;
-		append(svg, target.get(name), id, color);
 	}
 	
 	private void setColor(String color) {
 		if(!initialized) return;
 		if(this.color.equalsIgnoreCase(color)) return;
 		this.color = color;
-		Snap morph = new Snap("#"+id);
-		String path = target.get(name).getElementsByTagName("path").getItem(0).getAttribute("d");
-		morph.animate(new Path().setD(path).setFill(color), 200);
 	}
 	
-	public Icon changeIcon(String name) {
-		Snap morph = new Snap("#"+id);
-		String path = target.get(name).getElementsByTagName("path").getItem(0).getAttribute("d");
-		morph.animate(new Path().setD(path).setFill(color), 200);
+	public Icon change(String name) {
+		Element symbol = target.get(name);
+		String path = symbol.getElementsByTagName("path").getItem(0).getAttribute("d");
+		svg.getElementsByTagName("path").getItem(0).setAttribute("fill", color);
+		Kute.to("#"+id, new Kute.Shape().setPath(path), new Kute.Option().setEasing("easingBounceOut").setDuration(500.0).setMorphPrecision(4.0)).start();
+		getElement().setAttribute("viewBox", symbol.getAttribute("viewBox"));
 		return this;
 	}
 	
-	public native Element createSVG() /*-{
+	public Icon update() {
+		append(svg, target.get(name), id, color);
+		return this;
+	}
+	
+	private native Element createSVG() /*-{
 		var obj = this;
 		var svg = $wnd.document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 		svg.setAttribute("area-hidden", "true");
 		svg.setAttribute("focusable", "false");
+		svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 		
 		var MutationObserver = $wnd.MutationObserver || $wnd.WebKitMutationObserver || $wnd.MozMutationObserver;
 		var observer = new MutationObserver(function(mutations) {
 			mutations.forEach(function(mutation) {
 				if (mutation.type == "attributes") {
 					var style = $wnd.getComputedStyle(svg, null);
+					
 					var fw = style.getPropertyValue("font-weight");
-					if(fw == null) obj.@net.sayaya.ui.icon2.Icon::setRegular()();
-					else if(fw == "") obj.@net.sayaya.ui.icon2.Icon::setRegular()();
-					else if(fw.toUpperCase() == "NORMAL") obj.@net.sayaya.ui.icon2.Icon::setRegular()();
-					else if(fw.toUpperCase() == "BOLD") obj.@net.sayaya.ui.icon2.Icon::setBold()();
-					else if(fw.toUpperCase() == "BOLDER") obj.@net.sayaya.ui.icon2.Icon::setBold()();
-					else if(fw.toUpperCase() == "LIGHTER") obj.@net.sayaya.ui.icon2.Icon::setLight()();
+					if(fw == null)							obj.@net.sayaya.ui.icon2.Icon::setRegular()();
+					else if(fw == "")						obj.@net.sayaya.ui.icon2.Icon::setRegular()();
+					else if(fw.toUpperCase() == "NORMAL")	obj.@net.sayaya.ui.icon2.Icon::setRegular()();
+					else if(fw.toUpperCase() == "BOLD")		obj.@net.sayaya.ui.icon2.Icon::setBold()();
+					else if(fw.toUpperCase() == "BOLDER")	obj.@net.sayaya.ui.icon2.Icon::setBold()();
+					else if(fw.toUpperCase() == "LIGHTER")	obj.@net.sayaya.ui.icon2.Icon::setLight()();
+					else if(fw >= 700)						obj.@net.sayaya.ui.icon2.Icon::setBold()();
+					else if(fw >= 400)						obj.@net.sayaya.ui.icon2.Icon::setRegular()();
+					else if(fw < 400)						obj.@net.sayaya.ui.icon2.Icon::setLight()();
 					
 					var color = style.getPropertyValue("color");
 					if(color!=null) obj.@net.sayaya.ui.icon2.Icon::setColor(Ljava/lang/String;)(color);
@@ -134,11 +140,12 @@ public class Icon extends Widget {
 		return svg;
 	}-*/;
 	
-	public static native Element append(Element svg, Element symbol, String id, String color) /*-{
+	private static native Element append(Element svg, Element symbol, String id, String color) /*-{
 		while (svg.firstChild) svg.removeChild(svg.firstChild);
 		if(symbol == null) return svg;
 		var viewBox = symbol.getAttribute("viewBox");
 		svg.setAttribute("viewBox", viewBox);
+		
 		var path = symbol.getElementsByTagName("path")[0].cloneNode(true);
 		path.setAttribute("id", id);
 		path.setAttribute("fill", color);
@@ -146,7 +153,7 @@ public class Icon extends Widget {
 		return svg;
 	}-*/;
 	
-	public static native void load1() /*-{
+	private static native void load1() /*-{
 		var req = new XMLHttpRequest();
 		req.onreadystatechange=function() {
 			if(this.readyState!=4 || this.status!=200) return;
@@ -164,7 +171,7 @@ public class Icon extends Widget {
 		req.send();
 	}-*/;
 	
-	public static native void load2() /*-{
+	private static native void load2() /*-{
 		var req = new XMLHttpRequest();
 		req.onreadystatechange=function() {
 			if(this.readyState!=4 || this.status!=200) return;
@@ -182,7 +189,7 @@ public class Icon extends Widget {
 		req.send();
 	}-*/;
 	
-	public static native void load3() /*-{
+	private static native void load3() /*-{
 		var req = new XMLHttpRequest();
 		req.onreadystatechange=function() {
 			if(this.readyState!=4 || this.status!=200) return;
