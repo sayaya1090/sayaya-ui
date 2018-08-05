@@ -64,45 +64,51 @@ public class Icon extends Widget {
 	@Override
 	public native void setStyleName(String style) /*-{
 		var svg = this.@net.sayaya.ui.icon2.Icon::svg;
-		svg.classList.add(style);
+		var classList = svg.classList;
+		if(classList == null) svg.className = style;
+		else classList.add(style);
 	}-*/;
 	
 	private void setRegular() {
 		if(!initialized) return;
 		if(target == REGULAR_SYMBOLS) return;
 		else target = REGULAR_SYMBOLS;
+		update();
 	}
 	
 	private void setBold() {
 		if(!initialized) return;
 		if(target == SOLID_SYMBOLS) return;
 		else target = SOLID_SYMBOLS;
+		update();
 	}
 	
 	private void setLight() {
 		if(!initialized) return;
 		if(target == LIGHT_SYMBOLS) return;
 		else target = LIGHT_SYMBOLS;
+		update();
 	}
 	
 	private void setColor(String color) {
 		if(!initialized) return;
 		if(this.color.equalsIgnoreCase(color)) return;
 		this.color = color;
+		update();
 	}
 	
-	public Icon change(String name) {
+	public Icon morph(String name) {
 		Element symbol = target.get(name);
 		String path = symbol.getElementsByTagName("path").getItem(0).getAttribute("d");
 		svg.getElementsByTagName("path").getItem(0).setAttribute("fill", color);
-		Kute.to("#"+id, new Kute.Shape().setPath(path), new Kute.Option().setEasing("easingBounceOut").setDuration(500.0).setMorphPrecision(4.0)).start();
+		Kute.to("#"+id, new Kute.Shape().setPath(path), new Kute.Option().setEasing("easingQuadraticIn").setDuration(100.0).setMorphPrecision(4.0)).start();
 		getElement().setAttribute("viewBox", symbol.getAttribute("viewBox"));
 		return this;
 	}
 	
-	public Icon update() {
+
+	private void update() {
 		append(svg, target.get(name), id, color);
-		return this;
 	}
 	
 	private native Element createSVG() /*-{
