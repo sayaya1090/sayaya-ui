@@ -4,87 +4,127 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.sayaya.ui.handler.Callback;
+import net.sayaya.ui.icon2.Snap.Path;
+import net.sayaya.ui.style.color.Palette;
 
 public class Icon extends Widget {
-	private final static HashMap<String, Element> SOLID_SYMBOLS = new HashMap<>();
-	private final static HashMap<String, Element> REGULAR_SYMBOLS = new HashMap<>();
-	private final static HashMap<String, Element> LIGHT_SYMBOLS = new HashMap<>();
-	private static boolean initialized = false;
 	private final static List<Callback<Void>> init = new LinkedList<>();
 	static {
 		load1();
 		load2();
 		load3();
 	}
+	private static final Resource RESOURCE =  GWT.create(Resource.class);
+	static {
+		RESOURCE.style().ensureInjected();
+	}
+	public static final Resource.Style GSS = RESOURCE.style();
+	public interface Resource extends ClientBundle {
+		public static final Resource instance=  GWT.create(Resource.class);
+		@Source("Icon.gss")
+		Style style();
+		
+		public static interface Style extends CssResource {
+			String icon();
+			String regular();
+			String light();
+			String solid();
+		}
+	}
+	private final static HashMap<String, Element> SOLID_SYMBOLS = new HashMap<>();
+	private final static HashMap<String, Element> REGULAR_SYMBOLS = new HashMap<>();
+	private final static HashMap<String, Element> LIGHT_SYMBOLS = new HashMap<>();
+	private static boolean initialized = false;
+	private final Element svg = createSVG();
+	private final String id = Document.get().createUniqueId();
 	private String name;
 	private HashMap<String, Element> target = REGULAR_SYMBOLS;
-	private final Element div = createSVG();
-	private final String id = Document.get().createUniqueId();
+	private String color = Palette.getInstance().getColorText1();
 	public Icon(String name) {
 		this.name = name;
-		this.setElement(div);
+		this.setElement(svg);
 		style();
-		if(initialized) append(div, target.get(name), id);
-		else init.add(r->append(div, target.get(name), id));
-		
-		Scheduler.get().scheduleFixedDelay(()->{
-			Snap morph = new Snap("#"+id);
-			morph.animate(t(target.get("check").getElementsByTagName("path").getItem(0).getAttribute("d")), 5000);
-			return false;
-		}, 5000);
+		if(initialized) append(svg, target.get(name), id, color);
+		else init.add(r->append(svg, target.get(name), id, color));
 	}
 	
 	private void style() {
-		getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
-		getElement().getStyle().setProperty("speak", "none");
-		getElement().getStyle().setFontWeight(FontWeight.LIGHTER);
+		setStyleName(GSS.icon());
 	}
 	
+	@Override
+	public native void setStyleName(String style) /*-{
+		var svg = this.@net.sayaya.ui.icon2.Icon::svg;
+		svg.classList.add(style);
+	}-*/;
+	
 	private void setRegular() {
+		if(!initialized) return;
 		if(target == REGULAR_SYMBOLS) return;
 		else target = REGULAR_SYMBOLS;
-		append(div, target.get(name), id);
+		append(svg, target.get(name), id, color);
 	}
 	
 	private void setBold() {
+		if(!initialized) return;
 		if(target == SOLID_SYMBOLS) return;
 		else target = SOLID_SYMBOLS;
-		append(div, target.get(name), id);
+		append(svg, target.get(name), id, color);
 	}
 	
 	private void setLight() {
+		if(!initialized) return;
 		if(target == LIGHT_SYMBOLS) return;
 		else target = LIGHT_SYMBOLS;
-		append(div, target.get(name), id);
+		append(svg, target.get(name), id, color);
 	}
-
-	private native Object t(String path) /*-{
-		return { d: path };
-	}-*/;
+	
+	private void setColor(String color) {
+		if(!initialized) return;
+		if(this.color.equalsIgnoreCase(color)) return;
+		this.color = color;
+		Snap morph = new Snap("#"+id);
+		String path = target.get(name).getElementsByTagName("path").getItem(0).getAttribute("d");
+		morph.animate(new Path().setD(path).setFill(color), 200);
+	}
+	
+	public Icon changeIcon(String name) {
+		Snap morph = new Snap("#"+id);
+		String path = target.get(name).getElementsByTagName("path").getItem(0).getAttribute("d");
+		morph.animate(new Path().setD(path).setFill(color), 200);
+		return this;
+	}
+	
 	public native Element createSVG() /*-{
+		var obj = this;
 		var svg = $wnd.document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 		svg.setAttribute("area-hidden", "true");
 		svg.setAttribute("focusable", "false");
-		var obj = this;
+		
 		var MutationObserver = $wnd.MutationObserver || $wnd.WebKitMutationObserver || $wnd.MozMutationObserver;
 		var observer = new MutationObserver(function(mutations) {
 			mutations.forEach(function(mutation) {
 				if (mutation.type == "attributes") {
-					if(svg.style.fontWeight == null) obj.@net.sayaya.ui.icon2.Icon::setRegular()();
-					else if(svg.style.fontWeight == "") obj.@net.sayaya.ui.icon2.Icon::setRegular()();
-					else if(svg.style.fontWeight.toUpperCase() == "NORMAL") obj.@net.sayaya.ui.icon2.Icon::setRegular()();
-					else if(svg.style.fontWeight.toUpperCase() == "BOLD") obj.@net.sayaya.ui.icon2.Icon::setBold()();
-					else if(svg.style.fontWeight.toUpperCase() == "BOLDER") obj.@net.sayaya.ui.icon2.Icon::setBold()();
-					else if(svg.style.fontWeight.toUpperCase() == "LIGHTER") obj.@net.sayaya.ui.icon2.Icon::setLight()();
+					var style = $wnd.getComputedStyle(svg, null);
+					var fw = style.getPropertyValue("font-weight");
+					if(fw == null) obj.@net.sayaya.ui.icon2.Icon::setRegular()();
+					else if(fw == "") obj.@net.sayaya.ui.icon2.Icon::setRegular()();
+					else if(fw.toUpperCase() == "NORMAL") obj.@net.sayaya.ui.icon2.Icon::setRegular()();
+					else if(fw.toUpperCase() == "BOLD") obj.@net.sayaya.ui.icon2.Icon::setBold()();
+					else if(fw.toUpperCase() == "BOLDER") obj.@net.sayaya.ui.icon2.Icon::setBold()();
+					else if(fw.toUpperCase() == "LIGHTER") obj.@net.sayaya.ui.icon2.Icon::setLight()();
+					
+					var color = style.getPropertyValue("color");
+					if(color!=null) obj.@net.sayaya.ui.icon2.Icon::setColor(Ljava/lang/String;)(color);
 				}
 			});
 		});
@@ -94,12 +134,14 @@ public class Icon extends Widget {
 		return svg;
 	}-*/;
 	
-	public static native Element append(Element svg, Element symbol, String id) /*-{
+	public static native Element append(Element svg, Element symbol, String id, String color) /*-{
 		while (svg.firstChild) svg.removeChild(svg.firstChild);
+		if(symbol == null) return svg;
 		var viewBox = symbol.getAttribute("viewBox");
 		svg.setAttribute("viewBox", viewBox);
 		var path = symbol.getElementsByTagName("path")[0].cloneNode(true);
 		path.setAttribute("id", id);
+		path.setAttribute("fill", color);
 		svg.appendChild(path.cloneNode(true));
 		return svg;
 	}-*/;
@@ -118,7 +160,7 @@ public class Icon extends Widget {
 			}
 			@net.sayaya.ui.icon2.Icon::complete()();
 		};
-		req.open("GET", "fontawesome-pro/sprites/solid.svg");
+		req.open("GET", "fontawesome/sprites/solid.svg");
 		req.send();
 	}-*/;
 	
@@ -136,7 +178,7 @@ public class Icon extends Widget {
 			}
 			@net.sayaya.ui.icon2.Icon::complete()();
 		};
-		req.open("GET", "fontawesome-pro/sprites/regular.svg");
+		req.open("GET", "fontawesome/sprites/regular.svg");
 		req.send();
 	}-*/;
 	
@@ -154,7 +196,7 @@ public class Icon extends Widget {
 			}
 			@net.sayaya.ui.icon2.Icon::complete()();
 		};
-		req.open("GET", "fontawesome-pro/sprites/light.svg");
+		req.open("GET", "fontawesome/sprites/light.svg");
 		req.send();
 	}-*/;
 	
