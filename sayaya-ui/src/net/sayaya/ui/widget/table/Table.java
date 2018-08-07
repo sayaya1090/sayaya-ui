@@ -35,7 +35,7 @@ public abstract class Table<T> extends ResizeComposite implements TableBase<T> {
 	.setData(new Data[] {})
 	.setStretchH("all");
 	private final LayoutPanel container = new LayoutPanel();
-	private final SpreadSheet sheet = new SpreadSheet(setting);
+	private SpreadSheet sheet = new SpreadSheet(setting);
 	
 	public Table() {
 		initWidget(container);
@@ -137,6 +137,7 @@ public abstract class Table<T> extends ResizeComposite implements TableBase<T> {
 		container.clear();
 		if(data!=null && data.length > 0) {
 			setting.setData(data).setMaxRows(Math.max(1, data.length));
+			sheet = new SpreadSheet(setting);
 			container.add(sheet);
 			sheet.update(setting);
 		} else {
