@@ -48,12 +48,11 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 			double x = axisX.parse(category) + delta;
 			Box<Double> initBox = new Box<Double>().setMin(medMap).setQ1(medMap).setMedian(medMap).setQ3(medMap).setMax(medMap);
 			BoxAnimated shape = (BoxAnimated) createBox(bw, initBox, agenda)
-				.setBoxNext(nextBox)
-				.setPointNext(new Point<Double, Double> (x, axisY.getY()))
-				.setColor(agenda.getColor())
-				.setBorderWidth(borderWidth).setBorderColor(borderColor)
-				.setX(x).setY(axisY.getY())
-			;
+			.setBoxNext(nextBox)
+			.setPointNext(new Point<Double, Double> (x, axisY.getY()))
+			.setColor(agenda.getColor())
+			.setBorderWidth(borderWidth).setBorderColor(borderColor)
+			.setX(x).setY(axisY.getY());
 			if(!shapes.containsKey(category)) shapes.put(category, new TreeMap<Integer, BoxAnimated>());
 			shapes.get(category).put(idx, shape);
 			add(shape);
@@ -121,10 +120,18 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 		this.betweenMargin = betweenMargin;
 		return this;
 	}
+	public GraphBox<C, N> setBetweenMargin(int betweenMargin) {
+		this.betweenMargin = betweenMargin;
+		return this;
+	}
 	public double getWithinMargin() {
 		return withinMargin;
 	}
 	public GraphBox<C, N> setWithinMargin(double withinMargin) {
+		this.withinMargin = withinMargin;
+		return this;
+	}
+	public GraphBox<C, N> setWithinMargin(int withinMargin) {
 		this.withinMargin = withinMargin;
 		return this;
 	}

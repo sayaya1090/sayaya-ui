@@ -33,7 +33,7 @@ public final class MenuItem extends FlexTable implements ProvidesResize, HasClic
 				childContainer.setHeight("auto");
 				int height=childContainer.getOffsetHeight();
 				childContainer.setHeight(height*progress + "px");
-			} else if(isSelected) addStyleName(StyleSlideNavigator.GSS.itemSelectedClose());
+			}
 			if(isSelected) addStyleName(StyleSlideNavigator.GSS.itemSelected());
 		}
 	};
@@ -89,16 +89,10 @@ public final class MenuItem extends FlexTable implements ProvidesResize, HasClic
 	public void onResize(State state) {
 		if(state == State.COLLAPSE) {
 			label.setVisible(false);
-			if(isSelected) {
-				close.run(80);
-				addStyleName(StyleSlideNavigator.GSS.itemSelectedClose());
-			}
+			if(isSelected) close.run(80);
 		} else {
 			label.setVisible(true);
-			if(isSelected) {
-				open.run(80);
-				removeStyleName(StyleSlideNavigator.GSS.itemSelectedClose());
-			}
+			if(isSelected) open.run(80);
 		}
 	}
 	
@@ -125,34 +119,35 @@ public final class MenuItem extends FlexTable implements ProvidesResize, HasClic
 				if(childContainer.isAttached()) childContainer.setHeight("0px");
 				removeStyleName(StyleSlideNavigator.GSS.itemSelected());
 			}
-			removeStyleName(StyleSlideNavigator.GSS.itemSelectedClose());
 		}
 		this.isSelected = isSelected;
 	}
 	
 	public void setPlace(State state, Place<?> place) {
-		if(place == null) isSelected = false;
-		else if(place.isInstanceOf(this.place)) isSelected = true;
-		else isSelected = false;
+		boolean selected = false;
+		if(place == null) selected = false;
+		else if(place.isInstanceOf(this.place)) {
+			selected = true;
+			isSelected = true;
+		} else selected = false;
+		
 		if(state == State.COLLAPSE) {
 			label.setVisible(false);
-			if(isSelected) {
+			if(selected) {
 				if(childContainer.isAttached()) childContainer.setHeight("0px");
-				removeStyleName(StyleSlideNavigator.GSS.itemSelected());
-				addStyleName(StyleSlideNavigator.GSS.itemSelectedClose());
-			}
+				addStyleName(StyleSlideNavigator.GSS.itemSelected());
+			} else setSelect(false);
 		} else {
 			label.setVisible(true);
-			if(isSelected) {
+			if(selected) {
 				if(childContainer.isAttached()) {
 					childContainer.setHeight("auto");
 					int height=childContainer.getOffsetHeight();
 					childContainer.setHeight(height + "px");
-				} else if(isSelected) addStyleName(StyleSlideNavigator.GSS.itemSelectedClose());
+				}
 				addStyleName(StyleSlideNavigator.GSS.itemSelected());
-				removeStyleName(StyleSlideNavigator.GSS.itemSelectedClose());
 				children.stream().forEach(child->child.setPlace(place));
-			}
+			} else setSelect(false);
 		}
 	}
 	

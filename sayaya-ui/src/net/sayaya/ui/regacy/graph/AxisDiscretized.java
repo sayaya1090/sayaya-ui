@@ -104,12 +104,22 @@ public class AxisDiscretized<T> extends Axis<T> implements HasStroke {
 		this.width = width;
 		return this;
 	}
+	
+	public AxisDiscretized<T> setWidth(int width) {
+		this.width = width;
+		return this;
+	}
 
 	public double getHeight() {
 		return height;
 	}
 
 	public AxisDiscretized<T> setHeight(double height) {
+		this.height = height;
+		return this;
+	}
+	
+	public AxisDiscretized<T> setHeight(int height) {
 		this.height = height;
 		return this;
 	}
