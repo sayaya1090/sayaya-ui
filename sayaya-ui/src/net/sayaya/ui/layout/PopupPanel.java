@@ -3,11 +3,14 @@ package net.sayaya.ui.layout;
 import java.util.LinkedList;
 import java.util.function.Supplier;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 
@@ -24,12 +27,20 @@ public class PopupPanel extends Composite {
 	private PopupPanel parent;
 	private PopupPanel(DomEvent<?> evt) {
 		this();
-		container.setPopupPosition(evt.getNativeEvent().getClientX()-10, evt.getNativeEvent().getClientY()-10);
+		int cw = Window.getClientWidth();
+		int x = evt.getNativeEvent().getClientX()-10;
+		int ww = 152;
+		int dx = Math.min(x, cw-ww-5);
+		container.setPopupPosition(dx, evt.getNativeEvent().getClientY()-10);
 	}
 	
 	private PopupPanel(Event evt) {
 		this();
-		container.setPopupPosition(evt.getClientX()-10, evt.getClientY()-10);
+		int cw = Window.getClientWidth();
+		int x = evt.getClientX()-10;
+		int ww = 142;
+		int dx = Math.min(x, cw-ww-5);
+		container.setPopupPosition(dx, evt.getClientY()-10);
 	}
 	
 	private PopupPanel() {
@@ -46,6 +57,17 @@ public class PopupPanel extends Composite {
 	
 	public PopupPanel show() {
 		container.show();
+		int ch = Window.getClientHeight();
+		Scheduler.get().scheduleDeferred(()->{
+			int wh = container.getElement().getOffsetHeight();
+			int y = container.getAbsoluteTop();
+			int dy = Math.min(y, ch-wh-5);
+			if(y != dy) {
+				container.hide();
+				container.setPopupPosition(container.getPopupLeft(), dy);
+				container.show();
+			}
+		});
 		return this;
 	}
 	
