@@ -79,7 +79,7 @@ public abstract class Button<B extends Button<B>> extends Composite implements H
 	public boolean isEnabled() {
 		return widget.isEnabled();
 	}
-	
+
 	@Override
 	public HandlerRegistration addClickHandler(ClickHandler handler) {
 		return widget.addClickHandler(handler);

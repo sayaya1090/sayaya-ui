@@ -125,14 +125,14 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 	
 	@SuppressWarnings("unused")
 	private final static class RectangleAnimated extends Rectangle {
-		private Point<Integer, Integer> pointNext = new Point<Integer, Integer>(0, 0);
+		private Point<Double, Double> pointNext = new Point<Double, Double>(0.0, 0.0);
 		private double rotateNext = 0;
-		private int widthNext = 0;
-		private int heightNext = 0;
-		private Point<Integer, Integer> pointPrev = new Point<Integer, Integer>(0, 0);
+		private double widthNext = 0;
+		private double heightNext = 0;
+		private Point<Double, Double> pointPrev = new Point<Double, Double>(0.0, 0.0);
 		private double rotatePrev = 0;
-		private int widthPrev = 0;
-		private int heightPrev = 0;
+		private double widthPrev = 0;
+		private double heightPrev = 0;
 		public RectangleAnimated(int width, int height) {
 			super(width, height);
 		}
@@ -152,11 +152,11 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 				heightPrev = getHeight();
 			}
 			
-			int x = getNext(pointPrev.getX(), pointNext.getX(), progress);
-			int y = getNext(pointPrev.getY(), pointNext.getY(), progress);
+			double x = getNext(pointPrev.getX(), pointNext.getX(), progress);
+			double y = getNext(pointPrev.getY(), pointNext.getY(), progress);
 			double rotate = getNext(rotatePrev, rotateNext, progress);
-			int width = getNext(widthPrev, widthNext, progress);
-			int height = getNext(heightPrev, heightNext, progress);
+			double width = getNext(widthPrev, widthNext, progress);
+			double height = getNext(heightPrev, heightNext, progress);
 
 			String color = getColor();
 			String borderColor = getBorderColor();
@@ -176,11 +176,11 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 			setHeight(height);
 		}
 
-		public Point<Integer, Integer> getPointNext() {
+		public Point<Double, Double> getPointNext() {
 			return pointNext;
 		}
 
-		public RectangleAnimated setPointNext(Point<Integer, Integer> pointNext) {
+		public RectangleAnimated setPointNext(Point<Double, Double> pointNext) {
 			this.pointNext = pointNext;
 			return this;
 		}
@@ -198,7 +198,7 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 			return widthNext;
 		}
 
-		public RectangleAnimated setWidthNext(int widthNext) {
+		public RectangleAnimated setWidthNext(double widthNext) {
 			this.widthNext = widthNext;
 			return this;
 		}
@@ -207,16 +207,16 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 			return heightNext;
 		}
 
-		public RectangleAnimated setHeightNext(int heightNext) {
+		public RectangleAnimated setHeightNext(double heightNext) {
 			this.heightNext = heightNext;
 			return this;
 		}
 
-		public Point<Integer, Integer> getPointPrev() {
+		public Point<Double, Double> getPointPrev() {
 			return pointPrev;
 		}
 
-		public RectangleAnimated setPointPrev(Point<Integer, Integer> pointPrev) {
+		public RectangleAnimated setPointPrev(Point<Double, Double> pointPrev) {
 			this.pointPrev = pointPrev;
 			return this;
 		}

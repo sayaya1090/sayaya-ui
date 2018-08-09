@@ -10,7 +10,7 @@ public final class Text extends ShapeInstance<Text> {
 	private String font;
 	private TextAlign align;
 	private TextBaseline baseline = TextBaseline.ALPHABETIC;
-	private int size;
+	private double size;
 	public Text(String text) {
 		this.text = text;
 	}
@@ -42,11 +42,11 @@ public final class Text extends ShapeInstance<Text> {
 		return this;
 	}
 
-	public int getSize() {
+	public double getSize() {
 		return size;
 	}
 
-	public Text setSize(int size) {
+	public Text setSize(double size) {
 		this.size = size;
 		return this;
 	}
