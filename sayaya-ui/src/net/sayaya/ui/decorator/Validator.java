@@ -51,10 +51,6 @@ public class Validator {
 			label.getElement().getStyle().setColor(Palette.getInstance().getColorText3());
 			return this;
 		}
-		
-		protected final Label getPlaceholder() {
-			return label;
-		}
 
 		@Override
 		public TextBoxDecoratorValidator<T> setValue(T value) {
