@@ -12,8 +12,8 @@ public class AxisContinuous<T extends Number> extends Axis<T> implements HasStro
 	private NumberFormat nf = NumberFormat.getDecimalFormat();
 	private String borderColor;
 	private double borderWidth;
-	private int width;
-	private int height;
+	private double width;
+	private double height;
 	public AxisContinuous(AXIS_DIRECTION direction) {
 		super(direction);
 	}
@@ -84,8 +84,8 @@ public class AxisContinuous<T extends Number> extends Axis<T> implements HasStro
 		if(isInverted()) context.scale(1.0, -1.0);
 		Double p = min.doubleValue();
 		double step = this.step.doubleValue();
-		int stepSize = 10;
-		int textLoc = 20;
+		double stepSize = 10;
+		double textLoc = 20;
 		while(p.compareTo(max.doubleValue()) <= 0) {
 			context.beginPath();
 			context.moveTo((p+translate)*scaleX, 0);
@@ -122,20 +122,20 @@ public class AxisContinuous<T extends Number> extends Axis<T> implements HasStro
 			return getY()-(data.doubleValue() + translate) * scaleX;
 		else return getX() + (data.doubleValue() + translate) * scaleX;
 	}
-	public int getWidth() {
+	public double getWidth() {
 		return width;
 	}
 
-	public AxisContinuous<T> setWidth(int width) {
+	public AxisContinuous<T> setWidth(double width) {
 		this.width = width;
 		return this;
 	}
 
-	public int getHeight() {
+	public double getHeight() {
 		return height;
 	}
 
-	public AxisContinuous<T> setHeight(int height) {
+	public AxisContinuous<T> setHeight(double height) {
 		this.height = height;
 		return this;
 	}

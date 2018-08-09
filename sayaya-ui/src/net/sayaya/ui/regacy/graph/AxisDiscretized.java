@@ -13,8 +13,8 @@ public class AxisDiscretized<T> extends Axis<T> implements HasStroke {
 	private HashMap<T, Integer> map = new HashMap<T, Integer>();
 	private String borderColor;
 	private double borderWidth;
-	private int width;
-	private int height;
+	private double width;
+	private double height;
 
 	public AxisDiscretized(AXIS_DIRECTION direction) {
 		super(direction);
@@ -45,8 +45,8 @@ public class AxisDiscretized<T> extends Axis<T> implements HasStroke {
 		context.setLineWidth(borderWidth/2);
 		context.setFillStyle(borderColor);
 		context.setFont("8pt " + borderColor);
-		int stepSize = 10;
-		int textLoc = 20;
+		double stepSize = 10;
+		double textLoc = 20;
 		if(isInverted()) context.scale(1.0, -1.0);
 		for(int i = 0; i <= split; ++i) {
 			context.beginPath();
@@ -96,20 +96,20 @@ public class AxisDiscretized<T> extends Axis<T> implements HasStroke {
 		drawStep(context, progress);
 	}
 
-	public int getWidth() {
+	public double getWidth() {
 		return width;
 	}
 
-	public AxisDiscretized<T> setWidth(int width) {
+	public AxisDiscretized<T> setWidth(double width) {
 		this.width = width;
 		return this;
 	}
 
-	public int getHeight() {
+	public double getHeight() {
 		return height;
 	}
 
-	public AxisDiscretized<T> setHeight(int height) {
+	public AxisDiscretized<T> setHeight(double height) {
 		this.height = height;
 		return this;
 	}
