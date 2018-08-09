@@ -3,7 +3,6 @@ package net.sayaya.ui.widget;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.DOM;
@@ -14,7 +13,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.sayaya.ui.style.StyleDialogBox;
-import net.sayaya.ui.widget.Button;
 
 public class DialogBox extends com.google.gwt.user.client.ui.DialogBox {
 	private final static Set<DialogBox> INSTANCES = new HashSet<>();
