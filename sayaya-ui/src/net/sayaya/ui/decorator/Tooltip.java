@@ -14,10 +14,7 @@ import net.sayaya.ui.style.StyleTooltip;
 import net.sayaya.ui.widget.Label;
 
 public class Tooltip {
-	public static enum TooltipPos {
-		AUTO, TOP, BOTTOM
-	}
-	public static <T extends IsWidget> T decorate(T widget, String tooltip, TooltipPos pos) {
+	public static <T extends IsWidget> T decorate(T widget, String tooltip) {
 		Label label = new Label().setValue(tooltip);
 		style(label);
 		label.getElement().getStyle().setZIndex(Integer.MAX_VALUE);
@@ -28,13 +25,7 @@ public class Tooltip {
 			int ch = Window.getClientHeight();
 			int cw = Window.getClientWidth();
 			int deltaY = 0;
-			if(pos == TooltipPos.TOP) {
-				deltaY = -25;
-				label.addStyleName(StyleTooltip.GSS.fadein2());
-			} else if(pos == TooltipPos.BOTTOM) {
-				deltaY = widget.asWidget().getOffsetHeight()+5;
-				label.addStyleName(StyleTooltip.GSS.fadein1());
-			} else if(top > ch/2) {
+			if(top < ch/2) {
 				deltaY = -25;
 				label.addStyleName(StyleTooltip.GSS.fadein2());
 			} else {
@@ -47,10 +38,10 @@ public class Tooltip {
 				int left = widget.asWidget().getElement().getAbsoluteLeft();
 				int ww = widget.asWidget().getElement().getOffsetWidth();
 				int lw = label.getElement().getOffsetWidth();
-				double pos2 = left+(ww-lw)/2.0;
-				if(pos2+lw > cw) pos2 = cw-lw-5;
-				else if(pos2 < 5) pos2 = 5;
-				label.getElement().getStyle().setLeft(pos2, Unit.PX);
+				double pos = left+(ww-lw)/2.0;
+				if(pos+lw > cw) pos = cw-lw-5;
+				else if(pos < 5) pos = 5;
+				label.getElement().getStyle().setLeft(pos, Unit.PX);
 			});
 		}, MouseOverEvent.getType());
 		
@@ -61,9 +52,6 @@ public class Tooltip {
 			RootPanel.get().remove(label);
 		});
 		return widget;
-	}
-	public static <T extends IsWidget> T decorate(T widget, String tooltip) {
-		return decorate(widget, tooltip, TooltipPos.AUTO);
 	}
 	
 	private static void style(Widget w) {

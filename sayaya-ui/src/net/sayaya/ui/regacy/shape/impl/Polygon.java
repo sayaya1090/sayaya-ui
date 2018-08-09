@@ -34,10 +34,10 @@ public class Polygon extends ShapeInstance<Polygon> implements HasColor, HasStro
 	private double borderWidth = 1;
 	private String borderColor;
 	private double alpha = 1.0;
-	public Polygon(Double[]... points) {
+	public Polygon(Integer[]... points) {
 		this(toPoints(points));
 	}
-	private final static Point[] toPoints(Double[]...points) {
+	private final static Point[] toPoints(Integer[]...points) {
 		Point[] points2 = new Point[points.length];
 		for(int i = 0; i < points.length; ++i) points2[i] = new Point().setX(points[i][0]).setY(points[i][1]);
 		return points2;

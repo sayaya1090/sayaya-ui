@@ -12,8 +12,8 @@ import com.google.gwt.event.shared.GwtEvent;
 public interface Shape extends HasMouseOverHandlers, HasMouseOutHandlers, HasMouseDownHandlers {
 	boolean checkIn(double x, double y);
 	void draw(Context2d context, double progress);
-	double getX();
-	double getY();
+	int getX();
+	int getY();
 	double getRotate();
 	
 	void fireOver(MouseOverEvent event);

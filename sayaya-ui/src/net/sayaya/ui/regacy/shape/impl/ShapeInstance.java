@@ -18,25 +18,25 @@ public abstract class ShapeInstance<S extends ShapeInstance<S>> implements Shape
 	private final HashSet<MouseOverHandler> overHandlers = new HashSet<>();
 	private final HashSet<MouseOutHandler> outHandlers = new HashSet<>();
 	private final HashSet<MouseDownHandler> downHandlers = new HashSet<>();
-	private Point<Double, Double> position = new Point<>();
+	private Point<Integer, Integer> position = new Point<Integer, Integer>();
 	private double rotate;
 	@Override
-	public final double getX() {
+	public final int getX() {
 		return position.getX();
 	}
 	@Override
-	public final double getY() {
+	public final int getY() {
 		return position.getY();
 	}
 	@Override
 	public final double getRotate() {
 		return rotate;
 	}
-	public final S setX(double x) {
+	public final S setX(int x) {
 		position.setX(x);
 		return (S)this;
 	}
-	public final S setY(double y) {
+	public final S setY(int y) {
 		position.setY(y);
 		return (S)this;
 	}

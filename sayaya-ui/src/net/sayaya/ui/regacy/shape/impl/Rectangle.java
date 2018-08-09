@@ -6,23 +6,23 @@ import net.sayaya.ui.regacy.shape.HasColor;
 import net.sayaya.ui.regacy.shape.HasStroke;
 
 public class Rectangle extends ShapeInstance<Rectangle> implements HasColor, HasStroke {
-	private double width;
-	private double height;
+	private int width;
+	private int height;
 	private String color;
 	private String borderColor;
 	private double borderWidth = 1;
 	private double alpha = 1.0;
-	public Rectangle(double width, double height) {
+	public Rectangle(int width, int height) {
 		setWidth(width);
 		setHeight(height);
 	}
 
 	@Override
 	public boolean checkIn(double x, double y) {
-		double lx = 0;
-		double rx = width;
-		double ty = 0;
-		double by = height;
+		int lx = 0;
+		int rx = width;
+		int ty = 0;
+		int by = height;
 		
 		if(lx > x || rx < x) return false;
 		if(ty > y || by < y) return false;
@@ -43,20 +43,20 @@ public class Rectangle extends ShapeInstance<Rectangle> implements HasColor, Has
 		}
 	}
 
-	public double getWidth() {
+	public int getWidth() {
 		return width;
 	}
 
-	public Rectangle setWidth(double width) {
+	public Rectangle setWidth(int width) {
 		this.width = width;
 		return this;
 	}
 
-	public double getHeight() {
+	public int getHeight() {
 		return height;
 	}
 
-	public Rectangle setHeight(double height) {
+	public Rectangle setHeight(int height) {
 		this.height = height;
 		return this;
 	}

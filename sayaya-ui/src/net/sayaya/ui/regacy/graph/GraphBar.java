@@ -18,8 +18,8 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 	private final AxisContinuous<N> axisY;
 	private String borderColor;
 	private double borderWidth = 1;
-	private double betweenMargin = 20;
-	private double withinMargin = 5;
+	private int betweenMargin = 20;
+	private int withinMargin = 5;
 	private HashMap<C, Map<Integer, RectangleAnimated>> shapes = new HashMap<C, Map<Integer, RectangleAnimated>>();
 	
 	public GraphBar(int width, int height, AxisDiscretized<C> axisX, AxisContinuous<N> axisY) {
@@ -31,16 +31,16 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 	public GraphBar<C, N> setValueAt(int idx, C category, N value) {
 		getValue()[idx].put(category, value);
 		double y = axisY.parse(value);
-		double height = axisY.getY() - y;
+		int height = (int)(axisY.getY() - y);
 		if(!shapes.containsKey(category) || !shapes.get(category).containsKey(idx)) {
-			double bw = getBarWidth();
+			int bw = (int)getBarWidth();
 			Agenda agenda = getAgenda()[idx];
 			double delta = betweenMargin/2.0 + idx*(bw + withinMargin);
-			double x = axisX.parse(category) + delta;
+			int x = (int) (axisX.parse(category) + delta);
 			RectangleAnimated shape = (RectangleAnimated) createBar(bw, height, agenda)
 				.setWidthNext(bw).setHeightNext(height)
-				.setPointNext(new Point<Double, Double> (x+bw, y + height)).setRotateNext(Math.PI)
-				.setX(x+bw).setY(y + height)
+				.setPointNext(new Point<Integer, Integer> (x+bw, (int)y + height)).setRotateNext(Math.PI)
+				.setX(x+bw).setY((int)y + height)
 				.setRotate(Math.PI)
 				.setColor(agenda.getColor())
 				.setBorderWidth(borderWidth).setBorderColor(borderColor)
@@ -60,7 +60,7 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 	protected void setShapes() {
 		shapes.clear();
 		Map<C, N>[] values = getValue();
-		double bw = getBarWidth();
+		int bw = (int)getBarWidth();
 
 		for(int i = 0; i < values.length; ++i) {
 			Map<C, N> item = values[i];
@@ -69,13 +69,13 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 			for(Entry<C, N> entry: item.entrySet()) {
 				C category = entry.getKey();
 				N value = entry.getValue();
-				double x = axisX.parse(category) + delta;
+				int x = (int) (axisX.parse(category) + delta);
 				double y = axisY.parse(value);
-				double height = axisY.getY() - y;
+				int height = (int)(axisY.getY() - y);
 				RectangleAnimated shape = (RectangleAnimated) createBar(bw, height, agenda)
 					.setWidthNext(bw).setHeightNext(height)
-					.setPointNext(new Point<Double, Double> (x+bw, y + height)).setRotateNext(Math.PI)
-					.setX(x+bw).setY(y + height)
+					.setPointNext(new Point<Integer, Integer> (x+bw, (int)y + height)).setRotateNext(Math.PI)
+					.setX(x+bw).setY((int)y + height)
 					.setRotate(Math.PI)
 					.setColor(agenda.getColor())
 					.setBorderWidth(borderWidth).setBorderColor(borderColor)
@@ -87,7 +87,7 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 		}
 		add(axisX).add(axisY);
 	}
-	protected RectangleAnimated createBar(double width, double height, Agenda agenda) {
+	protected RectangleAnimated createBar(int width, int height, Agenda agenda) {
 		return new RectangleAnimated(width, 0);
 	}
 	public AxisDiscretized<C> getAxisX() {
@@ -96,17 +96,17 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 	public AxisContinuous<N> getAxisY() {
 		return axisY;
 	}
-	public double getBetweenMargin() {
+	public int getBetweenMargin() {
 		return betweenMargin;
 	}
-	public GraphBar<C, N> setBetweenMargin(double betweenMargin) {
+	public GraphBar<C, N> setBetweenMargin(int betweenMargin) {
 		this.betweenMargin = betweenMargin;
 		return this;
 	}
-	public double getWithinMargin() {
+	public int getWithinMargin() {
 		return withinMargin;
 	}
-	public GraphBar<C, N> setWithinMargin(double withinMargin) {
+	public GraphBar<C, N> setWithinMargin(int withinMargin) {
 		this.withinMargin = withinMargin;
 		return this;
 	}
@@ -132,19 +132,22 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 	
 	@SuppressWarnings("unused")
 	private final static class RectangleAnimated extends Rectangle {
-		private Point<Double, Double> pointNext = new Point<Double, Double>(0.0, 0.0);
+		private Point<Integer, Integer> pointNext = new Point<Integer, Integer>(0, 0);
 		private double rotateNext = 0;
-		private double widthNext = 0;
-		private double heightNext = 0;
-		private Point<Double, Double> pointPrev = new Point<Double, Double>(0.0, 0.0);
+		private int widthNext = 0;
+		private int heightNext = 0;
+		private Point<Integer, Integer> pointPrev = new Point<Integer, Integer>(0, 0);
 		private double rotatePrev = 0;
-		private double widthPrev = 0;
-		private double heightPrev = 0;
-		public RectangleAnimated(double width, double height) {
+		private int widthPrev = 0;
+		private int heightPrev = 0;
+		public RectangleAnimated(int width, int height) {
 			super(width, height);
 		}
 		public static double getNext(double prev, double next, double progress) {
 			return prev + progress*(next-prev);
+		}
+		public static int getNext(int prev, int next, double progress) {
+			return prev + (int)(progress*(next-prev));
 		}
 		@Override
 		public void draw(Context2d context, double progress) {
@@ -156,11 +159,11 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 				heightPrev = getHeight();
 			}
 			
-			double x = getNext(pointPrev.getX(), pointNext.getX(), progress);
-			double y = getNext(pointPrev.getY(), pointNext.getY(), progress);
+			int x = getNext(pointPrev.getX(), pointNext.getX(), progress);
+			int y = getNext(pointPrev.getY(), pointNext.getY(), progress);
 			double rotate = getNext(rotatePrev, rotateNext, progress);
-			double width = getNext(widthPrev, widthNext, progress);
-			double height = getNext(heightPrev, heightNext, progress);
+			int width = getNext(widthPrev, widthNext, progress);
+			int height = getNext(heightPrev, heightNext, progress);
 
 			String color = getColor();
 			String borderColor = getBorderColor();
@@ -180,11 +183,11 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 			setHeight(height);
 		}
 
-		public Point<Double, Double> getPointNext() {
+		public Point<Integer, Integer> getPointNext() {
 			return pointNext;
 		}
 
-		public RectangleAnimated setPointNext(Point<Double, Double> pointNext) {
+		public RectangleAnimated setPointNext(Point<Integer, Integer> pointNext) {
 			this.pointNext = pointNext;
 			return this;
 		}
@@ -202,7 +205,7 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 			return widthNext;
 		}
 
-		public RectangleAnimated setWidthNext(double widthNext) {
+		public RectangleAnimated setWidthNext(int widthNext) {
 			this.widthNext = widthNext;
 			return this;
 		}
@@ -211,16 +214,16 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 			return heightNext;
 		}
 
-		public RectangleAnimated setHeightNext(double heightNext) {
+		public RectangleAnimated setHeightNext(int heightNext) {
 			this.heightNext = heightNext;
 			return this;
 		}
 
-		public Point<Double, Double> getPointPrev() {
+		public Point<Integer, Integer> getPointPrev() {
 			return pointPrev;
 		}
 
-		public RectangleAnimated setPointPrev(Point<Double, Double> pointPrev) {
+		public RectangleAnimated setPointPrev(Point<Integer, Integer> pointPrev) {
 			this.pointPrev = pointPrev;
 			return this;
 		}
@@ -238,7 +241,7 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 			return widthPrev;
 		}
 
-		public RectangleAnimated setWidthPrev(double widthPrev) {
+		public RectangleAnimated setWidthPrev(int widthPrev) {
 			this.widthPrev = widthPrev;
 			return this;
 		}
@@ -247,7 +250,7 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 			return heightPrev;
 		}
 
-		public RectangleAnimated setHeightPrev(double heightPrev) {
+		public RectangleAnimated setHeightPrev(int heightPrev) {
 			this.heightPrev = heightPrev;
 			return this;
 		}
