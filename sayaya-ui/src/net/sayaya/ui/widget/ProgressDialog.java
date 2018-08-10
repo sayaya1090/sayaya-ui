@@ -39,7 +39,6 @@ public class ProgressDialog<T> extends DialogBox implements Callback<T> {
 		setStyleGauge(gauge.getElement().getStyle());
 		gauge.getLabel().setFont("Noto Sans KR").setColor(Palette.getInstance().getColorText1()).setSize(10);
 		gauge.getBar().setColor(Palette.getInstance().getColorDevider());
-		add(vp);
 		gauge.paint();
 		vp.getElement().getStyle().setPadding(5, Unit.PX);
 		setText("Save");
