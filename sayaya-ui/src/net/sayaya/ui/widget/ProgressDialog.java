@@ -8,7 +8,6 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -25,10 +24,14 @@ public class ProgressDialog<T> extends DialogBox implements Callback<T> {
 	private final Callback<T[]> callback;
 
 	public ProgressDialog(String title, int max, Callback<T[]> callback) {
+		this(title, new VerticalPanel(), max, callback);
+	}
+	
+	private ProgressDialog(String title, VerticalPanel vp, int max, Callback<T[]> callback) {
+		super(title, vp);
 		msg.setText(title);
 		this.max = max;
 		this.callback = callback;
-		VerticalPanel vp = new VerticalPanel();
 		gauge = new Gauge<Integer>(300, 15).setMin(0).setMax(max).setValue(0);
 		vp.add(msg);
 		vp.add(gauge);

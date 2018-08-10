@@ -87,7 +87,7 @@ public class Canvas extends Composite implements Focusable {
 		Context2d context = canvas.getContext2d();
 		
 		context.save();
-	//	context.translate(0.5, 0.5);
+		context.translate(0.5, 0.5);
 		shapes.forEach(shape->{
 			context.save();
 			context.translate(shape.getX(), shape.getY());
