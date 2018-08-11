@@ -4,13 +4,13 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.google.gwt.canvas.dom.client.Context2d.TextBaseline;
 
+import net.sayaya.ui.data.Point;
 import net.sayaya.ui.handler.HasValue;
-import net.sayaya.ui.regacy.data.Point;
-import net.sayaya.ui.regacy.shape.Animation;
-import net.sayaya.ui.regacy.shape.Canvas;
-import net.sayaya.ui.regacy.shape.HasStroke;
 import net.sayaya.ui.regacy.shape.impl.Rectangle;
 import net.sayaya.ui.regacy.shape.impl.Text;
+import net.sayaya.ui.shape.Animation;
+import net.sayaya.ui.shape.Canvas;
+import net.sayaya.ui.shape.HasStroke;
 import net.sayaya.ui.style.color.Palette;
 
 public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasStroke {
@@ -251,7 +251,6 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

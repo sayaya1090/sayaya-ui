@@ -2,8 +2,8 @@ package net.sayaya.ui.regacy.shape.impl;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
-import net.sayaya.ui.regacy.data.Point;
-import net.sayaya.ui.regacy.shape.HasStroke;
+import net.sayaya.ui.data.Point;
+import net.sayaya.ui.shape.HasStroke;
 
 public class Line extends ShapeInstance<Line> implements HasStroke {
 	private final Double[] start;

@@ -1,4 +1,4 @@
-package net.sayaya.ui.regacy.graph;
+package net.sayaya.ui.graph;
 
 import net.sayaya.ui.regacy.shape.impl.ShapeInstance;
 
@@ -36,7 +36,7 @@ public abstract class Axis<T> extends ShapeInstance<Axis<T>> {
 		return direction;
 	}
 
-	public abstract double parse(T data);
+	public abstract double map(T data);
 	
 	public static enum AXIS_DIRECTION {
 		X_BOTTOM

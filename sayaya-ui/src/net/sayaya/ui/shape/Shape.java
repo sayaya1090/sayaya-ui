@@ -1,4 +1,4 @@
-package net.sayaya.ui.regacy.shape;
+package net.sayaya.ui.shape;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.HasMouseDownHandlers;

@@ -5,10 +5,10 @@ import java.util.List;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
+import net.sayaya.ui.data.Point;
 import net.sayaya.ui.handler.HasValue;
-import net.sayaya.ui.regacy.data.Point;
-import net.sayaya.ui.regacy.shape.HasStroke;
 import net.sayaya.ui.regacy.shape.impl.Fan;
+import net.sayaya.ui.shape.HasStroke;
 
 public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, HasStroke {
 	private double min, max;

@@ -1,10 +1,10 @@
-package net.sayaya.ui.regacy.graph;
+package net.sayaya.ui.graph;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.google.gwt.i18n.client.NumberFormat;
 
-import net.sayaya.ui.regacy.shape.HasStroke;
+import net.sayaya.ui.shape.HasStroke;
 
 public class AxisContinuous<T extends Number> extends Axis<T> implements HasStroke {
 	private T min, max;
@@ -114,7 +114,7 @@ public class AxisContinuous<T extends Number> extends Axis<T> implements HasStro
 	}
 
 	@Override
-	public double parse(T data) {
+	public double map(T data) {
 		double length = max.doubleValue() - min.doubleValue();
 		double scaleX = width / length;
 		double translate = -min.doubleValue();

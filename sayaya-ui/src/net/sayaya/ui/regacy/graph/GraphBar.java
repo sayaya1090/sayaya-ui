@@ -6,10 +6,12 @@ import java.util.Map.Entry;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
+import net.sayaya.ui.data.Point;
+import net.sayaya.ui.graph.AxisContinuous;
+import net.sayaya.ui.graph.AxisDiscretized;
 import net.sayaya.ui.handler.HasValue;
-import net.sayaya.ui.regacy.data.Point;
-import net.sayaya.ui.regacy.shape.HasStroke;
 import net.sayaya.ui.regacy.shape.impl.Rectangle;
+import net.sayaya.ui.shape.HasStroke;
 
 import java.util.TreeMap;
 
@@ -30,13 +32,13 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 	
 	public GraphBar<C, N> setValueAt(int idx, C category, N value) {
 		getValue()[idx].put(category, value);
-		double y = axisY.parse(value);
+		double y = axisY.map(value);
 		double height = axisY.getY() - y;
 		if(!shapes.containsKey(category) || !shapes.get(category).containsKey(idx)) {
 			double bw = getBarWidth();
 			Agenda agenda = getAgenda()[idx];
 			double delta = betweenMargin/2.0 + idx*(bw + withinMargin);
-			double x = axisX.parse(category) + delta;
+			double x = axisX.map(category) + delta;
 			RectangleAnimated shape = (RectangleAnimated) createBar(bw, height, agenda)
 				.setWidthNext(bw).setHeightNext(height)
 				.setPointNext(new Point<Double, Double> (x+bw, y + height)).setRotateNext(Math.PI)
@@ -69,8 +71,8 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 			for(Entry<C, N> entry: item.entrySet()) {
 				C category = entry.getKey();
 				N value = entry.getValue();
-				double x = axisX.parse(category) + delta;
-				double y = axisY.parse(value);
+				double x = axisX.map(category) + delta;
+				double y = axisY.map(value);
 				double height = axisY.getY() - y;
 				RectangleAnimated shape = (RectangleAnimated) createBar(bw, height, agenda)
 					.setWidthNext(bw).setHeightNext(height)

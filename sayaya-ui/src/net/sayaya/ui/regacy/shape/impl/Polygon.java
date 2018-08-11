@@ -2,8 +2,8 @@ package net.sayaya.ui.regacy.shape.impl;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
-import net.sayaya.ui.regacy.shape.HasColor;
-import net.sayaya.ui.regacy.shape.HasStroke;
+import net.sayaya.ui.shape.HasColor;
+import net.sayaya.ui.shape.HasStroke;
 
 public class Polygon extends ShapeInstance<Polygon> implements HasColor, HasStroke {
 	private final static class Point {

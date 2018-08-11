@@ -1,4 +1,4 @@
-package net.sayaya.ui.regacy.shape;
+package net.sayaya.ui.shape;
 
 public interface HasColor {
 	String getColor();

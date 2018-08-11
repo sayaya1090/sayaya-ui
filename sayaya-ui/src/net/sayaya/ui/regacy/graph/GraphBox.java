@@ -7,10 +7,12 @@ import java.util.TreeMap;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
+import net.sayaya.ui.data.Point;
+import net.sayaya.ui.graph.AxisContinuous;
+import net.sayaya.ui.graph.AxisDiscretized;
 import net.sayaya.ui.handler.HasValue;
-import net.sayaya.ui.regacy.data.Point;
-import net.sayaya.ui.regacy.shape.HasStroke;
 import net.sayaya.ui.regacy.shape.impl.ShapeInstance;
+import net.sayaya.ui.shape.HasStroke;
 
 public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.regacy.graph.GraphBox.Box<N>>> implements HasValue<Map<C, net.sayaya.ui.regacy.graph.GraphBox.Box<N>>[]>, HasStroke {
 	private final AxisDiscretized<C> axisX;
@@ -29,11 +31,11 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 	
 	public GraphBox<C, N> setValueAt(int idx, C category, Box<N> box) {
 		getValue()[idx].put(category, box);
-		double min = axisY.parse(box.getMin());
-		double q1 = axisY.parse(box.getQ1());
-		double med = axisY.parse(box.getMedian());
-		double q3 = axisY.parse(box.getQ3());
-		double max = axisY.parse(box.getMax());
+		double min = axisY.map(box.getMin());
+		double q1 = axisY.map(box.getQ1());
+		double med = axisY.map(box.getMedian());
+		double q3 = axisY.map(box.getQ3());
+		double max = axisY.map(box.getMax());
 
 		double minMap = axisY.getY() - min;
 		double q1Map = axisY.getY() - q1;
@@ -45,7 +47,7 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 			double bw = getBoxWidth();
 			Agenda agenda = getAgenda()[idx];
 			double delta = betweenMargin/2.0 + idx*(bw + withinMargin);
-			double x = axisX.parse(category) + delta;
+			double x = axisX.map(category) + delta;
 			Box<Double> initBox = new Box<Double>().setMin(medMap).setQ1(medMap).setMedian(medMap).setQ3(medMap).setMax(medMap);
 			BoxAnimated shape = (BoxAnimated) createBox(bw, initBox, agenda)
 			.setBoxNext(nextBox)
@@ -76,12 +78,12 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 			for(Entry<C, Box<N>> value: item.entrySet()) {
 				C category = value.getKey();
 				Box<N> box = value.getValue();
-				double x = axisX.parse(category) + delta;
-				double min = axisY.parse(box.getMin());
-				double q1 = axisY.parse(box.getQ1());
-				double med = axisY.parse(box.getMedian());
-				double q3 = axisY.parse(box.getQ3());
-				double max = axisY.parse(box.getMax());
+				double x = axisX.map(category) + delta;
+				double min = axisY.map(box.getMin());
+				double q1 = axisY.map(box.getQ1());
+				double med = axisY.map(box.getMedian());
+				double q3 = axisY.map(box.getQ3());
+				double max = axisY.map(box.getMax());
 				
 				double minMap = axisY.getY() - min;
 				double q1Map = axisY.getY() - q1;

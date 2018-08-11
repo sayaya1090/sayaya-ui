@@ -10,8 +10,8 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 
-import net.sayaya.ui.regacy.data.Point;
-import net.sayaya.ui.regacy.shape.Shape;
+import net.sayaya.ui.data.Point;
+import net.sayaya.ui.shape.Shape;
 
 @SuppressWarnings("unchecked")
 public abstract class ShapeInstance<S extends ShapeInstance<S>> implements Shape {

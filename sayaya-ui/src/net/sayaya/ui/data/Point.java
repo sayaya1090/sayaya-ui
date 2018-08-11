@@ -1,4 +1,4 @@
-package net.sayaya.ui.regacy.data;
+package net.sayaya.ui.data;
 
 public final class Point<X, Y> {
 	private X x;

@@ -1,11 +1,11 @@
-package net.sayaya.ui.regacy.graph;
+package net.sayaya.ui.graph;
 
 import java.util.HashMap;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 
-import net.sayaya.ui.regacy.shape.HasStroke;
+import net.sayaya.ui.shape.HasStroke;
 
 @SuppressWarnings("unchecked")
 public class AxisDiscretized<T> extends Axis<T> implements HasStroke {
@@ -67,7 +67,7 @@ public class AxisDiscretized<T> extends Axis<T> implements HasStroke {
 		context.restore();
 	}
 	@Override
-	public double parse(T variable) {
+	public double map(T variable) {
 		int i = map.get(variable);
 		if(i < 0) return -1;
 		
