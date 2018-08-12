@@ -7,8 +7,10 @@ import java.util.Map.Entry;
 import com.google.gwt.canvas.dom.client.Context2d;
 
 import net.sayaya.ui.data.Point;
+import net.sayaya.ui.graph.Agenda;
 import net.sayaya.ui.graph.AxisContinuous;
 import net.sayaya.ui.graph.AxisDiscretized;
+import net.sayaya.ui.graph.Graph;
 import net.sayaya.ui.handler.HasValue;
 import net.sayaya.ui.regacy.shape.impl.Rectangle;
 import net.sayaya.ui.shape.HasStroke;
@@ -75,13 +77,12 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 				double y = axisY.map(value);
 				double height = axisY.getY() - y;
 				RectangleAnimated shape = (RectangleAnimated) createBar(bw, height, agenda)
-					.setWidthNext(bw).setHeightNext(height)
-					.setPointNext(new Point<Double, Double> (x+bw, y + height)).setRotateNext(Math.PI)
-					.setX(x+bw).setY(y + height)
-					.setRotate(Math.PI)
-					.setColor(agenda.getColor())
-					.setBorderWidth(borderWidth).setBorderColor(borderColor)
-				;
+				.setWidthNext(bw).setHeightNext(height)
+				.setPointNext(new Point<Double, Double> (x+bw, y + height)).setRotateNext(Math.PI)
+				.setX(x+bw).setY(y + height)
+				.setRotate(Math.PI)
+				.setColor(agenda.getColor())
+				.setBorderWidth(borderWidth).setBorderColor(borderColor);
 				add(shape);
 				if(!shapes.containsKey(category)) shapes.put(category, new TreeMap<Integer, RectangleAnimated>());
 				shapes.get(category).put(i, shape);

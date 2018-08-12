@@ -10,7 +10,7 @@ public class Animation extends com.google.gwt.animation.client.Animation {
 	
 	@Override
 	protected void onUpdate(double progress) {
-		canvas.cleard();
+		canvas.clear();
 		canvas.paint(progress);
 	}
 }

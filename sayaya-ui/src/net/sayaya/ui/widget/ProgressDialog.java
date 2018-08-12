@@ -11,8 +11,8 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import net.sayaya.ui.graph.Gauge;
 import net.sayaya.ui.handler.Callback;
-import net.sayaya.ui.regacy.graph.Gauge;
 import net.sayaya.ui.style.color.Palette;
 
 public class ProgressDialog<T> extends DialogBox implements Callback<T> {

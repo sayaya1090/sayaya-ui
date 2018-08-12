@@ -69,13 +69,13 @@ public class Canvas extends Composite implements Focusable {
 		return canvas.getCanvasElement().getHeight();
 	}
 	
-	public Canvas cleard() {
+	public Canvas clear() {
 		getContext().clearRect(0, 0, canvas.getCanvasElement().getWidth(), canvas.getCanvasElement().getHeight());
 		return this;
 	}
 	
 	public void paint() {
-		cleard();
+		clear();
 		paint(1.0);
 	}
 	public Context2d getContext() {

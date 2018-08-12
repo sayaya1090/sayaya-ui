@@ -6,6 +6,8 @@ import java.util.List;
 import com.google.gwt.canvas.dom.client.Context2d;
 
 import net.sayaya.ui.data.Point;
+import net.sayaya.ui.graph.Agenda;
+import net.sayaya.ui.graph.Graph;
 import net.sayaya.ui.handler.HasValue;
 import net.sayaya.ui.regacy.shape.impl.Fan;
 import net.sayaya.ui.shape.HasStroke;

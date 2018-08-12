@@ -1,4 +1,4 @@
-package net.sayaya.ui.regacy.graph;
+package net.sayaya.ui.graph;
 
 import net.sayaya.ui.handler.HasValue;
 import net.sayaya.ui.shape.Animation;
@@ -45,9 +45,6 @@ public abstract class Graph<D> extends Canvas implements HasValue<D[]>{
 			setShapes();
 			initialized = true;
 		}
-		paintDelegate(progress);
-	}
-	protected void paintDelegate(double progress) {
 		super.paint(progress);
 	}
 	public void update(int duration) {
