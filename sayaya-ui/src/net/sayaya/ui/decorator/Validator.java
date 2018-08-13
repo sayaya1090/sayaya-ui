@@ -63,7 +63,7 @@ public class Validator {
 
 		@Override
 		public TextBoxDecoratorValidator<T> setValue(T value) {
-			validator.validate(value, label);
+			isValid = validator.validate(value, label);
 			widget.setValue(value);
 			return this;
 		}
