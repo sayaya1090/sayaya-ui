@@ -35,7 +35,11 @@ public class Validator {
 			widget.asWidget().getElement().getStyle().setFontSize(fontSize, Unit.PX);
 			style(this);
 			widget.asWidget().addDomHandler(evt->{
-				isValid = validator.validate(widget.getValue(), label);
+				try {
+					isValid = validator.validate(widget.getValue(), label);
+				} catch(Exception e) {
+					isValid = false;
+				}
 			}, ChangeEvent.getType());
 			validator.validate(widget.getValue(), label);
 		}
