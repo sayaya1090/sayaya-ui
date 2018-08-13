@@ -15,7 +15,7 @@ import net.sayaya.ui.widget.InputBase;
 public class Validator {
 	@FunctionalInterface
 	public static interface Validation<T> {
-		void validate(T value, Label logger) throws RuntimeException;
+		boolean validate(T value, Label logger) throws RuntimeException;
 	}
 	public static <T> TextBoxDecoratorValidator<T> decorate(InputBase<T, ?> widget, double fontSize, Validation<T> validator) {
 		return new TextBoxDecoratorValidator<T>(widget, fontSize, validator);
@@ -25,6 +25,7 @@ public class Validator {
 		private final Validation<T> validator;
 		private final InputBase<T, ?> widget;
 		private final Label label = new Label();
+		private boolean isValid = false;
 		private TextBoxDecoratorValidator(InputBase<T, ?> w, double fontSize, Validation<T> validator) {
 			initWidget(layout);
 			widget = w;
@@ -34,7 +35,7 @@ public class Validator {
 			widget.asWidget().getElement().getStyle().setFontSize(fontSize, Unit.PX);
 			style(this);
 			widget.asWidget().addDomHandler(evt->{
-				validator.validate(widget.getValue(), label);
+				isValid = validator.validate(widget.getValue(), label);
 			}, ChangeEvent.getType());
 			validator.validate(widget.getValue(), label);
 		}
@@ -87,6 +88,10 @@ public class Validator {
 		@Override
 		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
 			return widget.addValueChangeHandler(handler);
+		}
+		
+		public boolean isValid() {
+			return isValid;
 		}
 	}
 }
