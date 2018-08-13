@@ -41,7 +41,7 @@ public class Validator {
 					isValid = false;
 				}
 			}, ChangeEvent.getType());
-			validator.validate(widget.getValue(), label);
+			isValid = validator.validate(widget.getValue(), label);
 		}
 		
 		private final void layout() {
