@@ -10,6 +10,9 @@ public class Line extends ShapeInstance<Line> implements HasStroke {
 	private final Double[] end;
 	private String color;
 	private double borderWidth;
+	public Line() {
+		this(new Double[] {0.0, 0.0}, new Double[] {0.0, 0.0});
+	}
 	public Line(Double[] start, Double[] end) {
 		this.start = start;
 		this.end = end;
@@ -47,6 +50,16 @@ public class Line extends ShapeInstance<Line> implements HasStroke {
 	@Override
 	public Line setBorderWidth(double width) {
 		this.borderWidth = width;
+		return this;
+	}
+	public Line setStart(double x, double y) {
+		this.start[0] = x;
+		this.start[1] = y;
+		return this;
+	}
+	public Line setEnd(double x, double y) {
+		this.end[0] = x;
+		this.end[1] = y;
 		return this;
 	}
 }

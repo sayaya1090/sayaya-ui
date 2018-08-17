@@ -10,6 +10,7 @@ import net.sayaya.ui.graph.Agenda;
 import net.sayaya.ui.graph.Graph;
 import net.sayaya.ui.handler.HasValue;
 import net.sayaya.ui.regacy.shape.impl.Fan;
+import net.sayaya.ui.regacy.shape.impl.ShapeInstance;
 import net.sayaya.ui.shape.HasStroke;
 
 public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, HasStroke {
@@ -47,7 +48,7 @@ public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, Ha
 		return this;
 	}
 	
-	public FanAnimated getShapeAt(int idx) {
+	protected ShapeInstance<Fan> getShapeAt(int idx) {
 		return shapes.get(idx);
 	}
 
