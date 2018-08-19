@@ -73,7 +73,7 @@ public class AxisDiscretized<T> extends Axis<T> implements HasStroke {
 		
 		int split = variables.length;
 		double step = width / (double)split;
-		return step*i + getX();
+		return step*i + getX() + step/2;
 	}
 
 	public double getWidth(T variable) {

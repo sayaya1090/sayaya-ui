@@ -152,7 +152,7 @@ public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, Ha
 	}
 	
 	@SuppressWarnings("unused")
-	private final static class FanAnimated extends Fan {
+	public final static class FanAnimated extends Fan {
 		private Point<Double, Double> pointNext = new Point<Double, Double>(0.0, 0.0);
 		private double rotateNext = 0;
 		

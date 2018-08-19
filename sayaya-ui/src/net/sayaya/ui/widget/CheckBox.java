@@ -79,8 +79,10 @@ public class CheckBox extends Composite implements InputBase<Boolean, CheckBox> 
 			if(immediate) uncheck.run(0);
 			else uncheck.run(0);
 		}
+		boolean oldValue = this.value;
 		this.value = value;
 		getElement().setAttribute("value", String.valueOf(value));
+		ValueChangeEvent.fireIfNotEqual(this, oldValue, value);
 		return this;
 	}
 
