@@ -5,15 +5,18 @@ import java.util.List;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
+import net.sayaya.ui.data.Point;
+import net.sayaya.ui.graph.Agenda;
+import net.sayaya.ui.graph.Graph;
 import net.sayaya.ui.handler.HasValue;
-import net.sayaya.ui.regacy.data.Point;
-import net.sayaya.ui.regacy.shape.HasStroke;
 import net.sayaya.ui.regacy.shape.impl.Fan;
+import net.sayaya.ui.regacy.shape.impl.ShapeInstance;
+import net.sayaya.ui.shape.HasStroke;
 
 public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, HasStroke {
 	private double min, max;
-	private int radiusOuter=20;
-	private int radiusInner=0;
+	private double radiusOuter=20;
+	private double radiusInner=0;
 	private String backgroundColor;
 	private String borderColor;
 	private double borderWidth = 1;
@@ -45,7 +48,7 @@ public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, Ha
 		return this;
 	}
 	
-	public FanAnimated getShapeAt(int idx) {
+	protected ShapeInstance<Fan> getShapeAt(int idx) {
 		return shapes.get(idx);
 	}
 
@@ -55,8 +58,8 @@ public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, Ha
 		super.getShapes().clear();
 		double length = max - min;
 		Double[] values = getValue();
-		int centerX = getWidth() / 2;
-		int centerY = getHeight() / 2;
+		double centerX = getWidth() / 2.0;
+		double centerY = getHeight() / 2.0;
 		Fan circle = new Fan(0, Math.PI*2, getRadiusInner(), getRadiusOuter()).setX(centerX).setY(centerY)
 			.setColor(backgroundColor).setBorderColor(borderColor).setBorderWidth(borderWidth).setRotate(-Math.PI/2);
 		add(circle);
@@ -68,7 +71,7 @@ public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, Ha
 			FanAnimated shape = (FanAnimated)createFan(0, end, radiusInner, radiusOuter, i, agenda.getName())
 				.setStartNext(0).setEndNext(end).setRadiusInnerNext(radiusInner)
 				.setRadiusOutNext(radiusOuter)
-				.setPointNext(new Point<Integer, Integer>().setX(centerX).setY(centerY))
+				.setPointNext(new Point<Double, Double>().setX(centerX).setY(centerY))
 				.setX(centerX).setY(centerY)
 				.setBorderColor(borderColor).setBorderWidth(borderWidth).setColor(agenda.getColor())
 			;
@@ -106,20 +109,20 @@ public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, Ha
 	protected final double getMax() {
 		return max;
 	}
-	public final int getRadiusOuter() {
+	public final double getRadiusOuter() {
 		return radiusOuter;
 	}
 
-	public final GraphCircle setRadiusOuter(int radiusOuter) {
+	public final GraphCircle setRadiusOuter(double radiusOuter) {
 		this.radiusOuter = radiusOuter;
 		return this;
 	}
 
-	public final int getRadiusInner() {
+	public final double getRadiusInner() {
 		return radiusInner;
 	}
 
-	public final GraphCircle setRadiusInner(int radiusInner) {
+	public final GraphCircle setRadiusInner(double radiusInner) {
 		this.radiusInner = radiusInner;
 		return this;
 	}
@@ -149,8 +152,8 @@ public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, Ha
 	}
 	
 	@SuppressWarnings("unused")
-	private final static class FanAnimated extends Fan {
-		private Point<Integer, Integer> pointNext = new Point<Integer, Integer>(0, 0);
+	public final static class FanAnimated extends Fan {
+		private Point<Double, Double> pointNext = new Point<Double, Double>(0.0, 0.0);
 		private double rotateNext = 0;
 		
 		private double startNext = 0;
@@ -158,7 +161,7 @@ public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, Ha
 		private double radiusInnerNext = 0;
 		private double radiusOutNext = 0;
 		
-		private Point<Integer, Integer> pointPrev = new Point<Integer, Integer>(0, 0);
+		private Point<Double, Double> pointPrev = new Point<Double, Double>(0.0, 0.0);
 		private double rotatePrev = 0;
 		
 		private double startPrev = 0;
@@ -167,9 +170,6 @@ public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, Ha
 		private double radiusOuterPrev = 0;
 		public static double getNext(double prev, double next, double progress) {
 			return prev + progress*(next-prev);
-		}
-		public static int getNext(int prev, int next, double progress) {
-			return prev + (int)(progress*(next-prev));
 		}
 		public FanAnimated(double radius) {
 			this(0, Math.PI*2, radius);
@@ -191,8 +191,8 @@ public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, Ha
 				radiusInnerPrev = getRadiusInner();
 				radiusOuterPrev = getRadiusOut();
 			}
-			int x = getNext(pointPrev.getX(), pointNext.getX(), progress);
-			int y = getNext(pointPrev.getY(), pointNext.getY(), progress);
+			double x = getNext(pointPrev.getX(), pointNext.getX(), progress);
+			double y = getNext(pointPrev.getY(), pointNext.getY(), progress);
 			double rotate = getNext(rotatePrev, rotateNext, progress);
 			double radiusInner = getNext(radiusInnerPrev, radiusInnerNext, progress);
 			double radiusOut = getNext(radiusOuterPrev, radiusOutNext, progress);
@@ -222,10 +222,10 @@ public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, Ha
 			setRadiusInner(radiusInner);
 			setRadiusOut(radiusOut);
 		}
-		public Point<Integer, Integer> getPointNext() {
+		public Point<Double, Double> getPointNext() {
 			return pointNext;
 		}
-		public FanAnimated setPointNext(Point<Integer, Integer> next) {
+		public FanAnimated setPointNext(Point<Double, Double> next) {
 			this.pointNext = next;
 			return this;
 		}
@@ -264,10 +264,10 @@ public class GraphCircle extends Graph<Double> implements HasValue<Double[]>, Ha
 			this.radiusOutNext = radiusOutNext;
 			return this;
 		}
-		public Point<Integer, Integer> getPointPrev() {
+		public Point<Double, Double> getPointPrev() {
 			return pointPrev;
 		}
-		public FanAnimated setPointPrev(Point<Integer, Integer> prev) {
+		public FanAnimated setPointPrev(Point<Double, Double> prev) {
 			this.pointPrev = prev;
 			return this;
 		}

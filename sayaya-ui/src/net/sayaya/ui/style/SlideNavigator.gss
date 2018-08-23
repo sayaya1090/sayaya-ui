@@ -39,7 +39,7 @@
 
 .item {
 	color: #FFFFFF;
-	padding-left: 1em;
+	padding-left: 10px;
 	line-height: 40px;
 	cursor: Pointer;
 	border: 1px solid transparent;
@@ -57,10 +57,6 @@
 
 .item-selected .item-icon {
 	font-weight: bold;
-}
-
-.item-selected-close {
-	box-shadow: 0 2px 6px rgba(0,0,0,0.16);
 }
 
 .item-icon {

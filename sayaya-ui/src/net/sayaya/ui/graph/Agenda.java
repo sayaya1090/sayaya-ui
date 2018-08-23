@@ -1,4 +1,4 @@
-package net.sayaya.ui.regacy.graph;
+package net.sayaya.ui.graph;
 
 public final class Agenda {
 	private String name;

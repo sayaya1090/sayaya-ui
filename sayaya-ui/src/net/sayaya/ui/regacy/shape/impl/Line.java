@@ -2,22 +2,25 @@ package net.sayaya.ui.regacy.shape.impl;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
-import net.sayaya.ui.regacy.data.Point;
-import net.sayaya.ui.regacy.shape.HasStroke;
+import net.sayaya.ui.data.Point;
+import net.sayaya.ui.shape.HasStroke;
 
 public class Line extends ShapeInstance<Line> implements HasStroke {
-	private final Integer[] start;
-	private final Integer[] end;
+	private final Double[] start;
+	private final Double[] end;
 	private String color;
 	private double borderWidth;
-	public Line(Integer[] start, Integer[] end) {
+	public Line() {
+		this(new Double[] {0.0, 0.0}, new Double[] {0.0, 0.0});
+	}
+	public Line(Double[] start, Double[] end) {
 		this.start = start;
 		this.end = end;
 	}
 	
 	public Line(Point<? extends Number, ? extends Number> start, Point<? extends Number, ? extends Number> end) {
-		this.start = new Integer[] {start.getX().intValue(), start.getY().intValue()};
-		this.end  = new Integer[] {end.getX().intValue(), end.getY().intValue()};
+		this.start = new Double[] {start.getX().doubleValue(), start.getY().doubleValue()};
+		this.end  = new Double[] {end.getX().doubleValue(), end.getY().doubleValue()};
 	}
 	@Override
 	public boolean checkIn(double x, double y) {
@@ -47,6 +50,16 @@ public class Line extends ShapeInstance<Line> implements HasStroke {
 	@Override
 	public Line setBorderWidth(double width) {
 		this.borderWidth = width;
+		return this;
+	}
+	public Line setStart(double x, double y) {
+		this.start[0] = x;
+		this.start[1] = y;
+		return this;
+	}
+	public Line setEnd(double x, double y) {
+		this.end[0] = x;
+		this.end[1] = y;
 		return this;
 	}
 }

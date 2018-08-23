@@ -9,13 +9,18 @@
 	<stylesheet src="http://fonts.googleapis.com/earlyaccess/notosanskr.css" />
 
 	<source path="activity" />
+	<source path="data" />
 	<source path="decorator"/>
+	<source path="dto"/>
+	<source path="graph"/>
 	<source path="handler"/>
 	<source path="icon"/>
+	<source path="icon2"/>
 	<source path="layout"/>
 	<source path="place"/>
 	<source path="style"/>
 	<source path="widget"/>
+	<source path="shape" />
 	
 	<source path="regacy" />
 	

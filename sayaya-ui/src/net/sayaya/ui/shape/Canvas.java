@@ -1,4 +1,4 @@
-package net.sayaya.ui.regacy.shape;
+package net.sayaya.ui.shape;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -44,20 +44,18 @@ public class Canvas extends Composite implements Focusable {
 		return this;
 	}
 	
-	public Canvas clear() {
+	public Canvas removeAll() {
 		shapes.clear();
 		return this;
 	}
 	
 	public Canvas setWidth(int width) {
-		//super.setWidth(width + "px");
 		canvas.setCoordinateSpaceWidth(width);
 		canvas.getCanvasElement().setWidth(width);
 		return this;
 	}
 	
 	public Canvas setHeight(int height) {
-		//super.setHeight(height + "px");
 		canvas.setCoordinateSpaceHeight(height);
 		canvas.getCanvasElement().setHeight(height);
 		return this;
@@ -71,13 +69,13 @@ public class Canvas extends Composite implements Focusable {
 		return canvas.getCanvasElement().getHeight();
 	}
 	
-	public Canvas clearScene() {
+	public Canvas clear() {
 		getContext().clearRect(0, 0, canvas.getCanvasElement().getWidth(), canvas.getCanvasElement().getHeight());
 		return this;
 	}
 	
 	public void paint() {
-		clearScene();
+		clear();
 		paint(1.0);
 	}
 	public Context2d getContext() {
@@ -102,22 +100,22 @@ public class Canvas extends Composite implements Focusable {
 	
 	@Override
 	public void setWidth(String width) {
-	//	Log.log(Level.SEVERE, "Not Suppport operation exception: use Canvas.setWidth(int)");
+		throw new RuntimeException("Not Suppport operation exception: use Canvas.setWidth(int)");
 	}
 	
 	@Override
 	public void setHeight(String height) {
-	//	Log.log(Level.SEVERE, "Not Suppport operation exception: use Canvas.setHeight(int)");
+		throw new RuntimeException("Not Suppport operation exception: use Canvas.setWidth(int)");
 	}
 
-	public void onClick(int x, int y) {
+	private void onClick(int x, int y) {
 		shapes.forEach(shape->{
 			double[] translate = translate(x, y, shape);
 			if(shape.checkIn(translate[0], translate[1])) shape.fireDown(null); 
 		});
 	}
 
-	public void onOver(int x, int y) {
+	private void onOver(int x, int y) {
 		shapes.forEach(shape->{
 			double[] translate = translate(x, y, shape);
 			if(shape.checkIn(translate[0], translate[1])) shape.fireOver(null);
@@ -125,7 +123,7 @@ public class Canvas extends Composite implements Focusable {
 		});
 	}
 
-	public double[] translate(int x, int y, Shape shape) {
+	private double[] translate(double x, double y, Shape shape) {
 		x = x - shape.getX();
 		y = y - shape.getY();
 		double theta = -shape.getRotate();
@@ -134,7 +132,7 @@ public class Canvas extends Composite implements Focusable {
 			, x * Math.sin(theta) + y * Math.cos(theta)
 		};
 	}
-	public void onOut(MouseOutEvent event) {
+	private void onOut(MouseOutEvent event) {
 		shapes.forEach(shape->shape.fireOut(event));
 	}
 

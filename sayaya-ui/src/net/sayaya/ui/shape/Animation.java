@@ -1,4 +1,6 @@
-package net.sayaya.ui.regacy.shape;
+package net.sayaya.ui.shape;
+
+import net.sayaya.ui.shape.Canvas;
 
 public class Animation extends com.google.gwt.animation.client.Animation {
 	private final Canvas canvas;
@@ -8,7 +10,7 @@ public class Animation extends com.google.gwt.animation.client.Animation {
 	
 	@Override
 	protected void onUpdate(double progress) {
-		canvas.clearScene();
+		canvas.clear();
 		canvas.paint(progress);
 	}
 }

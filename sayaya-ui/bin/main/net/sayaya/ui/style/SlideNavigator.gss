@@ -25,6 +25,7 @@
 	width: 0px;
 	height: 27px;
 	cursor: pointer;
+	top: 16px !important;
 }
 
 .knocker-icon {
@@ -38,7 +39,7 @@
 
 .item {
 	color: #FFFFFF;
-	padding-left: 1em;
+	padding-left: 10px;
 	line-height: 40px;
 	cursor: Pointer;
 	border: 1px solid transparent;
@@ -56,10 +57,6 @@
 
 .item-selected .item-icon {
 	font-weight: bold;
-}
-
-.item-selected-close {
-	box-shadow: 0 2px 6px rgba(0,0,0,0.16);
 }
 
 .item-icon {
@@ -85,12 +82,13 @@
 
 .item-container {
 	position: relative;
-	left: -15px;
+	left: -18px;
 	width: 300px;
-	display: list-item;
+	display: block;
 	overflow: hidden;
 	box-shadow: inset 1px 3px 6px rgba(0,0,0,0.23),
 				inset 0px 0px 2px rgba(255,255,255,1.0); 
+	background-color: #00000099;
 }
 
 .item-sub {
@@ -100,14 +98,33 @@
 	cursor: Pointer;
 	border: 1px solid transparent;
 	display: flex;
+	white-space: nowrap;
 }
 
 .item-sub:hover {
 	background-color: rgba(255, 255, 255, 0.1);
 }
 
+
+.item-sub:hover {
+	animation-duration: 0.2s;
+	animation-name: isfi;
+	animation-fill-mode: forwards;
+}
+
+@keyframes isfi {
+	from {
+		color: #FFFFFF88;
+		background-color: transparent;
+	}
+	to {
+		color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+		background-color: rgba(255, 255, 255, 0.1);
+	}
+}
+
 .item-sub-selected {
-	color: #FFFFFF;
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()") !important;
 	font-weight: bolder;
 }
 
@@ -127,5 +144,4 @@
 	-o-user-select: none;
 	user-select: none;
 	font-size: 12px;
-	padding-left: 1em;
 }

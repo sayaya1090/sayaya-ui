@@ -289,6 +289,18 @@
 .list-ul:before {
 	content: "\f0ca";
 }
+.lock:before {
+	content: "\f023";
+}
+.lock-alt:before {
+	content: "\f30d";
+}
+.lock-open:before {
+	content: "\f3c1";
+}
+.lock-open-alt:before {
+	content: "\f3c2";
+}
 .marker:before {
 	content: "\f5a1";
 }
@@ -466,11 +478,20 @@
 .undo-alt:before {
 	content: "\f2ea";
 }
+.unlock:before {
+	content: "\f09c";
+}
+.unlock-alt:before {
+	content: "\f13e";
+}
 .unlink:before {
 	content: "\f127";
 }
 .user-circle:before {
 	content: "\f2bd";
+}
+.user-lock:before {
+	content: "\f502";
 }
 .wranch:before {
 	content: "\f0ad";

@@ -1,16 +1,16 @@
-package net.sayaya.ui.regacy.graph;
+package net.sayaya.ui.graph;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.google.gwt.canvas.dom.client.Context2d.TextBaseline;
 
+import net.sayaya.ui.data.Point;
 import net.sayaya.ui.handler.HasValue;
-import net.sayaya.ui.regacy.data.Point;
-import net.sayaya.ui.regacy.shape.Animation;
-import net.sayaya.ui.regacy.shape.Canvas;
-import net.sayaya.ui.regacy.shape.HasStroke;
 import net.sayaya.ui.regacy.shape.impl.Rectangle;
 import net.sayaya.ui.regacy.shape.impl.Text;
+import net.sayaya.ui.shape.Animation;
+import net.sayaya.ui.shape.Canvas;
+import net.sayaya.ui.shape.HasStroke;
 import net.sayaya.ui.style.color.Palette;
 
 public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasStroke {
@@ -25,10 +25,10 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 	public Gauge(int width, int height) {
 		super(width, height);
 		bar = new RectangleAnimated(0, height);
-		label = new Text("").setX(width/2).setY(height/2)
-				.setSize(10)
-				.setAlign(TextAlign.CENTER).setBaseline(TextBaseline.MIDDLE)
-				.setFont("Noto Sans KR").setColor(Palette.getInstance().getColorText1());
+		label = new Text("").setX(width/2.0).setY(height/2.0)
+		.setSize(10)
+		.setAlign(TextAlign.CENTER).setBaseline(TextBaseline.MIDDLE)
+		.setFont("Noto Sans KR").setColor(Palette.getInstance().getColorText1());
 		add(bar);
 		add(label);
 	}
@@ -50,7 +50,7 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 	@Override
 	public Gauge<N> setWidth(int width) {
 		super.setWidth(width);
-		if(label!=null) label.setX(width / 2);
+		if(label!=null) label.setX(width/2.0);
 		return this;
 	}
 	
@@ -62,11 +62,10 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 		int width = getWidth();
 		int height = getHeight();
 		double d = value.doubleValue();
-		int w =(int)(d * width / length);
+		double w = d * width / length;
 		bar.setWidthNext(w).setHeightNext(height)
-			.setBorderWidth(borderWidth)
-			.setX(0).setY(0)
-		;
+		.setBorderWidth(borderWidth)
+		.setX(0).setY(0);
 		return this;
 	}
 	
@@ -125,22 +124,22 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 	
 	@SuppressWarnings("unused")
 	private final static class RectangleAnimated extends Rectangle {
-		private Point<Integer, Integer> pointNext = new Point<Integer, Integer>(0, 0);
+		private Point<Double, Double> pointNext = new Point<Double, Double>(0.0, 0.0);
 		private double rotateNext = 0;
-		private int widthNext = 0;
-		private int heightNext = 0;
-		private Point<Integer, Integer> pointPrev = new Point<Integer, Integer>(0, 0);
+		private double widthNext = 0;
+		private double heightNext = 0;
+		private Point<Double, Double> pointPrev = new Point<Double, Double>(0.0, 0.0);
 		private double rotatePrev = 0;
-		private int widthPrev = 0;
-		private int heightPrev = 0;
+		private double widthPrev = 0;
+		private double heightPrev = 0;
 		public RectangleAnimated(int width, int height) {
 			super(width, height);
 		}
 		public static double getNext(double prev, double next, double progress) {
 			return prev + progress*(next-prev);
 		}
-		public static int getNext(int prev, int next, double progress) {
-			return prev + (int)(progress*(next-prev));
+		public static double getNext(int prev, int next, double progress) {
+			return prev + progress*(next-prev);
 		}
 		@Override
 		public void draw(Context2d context, double progress) {
@@ -152,11 +151,11 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 				heightPrev = getHeight();
 			}
 			
-			int x = getNext(pointPrev.getX(), pointNext.getX(), progress);
-			int y = getNext(pointPrev.getY(), pointNext.getY(), progress);
+			double x = getNext(pointPrev.getX(), pointNext.getX(), progress);
+			double y = getNext(pointPrev.getY(), pointNext.getY(), progress);
 			double rotate = getNext(rotatePrev, rotateNext, progress);
-			int width = getNext(widthPrev, widthNext, progress);
-			int height = getNext(heightPrev, heightNext, progress);
+			double width = getNext(widthPrev, widthNext, progress);
+			double height = getNext(heightPrev, heightNext, progress);
 
 			String color = getColor();
 			String borderColor = getBorderColor();
@@ -176,11 +175,11 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 			setHeight(height);
 		}
 
-		public Point<Integer, Integer> getPointNext() {
+		public Point<Double, Double> getPointNext() {
 			return pointNext;
 		}
 
-		public RectangleAnimated setPointNext(Point<Integer, Integer> pointNext) {
+		public RectangleAnimated setPointNext(Point<Double, Double> pointNext) {
 			this.pointNext = pointNext;
 			return this;
 		}
@@ -198,7 +197,7 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 			return widthNext;
 		}
 
-		public RectangleAnimated setWidthNext(int widthNext) {
+		public RectangleAnimated setWidthNext(double widthNext) {
 			this.widthNext = widthNext;
 			return this;
 		}
@@ -207,16 +206,16 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 			return heightNext;
 		}
 
-		public RectangleAnimated setHeightNext(int heightNext) {
+		public RectangleAnimated setHeightNext(double heightNext) {
 			this.heightNext = heightNext;
 			return this;
 		}
 
-		public Point<Integer, Integer> getPointPrev() {
+		public Point<Double, Double> getPointPrev() {
 			return pointPrev;
 		}
 
-		public RectangleAnimated setPointPrev(Point<Integer, Integer> pointPrev) {
+		public RectangleAnimated setPointPrev(Point<Double, Double> pointPrev) {
 			this.pointPrev = pointPrev;
 			return this;
 		}
@@ -251,7 +250,6 @@ public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasS
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

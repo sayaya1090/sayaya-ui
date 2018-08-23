@@ -21,6 +21,10 @@ public interface Presenter {
 		ValueChangeEvent<Place> evt = new ValueChangeEvent<Place>(place) {};
 		handlers.forEach(handler->handler.onValueChange(evt));
 	}
+	public static void replace(Place place) {
+		ValueChangeEvent<Place> evt = new ValueChangeEvent<Place>(place) {};
+		handlers.forEach(handler->handler.onValueChange(evt));
+	}
 	
 	public static HandlerRegistration addValueChangeHandler(ValueChangeHandler<Place> handler) {
 		handlers.add(handler);

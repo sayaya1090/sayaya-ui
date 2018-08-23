@@ -7,18 +7,22 @@ import java.util.TreeMap;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
+import net.sayaya.ui.data.Point;
+import net.sayaya.ui.graph.Agenda;
+import net.sayaya.ui.graph.AxisContinuous;
+import net.sayaya.ui.graph.AxisDiscretized;
+import net.sayaya.ui.graph.Graph;
 import net.sayaya.ui.handler.HasValue;
-import net.sayaya.ui.regacy.data.Point;
-import net.sayaya.ui.regacy.shape.HasStroke;
 import net.sayaya.ui.regacy.shape.impl.ShapeInstance;
+import net.sayaya.ui.shape.HasStroke;
 
 public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.regacy.graph.GraphBox.Box<N>>> implements HasValue<Map<C, net.sayaya.ui.regacy.graph.GraphBox.Box<N>>[]>, HasStroke {
 	private final AxisDiscretized<C> axisX;
 	private final AxisContinuous<N> axisY;
 	private String borderColor;
 	private double borderWidth = 1;
-	private int betweenMargin = 20;
-	private int withinMargin = 5;
+	private double betweenMargin = 20;
+	private double withinMargin = 5;
 	private HashMap<C, Map<Integer, BoxAnimated>> shapes = new HashMap<C, Map<Integer, BoxAnimated>>();
 	
 	public GraphBox(int width, int height, AxisDiscretized<C> axisX, AxisContinuous<N> axisY) {
@@ -29,31 +33,30 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 	
 	public GraphBox<C, N> setValueAt(int idx, C category, Box<N> box) {
 		getValue()[idx].put(category, box);
-		double min = axisY.parse(box.getMin());
-		double q1 = axisY.parse(box.getQ1());
-		double med = axisY.parse(box.getMedian());
-		double q3 = axisY.parse(box.getQ3());
-		double max = axisY.parse(box.getMax());
+		double min = axisY.map(box.getMin());
+		double q1 = axisY.map(box.getQ1());
+		double med = axisY.map(box.getMedian());
+		double q3 = axisY.map(box.getQ3());
+		double max = axisY.map(box.getMax());
 
-		int minMap = (int)(axisY.getY() - min);
-		int q1Map = (int)(axisY.getY() - q1);
-		int medMap = (int)(axisY.getY() - med);
-		int q3Map = (int)(axisY.getY() - q3);
-		int maxMap = (int)(axisY.getY() - max);
-		Box<Integer> nextBox = new Box<Integer>().setMin(minMap).setQ1(q1Map).setMedian(medMap).setQ3(q3Map).setMax(maxMap);
+		double minMap = axisY.getY() - min;
+		double q1Map = axisY.getY() - q1;
+		double medMap = axisY.getY() - med;
+		double q3Map = axisY.getY() - q3;
+		double maxMap = axisY.getY() - max;
+		Box<Double> nextBox = new Box<Double>().setMin(minMap).setQ1(q1Map).setMedian(medMap).setQ3(q3Map).setMax(maxMap);
 		if(!shapes.containsKey(category) || !shapes.get(category).containsKey(idx)) {
-			int bw = (int)getBoxWidth();
+			double bw = getBoxWidth();
 			Agenda agenda = getAgenda()[idx];
 			double delta = betweenMargin/2.0 + idx*(bw + withinMargin);
-			int x = (int) (axisX.parse(category) + delta);
-			Box<Integer> initBox = new Box<Integer>().setMin(medMap).setQ1(medMap).setMedian(medMap).setQ3(medMap).setMax(medMap);
+			double x = axisX.map(category) + delta;
+			Box<Double> initBox = new Box<Double>().setMin(medMap).setQ1(medMap).setMedian(medMap).setQ3(medMap).setMax(medMap);
 			BoxAnimated shape = (BoxAnimated) createBox(bw, initBox, agenda)
-				.setBoxNext(nextBox)
-				.setPointNext(new Point<Integer, Integer> (x, axisY.getY()))
-				.setColor(agenda.getColor())
-				.setBorderWidth(borderWidth).setBorderColor(borderColor)
-				.setX(x).setY(axisY.getY())
-			;
+			.setBoxNext(nextBox)
+			.setPointNext(new Point<Double, Double> (x, axisY.getY()))
+			.setColor(agenda.getColor())
+			.setBorderWidth(borderWidth).setBorderColor(borderColor)
+			.setX(x).setY(axisY.getY());
 			if(!shapes.containsKey(category)) shapes.put(category, new TreeMap<Integer, BoxAnimated>());
 			shapes.get(category).put(idx, shape);
 			add(shape);
@@ -69,7 +72,7 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 	protected void setShapes() {
 		shapes.clear();
 		Map<C, Box<N>>[] values = getValue();
-		int bw = (int)getBoxWidth();
+		double bw = getBoxWidth();
 		for(int i = 0; i < values.length; ++i) {
 			Map<C, Box<N>> item = values[i];
 			Agenda agenda = getAgenda()[i];
@@ -77,23 +80,23 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 			for(Entry<C, Box<N>> value: item.entrySet()) {
 				C category = value.getKey();
 				Box<N> box = value.getValue();
-				int x = (int) (axisX.parse(category) + delta);
-				double min = axisY.parse(box.getMin());
-				double q1 = axisY.parse(box.getQ1());
-				double med = axisY.parse(box.getMedian());
-				double q3 = axisY.parse(box.getQ3());
-				double max = axisY.parse(box.getMax());
+				double x = axisX.map(category) + delta;
+				double min = axisY.map(box.getMin());
+				double q1 = axisY.map(box.getQ1());
+				double med = axisY.map(box.getMedian());
+				double q3 = axisY.map(box.getQ3());
+				double max = axisY.map(box.getMax());
 				
-				int minMap = (int)(axisY.getY() - min);
-				int q1Map = (int)(axisY.getY() - q1);
-				int medMap = (int)(axisY.getY() - med);
-				int q3Map = (int)(axisY.getY() - q3);
-				int maxMap = (int)(axisY.getY() - max);
-				Box<Integer> initBox = new Box<Integer>().setMin(medMap).setQ1(medMap).setMedian(medMap).setQ3(medMap).setMax(medMap);
-				Box<Integer> nextBox = new Box<Integer>().setMin(minMap).setQ1(q1Map).setMedian(medMap).setQ3(q3Map).setMax(maxMap);
+				double minMap = axisY.getY() - min;
+				double q1Map = axisY.getY() - q1;
+				double medMap = axisY.getY() - med;
+				double q3Map = axisY.getY() - q3;
+				double maxMap = axisY.getY() - max;
+				Box<Double> initBox = new Box<Double>().setMin(medMap).setQ1(medMap).setMedian(medMap).setQ3(medMap).setMax(medMap);
+				Box<Double> nextBox = new Box<Double>().setMin(minMap).setQ1(q1Map).setMedian(medMap).setQ3(q3Map).setMax(maxMap);
 				BoxAnimated shape = (BoxAnimated) createBox(bw, initBox, agenda)
 					.setBoxNext(nextBox)
-					.setPointNext(new Point<Integer, Integer> (x, axisY.getY()))
+					.setPointNext(new Point<Double, Double> (x, axisY.getY()))
 					.setColor(agenda.getColor())
 					.setBorderWidth(borderWidth).setBorderColor(borderColor)
 					.setX(x).setY(axisY.getY())
@@ -111,18 +114,26 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 	public AxisContinuous<N> getAxisY() {
 		return axisY;
 	}
-	protected BoxAnimated createBox(int width, Box<Integer> box, Agenda agenda) {
+	protected BoxAnimated createBox(double width, Box<Double> box, Agenda agenda) {
 		return new BoxAnimated(width, box);
 	}
-	public int getBetweenMargin() {
+	public double getBetweenMargin() {
 		return betweenMargin;
+	}
+	public GraphBox<C, N> setBetweenMargin(double betweenMargin) {
+		this.betweenMargin = betweenMargin;
+		return this;
 	}
 	public GraphBox<C, N> setBetweenMargin(int betweenMargin) {
 		this.betweenMargin = betweenMargin;
 		return this;
 	}
-	public int getWithinMargin() {
+	public double getWithinMargin() {
 		return withinMargin;
+	}
+	public GraphBox<C, N> setWithinMargin(double withinMargin) {
+		this.withinMargin = withinMargin;
+		return this;
 	}
 	public GraphBox<C, N> setWithinMargin(int withinMargin) {
 		this.withinMargin = withinMargin;
@@ -199,24 +210,24 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 		}
 	}
 	public static class BoxAnimated extends ShapeInstance<BoxAnimated> implements HasStroke {
-		private int width;
-		private final Box<Integer> box = new Box<Integer>();
-		private Box<Integer> boxPrev;
-		private Box<Integer> boxNext;
+		private double width;
+		private final Box<Double> box = new Box<Double>();
+		private Box<Double> boxPrev;
+		private Box<Double> boxNext;
 		
-		private Point<Integer, Integer> pointNext = new Point<Integer, Integer>(0, 0);
+		private Point<Double, Double> pointNext = new Point<Double, Double>(0.0, 0.0);
 		private double rotateNext = 0;
-		private Point<Integer, Integer> pointPrev = new Point<Integer, Integer>(0, 0);
+		private Point<Double, Double> pointPrev = new Point<Double, Double>(0.0, 0.0);
 		// private double rotatePrev = 0.0;
 		
 		private String color;
 		private String borderColor;
 		private double borderWidth = 1;
-		private BoxAnimated(int width, Box<Integer> box) {
+		private BoxAnimated(double width, Box<Double> box) {
 			this.width = width;
 			this.box.setMin(box.getMin()).setQ1(box.getQ1()).setMedian(box.getMedian()).setQ3(box.getQ3()).setMax(box.getMax());
 		}
-		public BoxAnimated setBoxNext(Box<Integer> box) {
+		public BoxAnimated setBoxNext(Box<Double> box) {
 			this.boxNext = box;
 			return this;
 		}
@@ -227,7 +238,7 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 				pointPrev.setX(getX());
 				pointPrev.setY(getY());
 				// rotatePrev = getRotate();
-				boxPrev = new Box<Integer>().setMin(box.getMin()).setQ1(box.getQ1()).setMedian(box.getMedian()).setQ3(box.getQ3()).setMax(box.getMax());
+				boxPrev = new Box<Double>().setMin(box.getMin()).setQ1(box.getQ1()).setMedian(box.getMedian()).setQ3(box.getQ3()).setMax(box.getMax());
 			}
 			context.setLineWidth(borderWidth);
 			context.scale(1.0, -1.0);
@@ -262,16 +273,15 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 			}
 
 			
-			this.box.setMin(box.getMin().intValue()).setQ1(box.getQ1().intValue()).setMedian(box.getMedian().intValue())
-			.setQ3(box.getQ3().intValue()).setMax(box.getMax().intValue());
+			this.box.setMin(box.getMin()).setQ1(box.getQ1()).setMedian(box.getMedian()).setQ3(box.getQ3()).setMax(box.getMax());
 		}
 		
 		@Override
 		public boolean checkIn(double x, double y) {
-			int lx = 0;
-			int rx = width;
-			int ty = box.getQ1();
-			int by = box.getQ3();
+			double lx = 0;
+			double rx = width;
+			double ty = box.getQ1();
+			double by = box.getQ3();
 			
 			if(lx > width-x || rx < width-x) return false;
 			if(ty > -y || by < -y) return false;
@@ -290,10 +300,10 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 			return new Box<Double>().setMin(min).setQ1(q1).setMedian(med).setQ3(q3).setMax(max);
 		}
 		
-		public Point<Integer, Integer> getPointNext() {
+		public Point<Double, Double> getPointNext() {
 			return pointNext;
 		}
-		public BoxAnimated setPointNext(Point<Integer, Integer> pointNext) {
+		public BoxAnimated setPointNext(Point<Double, Double> pointNext) {
 			this.pointNext = pointNext;
 			return this;
 		}

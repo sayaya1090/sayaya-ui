@@ -1,8 +1,8 @@
-package net.sayaya.ui.regacy.graph;
+package net.sayaya.ui.graph;
 
 import net.sayaya.ui.handler.HasValue;
-import net.sayaya.ui.regacy.shape.Animation;
-import net.sayaya.ui.regacy.shape.Canvas;
+import net.sayaya.ui.shape.Animation;
+import net.sayaya.ui.shape.Canvas;
 
 public abstract class Graph<D> extends Canvas implements HasValue<D[]>{
 	private Agenda[] agenda = null;
@@ -45,9 +45,6 @@ public abstract class Graph<D> extends Canvas implements HasValue<D[]>{
 			setShapes();
 			initialized = true;
 		}
-		paintDelegate(progress);
-	}
-	protected void paintDelegate(double progress) {
 		super.paint(progress);
 	}
 	public void update(int duration) {

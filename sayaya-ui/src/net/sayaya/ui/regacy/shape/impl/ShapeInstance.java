@@ -10,33 +10,33 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 
-import net.sayaya.ui.regacy.data.Point;
-import net.sayaya.ui.regacy.shape.Shape;
+import net.sayaya.ui.data.Point;
+import net.sayaya.ui.shape.Shape;
 
 @SuppressWarnings("unchecked")
 public abstract class ShapeInstance<S extends ShapeInstance<S>> implements Shape {
 	private final HashSet<MouseOverHandler> overHandlers = new HashSet<>();
 	private final HashSet<MouseOutHandler> outHandlers = new HashSet<>();
 	private final HashSet<MouseDownHandler> downHandlers = new HashSet<>();
-	private Point<Integer, Integer> position = new Point<Integer, Integer>();
+	private Point<Double, Double> position = new Point<>();
 	private double rotate;
 	@Override
-	public final int getX() {
+	public final double getX() {
 		return position.getX();
 	}
 	@Override
-	public final int getY() {
+	public final double getY() {
 		return position.getY();
 	}
 	@Override
 	public final double getRotate() {
 		return rotate;
 	}
-	public final S setX(int x) {
+	public final S setX(double x) {
 		position.setX(x);
 		return (S)this;
 	}
-	public final S setY(int y) {
+	public final S setY(double y) {
 		position.setY(y);
 		return (S)this;
 	}

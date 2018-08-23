@@ -2,8 +2,8 @@ package net.sayaya.ui.regacy.shape.impl;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
-import net.sayaya.ui.regacy.shape.HasColor;
-import net.sayaya.ui.regacy.shape.HasStroke;
+import net.sayaya.ui.shape.HasColor;
+import net.sayaya.ui.shape.HasStroke;
 
 public class Polygon extends ShapeInstance<Polygon> implements HasColor, HasStroke {
 	private final static class Point {
@@ -34,10 +34,10 @@ public class Polygon extends ShapeInstance<Polygon> implements HasColor, HasStro
 	private double borderWidth = 1;
 	private String borderColor;
 	private double alpha = 1.0;
-	public Polygon(Integer[]... points) {
+	public Polygon(Double[]... points) {
 		this(toPoints(points));
 	}
-	private final static Point[] toPoints(Integer[]...points) {
+	private final static Point[] toPoints(Double[]...points) {
 		Point[] points2 = new Point[points.length];
 		for(int i = 0; i < points.length; ++i) points2[i] = new Point().setX(points[i][0]).setY(points[i][1]);
 		return points2;

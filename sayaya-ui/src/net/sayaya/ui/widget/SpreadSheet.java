@@ -404,6 +404,7 @@ public final class SpreadSheet extends ResizeComposite {
 		
 		@JsOverlay
 		public Data put(String key, Object item) {
+			if(item!=null && (item instanceof String)) item = ((String)item).trim();
 			SpreadSheet.put(this, key, item);
 			return this;
 		}
@@ -511,6 +512,16 @@ public final class SpreadSheet extends ResizeComposite {
 	@JsFunction
 	public static interface AfterColumnMove {
 		void apply(int[] targets, int dest);
+	}
+	
+	@JsFunction
+	public static interface BeforePaste {
+		void apply(Object[][] data, Object[] coords);
+	}
+	
+	@JsFunction
+	public static interface AfterPaste {
+		void apply(Object[][] data, Object[] coords);
 	}
 	
 	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
@@ -786,6 +797,10 @@ public final class SpreadSheet extends ResizeComposite {
 		private BeforeColumnMove beforeColumnMove;
 		@JsProperty(name="afterColumnMove")
 		private AfterColumnMove afterColumnMove;
+		@JsProperty(name="beforePaste")
+		private BeforePaste beforePaste;
+		@JsProperty(name="afterPaste")
+		private AfterPaste afterPaste;
 		@JsOverlay
 		public Data[] getData() {
 			return data;
@@ -1190,6 +1205,18 @@ public final class SpreadSheet extends ResizeComposite {
 		@JsOverlay
 		public SheetSetting setAfterColumnMove(AfterColumnMove afterColumnMove) {
 			this.afterColumnMove = afterColumnMove;
+			return this;
+		}
+
+		@JsOverlay
+		public SheetSetting setBeforePaste(BeforePaste beforePaste) {
+			this.beforePaste = beforePaste;
+			return this;
+		}
+
+		@JsOverlay
+		public SheetSetting setAfterPaste(AfterPaste afterPaste) {
+			this.afterPaste = afterPaste;
 			return this;
 		}
 	}

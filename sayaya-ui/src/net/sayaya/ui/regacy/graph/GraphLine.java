@@ -7,14 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.gwt.user.client.Window;
-
+import net.sayaya.ui.data.Point;
+import net.sayaya.ui.graph.Agenda;
+import net.sayaya.ui.graph.Axis;
+import net.sayaya.ui.graph.AxisContinuous;
+import net.sayaya.ui.graph.Graph;
 import net.sayaya.ui.handler.HasValue;
-import net.sayaya.ui.regacy.data.Point;
-import net.sayaya.ui.regacy.shape.HasStroke;
 import net.sayaya.ui.regacy.shape.impl.Fan;
 import net.sayaya.ui.regacy.shape.impl.Line;
 import net.sayaya.ui.regacy.shape.impl.Polygon;
+import net.sayaya.ui.shape.HasStroke;
 
 public class GraphLine<C, N extends Number> extends Graph<Map<C, N>> implements HasValue<Map<C, N>[]>, HasStroke {
 	private final Axis<C> axisX;
@@ -42,8 +44,8 @@ public class GraphLine<C, N extends Number> extends Graph<Map<C, N>> implements 
 				C category = entry.getKey();
 				N value = entry.getValue();
 				
-				double x = axisX.parse(category);
-				double y = axisY.parse(value);
+				double x = axisX.map(category);
+				double y = axisY.map(value);
 				points.get(i).add(new Point<Double, Double>(x, y));
 			}
 			Collections.sort(points.get(i), (p1, p2)->Double.compare(p1.getX(), p2.getX()));

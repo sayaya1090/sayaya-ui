@@ -19,8 +19,6 @@ public class StyleSlideNavigator {
 			String item();
 			@CssResource.ClassName("item-selected")
 			String itemSelected();
-			@CssResource.ClassName("item-selected-close")
-			String itemSelectedClose();
 			@CssResource.ClassName("item-icon")
 			String itemIcon();
 			@CssResource.ClassName("item-label")

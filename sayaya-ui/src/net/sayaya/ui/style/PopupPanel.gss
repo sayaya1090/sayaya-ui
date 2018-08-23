@@ -35,6 +35,7 @@
 	min-width: 140px;
 	text-align: left;
 	display: list-item;
+	list-style: none;
 	white-space: nowrap;
 }
 
@@ -43,11 +44,13 @@
 	animation-name: fi;
 	animation-fill-mode: forwards;
 	font-weight: bold;
+	letter-spacing: -0.3px;
 }
 
 .item-hover {
 	background-color: eval("net.sayaya.ui.style.color.Palette.toRGBA(net.sayaya.ui.style.color.Palette.getInstance().getColor1(), 0.25)");
 	font-weight: bold;
+	letter-spacing: -0.3px;
 }
 
 @keyframes fi {

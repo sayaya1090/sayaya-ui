@@ -201,6 +201,13 @@ public class Icon extends HTML {
 			String listOl();
 			@CssResource.ClassName("list-ul")
 			String listUl();
+			String lock();
+			@CssResource.ClassName("lock-alt")
+			String lockAlt();
+			@CssResource.ClassName("lock-open")
+			String lockOpen();
+			@CssResource.ClassName("lock-open-alt")
+			String lockOpenAlt();
 			@CssResource.ClassName("marker")
 			String marker();
 			String outdent();
@@ -290,9 +297,14 @@ public class Icon extends HTML {
 			String undo();
 			@CssResource.ClassName("undo-alt")
 			String undoAlt();
+			String unlock();
+			@CssResource.ClassName("unlock-alt")
+			String unlockAlt();
 			String unlink();
 			@CssResource.ClassName("user-circle")
 			String userCircle();
+			@CssResource.ClassName("user-lock")
+			String userLock();
 			String wranch();
 		}
 	}

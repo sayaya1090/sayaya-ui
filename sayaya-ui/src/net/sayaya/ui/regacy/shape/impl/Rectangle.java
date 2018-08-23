@@ -2,27 +2,27 @@ package net.sayaya.ui.regacy.shape.impl;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
-import net.sayaya.ui.regacy.shape.HasColor;
-import net.sayaya.ui.regacy.shape.HasStroke;
+import net.sayaya.ui.shape.HasColor;
+import net.sayaya.ui.shape.HasStroke;
 
 public class Rectangle extends ShapeInstance<Rectangle> implements HasColor, HasStroke {
-	private int width;
-	private int height;
+	private double width;
+	private double height;
 	private String color;
 	private String borderColor;
 	private double borderWidth = 1;
 	private double alpha = 1.0;
-	public Rectangle(int width, int height) {
+	public Rectangle(double width, double height) {
 		setWidth(width);
 		setHeight(height);
 	}
 
 	@Override
 	public boolean checkIn(double x, double y) {
-		int lx = 0;
-		int rx = width;
-		int ty = 0;
-		int by = height;
+		double lx = 0;
+		double rx = width;
+		double ty = 0;
+		double by = height;
 		
 		if(lx > x || rx < x) return false;
 		if(ty > y || by < y) return false;
@@ -43,20 +43,20 @@ public class Rectangle extends ShapeInstance<Rectangle> implements HasColor, Has
 		}
 	}
 
-	public int getWidth() {
+	public double getWidth() {
 		return width;
 	}
 
-	public Rectangle setWidth(int width) {
+	public Rectangle setWidth(double width) {
 		this.width = width;
 		return this;
 	}
 
-	public int getHeight() {
+	public double getHeight() {
 		return height;
 	}
 
-	public Rectangle setHeight(int height) {
+	public Rectangle setHeight(double height) {
 		this.height = height;
 		return this;
 	}
