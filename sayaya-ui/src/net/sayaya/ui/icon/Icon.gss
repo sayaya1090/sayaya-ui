@@ -523,7 +523,7 @@
 .user-lock:before {
 	content: "\f502";
 }
-.vials:before {
+.vial:before {
 	content: "\f492";
 }
 .vials:before {
