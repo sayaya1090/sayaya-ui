@@ -524,6 +524,9 @@
 	content: "\f502";
 }
 .vials:before {
+	content: "\f492";
+}
+.vials:before {
 	content: "\f493";
 }
 .wranch:before {
