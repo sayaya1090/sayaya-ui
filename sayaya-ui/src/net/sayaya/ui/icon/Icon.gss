@@ -55,6 +55,9 @@
 .bold:before {
 	content: "\f032";
 }
+.bong:before {
+	content: "\f55c";
+}
 .box:before {
 	content: "\f466";
 }
@@ -196,6 +199,9 @@
 .cut:before {
 	content: "\f0c4";	
 }
+.dna:before {
+	content: "\f471";	
+}
 .edit:before {
 	content: "\f044";	
 }
@@ -222,6 +228,12 @@
 }
 .file-alt:before {
 	content: "\f15c";
+}
+.file-medical:before {
+	content: "\f477";
+}
+.file-medical-alt:before {
+	content: "\f478";
 }
 .file-plus:before {
 	content: "\f319";
@@ -304,6 +316,12 @@
 .marker:before {
 	content: "\f5a1";
 }
+.microscope:before {
+	content: "\f610";
+}
+.mortar-pestle:before {
+	content: "\f5a7";
+}
 .outdent:before {
 	content: "\f03b";
 }
@@ -342,6 +360,15 @@
 }
 .plus-circle:before {
 	content: "\f055";
+}
+.prescription:before {
+	content: "\f5b1";
+}
+.prescription-bottle:before {
+	content: "\f485";
+}
+.prescription-bottle-alt:before {
+	content: "\f486";
 }
 .print:before {
 	content: "\f02f";

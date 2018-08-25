@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 
+import net.sayaya.ui.graph.Axis.AXIS_DIRECTION;
 import net.sayaya.ui.shape.HasStroke;
 
 @SuppressWarnings("unchecked")
@@ -73,7 +74,9 @@ public class AxisDiscretized<T> extends Axis<T> implements HasStroke {
 		
 		int split = variables.length;
 		double step = width / (double)split;
-		return step*i + getX() + step/2;
+		if(this.getDirection() == AXIS_DIRECTION.Y_LEFT || this.getDirection() == AXIS_DIRECTION.Y_RIGHT) 
+			return getY()-(step*i+step/2);
+		else return getX() + (step*i+ step/2);
 	}
 
 	public double getWidth(T variable) {
