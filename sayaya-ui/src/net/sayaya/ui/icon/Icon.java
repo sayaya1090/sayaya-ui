@@ -72,6 +72,7 @@ public class Icon extends HTML {
 			String ban();
 			String barcode();
 			String bold();
+			String bong();
 			String box();
 			@CssResource.ClassName("box-check")
 			String boxCheck();
@@ -156,6 +157,7 @@ public class Icon extends HTML {
 			String columns();
 			String copy();
 			String cut();
+			String dna();
 			String edit();
 			String eraser();
 			String exclamation();
@@ -171,6 +173,10 @@ public class Icon extends HTML {
 			String file();
 			@CssResource.ClassName("file-alt")
 			String fileAlt();
+			@CssResource.ClassName("file-medical")
+			String fileMedical();
+			@CssResource.ClassName("file-medical-alt")
+			String fileMedicalAlt();
 			@CssResource.ClassName("file-plus")
 			String filePlus();
 			String font();
@@ -208,8 +214,10 @@ public class Icon extends HTML {
 			String lockOpen();
 			@CssResource.ClassName("lock-open-alt")
 			String lockOpenAlt();
-			@CssResource.ClassName("marker")
 			String marker();
+			String microscope();
+			@CssResource.ClassName("mortar-pestle")
+			String mortarPestle();
 			String outdent();
 			@CssResource.ClassName("paper-plane")
 			String paperPlane();
@@ -227,6 +235,11 @@ public class Icon extends HTML {
 			String plus();
 			@CssResource.ClassName("plus-circle")
 			String plusCircle();
+			String prescription();
+			@CssResource.ClassName("prescription-bottle")
+			String prescriptionBottle();
+			@CssResource.ClassName("prescription-bottle-alt")
+			String prescriptionBottleAlt();
 			String print();
 			@CssResource.ClassName("quote-left")
 			String quoteLeft();
