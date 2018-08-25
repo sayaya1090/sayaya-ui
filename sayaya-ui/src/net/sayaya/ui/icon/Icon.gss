@@ -520,6 +520,12 @@
 .user-lock:before {
 	content: "\f502";
 }
+.user-lock:before {
+	content: "\f502";
+}
+.vials:before {
+	content: "\f493";
+}
 .wranch:before {
 	content: "\f0ad";
 }

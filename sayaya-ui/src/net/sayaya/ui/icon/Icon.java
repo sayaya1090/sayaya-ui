@@ -318,6 +318,8 @@ public class Icon extends HTML {
 			String userCircle();
 			@CssResource.ClassName("user-lock")
 			String userLock();
+			String vial();
+			String vials();
 			String wranch();
 		}
 	}
