@@ -46,7 +46,8 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 			td.removeAllChildren();
 			if(value == null) td.setInnerHTML("");
 			Boolean cast = (Boolean)value;
-			CheckBox check = new CheckBox(22).setValue(cast, true);
+			CheckBox check = new CheckBox(15).setValue(cast, true);
+			check.getElement().getStyle().setMarginTop(4, Unit.PX);
 			Element elem = check.getElement();
 			Event.setEventListener(td, evt->{
 				evt.preventDefault();
@@ -87,7 +88,7 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 			return td;
 		});
 		private final Element checkAll = DOM.createDiv();
-		private final CheckBox tmp = new CheckBox(22).setValue(false, true);
+		private final CheckBox tmp = new CheckBox(15).setValue(false, true);
 		private final EventBus bus = new SimpleEventBus();
 		private TableSelectableImpl(TableBase<T> base, BiFunction<Integer, Data, T> mapper) {
 			this.base = base;
@@ -102,12 +103,12 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 			checkAll.getStyle().setDisplay(Display.BLOCK);
 			checkAll.getStyle().setTextAlign(TextAlign.CENTER);
 			tmp.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
-			tmp.getElement().getStyle().setTop(6, Unit.PX);
+			tmp.getElement().getStyle().setTop(3, Unit.PX);
 			tmp.getElement().getStyle().setLeft(0, Unit.PX);
 			Element square = tmp.getElement().getChild(1).getChild(0).cast();
 			square.getStyle().setBackgroundColor("#FFFFFF");
-			square.getStyle().setWidth(20, Unit.PX);
-			square.getStyle().setHeight(20, Unit.PX);
+			square.getStyle().setWidth(13, Unit.PX);
+			square.getStyle().setHeight(13, Unit.PX);
 			Element check = square.getChild(0).cast();
 			check.setId(checkId);
 		}
@@ -117,7 +118,7 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 			getSetting().getData()[row].put(columnCheckbox.getData(), select);
 			
 			Element td = getTable().getCell(row, 0, true);
-			CheckBox check = new CheckBox(22).setValue(select, true);
+			CheckBox check = new CheckBox(15).setValue(select, true);
 			td.removeAllChildren();
 			td.appendChild(check.getElement());
 			if(select) {

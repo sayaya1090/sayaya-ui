@@ -11,7 +11,7 @@
 	-o-user-select: none;
 	user-select: none;
 	line-height: normal;
-	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
 }
 
 .square {

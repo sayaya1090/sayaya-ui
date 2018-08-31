@@ -9,8 +9,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 
@@ -107,6 +110,8 @@ public final class SpreadSheet extends ResizeComposite {
 		public native boolean selectRows(int start);
 		public native boolean selectCell(int row, int column);
 		public native Element getCell(int row, int col, boolean topmost);
+		public native String getDataAtCell(int row, int column);
+		public native BaseEditor getActiveEditor();
 	}
 	
 	@JsFunction
@@ -310,6 +315,7 @@ public final class SpreadSheet extends ResizeComposite {
 			this.renderer = new Renderer() {
 				@Override
 				public Element render(SpreadSheetTable instance, Element td, int row, int col, String prop, Object value, ColumnInfo columnInfo) {
+					baseRenderer(this, instance, td, row, col, prop, value, columnInfo);
 					if(columnInfo.getValidator()!=null) try {
 						columnInfo.getValidator().exec(value, test->{
 							Object tested = value;
@@ -322,6 +328,18 @@ public final class SpreadSheet extends ResizeComposite {
 									DivElement arrow = Document.get().createDivElement();
 									arrow.setInnerHTML("▼");
 									arrow.setClassName("htAutocompleteArrow");
+									Event.sinkEvents(arrow, Event.ONCLICK);
+									Event.setEventListener(td, evt->{
+										BaseEditor editor = instance.getActiveEditor();
+										String data = instance.getDataAtCell(row, col);
+										if(data!=null) data = data.trim();
+										editor.beginEditing(data);
+										editor.setValue(data);
+										evt.preventDefault();
+										evt.stopPropagation();
+									});
+									td.getStyle().setDisplay(Display.TABLE_CELL);
+									td.getStyle().setWhiteSpace(WhiteSpace.PRE);
 									td.appendChild(arrow);
 								} else renderer.render(instance, td, row, col, prop, tested, columnInfo);
 							}
@@ -334,6 +352,18 @@ public final class SpreadSheet extends ResizeComposite {
 							DivElement arrow = Document.get().createDivElement();
 							arrow.setInnerHTML("▼");
 							arrow.setClassName("htAutocompleteArrow");
+							Event.sinkEvents(arrow, Event.ONCLICK);
+							Event.setEventListener(td, evt->{
+								BaseEditor editor = instance.getActiveEditor();
+								String data = instance.getDataAtCell(row, col);
+								if(data!=null) data = data.trim();
+								editor.beginEditing(data);
+								editor.setValue(data);
+								evt.preventDefault();
+								evt.stopPropagation();
+							});
+							td.getStyle().setDisplay(Display.TABLE_CELL);
+							td.getStyle().setWhiteSpace(WhiteSpace.PRE);
 							td.appendChild(arrow);
 						} else renderer.render(instance, td, row, col, prop, null, columnInfo);
 					}
@@ -343,11 +373,24 @@ public final class SpreadSheet extends ResizeComposite {
 						DivElement arrow = Document.get().createDivElement();
 						arrow.setInnerHTML("▼");
 						arrow.setClassName("htAutocompleteArrow");
+						Event.sinkEvents(arrow, Event.ONCLICK);
+						Event.setEventListener(td, evt->{
+							BaseEditor editor = instance.getActiveEditor();
+							String data = instance.getDataAtCell(row, col);
+							if(data!=null) data = data.trim();
+							editor.beginEditing(data);
+							editor.setValue(data);
+							evt.preventDefault();
+							evt.stopPropagation();
+						});
+						td.getStyle().setDisplay(Display.TABLE_CELL);
+						td.getStyle().setWhiteSpace(WhiteSpace.PRE);
 						td.appendChild(arrow);
 					} else renderer.render(instance, td, row, col, prop, value, columnInfo);
 					return td;
 				}
 			};
+			registerRenderer(this.renderer, "RND" + Random.nextInt());
 			return this;
 		}
 		@JsOverlay
@@ -1308,7 +1351,7 @@ public final class SpreadSheet extends ResizeComposite {
 		private Prototype<T> prototype;
 		
 		@JsOverlay
-		public Prototype<T>getPrototype() {
+		public Prototype<T> getPrototype() {
 			return prototype;
 		}
 
@@ -1318,6 +1361,19 @@ public final class SpreadSheet extends ResizeComposite {
 			return this;
 		}
 	}
+	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
+	public final static class BaseEditor {
+		public native void enableFullEditMode();
+		public native boolean isInFullEditMode();
+		public native void beginEditing(String value);
+		public native void setValue(String value);
+	}
+	public static native void registerRenderer(Object renderer, String id) /*-{
+		$wnd.Handsontable.renderers.registerRenderer(id, renderer);
+	}-*/;
+	public static native void baseRenderer(Object renderer, Object... args) /*-{
+		$wnd.Handsontable.renderers.BaseRenderer.apply(renderer, args);
+	}-*/;
 	
 	public static native <T> PrototypeEditor<T> createBaseEditor(Class<T> clazz) /*-{
 		var tmp = $wnd.Handsontable.editors.BaseEditor.prototype.extend();
