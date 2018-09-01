@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.Composite;
 
 import net.sayaya.ui.style.StyleTextBox;
@@ -59,5 +60,11 @@ public class DateBox extends Composite implements InputBase<Date, DateBox> {
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Date> handler) {
 		return widget.addValueChangeHandler(handler);
+	}
+	
+	public DateBox setFormat(String format) {
+		DateTimeFormat dtf = DateTimeFormat.getFormat(format);
+		widget.setFormat(new com.google.gwt.user.datepicker.client.DateBox.DefaultFormat(dtf));
+		return this;
 	}
 }
