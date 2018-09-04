@@ -332,9 +332,11 @@ public final class SpreadSheet extends ResizeComposite {
 									Event.setEventListener(td, evt->{
 										BaseEditor editor = instance.getActiveEditor();
 										String data = instance.getDataAtCell(row, col);
-										if(data!=null) data = data.trim();
-										editor.beginEditing(data);
-										editor.setValue(data);
+										if(data!=null) {
+											data = data.trim();
+											editor.beginEditing(data);
+											editor.setValue(data);
+										}
 										evt.preventDefault();
 										evt.stopPropagation();
 									});
@@ -356,9 +358,11 @@ public final class SpreadSheet extends ResizeComposite {
 							Event.setEventListener(td, evt->{
 								BaseEditor editor = instance.getActiveEditor();
 								String data = instance.getDataAtCell(row, col);
-								if(data!=null) data = data.trim();
-								editor.beginEditing(data);
-								editor.setValue(data);
+								if(data!=null) {
+									data = data.trim();
+									editor.beginEditing(data);
+									editor.setValue(data);
+								}
 								evt.preventDefault();
 								evt.stopPropagation();
 							});
@@ -377,9 +381,11 @@ public final class SpreadSheet extends ResizeComposite {
 						Event.setEventListener(td, evt->{
 							BaseEditor editor = instance.getActiveEditor();
 							String data = instance.getDataAtCell(row, col);
-							if(data!=null) data = data.trim();
-							editor.beginEditing(data);
-							editor.setValue(data);
+							if(data!=null) {
+								data = data.trim();
+								editor.beginEditing(data);
+								editor.setValue(data);
+							}
 							evt.preventDefault();
 							evt.stopPropagation();
 						});
