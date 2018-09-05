@@ -340,6 +340,12 @@
 .paste:before {
 	content: "\f0ea";
 }
+.pause:before {
+	content: "\f04c";
+}
+.pause-circle:before {
+	content: "\f28b";
+}
 .pen:before {
 	content: "\f304";
 }
@@ -354,6 +360,12 @@
 }
 .pencil:before {
 	content: "\f040";
+}
+.play:before {
+	content: "\f04b";
+}
+.play-circle:before {
+	content: "\f144";
 }
 .plus:before {
 	content: "\f067";
@@ -384,6 +396,12 @@
 }
 .redo-alt:before {
 	content: "\f2f9";
+}
+.repeat:before {
+	content: "\f363";
+}
+.repeat-alt:before {
+	content: "\f364";
 }
 .reply:before {
 	content: "\f3e5";
@@ -438,6 +456,18 @@
 }
 .square:before {
 	content: "\f0c8";
+}
+.stop:before {
+	content: "\f04d";
+}
+.stop-circle:before {
+	content: "\f28d";
+}
+.step-backward:before {
+	content: "\f048";
+}
+.step-forward:before {
+	content: "\f051";
 }
 .strikethrough:before {
 	content: "\f0cc";

@@ -224,6 +224,9 @@ public class Icon extends HTML {
 			String paperclip();
 			String paragraph();
 			String paste();
+			String pause();
+			@CssResource.ClassName("pause-circle")
+			String pauseCircle();
 			String pen();
 			@CssResource.ClassName("pen-alt")
 			String penAlt();
@@ -232,6 +235,9 @@ public class Icon extends HTML {
 			@CssResource.ClassName("pen-nib")
 			String penNib();
 			String pencil();
+			String play();
+			@CssResource.ClassName("play-circle")
+			String playCircle();
 			String plus();
 			@CssResource.ClassName("plus-circle")
 			String plusCircle();
@@ -248,6 +254,9 @@ public class Icon extends HTML {
 			String redo();
 			@CssResource.ClassName("redo-alt")
 			String redoAlt();
+			String repeat();
+			@CssResource.ClassName("repeat-alt")
+			String repeatAlt();
 			String reply();
 			@CssResource.ClassName("reply-alt")
 			String replyAlt();
@@ -278,6 +287,13 @@ public class Icon extends HTML {
 			String signoOutAlt();
 			String sitemap();
 			String square();
+			String stop();
+			@CssResource.ClassName("stop-circle")
+			String stopCircle();
+			@CssResource.ClassName("step-backward")
+			String stepBackward();
+			@CssResource.ClassName("step-forward")
+			String stepForward();
 			String strikethrough();
 			String subscript();
 			String superscript();
