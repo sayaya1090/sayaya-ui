@@ -44,12 +44,14 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 		double medMap = axisY.getY() - med;
 		double q3Map = axisY.getY() - q3;
 		double maxMap = axisY.getY() - max;
+		double cw = axisX.getWidth(category);
+		double cd = cw/2;
 		Box<Double> nextBox = new Box<Double>().setMin(minMap).setQ1(q1Map).setMedian(medMap).setQ3(q3Map).setMax(maxMap);
 		if(!shapes.containsKey(category) || !shapes.get(category).containsKey(idx)) {
 			double bw = getBoxWidth();
 			Agenda agenda = getAgenda()[idx];
 			double delta = betweenMargin/2.0 + idx*(bw + withinMargin);
-			double x = axisX.map(category) + delta;
+			double x = axisX.map(category) - cd + delta;
 			Box<Double> initBox = new Box<Double>().setMin(medMap).setQ1(medMap).setMedian(medMap).setQ3(medMap).setMax(medMap);
 			BoxAnimated shape = (BoxAnimated) createBox(bw, initBox, agenda)
 			.setBoxNext(nextBox)
@@ -79,8 +81,10 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 			double delta = betweenMargin/2.0 + i*(bw + withinMargin);
 			for(Entry<C, Box<N>> value: item.entrySet()) {
 				C category = value.getKey();
+				double cw = axisX.getWidth(category);
+				double cd = cw/2;
 				Box<N> box = value.getValue();
-				double x = axisX.map(category) + delta;
+				double x = axisX.map(category) - cd + delta;
 				double min = axisY.map(box.getMin());
 				double q1 = axisY.map(box.getQ1());
 				double med = axisY.map(box.getMedian());
@@ -95,12 +99,11 @@ public class GraphBox<C, N extends Number> extends Graph<Map<C, net.sayaya.ui.re
 				Box<Double> initBox = new Box<Double>().setMin(medMap).setQ1(medMap).setMedian(medMap).setQ3(medMap).setMax(medMap);
 				Box<Double> nextBox = new Box<Double>().setMin(minMap).setQ1(q1Map).setMedian(medMap).setQ3(q3Map).setMax(maxMap);
 				BoxAnimated shape = (BoxAnimated) createBox(bw, initBox, agenda)
-					.setBoxNext(nextBox)
-					.setPointNext(new Point<Double, Double> (x, axisY.getY()))
-					.setColor(agenda.getColor())
-					.setBorderWidth(borderWidth).setBorderColor(borderColor)
-					.setX(x).setY(axisY.getY())
-				;
+				.setBoxNext(nextBox)
+				.setPointNext(new Point<Double, Double> (x, axisY.getY()))
+				.setColor(agenda.getColor())
+				.setBorderWidth(borderWidth).setBorderColor(borderColor)
+				.setX(x).setY(axisY.getY());
 				add(shape);
 				if(!shapes.containsKey(category)) shapes.put(category, new TreeMap<Integer, BoxAnimated>());
 				shapes.get(category).put(i, shape);	

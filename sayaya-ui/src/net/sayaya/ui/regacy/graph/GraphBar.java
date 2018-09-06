@@ -36,19 +36,20 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 		getValue()[idx].put(category, value);
 		double y = axisY.map(value);
 		double height = axisY.getY() - y;
+		double cw = axisX.getWidth(category);
+		double cd = cw/2;
 		if(!shapes.containsKey(category) || !shapes.get(category).containsKey(idx)) {
 			double bw = getBarWidth();
 			Agenda agenda = getAgenda()[idx];
 			double delta = betweenMargin/2.0 + idx*(bw + withinMargin);
-			double x = axisX.map(category) + delta;
+			double x = axisX.map(category) - cd + delta ;
 			RectangleAnimated shape = (RectangleAnimated) createBar(bw, height, agenda)
-				.setWidthNext(bw).setHeightNext(height)
-				.setPointNext(new Point<Double, Double> (x+bw, y + height)).setRotateNext(Math.PI)
-				.setX(x+bw).setY(y + height)
-				.setRotate(Math.PI)
-				.setColor(agenda.getColor())
-				.setBorderWidth(borderWidth).setBorderColor(borderColor)
-			;
+			.setWidthNext(bw).setHeightNext(height)
+			.setPointNext(new Point<Double, Double> (x+bw, y + height)).setRotateNext(Math.PI)
+			.setX(x+bw).setY(y + height)
+			.setRotate(Math.PI)
+			.setColor(agenda.getColor())
+			.setBorderWidth(borderWidth).setBorderColor(borderColor);
 			if(!shapes.containsKey(category)) shapes.put(category, new TreeMap<Integer, RectangleAnimated>());
 			shapes.get(category).put(idx, shape);
 			add(shape);
@@ -72,8 +73,10 @@ public class GraphBar <C, N extends Number> extends Graph<Map<C, N>> implements 
 			double delta = betweenMargin/2.0 + i*(bw + withinMargin);
 			for(Entry<C, N> entry: item.entrySet()) {
 				C category = entry.getKey();
+				double cw = axisX.getWidth(category);
+				double cd = cw/2;
 				N value = entry.getValue();
-				double x = axisX.map(category) + delta;
+				double x = axisX.map(category) - cd + delta;
 				double y = axisY.map(value);
 				double height = axisY.getY() - y;
 				RectangleAnimated shape = (RectangleAnimated) createBar(bw, height, agenda)

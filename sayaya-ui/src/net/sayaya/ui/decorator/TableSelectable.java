@@ -180,13 +180,15 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 		}
 
 		@Override
-		public TableSelectable<T> setValues(Data... values) {
+		public TableSelectable<T> setValues(Data... values) {	
 			Arrays.stream(values).forEach(value->value.setOrigin(columnCheckbox.getData(), false));
 			updateCheckbox(false);
 			base.setValues(values);
 			
 			SpreadSheet sheet = getTable();
-			if(sheet!=null) DOM.setEventListener(sheet.getElement(), evt->{
+			if(sheet==null) return this;
+			
+			DOM.setEventListener(sheet.getElement(), evt->{
 				if(evt.getTypeInt() == Event.ONCLICK) {
 					evt.preventDefault();
 					Element target = Element.as(((NativeEvent) evt).getEventTarget());

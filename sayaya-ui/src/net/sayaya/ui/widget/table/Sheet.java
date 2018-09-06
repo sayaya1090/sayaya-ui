@@ -46,6 +46,7 @@ public abstract class Sheet<T> extends ResizeComposite implements TableBase<T> {
 	}
 	
 	public Element[] getHeader() {
+		if(sheet == null) return new Element[] {};
 		NodeList<Element> elems = sheet.getElement().getElementsByTagName("th");
 		Element[] array = new Element[elems.getLength()/2];
 		for(int i = 0; i < elems.getLength()/2; ++i) array[i] = elems.getItem(i).getFirstChildElement();
@@ -53,6 +54,7 @@ public abstract class Sheet<T> extends ResizeComposite implements TableBase<T> {
 	}
 	
 	public Element getBody() {
+		if(sheet == null) return null;
 		NodeList<Element> elems = sheet.getElement().getElementsByTagName("tbody");
 		return elems.getItem(0);
 	}
@@ -129,7 +131,7 @@ public abstract class Sheet<T> extends ResizeComposite implements TableBase<T> {
 	
 	@Override
 	public final void update() {
-		sheet.update(setting);
+		if(sheet!=null) sheet.update(setting);
 	}
 	
 	private T[] values = null;
@@ -149,8 +151,8 @@ public abstract class Sheet<T> extends ResizeComposite implements TableBase<T> {
 	public final Sheet<T> setValues(Data... data) {
 		container.clear();
 		if(data!=null && data.length > 0) {
-			setting.setData(data).setMaxRows(Math.max(1, data.length));
 			sheet = new SpreadSheet(setting);
+			setting.setData(data).setMaxRows(Math.max(1, data.length));
 			container.add(sheet);
 			sheet.update(setting);
 		} else {
