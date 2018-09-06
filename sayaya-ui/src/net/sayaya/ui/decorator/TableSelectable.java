@@ -185,7 +185,8 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 			updateCheckbox(false);
 			base.setValues(values);
 			
-			DOM.setEventListener(getTable().getElement(), evt->{
+			SpreadSheet sheet = getTable();
+			if(sheet!=null) DOM.setEventListener(sheet.getElement(), evt->{
 				if(evt.getTypeInt() == Event.ONCLICK) {
 					evt.preventDefault();
 					Element target = Element.as(((NativeEvent) evt).getEventTarget());
