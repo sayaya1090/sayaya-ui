@@ -20,5 +20,4 @@ public abstract class Place<T extends Place<T>> extends com.google.gwt.place.sha
 	public boolean equals(T other) {
 		return false;
 	}
-	public abstract String toString();
 }
