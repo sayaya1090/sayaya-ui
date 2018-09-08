@@ -328,7 +328,7 @@ public final class SpreadSheet extends ResizeComposite {
 									DivElement arrow = Document.get().createDivElement();
 									arrow.setInnerHTML("▼");
 									arrow.setClassName("htAutocompleteArrow");
-									Event.sinkEvents(arrow, Event.ONCLICK);
+									Event.sinkEvents(td, Event.ONCLICK);
 									Event.setEventListener(td, evt->{
 										BaseEditor editor = instance.getActiveEditor();
 										String data = instance.getDataAtCell(row, col);
@@ -336,7 +336,7 @@ public final class SpreadSheet extends ResizeComposite {
 											data = data.trim();
 											editor.beginEditing(data);
 											editor.setValue(data);
-										}
+										} else editor.beginEditing("");
 										evt.preventDefault();
 										evt.stopPropagation();
 									});
@@ -354,7 +354,7 @@ public final class SpreadSheet extends ResizeComposite {
 							DivElement arrow = Document.get().createDivElement();
 							arrow.setInnerHTML("▼");
 							arrow.setClassName("htAutocompleteArrow");
-							Event.sinkEvents(arrow, Event.ONCLICK);
+							Event.sinkEvents(td, Event.ONCLICK);
 							Event.setEventListener(td, evt->{
 								BaseEditor editor = instance.getActiveEditor();
 								String data = instance.getDataAtCell(row, col);
@@ -362,7 +362,7 @@ public final class SpreadSheet extends ResizeComposite {
 									data = data.trim();
 									editor.beginEditing(data);
 									editor.setValue(data);
-								}
+								} else editor.beginEditing("");
 								evt.preventDefault();
 								evt.stopPropagation();
 							});
@@ -377,7 +377,7 @@ public final class SpreadSheet extends ResizeComposite {
 						DivElement arrow = Document.get().createDivElement();
 						arrow.setInnerHTML("▼");
 						arrow.setClassName("htAutocompleteArrow");
-						Event.sinkEvents(arrow, Event.ONCLICK);
+						Event.sinkEvents(td, Event.ONCLICK);
 						Event.setEventListener(td, evt->{
 							BaseEditor editor = instance.getActiveEditor();
 							String data = instance.getDataAtCell(row, col);
@@ -385,7 +385,7 @@ public final class SpreadSheet extends ResizeComposite {
 								data = data.trim();
 								editor.beginEditing(data);
 								editor.setValue(data);
-							}
+							} else editor.beginEditing("");
 							evt.preventDefault();
 							evt.stopPropagation();
 						});
