@@ -173,10 +173,18 @@ public class Icon extends HTML {
 			String file();
 			@CssResource.ClassName("file-alt")
 			String fileAlt();
+			@CssResource.ClassName("file-download")
+			String fileDownload();
+			@CssResource.ClassName("file-excel")
+			String fileExcel();
+			@CssResource.ClassName("file-invoice")
+			String fileInvoice();
 			@CssResource.ClassName("file-medical")
 			String fileMedical();
 			@CssResource.ClassName("file-medical-alt")
 			String fileMedicalAlt();
+			@CssResource.ClassName("file-pdf")
+			String filePdf();
 			@CssResource.ClassName("file-plus")
 			String filePlus();
 			String font();

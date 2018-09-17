@@ -104,6 +104,11 @@ public class Placeholder {
 		protected final Label getPlaceholder() {
 			return label;
 		}
+		
+		public InputBaseDecoratorPlaceholder<T> setPlaceholder(String msg) {
+			label.setValue(msg);
+			return this;
+		}
 
 		@Override
 		public InputBaseDecoratorPlaceholder<T> setValue(T value) {

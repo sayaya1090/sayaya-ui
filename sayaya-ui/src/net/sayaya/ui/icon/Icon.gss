@@ -229,11 +229,23 @@
 .file-alt:before {
 	content: "\f15c";
 }
+.file-download:before {
+	content: "\f56d";
+}
+.file-excel:before {
+	content: "\f1c3";
+}
+.file-invoice:before {
+	content: "\f570";
+}
 .file-medical:before {
 	content: "\f477";
 }
 .file-medical-alt:before {
 	content: "\f478";
+}
+.file-pdf:before {
+	content: "\f1c1";
 }
 .file-plus:before {
 	content: "\f319";

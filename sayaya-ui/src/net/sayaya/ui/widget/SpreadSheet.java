@@ -134,6 +134,48 @@ public final class SpreadSheet extends ResizeComposite {
 		void exec(String query, Callback<String[]> callback);
 	}
 	
+	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
+	public final static class Filter {
+		@JsProperty(name="column")
+		private Integer column;
+		@JsProperty(name="conditions")
+		private FilterCondition[] conditions;
+		@JsProperty(name="operation")
+		private String operation;
+		@JsOverlay
+		public Integer getColumn() {
+			return column;
+		}
+		@JsOverlay
+		public FilterCondition[] getConditions() {
+			return conditions;
+		}
+		@JsOverlay
+		public String getOperation() {
+			return operation;
+		}
+	}
+	
+	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
+	public final static class FilterCondition {
+		@JsProperty(name="name")
+		private String name;
+		@JsProperty(name="args")
+		private String[][] args;
+		@JsOverlay
+		public String getName() {
+			return name;
+		}
+		@JsOverlay
+		public String[][] getArgs() {
+			return args;
+		}
+	}
+	@JsFunction
+	public static interface AfterFilter {
+		void apply(Filter[] conditionsStack);
+	}
+	
 	@JsFunction
 	public static interface Validator {
 		void exec(Object value, Callback<Boolean> callback);
@@ -850,6 +892,8 @@ public final class SpreadSheet extends ResizeComposite {
 		private BeforePaste beforePaste;
 		@JsProperty(name="afterPaste")
 		private AfterPaste afterPaste;
+		@JsProperty(name="afterFilter")
+		private AfterFilter afterFilter;
 		@JsOverlay
 		public Data[] getData() {
 			return data;
@@ -1266,6 +1310,17 @@ public final class SpreadSheet extends ResizeComposite {
 		@JsOverlay
 		public SheetSetting setAfterPaste(AfterPaste afterPaste) {
 			this.afterPaste = afterPaste;
+			return this;
+		}
+
+		@JsOverlay
+		public AfterFilter getAfterFilter() {
+			return afterFilter;
+		}
+
+		@JsOverlay
+		public SheetSetting setAfterFilter(AfterFilter afterFilter) {
+			this.afterFilter = afterFilter;
 			return this;
 		}
 	}
