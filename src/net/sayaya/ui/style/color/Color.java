@@ -9,7 +9,6 @@ public class Color {
      * <div style="border:1px solid black;width:40px;height:20px;background-color:#93A6D0;float:left;margin: 0 10px 0 0"></div>
      */
 	public final static String Serenity = "#93A6D0";
-	
 	/**
 	 * Pairs: RoseQuartz Serenity LilacGray
      * <div style="border:1px solid black;width:40px;height:20px;background-color:#F7786B;float:left;margin: 0 10px 0 0"></div>
