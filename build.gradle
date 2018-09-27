@@ -21,9 +21,6 @@ buildscript {
 	repositories {
 		jcenter()
 		mavenCentral()
-		maven {
-			url new File(rootProject.projectDir.parentFile, 'repo').toURI()
-		}
 	}
 	dependencies {
 		classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
