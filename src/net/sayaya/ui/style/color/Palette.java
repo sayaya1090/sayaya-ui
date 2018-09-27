@@ -22,7 +22,7 @@ public class Palette {
 		return instance;
 	}
 	/**
-	 * A primary color is the color displayed most frequently across your app¡¯s screens and components. If you don¡¯t have a secondary color, your primary color can also be used to accent elements.
+	 * A primary color is the color displayed most frequently across your apps screens and components. If you donï¿½ï¿½t have a secondary color, your primary color can also be used to accent elements.
 	 * <p><b>Dark and light primary variants</b></p>
 	 * You can make a color theme for your app using your primary color, as well as dark and light primary variants.<br/>
      * <p><b>Distinguish UI elements</b></p>
@@ -32,7 +32,7 @@ public class Palette {
 		return color1;
 	}
 	/**
-	 * A primary color is the color displayed most frequently across your app¡¯s screens and components. If you don¡¯t have a secondary color, your primary color can also be used to accent elements.
+	 * A primary color is the color displayed most frequently across your apps screens and components. If you donï¿½ï¿½t have a secondary color, your primary color can also be used to accent elements.
 	 * <p><b>Dark and light primary variants</b></p>
 	 * You can make a color theme for your app using your primary color, as well as dark and light primary variants.<br/>
      * <p><b>Distinguish UI elements</b></p>
