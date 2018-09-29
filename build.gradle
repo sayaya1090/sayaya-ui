@@ -57,6 +57,7 @@ artifacts {
     archives jar
     archives javadocJar
     archives sourcesJar
+    
     file("build/libs/${archivesBaseName}-${version}.jar.asc")
     file("build/libs/${archivesBaseName}-${version}-javadoc.jar.asc")
     file("build/libs/${archivesBaseName}-${version}-sources.jar.asc")
