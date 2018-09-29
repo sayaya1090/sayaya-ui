@@ -38,11 +38,6 @@ gwt {
 	maxHeapSize = "1024M";
 }
 
-compileGwt {
-	minHeapSize = "512M";
-	maxHeapSize = "1024M";
-}
-
 task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
     classifier = 'sources'
@@ -57,7 +52,6 @@ artifacts {
     archives jar
     archives javadocJar
     archives sourcesJar
-    
     file("build/libs/${archivesBaseName}-${version}.jar.asc")
     file("build/libs/${archivesBaseName}-${version}-javadoc.jar.asc")
     file("build/libs/${archivesBaseName}-${version}-sources.jar.asc")
