@@ -34,10 +34,13 @@ compileJava {
 gwt {
 	gwtVersion='2.8.2'
 	eclipse.addGwtContainer = false;
+	minHeapSize = "512M";
+	maxHeapSize = "1024M";
 }
 
-tasks.withType(de.richsource.gradle.plugins.gwt.AbstractGwtActionTask) {
-	jvmArgs "-Xss1M"
+compileGwt {
+	minHeapSize = "512M";
+	maxHeapSize = "1024M";
 }
 
 task sourcesJar(type: Jar) {
