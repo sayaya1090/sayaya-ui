@@ -36,6 +36,7 @@ gwt {
 	eclipse.addGwtContainer = false;
 	minHeapSize = "512M";
 	maxHeapSize = "1024M";
+	jvmArgs "-XX:ReservedCodeCacheSize=512M","-Xss2M"
 }
 
 task sourcesJar(type: Jar) {
