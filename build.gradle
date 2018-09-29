@@ -36,6 +36,10 @@ gwt {
 	eclipse.addGwtContainer = false;
 }
 
+tasks.withType(de.richsource.gradle.plugins.gwt.AbstractGwtActionTask) {
+	jvmArgs "-Xss1M"
+}
+
 task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
     classifier = 'sources'
