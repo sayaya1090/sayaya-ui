@@ -370,8 +370,8 @@ public final class SpreadSheet extends ResizeComposite {
 									DivElement arrow = Document.get().createDivElement();
 									arrow.setInnerHTML("▼");
 									arrow.setClassName("htAutocompleteArrow");
-									Event.sinkEvents(td, Event.ONCLICK);
-									Event.setEventListener(td, evt->{
+									Event.sinkEvents(arrow, Event.ONCLICK);
+									Event.setEventListener(arrow, evt->{
 										BaseEditor editor = instance.getActiveEditor();
 										String data = instance.getDataAtCell(row, col);
 										if(data!=null) {
@@ -396,8 +396,8 @@ public final class SpreadSheet extends ResizeComposite {
 							DivElement arrow = Document.get().createDivElement();
 							arrow.setInnerHTML("▼");
 							arrow.setClassName("htAutocompleteArrow");
-							Event.sinkEvents(td, Event.ONCLICK);
-							Event.setEventListener(td, evt->{
+							Event.sinkEvents(arrow, Event.ONCLICK);
+							Event.setEventListener(arrow, evt->{
 								BaseEditor editor = instance.getActiveEditor();
 								String data = instance.getDataAtCell(row, col);
 								if(data!=null) {
@@ -419,8 +419,8 @@ public final class SpreadSheet extends ResizeComposite {
 						DivElement arrow = Document.get().createDivElement();
 						arrow.setInnerHTML("▼");
 						arrow.setClassName("htAutocompleteArrow");
-						Event.sinkEvents(td, Event.ONCLICK);
-						Event.setEventListener(td, evt->{
+						Event.sinkEvents(arrow, Event.ONCLICK);
+						Event.setEventListener(arrow, evt->{
 							BaseEditor editor = instance.getActiveEditor();
 							String data = instance.getDataAtCell(row, col);
 							if(data!=null) {

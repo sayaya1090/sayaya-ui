@@ -5,6 +5,9 @@
 .sheet {
 	
 }
+.sheet .handsontable {
+	cursor: cell;
+}
 
 .sheet .handsontable th {
 	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
@@ -122,7 +125,7 @@
 	padding-right: 15px;
 	border-bottom: 1px solid #D4D7DA;
 	border-left: 0px hidden;
-	border-right: 0px hidden;
+	border-right: 1px solid #D4D7DA;
 	white-space: nowrap;
 }
 
