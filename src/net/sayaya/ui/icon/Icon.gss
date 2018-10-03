@@ -250,6 +250,9 @@
 .file-plus:before {
 	content: "\f319";
 }
+.filter:before {
+	content: "\f0b0";
+}
 .font:before {
 	content: "\f031";
 }

@@ -39,40 +39,40 @@ gwt {
 }
 
 task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
-    classifier = 'sources'
+	 from sourceSets.main.allSource
+	 classifier = 'sources'
 }
 
 task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from tasks.javadoc.destinationDir
+	 classifier = 'javadoc'
+	 from tasks.javadoc.destinationDir
 }
 
 artifacts {
-    archives jar
-    archives javadocJar
-    archives sourcesJar
-    file("build/libs/${archivesBaseName}-${version}.jar.asc")
-    file("build/libs/${archivesBaseName}-${version}-javadoc.jar.asc")
-    file("build/libs/${archivesBaseName}-${version}-sources.jar.asc")
+	 archives jar
+	 archives javadocJar
+	 archives sourcesJar
+	 file("build/libs/${archivesBaseName}-${version}.jar.asc")
+	 file("build/libs/${archivesBaseName}-${version}-javadoc.jar.asc")
+	 file("build/libs/${archivesBaseName}-${version}-sources.jar.asc")
 }
 
 jar {
-    from sourceSets.main.allJava
-    manifest {
-        attributes 'Implementation-Title': archivesBaseName,
-                   'Implementation-Version': version
-    }
+	 from sourceSets.main.allJava
+	 manifest {
+		  attributes 'Implementation-Title': archivesBaseName,
+						 'Implementation-Version': version
+	 }
 }
 
 sourceSets {
-   main {
-        java {
-            srcDir 'src'
-        }
-        
-        resources {
-        	srcDir 'src'
-        }
+	main {
+		  java {
+				srcDir 'src'
+		  }
+		  
+		  resources {
+		  	srcDir 'src'
+		  }
 	}
 }

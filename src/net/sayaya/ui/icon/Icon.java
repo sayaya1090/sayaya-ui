@@ -187,6 +187,7 @@ public class Icon extends HTML {
 			String filePdf();
 			@CssResource.ClassName("file-plus")
 			String filePlus();
+			String filter();
 			String font();
 			String glasses();
 			String globe();
