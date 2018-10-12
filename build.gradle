@@ -15,6 +15,7 @@ repositories {
 dependencies {
 	compileOnly('com.google.gwt:gwt-user:2.8.2')
 	compileOnly('com.google.gwt:gwt-dev:2.8.2')
+	compileOnly('org.projectlombok:lombok:1.18.2')
 }
 
 buildscript {
