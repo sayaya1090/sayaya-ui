@@ -339,6 +339,8 @@ public class Icon extends HTML {
 			@CssResource.ClassName("unlock-alt")
 			String unlockAlt();
 			String unlink();
+			@CssResource.ClassName("user-chart")
+			String userChart();
 			@CssResource.ClassName("user-circle")
 			String userCircle();
 			@CssResource.ClassName("user-lock")

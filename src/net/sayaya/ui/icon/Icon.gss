@@ -559,6 +559,9 @@
 .unlink:before {
 	content: "\f127";
 }
+.user-chart:before {
+	content: "\f6a3";
+}
 .user-circle:before {
 	content: "\f2bd";
 }
