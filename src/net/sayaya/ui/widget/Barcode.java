@@ -35,6 +35,9 @@ public class Barcode extends FocusWidget {
 	private final native static Element element(String id) /*-{
 		var svg = $wnd.document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.className.baseVal = id;
+		svg.className.indexOf = function(str) {
+			return -1;
+		};
 		return svg;
 	}-*/;
 	
