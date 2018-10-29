@@ -57,7 +57,7 @@ public class Validator {
 			return this;
 		}
 		
-		protected final Label getLogger() {
+		public final Label getLogger() {
 			return label;
 		}
 
