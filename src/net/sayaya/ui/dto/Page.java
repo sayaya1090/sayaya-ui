@@ -36,7 +36,7 @@ public final class Page {
 	@JsOverlay
 	public Page setLimit(int limit) {
 		this.limit = limit;
-		if(offset >= 0) page = (int) offset/limit;
+		// if(offset >= 0) page = (int) offset/limit;
 		return this;
 	}
 	@JsOverlay
