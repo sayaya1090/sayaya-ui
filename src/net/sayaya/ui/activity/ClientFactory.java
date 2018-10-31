@@ -1,5 +1,6 @@
 package net.sayaya.ui.activity;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.web.bindery.event.shared.EventBus;
@@ -9,7 +10,7 @@ public interface ClientFactory {
 	PlaceController getPlaceController();
 	
 	public static class ClientFactoryImpl implements ClientFactory {
-		private static final EventBus eventBus = new SimpleEventBus();
+		private static final EventBus eventBus = GWT.create(SimpleEventBus.class);
 		private static final PlaceController placeController = new PlaceController(eventBus);
 
 		@Override

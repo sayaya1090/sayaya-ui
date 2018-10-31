@@ -96,6 +96,14 @@ public final class SpreadSheet extends ResizeComposite {
 		return table.selectCell(row, column);
 	}
 	
+	public void addRow(int row, int amount) {
+		table.alter("insert_row", row, amount);
+	}
+	
+	public void removeRow(int row, int amount) {
+		table.alter("remove_row", row, amount);
+	}
+	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name="Handsontable")	
 	public final static class SpreadSheetTable {
 		public SpreadSheetTable(Element element, SheetSetting setting) {};
@@ -112,6 +120,7 @@ public final class SpreadSheet extends ResizeComposite {
 		public native Element getCell(int row, int col, boolean topmost);
 		public native String getDataAtCell(int row, int column);
 		public native BaseEditor getActiveEditor();
+		public native void alter(String action, int idex, int amount);
 	}
 	
 	@JsFunction
