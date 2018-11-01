@@ -1,4 +1,4 @@
-.breadcrumb {
+.barcode {
 	display: block;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
