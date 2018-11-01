@@ -5,7 +5,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FocusWidget;
 
 import lombok.Builder;
-import net.sayaya.ui.style.StyleBarcode;
 
 public class Barcode extends FocusWidget {
 	private final String id = DOM.createUniqueId();
@@ -14,6 +13,7 @@ public class Barcode extends FocusWidget {
 	@Builder
 	public Barcode(String format, long value, Integer width, Integer height, Integer textmargin, String font, Integer fontSize
 		, String fontoption, String lineColor, String background) {
+		element.getStyle().setProperty("pointerEvents", "none");
 		setElement(element);
 		if(format != null && !format.trim().isEmpty()) element.setAttribute("jsbarcode-format", format);
 		else element.setAttribute("jsbarcode-format", "auto");
@@ -31,7 +31,6 @@ public class Barcode extends FocusWidget {
 	
 	public void init() {
 		init(id);
-		setStyleName(StyleBarcode.GSS.barcode());
 	}
 	
 	private final native static Element element(String id) /*-{
