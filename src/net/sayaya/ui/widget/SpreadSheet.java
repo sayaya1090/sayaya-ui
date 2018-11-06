@@ -96,12 +96,12 @@ public final class SpreadSheet extends ResizeComposite {
 		return table.selectCell(row, column);
 	}
 	
-	public void addRow(int row, int amount) {
-		table.alter("insert_row", row, amount);
-	}
-	
 	public void removeRow(int row, int amount) {
 		table.alter("remove_row", row, amount);
+	}
+	
+	public void removeRow(int row) {
+		table.alter("remove_row", row, 1);
 	}
 	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name="Handsontable")	

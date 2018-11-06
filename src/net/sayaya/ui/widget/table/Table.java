@@ -136,7 +136,7 @@ public abstract class Table<T> extends ResizeComposite implements TableBase<T> {
 	public final Table<T> setValues(Data... data) {
 		container.clear();
 		if(data!=null && data.length > 0) {
-			setting.setData(data).setMaxRows(Math.max(1, data.length));
+			setting.setData(data)/*.setMaxRows(Math.max(1, data.length))*/;
 			sheet = new SpreadSheet(setting);
 			container.add(sheet);
 			sheet.update(setting);
