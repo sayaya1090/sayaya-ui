@@ -1,0 +1,136 @@
+.header {
+	position: relative;
+	border-collapse: collapse;
+	border-spacing: 0;
+	border-width: 0;
+	table-layout: fixed;
+	margin: 0;
+	outline-width: 0;
+	max-width: none;
+	max-height: none;
+	cursor: cell;
+	z-index: 999;
+}
+
+.viewport {
+	overflow: auto;
+	top: 1px;
+	position: inherit;
+}
+
+.field {
+	position: relative;
+	top: 26px;
+}
+.table {
+	position: relative;
+	border-collapse: collapse;
+	border-spacing: 0;
+	border-width: 0;
+	table-layout: fixed;
+	margin: 0;
+	outline-width: 0;
+	max-width: none;
+	max-height: none;
+	cursor: cell;
+}
+
+.table thead {
+
+}
+
+.header thead tr th {
+	display: inline-table;
+	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
+	color: #FFFFFF;
+	font-size: 13px;
+	font-weight: bold;
+	font-family: "Noto Sans KR";
+	line-height: 25px;
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	cursor: pointer;
+	border-bottom: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	border-left: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	border-right: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+}
+
+.header thead th: first-of-type {
+
+}
+
+.header thead th: last-of-type {
+
+}
+
+.table tbody {
+	display: block;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.table tbody tr {
+
+}
+
+.table tbody tr:nth-child(2n+1) {
+	background-color: rgba(240, 240, 240, 0.8);
+}
+
+.table tbody tr:nth-child(2n+1) {
+	background-color: rgba(240, 240, 240, 0.8);
+	color: #5E6275;
+}
+
+.table tbody tr:nth-child(2n) {
+	background-color: #FFFFFF;
+}
+
+.table tbody tr:nth-child(2n) {
+	background-color: #FFFFFF;
+	color: #5E6275;
+}
+
+.table tbody tr td {
+	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
+	font-size: 13px;
+	font-family: "Noto Sans KR";
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	padding-left: 15px;
+	padding-right: 15px;
+	border-bottom: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	border-left: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	border-right: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+}
+
+.select-range {
+	position: absolute;
+	pointer-events: none;
+	border: 2px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+	background-color: rgba(0, 0, 0, 0.1);
+	overflow: visible;
+	z-index: 10;
+}
+
+.select-range-square {
+	position: absolute;
+	right: -4px;
+	bottom: -4px;
+	width: 1px;
+	height: 1px;
+	outline: 1px solid #FFFFFF;
+	border: 2px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+	pointer-events: all;
+	cursor: crosshair;
+}
+
+.copy-range {
+	position: absolute;
+	pointer-events: none;
+	border: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColor2()");
+	background-color: eval("net.sayaya.ui.style.color.Palette.toRGBA(net.sayaya.ui.style.color.Palette.getInstance().getColor2(), 0.1)");
+	overflow: visible;
+	z-index: 9;
+}
