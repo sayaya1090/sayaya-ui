@@ -57,4 +57,9 @@ public final class TextBox extends Composite implements InputBase<String, TextBo
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
 		return widget.addValueChangeHandler(handler);
 	}
+	
+	public TextBox selectAll() {
+		widget.selectAll();
+		return this;
+	}
 }

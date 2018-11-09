@@ -62,4 +62,9 @@ public class LongBox extends Composite implements InputBase<Long, LongBox> {
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Long> handler) {
 		return widget.addValueChangeHandler(handler);
 	}
+	
+	public LongBox selectAll() {
+		widget.selectAll();
+		return this;
+	}
 }

@@ -57,4 +57,9 @@ public final class PasswordBox extends Composite implements InputBase<String, Pa
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
 		return widget.addValueChangeHandler(handler);
 	}
+	
+	public PasswordBox selectAll() {
+		widget.selectAll();
+		return this;
+	}
 }

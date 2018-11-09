@@ -2,6 +2,7 @@ package net.sayaya.ui.widget.textbox;
 
 import java.util.Date;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -67,4 +68,13 @@ public class DateBox extends Composite implements InputBase<Date, DateBox> {
 		widget.setFormat(new com.google.gwt.user.datepicker.client.DateBox.DefaultFormat(dtf));
 		return this;
 	}
+	
+	public DateBox selectAll() {
+		selectAll(widget.getElement());
+		return this;
+	}
+	
+	private native void selectAll(Element element) /*-{
+		element.setSelectionRange(0, element.value.length);
+	}-*/;
 }

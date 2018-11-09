@@ -62,4 +62,9 @@ public class IntegerBox extends Composite implements InputBase<Integer, IntegerB
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Integer> handler) {
 		return widget.addValueChangeHandler(handler);
 	}
+	
+	public IntegerBox selectAll() {
+		widget.selectAll();
+		return this;
+	}
 }

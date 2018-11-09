@@ -57,4 +57,9 @@ public class TextArea extends Composite implements InputBase<String, TextArea> {
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
 		return widget.addValueChangeHandler(handler);
 	}
+	
+	public TextArea selectAll() {
+		widget.selectAll();
+		return this;
+	}
 }
