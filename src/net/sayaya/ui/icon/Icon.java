@@ -256,6 +256,8 @@ public class Icon extends HTML {
 			@CssResource.ClassName("prescription-bottle-alt")
 			String prescriptionBottleAlt();
 			String print();
+			@CssResource.ClassName("puzzle-piece")
+			String puzzlePiece();
 			@CssResource.ClassName("quote-left")
 			String quoteLeft();
 			@CssResource.ClassName("quote-right")

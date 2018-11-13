@@ -397,6 +397,9 @@
 .prescription-bottle-alt:before {
 	content: "\f486";
 }
+.puzzle-piece:before {
+	content: "\f12e";
+}
 .print:before {
 	content: "\f02f";
 }
