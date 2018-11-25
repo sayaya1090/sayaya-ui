@@ -25,7 +25,6 @@ public class DialogBox extends com.google.gwt.user.client.ui.DialogBox {
 		setText(title);
 		layout(buttons);
 		style();
-		show();
 	}
 	
 	private void layout(Button<?>... buttons) {
