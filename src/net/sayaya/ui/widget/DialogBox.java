@@ -25,14 +25,12 @@ public class DialogBox extends com.google.gwt.user.client.ui.DialogBox {
 		setText(title);
 		layout(buttons);
 		style();
-		hide();
 	}
 	
 	private void layout(Button<?>... buttons) {
 		add(layout);
 		for(Button<?> button: buttons) control.add(button);
 		addCloseHandler(evt->RootPanel.get().getElement().removeChild(overlay));
-		RootPanel.get().getElement().appendChild(overlay);
 		getElement().getStyle().setZIndex(Integer.MAX_VALUE);
 		layout.setWidth("100%");
 		((Element)this.getContainerElement().getChild(0).cast()).getStyle().setWidth(100, Unit.PCT);
@@ -56,6 +54,7 @@ public class DialogBox extends com.google.gwt.user.client.ui.DialogBox {
 			parent = other;
 			break;
 		}
+		RootPanel.get().getElement().appendChild(overlay);
 		super.show();
 		INSTANCES.add(this);
 	}
