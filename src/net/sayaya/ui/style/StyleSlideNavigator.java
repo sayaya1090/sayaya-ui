@@ -40,5 +40,5 @@ public class StyleSlideNavigator {
 	static {
 		RESOURCE.style().ensureInjected();
 	}
-	public static final SlideNavigatorResource.Style GSS = RESOURCE.style();
+	public static SlideNavigatorResource.Style GSS = RESOURCE.style();
 }
