@@ -853,6 +853,8 @@ public final class SpreadSheet extends ResizeComposite {
 		private boolean manualRowMove;
 		@JsProperty(name="manualColumnMove")
 		private boolean manualColumnMove;
+		@JsProperty(name="viewportColumnRenderingOffset")
+		private Integer viewportColumnRenderingOffset;
 		@JsProperty(name="contextMenu")
 		private Object contextMenu;
 		@JsProperty(name="dropdownMenu")
@@ -1074,6 +1076,15 @@ public final class SpreadSheet extends ResizeComposite {
 			this.manualColumnMove = manualColumnMove;
 			return this;
 		}
+		@JsOverlay
+		public Integer getViewportColumnRenderingOffset() {
+			return viewportColumnRenderingOffset;
+		}
+		@JsOverlay
+		public SheetSetting setViewportColumnRenderingOffset(Integer viewportColumnRenderingOffset) {
+			this.viewportColumnRenderingOffset = viewportColumnRenderingOffset;
+			return this;
+		}
 
 		@JsOverlay
 		public SheetSetting setContextMenu(boolean contextMenu) {
@@ -1152,6 +1163,7 @@ public final class SpreadSheet extends ResizeComposite {
 			String[] arr = new String[headers.size()];
 			headers.toArray(arr);
 			setColHeaders(arr);
+			this.viewportColumnRenderingOffset = arr.length;
 			return this;
 		}
 		
