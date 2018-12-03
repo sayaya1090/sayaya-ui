@@ -1,4 +1,4 @@
-@external handsontable, htNoFrame, htRowHeaders current, listbox, ht__highlight, htAutocompleteArrow, htFiltersActive, zeroclipboard-is-hover
+@external handsontable, htCore, htNoFrame, htRowHeaders current, listbox, ht__highlight, htAutocompleteArrow, htFiltersActive, zeroclipboard-is-hover
 , htContextMenu, changeType, ht_clone_top_left_corner, htDropdownMenu, htUIMultipleSelect, htItemWrapper, htCore
 , htUIInput, htUIButton, htUIButtonOK
 , htFiltersConditionsMenu;
@@ -7,6 +7,10 @@
 }
 .sheet .handsontable {
 	cursor: cell;
+}
+
+.sheet .handsontable table.htCore {
+	border-collapse: collapse;
 }
 
 .sheet .handsontable th {
@@ -119,10 +123,12 @@
 }
 
 .sheet .handsontable tr td {
-	padding-top: 5px;
-	padding-bottom: 5px;
+	padding-top: 0px;
+	padding-bottom: 0px;
 	padding-left: 15px;
 	padding-right: 15px;
+	height: 32px;
+	line-height: 32px;
 	border-bottom: 1px solid #D4D7DA;
 	border-left: 0px hidden;
 	border-right: 1px solid #D4D7DA;
