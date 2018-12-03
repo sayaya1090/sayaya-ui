@@ -47,7 +47,7 @@ public interface TableSelectable<T> extends TableBase<T>, HasSelectionChangedHan
 			if(value == null) td.setInnerHTML("");
 			Boolean cast = (Boolean)value;
 			CheckBox check = new CheckBox(15).setValue(cast, true);
-			check.getElement().getStyle().setMarginTop(4, Unit.PX);
+			check.getElement().getStyle().setMarginTop(8, Unit.PX);
 			Element elem = check.getElement();
 			Event.setEventListener(td, evt->{
 				evt.preventDefault();
