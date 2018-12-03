@@ -11,6 +11,7 @@
 
 .sheet .handsontable table.htCore {
 	border-collapse: collapse;
+	margin-left: -1px;
 }
 
 .sheet .handsontable th {
