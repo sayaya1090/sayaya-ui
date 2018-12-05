@@ -6,7 +6,7 @@
 	<inherits name="com.google.gwt.logging.Logging"/>
 	<inherits name="com.google.gwt.place.Place" />
 	<inherits name="com.google.gwt.activity.Activity" />
-	<stylesheet src="http://fonts.googleapis.com/earlyaccess/notosanskr.css" />
+	<inherits name="org.vectomatic.libgwtsvg"/> 
 
 	<source path="activity" />
 	<source path="data" />

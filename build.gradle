@@ -17,6 +17,7 @@ dependencies {
 	compileOnly('com.google.gwt:gwt-dev:2.8.2')
 	compileOnly('com.google.guava:guava-gwt:26.0-jre')
 	compileOnly('org.projectlombok:lombok:1.18.2')
+	compileOnly('org.vectomatic:lib-gwt-svg:0.5.15')
 }
 
 buildscript {
