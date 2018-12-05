@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.HasValue;
 
 import net.sayaya.ui.svg.shape.Animation;
 import net.sayaya.ui.svg.shape.Canvas;
-import net.sayaya.ui.svg.shape.HasStroke;
+import net.sayaya.ui.widget.shape.HasStroke;
 
 public class Gauge<N extends Number> extends Canvas implements HasValue<N>, HasStroke {
 	private N min, max, value;

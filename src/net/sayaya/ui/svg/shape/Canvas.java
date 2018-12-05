@@ -8,6 +8,7 @@ import org.vectomatic.dom.svg.OMSVGSVGElement;
 import org.vectomatic.dom.svg.utils.OMSVGParser;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.user.client.ui.Composite;
@@ -16,11 +17,17 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
 
+import net.sayaya.ui.widget.shape.Shape;
+
 public class Canvas extends HTML implements Focusable {
+	private static final String SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 	private final OMSVGDocument doc = OMSVGParser.currentDocument();
 	private final OMSVGSVGElement canvas = doc.createSVGSVGElement();
 	private final List<Shape> shapes = new LinkedList<Shape>();
-
+	
+	private static native Element createElementNS(final String ns, final String name)/*-{
+		return document.createElementNS(ns, name);
+	}-*/;
 	public Canvas(int width, int height) {
 		getElement().appendChild(canvas.getElement());
 		canvas.setViewBox(0, 0, width, height);

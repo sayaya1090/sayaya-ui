@@ -1,4 +1,4 @@
-package net.sayaya.ui.svg.shape;
+package net.sayaya.ui.widget.shape;
 
 public interface HasColor {
 	String getColor();

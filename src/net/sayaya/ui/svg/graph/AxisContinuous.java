@@ -4,7 +4,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.google.gwt.i18n.client.NumberFormat;
 
-import net.sayaya.ui.svg.shape.HasStroke;
+import net.sayaya.ui.widget.shape.HasStroke;
 
 public class AxisContinuous<T extends Number> extends Axis<T> implements HasStroke {
 	private T min, max;

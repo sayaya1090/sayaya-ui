@@ -5,7 +5,7 @@ import java.util.HashMap;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 
-import net.sayaya.ui.svg.shape.HasStroke;
+import net.sayaya.ui.widget.shape.HasStroke;
 
 @SuppressWarnings("unchecked")
 public class AxisDiscretized<T> extends Axis<T> implements HasStroke {

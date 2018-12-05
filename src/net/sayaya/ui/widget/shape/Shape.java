@@ -1,6 +1,5 @@
-package net.sayaya.ui.svg.shape;
+package net.sayaya.ui.widget.shape;
 
-import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.HasMouseDownHandlers;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
@@ -10,8 +9,6 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.shared.GwtEvent;
 
 public interface Shape extends HasMouseOverHandlers, HasMouseOutHandlers, HasMouseDownHandlers {
-	boolean checkIn(double x, double y);
-	void draw(Context2d context, double progress);
 	double getX();
 	double getY();
 	double getRotate();
