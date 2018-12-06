@@ -1,9 +1,10 @@
-package net.sayaya.ui.svg.graph;
+package net.sayaya.ui.widget.shape.graph;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.Context2d.TextAlign;
 import com.google.gwt.i18n.client.NumberFormat;
 
+import net.sayaya.ui.widget.SVG;
 import net.sayaya.ui.widget.shape.HasStroke;
 
 public class AxisContinuous<T extends Number> extends Axis<T> implements HasStroke {
@@ -14,8 +15,8 @@ public class AxisContinuous<T extends Number> extends Axis<T> implements HasStro
 	private double borderWidth;
 	private double width;
 	private double height;
-	public AxisContinuous(AXIS_DIRECTION direction) {
-		super(direction);
+	public AxisContinuous(SVG svg, AXIS_DIRECTION direction) {
+		super(svg, direction);
 	}
 	
 	public AxisContinuous<T> setNumberFormat(NumberFormat nf) {
@@ -52,11 +53,6 @@ public class AxisContinuous<T extends Number> extends Axis<T> implements HasStro
 	
 	public T getStep() {
 		return step;
-	}
-
-	@Override
-	public boolean checkIn(double x, double y) {
-		return false;
 	}
 
 	protected void drawHorizontalLine(Context2d context, double percent) {

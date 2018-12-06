@@ -1,38 +1,54 @@
 package net.sayaya.ui.widget.shape.impl;
 
+import net.sayaya.ui.data.Point;
 import net.sayaya.ui.shape.HasStroke;
 import net.sayaya.ui.widget.SVG;
 
 public class Line extends ShapeInstance<Line> implements HasStroke {
-	private final Double[] start;
-	private final Double[] end;
+	private final Point<Double, Double> start = new Point<>();
+	private final Point<Double, Double> end = new Point<>();
 	private String color;
-	private double borderWidth;
+	private double width;
 	public Line(SVG svg) {
-		this(svg, new Double[] {0.0, 0.0}, new Double[] {0.0, 0.0});
-	}
-	public Line(SVG svg, Double[] start, Double[] end) {
 		super(svg, "line");
-		this.start = start;
-		this.end = end;
+	}
+	
+	public Line setStart(Point<Double, Double> start) {
+		this.start.setX(start.getX());
+		this.start.setY(start.getY());
+		getElement().setAttribute("x1", String.valueOf(start.getX()));
+		getElement().setAttribute("y1", String.valueOf(start.getY()));
+		return this;
+	}
+	
+	public Line setEnd(Point<Double, Double> end) {
+		this.end.setX(end.getX());
+		this.end.setY(end.getY());
+		getElement().setAttribute("x2", String.valueOf(end.getX()));
+		getElement().setAttribute("y2", String.valueOf(end.getY()));
+		return this;
+	}
+	
+	public double getBorderWidth() {
+		return width;
 	}
 	
 	@Override
+	public Line setBorderWidth(double width) {
+		this.width = width;
+		getElement().setAttribute("stroke-width", String.valueOf(width));
+		return this;
+	}
+
+	@Override
 	public String getBorderColor() {
-		// TODO Auto-generated method stub
-		return null;
+		return color;
 	}
 
 	@Override
-	public HasStroke setBorderColor(String color) {
-		// TODO Auto-generated method stub
-		return null;
+	public Line setBorderColor(String color) {
+		this.color = color;
+		getElement().setAttribute("stroke", color);
+		return this;
 	}
-
-	@Override
-	public HasStroke setBorderWidth(double width) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

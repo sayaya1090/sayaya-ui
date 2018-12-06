@@ -1,4 +1,4 @@
-package net.sayaya.ui.svg.graph;
+package net.sayaya.ui.widget.shape.graph;
 
 import java.util.HashMap;
 

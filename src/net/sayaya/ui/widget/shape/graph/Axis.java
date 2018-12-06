@@ -1,11 +1,13 @@
-package net.sayaya.ui.svg.graph;
+package net.sayaya.ui.widget.shape.graph;
 
-import net.sayaya.ui.svg.shape.impl.ShapeInstance;
+import net.sayaya.ui.widget.SVG;
+import net.sayaya.ui.widget.shape.impl.ShapeInstance;
 
 public abstract class Axis<T> extends ShapeInstance<Axis<T>> {
 	private final AXIS_DIRECTION direction;
 	private final boolean isInverted;
-	public Axis(AXIS_DIRECTION direction) {
+	public Axis(SVG svg, AXIS_DIRECTION direction) {
+		super(svg, "polyline");
 		this.direction = direction;
 		switch(direction) {
 		case X_BOTTOM:
@@ -16,17 +18,17 @@ public abstract class Axis<T> extends ShapeInstance<Axis<T>> {
 			break;
 		case Y_LEFT:
 			isInverted = true;
-			setRotate(-Math.PI/2);
+	//		setRotate(-Math.PI/2);
 			break;
 		case Y_RIGHT:
 			isInverted = false;
-			setRotate(-Math.PI/2);
+	//		setRotate(-Math.PI/2);
 			break;
 		default:
 			isInverted = false;
 			break;
 		}
-		if(direction == AXIS_DIRECTION.Y_LEFT || direction == AXIS_DIRECTION.Y_RIGHT) setRotate(-Math.PI/2);
+	//	if(direction == AXIS_DIRECTION.Y_LEFT || direction == AXIS_DIRECTION.Y_RIGHT) setRotate(-Math.PI/2);
 		
 	}
 	public boolean isInverted() {
