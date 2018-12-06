@@ -5,13 +5,15 @@ import java.util.Date;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.sayaya.ui.style.StyleChart;
@@ -24,7 +26,7 @@ import net.sayaya.ui.widget.SpreadSheet.Data;
 import net.sayaya.ui.widget.SpreadSheet.SheetSetting;
 import net.sayaya.ui.widget.SpreadSheet.SpreadSheetTable;
 
-public abstract class Sheet<T> extends ResizeComposite implements TableBase<T> {
+public abstract class Sheet<T> extends Composite implements TableBase<T> {
 	private final SheetSetting setting = new SheetSetting()
 	.setRowHeaders(false)
 	.setAutoColSize(true)
@@ -35,7 +37,7 @@ public abstract class Sheet<T> extends ResizeComposite implements TableBase<T> {
 	.setFilters(true)
 	.setData(new Data[] {})
 	.setStretchH("all");
-	private final LayoutPanel container = new LayoutPanel();
+	private final SimplePanel container = new SimplePanel();
 	private SpreadSheet sheet;
 	
 	public Sheet() {
@@ -122,10 +124,15 @@ public abstract class Sheet<T> extends ResizeComposite implements TableBase<T> {
 	}
 	
 	@Override
+	public void onResize() {
+		if(sheet!=null) sheet.onResize();
+	}
+	
+	@Override
 	public final void onAnimationComplete() {
 		container.setVisible(true);
-		if(container.getWidgetCount() <= 0) return;
-		Widget child = container.getWidget(0);
+		if(container.getWidget() == null) return;
+		Widget child = container.getWidget();
 		if(child instanceof SpreadSheet) ((SpreadSheet)child).render();
 	}
 	
@@ -152,7 +159,7 @@ public abstract class Sheet<T> extends ResizeComposite implements TableBase<T> {
 		container.clear();
 		if(data!=null && data.length > 0) {
 			sheet = new SpreadSheet(setting);
-			setting.setData(data)/*.setMaxRows(Math.max(1, data.length))*/;
+			setting.setData(data).setMaxRows(Math.max(1, data.length));
 			container.add(sheet);
 			sheet.update(setting);
 		} else {
