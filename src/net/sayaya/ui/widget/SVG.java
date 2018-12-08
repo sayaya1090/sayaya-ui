@@ -5,6 +5,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FocusWidget;
 
 import lombok.Builder;
+import net.sayaya.ui.widget.shape.Shape;
 
 public class SVG extends FocusWidget {
 	private final String id = DOM.createUniqueId();
@@ -20,15 +21,9 @@ public class SVG extends FocusWidget {
 		return svg;
 	}-*/;
 	
-	public final Element create(String id, String tag) {
-		Element elem = element(id, tag);
-		element.appendChild(elem);
-		return elem;
+	public SVG add(Shape shape) {
+		element.appendChild(shape.toElement());
+		return this;
 	}
-	
-	private final native Element element(String id, String tag) /*-{
-		var elem = $wnd.document.createElementNS("http://www.w3.org/2000/svg", tag);
-		return elem;
-	}-*/;
 }
 

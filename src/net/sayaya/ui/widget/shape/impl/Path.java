@@ -1,8 +1,10 @@
 package net.sayaya.ui.widget.shape.impl;
 
-import net.sayaya.ui.shape.HasStroke;
-import net.sayaya.ui.widget.SVG;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
+
 import net.sayaya.ui.widget.shape.HasColor;
+import net.sayaya.ui.widget.shape.HasStroke;
 
 public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 	private double x, y, width, height;
@@ -10,8 +12,9 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 	private double alpha=1.0;
 	private String borderColor;
 	private double borderWidth;
-	public Path(SVG canvas) {
-		super(canvas, "path");
+	private final LinkedList<Command> commands = new LinkedList<>();
+	public Path() {
+		super("path");
 	}
 	
 	public double getX() {
@@ -98,5 +101,170 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 		this.borderColor = borderColor;
 		getElement().setAttribute("stroke", borderColor);
 		return this;
+	}
+	
+	public Path moveTo(double x, double y) {
+		commands.add(new Move(x, y));
+		return this;
+	}
+	public Path lineTo(double x, double y) {
+		commands.add(new Line(x, y));
+		return this;
+	}
+	public Path horizontalTo(double x) {
+		commands.add(new Horizontal(x));
+		return this;
+	}
+	public Path verticalTo(double y) {
+		commands.add(new Vertical(y));
+		return this;
+	}
+	public Path curve(double x1, double y1, double x2, double y2, double x, double y) {
+		commands.add(new Bezier3(x1, y1, x2, y2, x, y));
+		return new PathProxy(this);
+	}
+	public Path curve(double x1, double y1, double x, double y) {
+		commands.add(new Bezier2(x1, y1, x, y));
+		return this;
+	}
+	public Path arc(double rx, double ry, double xar, int laf, int sf, double x, double y) {
+		commands.add(new Arc(rx, ry, xar, laf, sf, x, y));
+		return this;
+	}
+	public Path close() {
+		commands.add(new Close());
+		return this;
+	}
+	public final Path build() {
+		String d = commands.stream().map(Command::toString).collect(Collectors.joining(" "));
+		getElement().setAttribute("d", d);
+		return this;
+	}
+	private final class PathProxy extends Path {
+		private double x, y, width, height;
+		private String color;
+		private double alpha=1.0;
+		private String borderColor;
+		private double borderWidth;
+		private final LinkedList<Command> commands = new LinkedList<>();
+		public PathProxy(Path path) {
+			this.x = path.x;
+			this.y = path.y;
+			
+		}
+		@Override
+		public Path curve(double x1, double y1, double x, double y) {
+			commands.add(new Bezier3Link(x1, y1, x, y));
+			return this;
+		}
+	}
+	private static interface Command {
+		String toString();
+	}
+	private final class Move implements Command {
+		private final double x, y;
+		public Move(double x, double y) {
+			this.x = x;
+			this.y = y;
+		}
+		public String toString() {
+			return "M " + x + " " + y;
+		}
+	}
+	private final class Line implements Command {
+		private final double x, y;
+		public Line(double x, double y) {
+			this.x = x;
+			this.y = y;
+		}
+		public String toString() {
+			return "L " + x + " " + y;
+		}
+	}
+	private final class Horizontal implements Command {
+		private final double x;
+		public Horizontal(double x) {
+			this.x = x;
+		}
+		public String toString() {
+			return "H " + x;
+		}
+	}
+	private final class Vertical implements Command {
+		private final double y;
+		public Vertical(double y) {
+			this.y = y;
+		}
+		public String toString() {
+			return "V " + y;
+		}
+	}
+	private final class Bezier3 implements Command {
+		private final double x, y, x1, y1, x2, y2;
+		public Bezier3(double x1, double y1, double x2, double y2, double x, double y) {
+			this.x = x;
+			this.y = y;
+			this.x1 = x1;
+			this.y1 = y1;
+			this.x2 = x2;
+			this.y2 = y2;
+		}
+		public String toString() {
+			return "C " + x1 + " " + y1 + ", " + x2 + " " + y2 + ", " + x + " " + y;
+		}
+	}
+	private final class Bezier3Link implements Command {
+		private final double x, y, x1, y1;
+		public Bezier3Link(double x1, double y1, double x, double y) {
+			this.x = x;
+			this.y = y;
+			this.x1 = x1;
+			this.y1 = y1;
+		}
+		public String toString() {
+			return "S " + x1 + " " + y1 + ", " + x + " " + y;
+		}
+	}
+	private final class Bezier2 implements Command {
+		private final double x, y, x1, y1;
+		public Bezier2(double x1, double y1, double x, double y) {
+			this.x = x;
+			this.y = y;
+			this.x1 = x1;
+			this.y1 = y1;
+		}
+		public String toString() {
+			return "Q " + x1 + " " + y1 + ", " + x + " " + y;
+		}
+	}
+	private final class Bezier2Link implements Command {
+		private final double x, y;
+		public Bezier2Link(double x, double y) {
+			this.x = x;
+			this.y = y;
+		}
+		public String toString() {
+			return "T " + x + " " + y;
+		}
+	}
+	private final class Arc implements Command {
+		private final double rx, ry, xar, laf, sf, x, y;
+		public Arc(double rx, double ry, double xar, int laf, int sf, double x, double y) {
+			this.rx = rx;
+			this.ry = ry;
+			this.xar = xar;
+			this.laf = laf;
+			this.sf = sf;
+			this.x = x;
+			this.y = y;
+		}
+		public String toString() {
+			return "A " + rx + " " + ry + "," + xar + "," + laf + "," + sf + "," + x + " " + y;
+		}
+	}
+	private final class Close implements Command {
+		public String toString() {
+			return "Z";
+		}
 	}
 }

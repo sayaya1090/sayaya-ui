@@ -2,15 +2,14 @@ package net.sayaya.ui.widget.shape.impl;
 
 import net.sayaya.ui.data.Point;
 import net.sayaya.ui.shape.HasStroke;
-import net.sayaya.ui.widget.SVG;
 
 public class Line extends ShapeInstance<Line> implements HasStroke {
 	private final Point<Double, Double> start = new Point<>();
 	private final Point<Double, Double> end = new Point<>();
 	private String color;
 	private double width;
-	public Line(SVG svg) {
-		super(svg, "line");
+	public Line() {
+		super("line");
 	}
 	
 	public Line setStart(Point<Double, Double> start) {

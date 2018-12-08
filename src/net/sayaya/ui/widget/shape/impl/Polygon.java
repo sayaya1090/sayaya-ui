@@ -1,7 +1,6 @@
 package net.sayaya.ui.widget.shape.impl;
 
 import net.sayaya.ui.shape.HasStroke;
-import net.sayaya.ui.widget.SVG;
 import net.sayaya.ui.widget.shape.HasColor;
 
 public class Polygon extends ShapeInstance<Polygon> implements HasStroke, HasColor {
@@ -10,8 +9,8 @@ public class Polygon extends ShapeInstance<Polygon> implements HasStroke, HasCol
 	private double alpha=1.0;
 	private String borderColor;
 	private double borderWidth;
-	public Polygon(SVG canvas) {
-		super(canvas, "polygon");
+	public Polygon() {
+		super("polygon");
 	}
 	
 	public double getX() {
