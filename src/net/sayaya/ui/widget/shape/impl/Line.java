@@ -8,8 +8,13 @@ public class Line extends ShapeInstance<Line> implements HasStroke {
 	private final Point<Double, Double> end = new Point<>();
 	private String color;
 	private double width;
+	private double alpha=1.0;
 	public Line() {
 		super("line");
+	}
+	
+	public Line setStart(Double x, Double y) {
+		return setStart(new Point<Double, Double>().setX(x).setY(y));
 	}
 	
 	public Line setStart(Point<Double, Double> start) {
@@ -18,6 +23,10 @@ public class Line extends ShapeInstance<Line> implements HasStroke {
 		getElement().setAttribute("x1", String.valueOf(start.getX()));
 		getElement().setAttribute("y1", String.valueOf(start.getY()));
 		return this;
+	}
+	
+	public Line setEnd(Double x, Double y) {
+		return setEnd(new Point<Double, Double>().setX(x).setY(y));
 	}
 	
 	public Line setEnd(Point<Double, Double> end) {
@@ -48,6 +57,15 @@ public class Line extends ShapeInstance<Line> implements HasStroke {
 	public Line setBorderColor(String color) {
 		this.color = color;
 		getElement().setAttribute("stroke", color);
+		return this;
+	}
+	
+	public double getAlpha() {
+		return alpha;
+	}
+
+	public Line setAlpha(double alpha) {
+		getElement().setAttribute("stroke-opacity", String.valueOf(alpha));
 		return this;
 	}
 }
