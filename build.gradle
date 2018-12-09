@@ -5,7 +5,7 @@ apply plugin: 'maven'
 
 group = 'net.sayaya'
 archivesBaseName = 'ui'
-version = "0.1"
+version = "0.5"
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 repositories {
