@@ -67,8 +67,10 @@ public class ProgressDialog<T> extends DialogBox implements Callback<T> {
 	}
 	
 	public synchronized void done() {
-		if(animation.isRunning()) animation.cancel();
-		else animation.prev = complete;
+		if(animation.isRunning()) {
+			animation.prev = gauge.getValue();
+			animation.cancel();
+		} else animation.prev = complete;
 		animation.next = ++complete;
 		animation.run(100);
 	}
