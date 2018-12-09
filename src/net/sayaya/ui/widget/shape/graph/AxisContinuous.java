@@ -2,7 +2,6 @@ package net.sayaya.ui.widget.shape.graph;
 
 import com.google.gwt.i18n.client.NumberFormat;
 
-import net.sayaya.ui.graph.Axis.AXIS_DIRECTION;
 import net.sayaya.ui.shape.HasStroke;
 
 public class AxisContinuous<T extends Number> extends Axis<T> implements HasStroke {

@@ -1,7 +1,6 @@
 package net.sayaya.ui.widget.shape.graph;
 
 import net.sayaya.ui.handler.HasValue;
-import net.sayaya.ui.style.color.Color;
 import net.sayaya.ui.style.color.Palette;
 import net.sayaya.ui.widget.SVG;
 import net.sayaya.ui.widget.shape.impl.Rect;
@@ -14,8 +13,7 @@ public class Gauge<N extends Number> extends SVG implements HasValue<N> {
 	private int width;
 	private double interval;
 	private final Rect bar = new Rect().setX(0).setY(0);
-	private final Text label = new Text().setBaseline(AlignmentBaseline.middle)
-	.setAnchor(TextAnchor.middle).setColor(Color.Crimson).setValue("Hello World!");
+	private final Text label = new Text().setBaseline(AlignmentBaseline.middle).setAnchor(TextAnchor.middle).setColor("#FFFFFF").setValue("");
 	
 	public Gauge(N min, N max) {
 		interval = max.doubleValue() - min.doubleValue();

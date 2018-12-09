@@ -3,6 +3,7 @@ package net.sayaya.ui.widget;
 import java.util.LinkedList;
 import java.util.Objects;
 
+import com.google.gwt.animation.client.Animation;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -11,39 +12,45 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import net.sayaya.ui.graph.Gauge;
 import net.sayaya.ui.handler.Callback;
 import net.sayaya.ui.style.color.Palette;
+import net.sayaya.ui.widget.shape.graph.Gauge;
 
 public class ProgressDialog<T> extends DialogBox implements Callback<T> {
 	private final Label msg = new Label();
 	private final static NumberFormat NF = NumberFormat.getFormat("0.00%");
-	private final Gauge<Integer> gauge;
+	private final Gauge<Double> gauge;
 	private int complete = 0;
 	private final int max;
 	private final Callback<T[]> callback;
-
+	private final AnimationProgress animation = new AnimationProgress();
 	public ProgressDialog(String title, int max, Callback<T[]> callback) {
 		this(title, new VerticalPanel(), max, callback);
 	}
 	
 	private ProgressDialog(String title, VerticalPanel vp, int max, Callback<T[]> callback) {
 		super(title, vp);
-		msg.setText(title);
+		msg.setText("");
 		this.max = max;
 		this.callback = callback;
-		gauge = new Gauge<Integer>(300, 15).setMin(0).setMax(max).setValue(0);
+		gauge = new Gauge<Double>(0.0, max+0.0).setWidth(300).setHeight(15).setValue(0.0);
 		vp.add(msg);
 		vp.add(gauge);
 		setStyleLabel(msg.getElement().getStyle());
 		setStyleGauge(gauge.getElement().getStyle());
-		gauge.getLabel().setFont("Noto Sans KR").setColor(Palette.getInstance().getColorText1()).setSize(10);
+		gauge.getText().setColor(Palette.getInstance().getColorText1());
+		gauge.getText().getElement().getStyle().setProperty("fontFamily", "Noto Sans KR");
+		gauge.getText().getElement().getStyle().setFontSize(10, Unit.PX);
 		gauge.getBar().setColor(Palette.getInstance().getColorDevider());
-		gauge.paint();
 		vp.getElement().getStyle().setPadding(5, Unit.PX);
-		setText("Save");
+		setText(title);
 		center();
 		show();
+	}
+	
+	public ProgressDialog<T> setLabel(String label) {
+		msg.setText(label);
+		return this;
 	}
 	
 	private void setStyleLabel(Style style) {
@@ -60,9 +67,21 @@ public class ProgressDialog<T> extends DialogBox implements Callback<T> {
 	}
 	
 	public synchronized void done() {
-		++complete;
-		gauge.getLabel().setText(NF.format(complete / (double)gauge.getMax()));
-		gauge.setValue(complete).update(100);
+		if(animation.isRunning()) animation.cancel();
+		else animation.prev = complete;
+		animation.next = ++complete;
+		animation.run(100);
+	}
+	
+	private final class AnimationProgress extends Animation {
+		private double prev = 0;
+		private double next = 0;
+		@Override
+		protected void onUpdate(double progress) {
+			double value = prev+(next-prev)*progress;
+			gauge.getText().setValue(NF.format(value / (double)max));
+			gauge.setValue(value);
+		}
 	}
 	
 	public int getComplete() {
