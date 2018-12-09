@@ -29,7 +29,10 @@ public class GridLayout extends Composite implements RequiresResize, AnimationCa
 		layout.add(sp);
 		return sp.setColspan(colspan).setRowspan(rowspan);
 	}
-
+	public GridLayout clear() {
+		layout.clear();
+		return this;
+	}
 	@Override
 	public void onResize() {
 		
