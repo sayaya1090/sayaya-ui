@@ -1,5 +1,9 @@
 package net.sayaya.ui.widget.shape.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
@@ -22,7 +26,7 @@ import net.sayaya.ui.widget.shape.Shape;
 public class ShapeInstance<S extends ShapeInstance<S>> extends FocusWidget implements Shape {
 	private final String id;
 	private HandlerManager handlerManager;
-	
+	private List<Transform> transform = new LinkedList<>();
 	public ShapeInstance(String tag) {
 		id = DOM.createUniqueId();
 		setElement(element(id, tag));
@@ -66,6 +70,20 @@ public class ShapeInstance<S extends ShapeInstance<S>> extends FocusWidget imple
 	@Override
 	public final Element toElement() {
 		return getElement();
+	}
+	@Override
+	@SuppressWarnings("unchecked")
+	public S transform(Transform transform) {
+		this.transform.add(transform);
+		String d = this.transform.stream().map(Transform::toString).collect(Collectors.joining(" "));
+		getElement().setAttribute("transform", d);
+		return (S) this;
+	}
+	@Override
+	@SuppressWarnings("unchecked")
+	public S remove(Transform transform) {
+		this.transform.remove(transform);
+		return (S) this;
 	}
 }
 

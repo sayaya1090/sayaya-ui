@@ -1,6 +1,7 @@
 package net.sayaya.ui.widget.shape.impl;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import net.sayaya.ui.widget.shape.HasColor;
@@ -22,8 +23,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 	}
 	
 	public Path setX(double x) {
-		this.x = x;
-		getElement().setAttribute("x", String.valueOf(x));
+		transform(new Translate(x, 0));
 		return this;
 	}
 	
@@ -32,8 +32,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 	}
 	
 	public Path setY(double y) {
-		this.y = y;
-		getElement().setAttribute("y", String.valueOf(y));
+		transform(new Translate(0, y));
 		return this;
 	}
 	
@@ -135,6 +134,13 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 		commands.add(new Close());
 		return this;
 	}
+	public Path clear() {
+		commands.clear();
+		return this;
+	}
+	protected List<Command> getCommands() {
+		return commands;
+	}
 	public final Path build() {
 		String d = commands.stream().map(Command::toString).collect(Collectors.joining(" "));
 		getElement().setAttribute("d", d);
@@ -158,10 +164,10 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return this;
 		}
 	}
-	private static interface Command {
+	protected static interface Command {
 		String toString();
 	}
-	private final class Move implements Command {
+	protected final class Move implements Command {
 		private final double x, y;
 		public Move(double x, double y) {
 			this.x = x;
@@ -171,7 +177,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "M " + x + " " + y;
 		}
 	}
-	private final class Line implements Command {
+	protected final class Line implements Command {
 		private final double x, y;
 		public Line(double x, double y) {
 			this.x = x;
@@ -181,7 +187,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "L " + x + " " + y;
 		}
 	}
-	private final class Horizontal implements Command {
+	protected final class Horizontal implements Command {
 		private final double x;
 		public Horizontal(double x) {
 			this.x = x;
@@ -190,7 +196,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "H " + x;
 		}
 	}
-	private final class Vertical implements Command {
+	protected final class Vertical implements Command {
 		private final double y;
 		public Vertical(double y) {
 			this.y = y;
@@ -199,7 +205,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "V " + y;
 		}
 	}
-	private final class Bezier3 implements Command {
+	protected final class Bezier3 implements Command {
 		private final double x, y, x1, y1, x2, y2;
 		public Bezier3(double x1, double y1, double x2, double y2, double x, double y) {
 			this.x = x;
@@ -213,7 +219,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "C " + x1 + " " + y1 + ", " + x2 + " " + y2 + ", " + x + " " + y;
 		}
 	}
-	private final class Bezier3Link implements Command {
+	protected final class Bezier3Link implements Command {
 		private final double x, y, x1, y1;
 		public Bezier3Link(double x1, double y1, double x, double y) {
 			this.x = x;
@@ -225,7 +231,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "S " + x1 + " " + y1 + ", " + x + " " + y;
 		}
 	}
-	private final class Bezier2 implements Command {
+	protected final class Bezier2 implements Command {
 		private final double x, y, x1, y1;
 		public Bezier2(double x1, double y1, double x, double y) {
 			this.x = x;
@@ -237,7 +243,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "Q " + x1 + " " + y1 + ", " + x + " " + y;
 		}
 	}
-	private final class Bezier2Link implements Command {
+	protected final class Bezier2Link implements Command {
 		private final double x, y;
 		public Bezier2Link(double x, double y) {
 			this.x = x;
@@ -247,7 +253,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "T " + x + " " + y;
 		}
 	}
-	private final class Arc implements Command {
+	protected final class Arc implements Command {
 		private final double rx, ry, xar, laf, sf, x, y;
 		public Arc(double rx, double ry, double xar, int laf, int sf, double x, double y) {
 			this.rx = rx;
@@ -262,7 +268,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "A " + rx + " " + ry + "," + xar + "," + laf + "," + sf + "," + x + " " + y;
 		}
 	}
-	private final class Close implements Command {
+	protected final class Close implements Command {
 		public String toString() {
 			return "Z";
 		}
