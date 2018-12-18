@@ -304,7 +304,7 @@
 .layer-group:before {
 	content: "\f5fd";
 }
-.layer-add:before {
+.layer-plus:before {
 	content: "\f5ff";
 }
 .layer-minus:before {
