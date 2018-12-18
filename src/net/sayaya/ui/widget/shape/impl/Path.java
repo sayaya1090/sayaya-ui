@@ -167,7 +167,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 	protected static interface Command {
 		String toString();
 	}
-	protected final class Move implements Command {
+	protected final static class Move implements Command {
 		private final double x, y;
 		public Move(double x, double y) {
 			this.x = x;
@@ -177,7 +177,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "M " + x + " " + y;
 		}
 	}
-	protected final class Line implements Command {
+	protected final static class Line implements Command {
 		private final double x, y;
 		public Line(double x, double y) {
 			this.x = x;
@@ -187,7 +187,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "L " + x + " " + y;
 		}
 	}
-	protected final class Horizontal implements Command {
+	protected final static class Horizontal implements Command {
 		private final double x;
 		public Horizontal(double x) {
 			this.x = x;
@@ -196,7 +196,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "H " + x;
 		}
 	}
-	protected final class Vertical implements Command {
+	protected final static class Vertical implements Command {
 		private final double y;
 		public Vertical(double y) {
 			this.y = y;
@@ -205,7 +205,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "V " + y;
 		}
 	}
-	protected final class Bezier3 implements Command {
+	protected final static class Bezier3 implements Command {
 		private final double x, y, x1, y1, x2, y2;
 		public Bezier3(double x1, double y1, double x2, double y2, double x, double y) {
 			this.x = x;
@@ -219,7 +219,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "C " + x1 + " " + y1 + ", " + x2 + " " + y2 + ", " + x + " " + y;
 		}
 	}
-	protected final class Bezier3Link implements Command {
+	protected final static class Bezier3Link implements Command {
 		private final double x, y, x1, y1;
 		public Bezier3Link(double x1, double y1, double x, double y) {
 			this.x = x;
@@ -231,7 +231,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "S " + x1 + " " + y1 + ", " + x + " " + y;
 		}
 	}
-	protected final class Bezier2 implements Command {
+	protected final static class Bezier2 implements Command {
 		private final double x, y, x1, y1;
 		public Bezier2(double x1, double y1, double x, double y) {
 			this.x = x;
@@ -243,7 +243,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "Q " + x1 + " " + y1 + ", " + x + " " + y;
 		}
 	}
-	protected final class Bezier2Link implements Command {
+	protected final static class Bezier2Link implements Command {
 		private final double x, y;
 		public Bezier2Link(double x, double y) {
 			this.x = x;
@@ -253,7 +253,7 @@ public class Path extends ShapeInstance<Path> implements HasStroke, HasColor {
 			return "T " + x + " " + y;
 		}
 	}
-	protected final class Arc implements Command {
+	protected final static class Arc implements Command {
 		private final double rx, ry, xar, laf, sf, x, y;
 		public Arc(double rx, double ry, double xar, int laf, int sf, double x, double y) {
 			this.rx = rx;

@@ -301,6 +301,15 @@
 .italic:before {
 	content: "\f033";
 }
+.layer-group:before {
+	content: "\f5fd";
+}
+.layer-add:before {
+	content: "\f5ff";
+}
+.layer-minus:before {
+	content: "\f5fe";
+}
 .link:before {
 	content: "\f0c1";
 }
