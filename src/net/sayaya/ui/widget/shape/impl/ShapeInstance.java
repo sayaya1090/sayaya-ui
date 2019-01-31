@@ -34,10 +34,11 @@ public class ShapeInstance<S extends ShapeInstance<S>> extends FocusWidget imple
 			String type = evt.getType();
 			if("mouseover".equals(type)) MouseOverEvent.fireNativeEvent(evt, this);
 			else if("mouseout".equals(type)) MouseOutEvent.fireNativeEvent(evt, this);
+			else if("mousedown".equals(type)) MouseDownEvent.fireNativeEvent(evt, this);
 			else if("click".equals(type)) ClickEvent.fireNativeEvent(evt, this);
 		});
 	}
-	private final native Element element(String id, String tag) /*-{
+	final native static Element element(String id, String tag) /*-{
 		var elem = $wnd.document.createElementNS("http://www.w3.org/2000/svg", tag);
 		return elem;
 	}-*/;
