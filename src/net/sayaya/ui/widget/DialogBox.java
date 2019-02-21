@@ -31,7 +31,7 @@ public class DialogBox extends com.google.gwt.user.client.ui.DialogBox {
 		add(layout);
 		for(Button<?> button: buttons) control.add(button);
 		addCloseHandler(evt->RootPanel.get().getElement().removeChild(overlay));
-		getElement().getStyle().setZIndex(Integer.MAX_VALUE);
+		getElement().getStyle().setZIndex(1001);
 		layout.setWidth("100%");
 		((Element)this.getContainerElement().getChild(0).cast()).getStyle().setWidth(100, Unit.PCT);
 	}
