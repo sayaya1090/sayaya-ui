@@ -1481,13 +1481,27 @@ public final class SpreadSheet extends ResizeComposite {
 			var scrollTop = this.instance.view.wt.wtTable.holder.scrollTop;
 			var scrollLeft = this.instance.view.wt.wtTable.holder.scrollLeft;
 			this.element.style.height = height + 'px';
-			this.element.style.minWidth = width + 'px';
-			this.element.style.top = tdOffset.top - scrollTop - rootOffset.top + 'px';
+			this.element.style.width = (width-9) + 'px';
+			this.element.style.top = tdOffset.top - scrollTop - rootOffset.top - 1 + 'px';
 			this.element.style.left = tdOffset.left - scrollLeft - rootOffset.left + 'px';
 			this.element.style.display = '';
+			this.element.style.padding = "1px 5px 0 5px";
 			try {
 				tmp.prototype.open_(this.element);
 			} catch(ignore){};
+		}
+		tmp.prototype.beginEditing = function (newInitialValue, event) {
+			if(this.state !== 'STATE_VIRGIN') return;
+			this.state = 'STATE_EDITING';
+			if (this.isInFullEditMode()) {
+				var stringifiedInitialValue = typeof newInitialValue === 'string' ? newInitialValue : this.originalValue;
+				this.setValue(stringifiedInitialValue);
+			}
+			this.open(event);
+			this._opened = true;
+			this.focus();
+			this.instance.view.render();
+			this.instance.runHooks('afterBeginEditing', this.row, this.col);
 		}
 		tmp.prototype.close=function() {
 			this.element.style.display = 'none';
@@ -1504,6 +1518,50 @@ public final class SpreadSheet extends ResizeComposite {
 		tmp.prototype.setValue=function(value) {
 			tmp.prototype.setValue_(this.element, value);
 		}
+		tmp.prototype.finishEditing = function (restoreOriginalValue, ctrlDown, callback) {
+			var _this = this;
+			var val;
+			if (callback) {
+				var previousCloseCallback = this._closeCallback;
+				this._closeCallback = function (result) {
+					if (previousCloseCallback) previousCloseCallback(result);
+					callback(result);
+					_this.instance.view.render();
+				};
+			}
+			if (this.isWaiting()) return;
+			if (this.state === 'STATE_VIRGIN') {
+				this.instance._registerTimeout(function () {
+					_this._fireCallbacks(true);
+				});
+				return;
+			}
+			if (this.state === 'STATE_EDITING') {
+				if (restoreOriginalValue) {
+					// this.cancelChanges();
+					this.instance.view.render();
+					return;
+				}
+				var value = this.getValue();
+				if (this.instance.getSettings().trimWhitespace) {
+					val = [[typeof value === 'string' ? String.prototype.trim.call(value || '') : value]];
+				} else {
+					val = [[value]];
+				}
+				this.state = 'STATE_WAITING';
+				this.instance.getSettings().data[this.row][this.prop] = value;
+				this.saveValue(val, ctrlDown);
+				if (this.instance.getCellValidator(this.cellProperties)) {
+					this.instance.addHookOnce('postAfterValidate', function (result) {
+						_this.state = 'STATE_FINISHED';
+						_this.discardEditor(result);
+					});
+				} else {
+					this.state = 'STATE_FINISHED';
+					this.discardEditor(true);
+				}
+			}
+		};
 		return tmp;
 	}-*/;
 }
