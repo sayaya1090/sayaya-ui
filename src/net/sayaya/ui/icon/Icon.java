@@ -71,6 +71,12 @@ public class Icon extends HTML {
 			String award();
 			String ban();
 			String barcode();
+			@CssResource.ClassName("barcode-alt")
+			String barcodeAlt();
+			@CssResource.ClassName("barcode-read")
+			String barcodeRead();
+			@CssResource.ClassName("barcode-scan")
+			String barcodeScan();
 			String bold();
 			String bong();
 			String box();
@@ -196,7 +202,9 @@ public class Icon extends HTML {
 			String h3();
 			@CssResource.ClassName("hand-holding-box")
 			String handHoldingBox();
+			String hashtag();
 			String heading();
+			String heart();
 			String highlighter();
 			String home();
 			@CssResource.ClassName("i-cursor")
@@ -279,6 +287,11 @@ public class Icon extends HTML {
 			String replyAlt();
 			String save();
 			String search();
+			String scanner();
+			@CssResource.ClassName("scanner-keyboard")
+			String scannerKeyboard();
+			@CssResource.ClassName("scanner-touchscreen")
+			String scannerTouchscreen();
 			String share();
 			@CssResource.ClassName("share-all")
 			String shareAll();

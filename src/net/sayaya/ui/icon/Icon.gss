@@ -52,6 +52,15 @@
 .barcode:before {
 	content: "\f02a"
 }
+.barcode-alt:before {
+	content: "\f463"
+}
+.barcode-read:before {
+	content: "\f464"
+}
+.barcode-scan:before {
+	content: "\f465"
+}
 .bold:before {
 	content: "\f032";
 }
@@ -274,8 +283,14 @@
 .hand-holding-box:before {
 	content: "\f47b";
 }
+.hashtag:before {
+	content: "\f292";
+}
 .heading:before {
 	content: "\f1dc";
+}
+.heart:before {
+	content: "\f004";
 }
 .highlighter:before {
 	content: "\f591";
@@ -441,6 +456,15 @@
 }
 .search:before {
 	content: "\f002";
+}
+.scanner:before {
+	content: "\f488";
+}
+.scanner-keyboard:before {
+	content: "\f489";
+}
+.scanner-touchscreen:before {
+	content: "\f48a";
 }
 .share:before {
 	content: "\f064";
