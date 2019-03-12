@@ -101,7 +101,7 @@ public class Placeholder {
 			return this;
 		}
 		
-		protected final Label getPlaceholder() {
+		public final Label getPlaceholder() {
 			return label;
 		}
 		
