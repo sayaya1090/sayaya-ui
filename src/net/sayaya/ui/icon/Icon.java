@@ -225,6 +225,7 @@ public class Icon extends HTML {
 			@CssResource.ClassName("info-circle")
 			String infoCircle();
 			String italic();
+			String key();
 			@CssResource.ClassName("layer-group")
 			String layerGroup();
 			@CssResource.ClassName("layer-plus")

@@ -331,6 +331,9 @@
 .italic:before {
 	content: "\f033";
 }
+.key:before {
+	content: "\f084";
+}
 .layer-group:before {
 	content: "\f5fd";
 }
