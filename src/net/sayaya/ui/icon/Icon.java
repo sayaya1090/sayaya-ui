@@ -209,6 +209,12 @@ public class Icon extends HTML {
 			String home();
 			@CssResource.ClassName("i-cursor")
 			String iCursor();
+			@CssResource.ClassName("id-badge")
+			String idBadge();
+			@CssResource.ClassName("id-card")
+			String idCard();
+			@CssResource.ClassName("id-card-alt")
+			String idCardAlt();
 			String indent();
 			String info();
 			@CssResource.ClassName("info-square")

@@ -301,6 +301,15 @@
 .i-cursor:before {
 	content: "\f246";
 }
+.id-badge:before {
+	content: "\f2c1";
+}
+.id-card:before {
+	content: "\f2c2";
+}
+.id-card-alt:before {
+	content: "\f47f";
+}
 .indent:before {
 	content: "\f03c";
 }
