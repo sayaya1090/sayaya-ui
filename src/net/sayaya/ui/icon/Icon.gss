@@ -214,10 +214,10 @@
 .edit:before {
 	content: "\f044";	
 }
-.envelop:before {
+.envelope:before {
 	content: "\f0e0";	
 }
-.envelop-open:before {
+.envelope-open:before {
 	content: "\f2b6";	
 }
 .eraser:before {
