@@ -214,6 +214,12 @@
 .edit:before {
 	content: "\f044";	
 }
+.envelop:before {
+	content: "\f0e0";	
+}
+.envelop-open:before {
+	content: "\f2b6";	
+}
 .eraser:before {
 	content: "\f12d";	
 }
@@ -604,17 +610,26 @@
 .unlink:before {
 	content: "\f127";
 }
+.user:before {
+	content: "\f007";
+}
 .user-chart:before {
 	content: "\f6a3";
 }
 .user-circle:before {
 	content: "\f2bd";
 }
+.user-class:before {
+	content: "\f63d";
+}
 .user-lock:before {
 	content: "\f502";
 }
 .user-lock:before {
 	content: "\f502";
+}
+.user-tag:before {
+	content: "\f507";
 }
 .vial:before {
 	content: "\f492";

@@ -165,6 +165,9 @@ public class Icon extends HTML {
 			String cut();
 			String dna();
 			String edit();
+			String envelope();
+			@CssResource.ClassName("envelope-open")
+			String envelopeOpen();
 			String eraser();
 			String exclamation();
 			@CssResource.ClassName("exclamation-triangle")
@@ -366,12 +369,17 @@ public class Icon extends HTML {
 			@CssResource.ClassName("unlock-alt")
 			String unlockAlt();
 			String unlink();
+			String user();
 			@CssResource.ClassName("user-chart")
 			String userChart();
 			@CssResource.ClassName("user-circle")
 			String userCircle();
+			@CssResource.ClassName("user-class")
+			String userClass();
 			@CssResource.ClassName("user-lock")
 			String userLock();
+			@CssResource.ClassName("user-tag")
+			String userTag();
 			String vial();
 			String vials();
 			String wranch();
