@@ -1,6 +1,6 @@
 .icon {
 	display: inline-block;
-	font-family: 'Font Awesome 5 Pro' !important;
+	font-family: 'Font Awesome 5 Pro','Font Awesome 5 Brands' !important;
 	speak: none;
 	text-rendering: auto;
 	-webkit-font-smoothing: antialiased;
