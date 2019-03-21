@@ -6,19 +6,15 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
-
 .light {
 	font-weight: 300;
 }
-
 .regular {
 	font-weight: 400;
 }
-
 .solid {
 	font-weight: 900;
 }
-
 .align-center:before {
 	content: "\f037";
 }
