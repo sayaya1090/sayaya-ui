@@ -183,6 +183,8 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 			String item();
 			@CssResource.ClassName("item-content")
 			String itemContent();
+			@CssResource.ClassName("item-title")
+			String itemTitle();
 			@CssResource.ClassName("item-visible")
 			String itemVisible();
 			@CssResource.ClassName("item-hidden")

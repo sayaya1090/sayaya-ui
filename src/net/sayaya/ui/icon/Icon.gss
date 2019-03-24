@@ -195,6 +195,12 @@
 .cogs:before {
 	content: "\f085";	
 }
+.comment:before {
+	content: "\f075";	
+}
+.comment-alt:before {
+	content: "\f27a";	
+}
 .columns:before {
 	content: "\f0db";	
 }
@@ -209,6 +215,12 @@
 }
 .edit:before {
 	content: "\f044";	
+}
+.ellipsis-h:before {
+	content: "\f141";	
+}
+.ellipsis-v:before {
+	content: "\f142";	
 }
 .envelope:before {
 	content: "\f0e0";	
@@ -311,6 +323,12 @@
 }
 .id-card-alt:before {
 	content: "\f47f";
+}
+.image:before {
+	content: "\f03e";
+}
+.images:before {
+	content: "\f302";
 }
 .indent:before {
 	content: "\f03c";
@@ -575,6 +593,9 @@
 }
 .th-list:before {
 	content: "\f00b";
+}
+.thumbtack:before {
+	content: "\f08d";
 }
 .trash:before {
 	content: "\f1f8";

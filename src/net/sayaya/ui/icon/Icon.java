@@ -160,11 +160,18 @@ public class Icon extends HTML {
 			String cloudDownloadAlt();
 			String cog();
 			String cogs();
+			String comment();
+			@CssResource.ClassName("comment-alt")
+			String commentAlt();
 			String columns();
 			String copy();
 			String cut();
 			String dna();
 			String edit();
+			@CssResource.ClassName("ellipsis-h")
+			String ellipsisH();
+			@CssResource.ClassName("ellipsis-v")
+			String ellipsisV();
 			String envelope();
 			@CssResource.ClassName("envelope-open")
 			String envelopeOpen();
@@ -218,6 +225,8 @@ public class Icon extends HTML {
 			String idCard();
 			@CssResource.ClassName("id-card-alt")
 			String idCardAlt();
+			String image();
+			String images();
 			String indent();
 			String info();
 			@CssResource.ClassName("info-square")
@@ -353,6 +362,7 @@ public class Icon extends HTML {
 			String thLarge();
 			@CssResource.ClassName("th-list")
 			String thList();
+			String thumbtack();
 			String trash();
 			@CssResource.ClassName("trash-alt")
 			String trashAlt();

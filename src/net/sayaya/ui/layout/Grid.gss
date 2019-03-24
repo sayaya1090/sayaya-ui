@@ -19,6 +19,11 @@
 	padding: 10px;
 }
 
+.item-title {
+	font-size: 12px;
+	text-transform: capitalize;
+}
+
 .item-visible {
 }
 
