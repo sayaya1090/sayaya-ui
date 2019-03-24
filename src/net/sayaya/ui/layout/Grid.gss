@@ -1,0 +1,45 @@
+.grid {
+	position:relative;
+}
+
+.item {
+	position: absolute;
+	margin: 5px;
+	z-index: 1;
+}
+		
+.item-content {
+	position: relative;
+	min-width: 100px;
+	min-height: 20px;
+	border: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
+	border-radius: 5px;
+	background-color: #FFFFFF;
+	cursor: pointer;
+	padding: 10px;
+}
+
+.item-visible {
+}
+
+.item-hidden {
+	z-index: 0;
+}
+
+.item-positioning {
+	z-index: 2;
+	border-radius: 5px;
+	box-shadow : 0px 3px 3px rgba(0,0,0,0.16), 0px 3px 3px rgba(0,0,0,0.23);
+}
+
+.item-releasing {
+	z-index: 3;
+	border-radius: 5px;
+	box-shadow : 0px 3px 3px rgba(0,0,0,0.16), 0px 3px 3px rgba(0,0,0,0.23);
+}
+
+.item-dragging {
+	z-index: 4;
+	border-radius: 5px;
+	box-shadow : 0px 10px 10px rgba(0,0,0,0.19), 0px 6px 3px rgba(0,0,0,0.23);
+}
