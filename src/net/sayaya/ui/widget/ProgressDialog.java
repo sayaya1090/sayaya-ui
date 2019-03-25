@@ -39,7 +39,7 @@ public class ProgressDialog<T> extends DialogBox implements Callback<T> {
 		setStyleLabel(msg.getElement().getStyle());
 		setStyleGauge(gauge.getElement().getStyle());
 		gauge.getText().setColor(Palette.getInstance().getColorText1());
-		gauge.getText().getElement().getStyle().setProperty("fontFamily", "'Open Sans', 'Noto Sans KR', sans-serif");
+		gauge.getText().getElement().getStyle().setProperty("fontFamily", "'Noto Sans KR', sans-serif");
 		gauge.getText().getElement().getStyle().setFontSize(10, Unit.PX);
 		gauge.getBar().setColor(Palette.getInstance().getColorDevider());
 		vp.getElement().getStyle().setPadding(5, Unit.PX);
@@ -54,7 +54,7 @@ public class ProgressDialog<T> extends DialogBox implements Callback<T> {
 	}
 	
 	private void setStyleLabel(Style style) {
-		style.setProperty("fontFamily", "'Open Sans', 'Noto Sans KR', sans-serif");
+		style.setProperty("fontFamily", "'Noto Sans KR', sans-serif");
 		style.setFontSize(12, Unit.PX);
 	}
 	

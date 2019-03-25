@@ -169,14 +169,14 @@ public class GraphCircle extends SVG implements HasValue<Double[]>, HasStroke {
 		if(agendas!=null) setAgenda(agendas);
 		Text label = new Text().setColor(Palette.getInstance().getColorText1()).setValue(this.label).setAnchor(TextAnchor.middle).setBaseline(AlignmentBaseline.baseline)
 		.setX(centerX).setY(centerY);
-		label.getElement().getStyle().setProperty("fontFamily", " 'Open Sans', 'Noto Sans KR', sans-serif");
+		label.getElement().getStyle().setProperty("fontFamily", "'Noto Sans KR', sans-serif");
 		label.getElement().getStyle().setFontSize(16, Unit.PX);
 		add(label);
 		
 		double total = 	Arrays.stream(values).mapToDouble(k->k).sum();
 		Text label2 = new Text().setColor(Palette.getInstance().getColorText1()).setValue(String.valueOf(total)).setAnchor(TextAnchor.middle).setBaseline(AlignmentBaseline.hanging)
 		.setX(centerX).setY(centerY+5);
-		label2.getElement().getStyle().setProperty("fontFamily", " 'Open Sans', 'Noto Sans KR', sans-serif");
+		label2.getElement().getStyle().setProperty("fontFamily", "'Noto Sans KR', sans-serif");
 		label2.getElement().getStyle().setFontSize(17, Unit.PX);
 		add(label2);
 		return this;
@@ -215,7 +215,7 @@ public class GraphCircle extends SVG implements HasValue<Double[]>, HasStroke {
 			if(agendas!=null && agendas.length > idx && agendas[idx]!=null) {
 				Text label = new Text().setColor(agendas[idx].getColor()).setValue(agendas[idx].getName() + " (" + values[idx] + ")").setBaseline(AlignmentBaseline.middle);
 				label.getElement().getStyle().setFontSize(12, Unit.PX);
-				label.getElement().getStyle().setProperty("fontFamily", "'Open Sans', 'Noto Sans KR', sans-serif");
+				label.getElement().getStyle().setProperty("fontFamily", "'Noto Sans KR', sans-serif");
 				add(label);
 				fan.setColor(agendas[idx++].getColor());
 				if(start + fan.getEnd()/2.0 <= Math.PI/2) {

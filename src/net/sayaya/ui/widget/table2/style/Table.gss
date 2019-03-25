@@ -45,7 +45,7 @@
 	color: #FFFFFF;
 	font-size: 13px;
 	font-weight: bold;
-	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
+	font-family: 'Noto Sans KR', sans-serif;
 	line-height: 25px;
 	text-rendering: auto;
 	-webkit-font-smoothing: antialiased;
@@ -94,7 +94,7 @@
 .table tbody tr td {
 	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
 	font-size: 13px;
-	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
+	font-family: 'Noto Sans KR', sans-serif;
 	text-rendering: auto;
 	-webkit-font-smoothing: antialiased;
 	padding-left: 15px;

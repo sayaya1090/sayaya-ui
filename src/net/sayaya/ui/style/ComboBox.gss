@@ -1,7 +1,7 @@
 .combobox {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
-	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
+	font-family: 'Noto Sans KR', sans-serif;
 	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
 	border: 1px solid transparent;
 	border-bottom: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");

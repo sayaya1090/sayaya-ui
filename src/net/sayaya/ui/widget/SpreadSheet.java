@@ -571,7 +571,7 @@ public final class SpreadSheet extends ResizeComposite {
 		Element render(SpreadSheetTable instance, Element td, int row, int col, String prop, Object value, ColumnInfo columnInfo);
 		@JsOverlay
 		default String getFont() {
-			return "'Open Sans', 'Noto Sans KR', sans-serif";
+			return "'Noto Sans KR', sans-serif";
 		}
 		@JsOverlay
 		default int getFontSize() {

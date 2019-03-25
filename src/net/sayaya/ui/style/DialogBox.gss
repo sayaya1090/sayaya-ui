@@ -15,7 +15,7 @@
 	background-color: white;
 	padding: 10px 10px 10px 22px;
 	cursor: default;
-	font-family: 'Open Sans', 'Noto Sans KR';
+	font-family: 'Noto Sans KR';
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	text-shadow: rgba(0,0,0,.01) 0 0 1px;
