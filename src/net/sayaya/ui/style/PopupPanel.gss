@@ -17,7 +17,7 @@
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	background-color: transparent;
-	font-family: 'Noto Sans KR',sans-serif;
+	font-family: 'Open Sans', 'Noto Sans KR',sans-serif;
 	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColor1()");
 	border: 0px hidden;
 	font-size: 12px;

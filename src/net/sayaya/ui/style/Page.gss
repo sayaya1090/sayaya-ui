@@ -28,7 +28,7 @@
 .label {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
-	font-family: 'Noto Sans KR', sans-serif;
+	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
@@ -40,7 +40,7 @@
 .box {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
-	font-family: 'Noto Sans KR', sans-serif;
+	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
 	border: 1px solid transparent;
 	border-bottom: 1px solid eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
 	outline-style: none;

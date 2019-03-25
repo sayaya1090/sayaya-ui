@@ -22,6 +22,7 @@
 .item-title {
 	font-size: 12px;
 	text-transform: capitalize;
+	transform: scaleY(1.02);
 }
 
 .item-visible {

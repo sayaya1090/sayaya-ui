@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import net.sayaya.ui.style.StyleTextBox;
 import net.sayaya.ui.style.color.Palette;
-import net.sayaya.ui.widget.Label;
 import net.sayaya.ui.widget.InputBase;
+import net.sayaya.ui.widget.Label;
 
 public class Validator {
 	@FunctionalInterface

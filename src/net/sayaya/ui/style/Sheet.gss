@@ -19,7 +19,7 @@
 	color: #FFFFFF;
 	font-size: 13px;
 	font-weight: bold;
-	font-family: "Noto Sans KR";
+	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
 	text-rendering: auto;
 	-webkit-font-smoothing: antialiased;
 	cursor: pointer;
@@ -115,7 +115,7 @@
 }
 
 .sheet .handsontable.listbox tr td {
-	font-family: "Noto Sans KR";
+	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
 	font-size: 11px;
 }
 
@@ -137,7 +137,7 @@
 }
 
 .sheet .htContextMenu table tbody tr td {
-	font-family: 'Noto Sans KR';
+	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
 	background: #FFFFFF !important;
 	border-width: 0;
 	padding: 4px 6px 0 6px;
@@ -154,7 +154,7 @@
 }
 
 .htDropdownMenu table tbody tr td .htItemWrapper {
-	font-family: 'Noto Sans KR';
+	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
 	font-size: 11px;
 }
 
@@ -169,14 +169,14 @@
 }
 
 .htFiltersConditionsMenu table tbody tr td .htItemWrapper {
-	font-family: 'Noto Sans KR';
+	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
 	font-size: 11px;
 }
 
 .handsontable .htUIInput.htUIButton input {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
-	font-family: 'Noto Sans KR', sans-serif;
+	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
 	font-weight: bold;
 	text-transform: uppercase;
 	min-width: 8em;
