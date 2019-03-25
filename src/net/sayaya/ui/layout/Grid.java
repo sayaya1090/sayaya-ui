@@ -6,7 +6,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ProvidesResize;
@@ -90,7 +89,7 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 		}
 		
 		@JsOverlay
-		public GridSetting setDragSortPredicate(BiFunction<Item, Event, DragSortPredicate> dragSortPredicate) {
+		public GridSetting setDragSortPredicate(BiFunction<Item, AnimationEvent, DragSortPredicate> dragSortPredicate) {
 			this.dragSortPredicate = dragSortPredicate;
 			return this;
 		}
@@ -150,6 +149,12 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 	
 	public enum DragSortPredicateAction {
 		move, swap
+	}
+	
+	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
+	public final static class AnimationEvent {
+		@JsProperty
+		private double deltaTime;
 	}
 
 	@Override
