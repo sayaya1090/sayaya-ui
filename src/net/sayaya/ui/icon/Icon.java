@@ -165,7 +165,7 @@ public class Icon extends HTML {
 			@CssResource.ClassName("comment-alt")
 			String commentAlt();
 			String compress();
-			@CssResource.ClassName("collapse-arrows-alt")
+			@CssResource.ClassName("compress-arrows-alt")
 			String compressArrowsAlt();
 			String copy();
 			String cut();
