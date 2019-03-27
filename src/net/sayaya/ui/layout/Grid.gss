@@ -21,7 +21,7 @@
 
 .item-title {
 	font-size: 12px;
-	text-transform: capitalize;
+	text-transform: uppercase;
 	transform: scaleY(1.02);
 }
 

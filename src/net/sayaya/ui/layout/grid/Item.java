@@ -67,7 +67,7 @@ public class Item extends Composite implements RequiresResize, HasClickHandlers,
 		return parent;
 	}
 	
-	public Panel getHeader() {
+	protected Panel getHeader_() {
 		return header;
 	}
 	
