@@ -15,15 +15,14 @@ import com.google.gwt.event.dom.client.HasDropHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import net.sayaya.ui.icon.Icon;
 import net.sayaya.ui.layout.Grid;
 import net.sayaya.ui.style.color.Palette;
 import net.sayaya.ui.widget.Label;
-import net.sayaya.ui.widget.button.ButtonToggle;
 
 public class Item extends Composite implements RequiresResize, HasClickHandlers, HasDragStartHandlers, HasDragOverHandlers, HasDropHandlers, HasDragLeaveHandlers {
 	private final SimplePanel panel = new SimplePanel();
@@ -31,7 +30,6 @@ public class Item extends Composite implements RequiresResize, HasClickHandlers,
 	private final SimplePanel content = new SimplePanel();
 	private final FlowPanel header = new FlowPanel();
 	private final Label title = new Label();
-	private final ButtonToggle state = new ButtonToggle(Icon.create(Icon.GSS.expand()));
 	private Grid parent;
 	public Item() {
 		initWidget(panel);
@@ -39,9 +37,7 @@ public class Item extends Composite implements RequiresResize, HasClickHandlers,
 		layout.add(header);
 		layout.add(content);
 		header.add(title);
-		header.add(state);
 		style();
-		state.setValue(false);
 	}
 	
 	private void style() {
@@ -50,7 +46,6 @@ public class Item extends Composite implements RequiresResize, HasClickHandlers,
 		title.addStyleName(Grid.GSS.itemTitle());
 		title.getElement().getStyle().setColor(Palette.getInstance().getColorText2());
 		header.getElement().getStyle().setDisplay(Display.FLEX);
-		state.getElement().getStyle().setProperty("marginLeft", "auto");
 	}
 	
 	public Item add(Widget w) {
@@ -72,13 +67,8 @@ public class Item extends Composite implements RequiresResize, HasClickHandlers,
 		return parent;
 	}
 	
-	public boolean isExpanded() {
-		return state.getValue();
-	}
-	
-	public Item setExpand(boolean expand) {
-		state.setValue(expand);
-		return this;
+	public Panel getHeader() {
+		return header;
 	}
 	
 	@Override

@@ -72,7 +72,7 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 		public native void remove(Element elem);
 		public native void show(Element elem);
 		public native void hide(Element elem);
-		public native void sort(Comparator comp);
+		public native void sort(Comparator<?> comp);
 	}
 	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
 	public final static class GridSetting {
