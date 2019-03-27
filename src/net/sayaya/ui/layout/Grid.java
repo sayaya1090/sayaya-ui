@@ -1,5 +1,6 @@
 package net.sayaya.ui.layout;
 
+import java.util.Comparator;
 import java.util.function.BiFunction;
 
 import com.google.gwt.core.client.GWT;
@@ -67,11 +68,24 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 		public native void synchronize();
 		public native void refreshItems();
 		public native void layout();
+		public native void add(Element elem);
+		public native void remove(Element elem);
+		public native void show(Element elem);
+		public native void hide(Element elem);
+		public native void sort(Comparator comp);
 	}
 	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
 	public final static class GridSetting {
 		@JsProperty
 		private boolean dragEnabled;
+		@JsProperty
+		private Layout layout;
+		@JsProperty
+		private double layoutOnResize;
+		@JsProperty
+		private boolean layoutOnInit;
+		@JsProperty
+		private double layoutDuration;
 		@JsProperty
 		private Object dragStartPredicate;
 		@JsProperty
@@ -155,6 +169,19 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 			this.itemReleasingClass = itemReleasingClass;
 			return this;
 		}
+	}
+	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
+	public final static class Layout {
+		@JsProperty
+		private boolean fillGaps;
+		@JsProperty
+		private boolean horizontal;
+		@JsProperty
+		private boolean alignRight;
+		@JsProperty
+		private boolean alignBottom;
+		@JsProperty
+		private boolean rounding;
 	}
 	
 	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
