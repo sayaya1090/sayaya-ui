@@ -160,10 +160,13 @@ public class Icon extends HTML {
 			String cloudDownloadAlt();
 			String cog();
 			String cogs();
+			String columns();
 			String comment();
 			@CssResource.ClassName("comment-alt")
 			String commentAlt();
-			String columns();
+			String compress();
+			@CssResource.ClassName("collapse-arrows-alt")
+			String compressArrowsAlt();
 			String copy();
 			String cut();
 			String dna();
@@ -183,6 +186,11 @@ public class Icon extends HTML {
 			String exclamationSquare();
 			@CssResource.ClassName("exclamation-circle")
 			String exclamationCircle();
+			String expand();
+			@CssResource.ClassName("expand-arrows")
+			String expandArrows();
+			@CssResource.ClassName("expand-arrows-alt")
+			String expandArrowsAlt();
 			@CssResource.ClassName("eye-dropper")
 			String eyeDropper();
 			@CssResource.ClassName("file")
@@ -261,6 +269,7 @@ public class Icon extends HTML {
 			@CssResource.ClassName("mortar-pestle")
 			String mortarPestle();
 			String outdent();
+			String palette();
 			@CssResource.ClassName("paper-plane")
 			String paperPlane();
 			String paperclip();
