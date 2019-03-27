@@ -67,8 +67,6 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 		public native void synchronize();
 		public native void refreshItems();
 		public native void layout();
-	//	@JsProperty
-	//	private boolean dragEnabled;
 	}
 	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
 	public final static class GridSetting {

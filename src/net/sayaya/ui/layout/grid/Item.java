@@ -22,7 +22,6 @@ import com.google.gwt.user.client.ui.Widget;
 import net.sayaya.ui.icon.Icon;
 import net.sayaya.ui.layout.Grid;
 import net.sayaya.ui.style.color.Palette;
-import net.sayaya.ui.widget.Button;
 import net.sayaya.ui.widget.Label;
 import net.sayaya.ui.widget.button.ButtonToggle;
 
