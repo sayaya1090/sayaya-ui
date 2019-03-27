@@ -1,7 +1,6 @@
 package net.sayaya.ui.layout.grid;
 
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.TextTransform;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DragLeaveHandler;
@@ -22,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import net.sayaya.ui.icon.Icon;
 import net.sayaya.ui.layout.Grid;
+import net.sayaya.ui.style.color.Palette;
 import net.sayaya.ui.widget.Button;
 import net.sayaya.ui.widget.Label;
 import net.sayaya.ui.widget.button.ButtonToggle;
@@ -31,8 +31,8 @@ public class Item extends Composite implements RequiresResize, HasClickHandlers,
 	private final FlowPanel layout = new FlowPanel();
 	private final SimplePanel content = new SimplePanel();
 	private final FlowPanel header = new FlowPanel();
-	private final Label title = new Label("ITEM");
-	private final Button<?> pin = new ButtonToggle(Icon.create(Icon.GSS.thumbtack()));
+	private final Label title = new Label();
+	private final ButtonToggle state = new ButtonToggle(Icon.create(Icon.GSS.expand()));
 	private Grid parent;
 	public Item() {
 		initWidget(panel);
@@ -40,16 +40,18 @@ public class Item extends Composite implements RequiresResize, HasClickHandlers,
 		layout.add(header);
 		layout.add(content);
 		header.add(title);
-		header.add(pin);
+		header.add(state);
 		style();
+		state.setValue(false);
 	}
 	
 	private void style() {
 		layout.addStyleName(Grid.GSS.itemContent());
 		content.getElement().getStyle().setMargin(5, Unit.PX);
 		title.addStyleName(Grid.GSS.itemTitle());
+		title.getElement().getStyle().setColor(Palette.getInstance().getColorText2());
 		header.getElement().getStyle().setDisplay(Display.FLEX);
-		pin.getElement().getStyle().setProperty("marginLeft", "auto");
+		state.getElement().getStyle().setProperty("marginLeft", "auto");
 	}
 	
 	public Item add(Widget w) {
@@ -69,6 +71,15 @@ public class Item extends Composite implements RequiresResize, HasClickHandlers,
 	@Override
 	public Grid getParent() {
 		return parent;
+	}
+	
+	public boolean isExpanded() {
+		return state.getValue();
+	}
+	
+	public Item setExpand(boolean expand) {
+		state.setValue(expand);
+		return this;
 	}
 	
 	@Override
