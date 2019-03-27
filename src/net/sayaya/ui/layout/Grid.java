@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.Widget;
 
-import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsProperty;
@@ -34,11 +33,9 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 		.setItemPositioningClass(GSS.itemPositioning())
 		.setItemDraggingClass(GSS.itemDragging())
 		.setItemReleasingClass(GSS.itemReleasing());
-		setting.setDragEnabled(true).setDragStartPredicate(this, (item, e)->{
-			if(e.deltaTime > 300) return true;
+		setting.setDragEnabled(true).setDragSortPredicate((item, e)->{
 			return null;
 		});
-		
 		addAttachHandler(evt->{
 			if(evt.isAttached()) muuri = new Muuri(this.getElement(), setting);
 		});
@@ -50,16 +47,6 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 		refresh();
 	}
 	
-	@JsFunction
-	public static interface _ItemEvent {
-		Object apply(MuuriItem item, AnimationEvent event);
-	}
-	
-	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name="Item")	
-	public final static class MuuriItem {
-		public native Element getElement();
-	}
-	
 	@JsType(isNative = true, namespace = JsPackage.GLOBAL, name="Muuri")	
 	public final static class Muuri {
 		public Muuri(Element elemen, GridSetting settings) {};
@@ -67,15 +54,11 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 		public native void synchronize();
 		public native void refreshItems();
 		public native void layout();
-	//	@JsProperty
-	//	private boolean dragEnabled;
 	}
 	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
 	public final static class GridSetting {
 		@JsProperty
 		private boolean dragEnabled;
-		@JsProperty
-		private Object dragStartPredicate;
 		@JsProperty
 		private Object dragSortPredicate;
 		@JsProperty
@@ -100,28 +83,16 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 		}
 		
 		@JsOverlay
-		public GridSetting setDragStartPredicate(DragStartPredicate dragStartPredicate) {
-			this.dragStartPredicate = dragStartPredicate;
-			return this;
-		}
-		
-		@JsOverlay
-		public GridSetting setDragStartPredicate(Grid grid, BiFunction<Item, AnimationEvent, Boolean> dragStartPredicate) {
-			_ItemEvent func = (MuuriItem item, AnimationEvent event)->{
-				Element elem = item.getElement();
-				for(int i = 0; i < grid.div.getWidgetCount(); ++i) if(elem.getParentElement().getChild(i) == elem) return dragStartPredicate.apply((Item)grid.div.getWidget(i), event);
-				return false;
-			};
-			this.dragStartPredicate = func;
-			return this;
-		}
-		
-		@JsOverlay
 		public GridSetting setDragSortPredicate(DragSortPredicate dragSortPredicate) {
 			this.dragSortPredicate = dragSortPredicate;
 			return this;
 		}
-
+		
+		@JsOverlay
+		public GridSetting setDragSortPredicate(BiFunction<Item, AnimationEvent, DragSortPredicate> dragSortPredicate) {
+			this.dragSortPredicate = dragSortPredicate;
+			return this;
+		}
 		@JsOverlay
 		public GridSetting setContainerClass(String containerClass) {
 			this.containerClass = containerClass;
@@ -158,38 +129,12 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 			return this;
 		}
 	}
-	
-	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
-	public final static class DragStartPredicate {
-		@JsProperty
-		private double distance;
-		@JsProperty
-		private double delay;
-		@JsProperty
-		private String handle;
-		@JsOverlay
-		public DragStartPredicate setDistance(double distance) {
-			this.distance = distance;
-			return this;
-		}
-		@JsOverlay
-		public DragStartPredicate setDelay(double delay) {
-			this.delay = delay;
-			return this;
-		}
-	}
-	
 	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
 	public final static class DragSortPredicate {
 		@JsProperty
 		private DragSortPredicateAction action;
 		@JsProperty
 		private double threshold;
-		@JsProperty
-		private double index;
-		@JsProperty
-		private Grid grid;
-		
 		@JsOverlay
 		public DragSortPredicate setAction(DragSortPredicateAction action) {
 			this.action = action;
@@ -210,8 +155,6 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 	public final static class AnimationEvent {
 		@JsProperty
 		private double deltaTime;
-		@JsProperty
-		private double distance;
 	}
 
 	@Override

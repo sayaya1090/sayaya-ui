@@ -195,20 +195,14 @@
 .cogs:before {
 	content: "\f085";	
 }
-.columns:before {
-	content: "\f0db";	
-}
 .comment:before {
 	content: "\f075";	
 }
 .comment-alt:before {
 	content: "\f27a";	
 }
-.compress:before {
-	content: "\f066";	
-}
-.compress-arrows-alt:before {
-	content: "\f78c";	
+.columns:before {
+	content: "\f0db";	
 }
 .copy:before {
 	content: "\f0c5";	
@@ -248,15 +242,6 @@
 }
 .exclamation-circle:before {
 	content: "\f06a";	
-}
-.expand:before {
-	content: "\f065";	
-}
-.expand-arrows:before {
-	content: "\f31e";	
-}
-.expand-arrows-alt:before {
-	content: "\f31d";	
 }
 .eye-dropper:before {
 	content: "\f1fb";	
@@ -410,9 +395,6 @@
 }
 .outdent:before {
 	content: "\f03b";
-}
-.palette:before {
-	content: "\f53f";
 }
 .paper-plane:before {
 	content: "\f1d8";
