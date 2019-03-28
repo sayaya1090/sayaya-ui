@@ -27,6 +27,9 @@
 .align-right:before {
 	content: "\f038";
 }
+.asterisk:before {
+	content: "\f069";
+}
 .at:before {
 	content: "\f1fa";
 }
