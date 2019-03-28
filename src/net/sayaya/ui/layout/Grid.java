@@ -26,20 +26,21 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 	private final FlowPanel div = new FlowPanel();
 	public Grid() {
 		initWidget(div);
-		
-		setting = new GridSetting()
+		this.setting = new GridSetting()
 		.setContainerClass(GSS.grid())
 		.setItemClass(GSS.item())
 		.setItemVisibleClass(GSS.itemVisible())
 		.setItemHiddenClass(GSS.itemHidden())
 		.setItemPositioningClass(GSS.itemPositioning())
 		.setItemDraggingClass(GSS.itemDragging())
-		.setItemReleasingClass(GSS.itemReleasing());
-		setting.setDragEnabled(true).setDragStartPredicate(this, (item, e)->{
+		.setItemReleasingClass(GSS.itemReleasing())
+		.setDragEnabled(true)
+		.setDragSortPredicate(new DragSortPredicate().setAction(DragSortPredicateAction.move).setThreshold(51))
+		.setLayout(new Layout().setFillGaps(true).setHorizontal(false).setRounding(true).setAlignBottom(false).setAlignBottom(false));
+		if(setting.dragStartPredicate==null) setting.setDragStartPredicate(this, (item, e)->{
 			if(e.deltaTime > 300) return true;
 			return null;
 		});
-		
 		addAttachHandler(evt->{
 			if(evt.isAttached()) muuri = new Muuri(this.getElement(), setting);
 		});
@@ -49,6 +50,10 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 		div.add(item);
 		item.setParent(this);
 		refresh();
+	}
+	
+	public GridSetting getSetting() {
+		return setting;
 	}
 	
 	@JsFunction
@@ -169,6 +174,11 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 			this.itemReleasingClass = itemReleasingClass;
 			return this;
 		}
+		@JsOverlay
+		public GridSetting setLayout(Layout layout) {
+			this.layout = layout;
+			return this;
+		}
 	}
 	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
 	public final static class Layout {
@@ -182,6 +192,31 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 		private boolean alignBottom;
 		@JsProperty
 		private boolean rounding;
+		@JsOverlay
+		public Layout setFillGaps(boolean fillGaps) {
+			this.fillGaps = fillGaps;
+			return this;
+		}
+		@JsOverlay
+		public Layout setHorizontal(boolean horizontal) {
+			this.horizontal = horizontal;
+			return this;
+		}
+		@JsOverlay
+		public Layout setAlignRight(boolean alignRight) {
+			this.alignRight = alignRight;
+			return this;
+		}
+		@JsOverlay
+		public Layout setAlignBottom(boolean alignBottom) {
+			this.alignBottom = alignBottom;
+			return this;
+		}
+		@JsOverlay
+		public Layout setRounding(boolean rounding) {
+			this.rounding = rounding;
+			return this;
+		}
 	}
 	
 	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
