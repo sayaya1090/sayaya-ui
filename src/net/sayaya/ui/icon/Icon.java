@@ -160,6 +160,7 @@ public class Icon extends HTML {
 			String cloudDownload();
 			@CssResource.ClassName("cloud-download-alt")
 			String cloudDownloadAlt();
+			String code();
 			String cog();
 			String cogs();
 			String columns();

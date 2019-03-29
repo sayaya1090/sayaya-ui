@@ -195,6 +195,9 @@
 .cloud-download-alt:before {
 	content: "\f381";
 }
+.code:before {
+	content: "\f121";	
+}
 .cog:before {
 	content: "\f013";	
 }

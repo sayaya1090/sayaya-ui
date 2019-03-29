@@ -27,10 +27,11 @@ public class Placeholder {
 		private final Label label = new Label();
 		private final double fontSizePlaceholder;
 		private final double fontSizeLabel;
+		private final static int PADDING = 4;
 		private final Animation show = new Animation() {
 			@Override
 			protected void onUpdate(double progress) {
-				double y = progress*(fontSizeLabel*1.2);
+				double y = progress*(fontSizeLabel*1.2+PADDING);
 				double fs = fontSizeLabel+progress*(fontSizePlaceholder-fontSizeLabel);
 				label.getElement().getStyle().setTop(y, Unit.PX);
 				label.getElement().getStyle().setFontSize(fs, Unit.PX);
@@ -39,7 +40,7 @@ public class Placeholder {
 		private final Animation hide = new Animation() {
 			@Override
 			protected void onUpdate(double progress) {
-				double y = (1-progress)*(fontSizeLabel*1.2);
+				double y = (1-progress)*(fontSizeLabel*1.2+PADDING);
 				double fs = (fontSizePlaceholder-fontSizeLabel)*(1-progress)+fontSizeLabel;
 				label.getElement().getStyle().setTop(y, Unit.PX);
 				label.getElement().getStyle().setFontSize(fs, Unit.PX);
@@ -86,7 +87,7 @@ public class Placeholder {
 			label.getElement().getStyle().setPosition(Position.RELATIVE);
 			label.getElement().getStyle().setZIndex(1);
 			widget.asWidget().getElement().getStyle().setPosition(Position.RELATIVE);
-			widget.asWidget().getElement().getStyle().setTop(0, Unit.PX);
+			widget.asWidget().getElement().getStyle().setTop(PADDING, Unit.PX);
 			widget.asWidget().getElement().getStyle().setZIndex(2);
 			widget.asWidget().getElement().getStyle().setBackgroundColor("transparent");
 		}
