@@ -60,7 +60,7 @@
 .barcode-scan:before {
 	content: "\f465"
 }
-.bold:before {
+.blog:before {
 	content: "\f781";
 }
 .bold:before {
