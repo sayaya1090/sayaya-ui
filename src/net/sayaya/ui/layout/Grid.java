@@ -21,6 +21,36 @@ import jsinterop.annotations.JsType;
 import net.sayaya.ui.layout.grid.Item;
 
 public class Grid extends Composite implements RequiresResize, ProvidesResize {
+	private static final Resource RESOURCE =  GWT.create(Resource.class);
+	static {
+		RESOURCE.style().ensureInjected();
+	}
+	public static final Resource.Style GSS = RESOURCE.style();
+	public interface Resource extends ClientBundle {
+		public static final Resource instance=  GWT.create(Resource.class);
+		@Source("Grid.gss")
+		Style style();
+		
+		public static interface Style extends CssResource {
+			String grid();
+			String item();
+			@CssResource.ClassName("item-content")
+			String itemContent();
+			@CssResource.ClassName("item-title")
+			String itemTitle();
+			@CssResource.ClassName("item-visible")
+			String itemVisible();
+			@CssResource.ClassName("item-hidden")
+			String itemHidden();
+			@CssResource.ClassName("item-positioning")
+			String itemPositioning();
+			@CssResource.ClassName("item-releasing")
+			String itemReleasing();
+			@CssResource.ClassName("item-dragging")
+			String itemDragging();
+		}
+	}
+	
 	private Muuri muuri;
 	private GridSetting setting;
 	private final FlowPanel div = new FlowPanel();
@@ -287,36 +317,6 @@ public class Grid extends Composite implements RequiresResize, ProvidesResize {
 		if(muuri!=null) {
 			muuri.refreshItems();
 			muuri.layout();
-		}
-	}
-	
-	private static final Resource RESOURCE =  GWT.create(Resource.class);
-	static {
-		RESOURCE.style().ensureInjected();
-	}
-	public static final Resource.Style GSS = RESOURCE.style();
-	public interface Resource extends ClientBundle {
-		public static final Resource instance=  GWT.create(Resource.class);
-		@Source("Grid.gss")
-		Style style();
-		
-		public static interface Style extends CssResource {
-			String grid();
-			String item();
-			@CssResource.ClassName("item-content")
-			String itemContent();
-			@CssResource.ClassName("item-title")
-			String itemTitle();
-			@CssResource.ClassName("item-visible")
-			String itemVisible();
-			@CssResource.ClassName("item-hidden")
-			String itemHidden();
-			@CssResource.ClassName("item-positioning")
-			String itemPositioning();
-			@CssResource.ClassName("item-releasing")
-			String itemReleasing();
-			@CssResource.ClassName("item-dragging")
-			String itemDragging();
 		}
 	}
 }

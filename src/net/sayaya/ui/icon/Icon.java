@@ -78,6 +78,7 @@ public class Icon extends HTML {
 			String barcodeRead();
 			@CssResource.ClassName("barcode-scan")
 			String barcodeScan();
+			String blog();
 			String bold();
 			String bong();
 			String box();
@@ -373,6 +374,8 @@ public class Icon extends HTML {
 			@CssResource.ClassName("th-list")
 			String thList();
 			String thumbtack();
+			String tools();
+			String toolbox();
 			String trash();
 			@CssResource.ClassName("trash-alt")
 			String trashAlt();

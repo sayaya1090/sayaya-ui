@@ -61,6 +61,9 @@
 	content: "\f465"
 }
 .bold:before {
+	content: "\f781";
+}
+.bold:before {
 	content: "\f032";
 }
 .bong:before {
@@ -617,6 +620,12 @@
 }
 .thumbtack:before {
 	content: "\f08d";
+}
+.tools:before {
+	content: "\f7d9";
+}
+.toolbox:before {
+	content: "\f552";
 }
 .trash:before {
 	content: "\f1f8";
