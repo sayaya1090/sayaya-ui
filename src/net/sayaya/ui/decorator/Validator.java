@@ -52,7 +52,8 @@ public class Validator {
 		@Override
 		public TextBoxDecoratorValidator<T> style(TextBoxDecoratorValidator<T> widet) {
 			label.setStyleName(StyleTextBox.GSS.placeholder());
-			label.getElement().getStyle().setLeft(3, Unit.PX);
+			label.getElement().getStyle().setMarginLeft(3, Unit.PX);
+			label.getElement().getStyle().setMarginTop(3, Unit.PX);
 			label.getElement().getStyle().setColor(Palette.getInstance().getColorText3());
 			return this;
 		}
