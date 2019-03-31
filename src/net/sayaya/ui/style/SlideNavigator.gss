@@ -68,14 +68,13 @@
 .item-label {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
-	font-family: 'Noto Sans KR', sans-serif;
+	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
 	-o-user-select: none;
 	user-select: none;
 	font-size: 16px;
-	font-weight: 500;
 	padding-left: 1em;
 	width: 265px;
 }
