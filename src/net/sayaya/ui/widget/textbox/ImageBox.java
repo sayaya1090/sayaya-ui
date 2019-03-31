@@ -25,9 +25,9 @@ public final class ImageBox extends Composite implements InputBase<String, Image
 	
 	@Override
 	public void onBrowserEvent(Event evt) {
-		if("paste".equalsIgnoreCase(evt.getType())) {
+		if(enabled & "paste".equalsIgnoreCase(evt.getType())) {
 			getPastedByte(evt, str->setValue(str));
-		} else if("keydown".equalsIgnoreCase(evt.getType())){
+		} else if(enabled & "keydown".equalsIgnoreCase(evt.getType())){
 			if(evt.getKeyCode() == 8				// Backspace
 			|| evt.getKeyCode() == 46) {			// Delete
 				getElement().getStyle().clearBackgroundImage();
