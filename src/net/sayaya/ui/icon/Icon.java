@@ -316,6 +316,9 @@ public class Icon extends HTML {
 			String reply();
 			@CssResource.ClassName("reply-alt")
 			String replyAlt();
+			String rss();
+			@CssResource.ClassName("rss-square")
+			String rssSquare();
 			String save();
 			String search();
 			String scanner();
