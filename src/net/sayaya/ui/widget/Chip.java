@@ -50,13 +50,20 @@ public class Chip extends Composite implements HasStyle<Chip>, HasClickHandlers,
 		this();
 		setText(text);
 	}
+	
 	public Chip(Icon icon) {
 		this();
 		setValue(icon);
 	}
+	
 	public Chip(Icon icon, String text) {
 		this();
 		setValue(icon, text);
+	}
+	
+	public Chip(String text, Icon icon) {
+		this();
+		setValue(text, icon);
 	}
 	
 	@Override
@@ -77,6 +84,11 @@ public class Chip extends Composite implements HasStyle<Chip>, HasClickHandlers,
 	
 	public Chip setValue(Icon icon, String text) {
 		widget.setHTML(icon.toString() + " " + text);
+		return this;
+	}
+	
+	public Chip setValue(String text, Icon icon) {
+		widget.setHTML(text + " " + icon.toString());
 		return this;
 	}
 	

@@ -1,4 +1,4 @@
-package net.sayaya.ui.widget;
+package net.sayaya.ui.widget.chip;
 
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -11,6 +11,7 @@ import com.google.gwt.event.shared.SimpleEventBus;
 import net.sayaya.ui.handler.HasValue;
 import net.sayaya.ui.icon.Icon;
 import net.sayaya.ui.style.StyleChip;
+import net.sayaya.ui.widget.Chip;
 
 public class ChipToggle extends Chip implements HasValue<Boolean>, HasValueChangeHandlers<Boolean> {
 	private final EventBus bus = new SimpleEventBus();
