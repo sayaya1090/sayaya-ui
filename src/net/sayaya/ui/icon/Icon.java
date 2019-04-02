@@ -150,6 +150,7 @@ public class Icon extends HTML {
 			String chevronRight();
 			@CssResource.ClassName("chevron-up")
 			String chevronUp();
+			String circle();
 			String clipboard();
 			@CssResource.ClassName("clipboard-check")
 			String clipboardCheck();

@@ -177,6 +177,9 @@
 .chevron-up:before {
 	content: "\f077";
 }
+.circle:before {
+	content: "\f111";
+}
 .clipboard:before {
 	content: "\f328";
 }
