@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.KeyPressEvent;
