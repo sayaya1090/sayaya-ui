@@ -4,35 +4,53 @@ import java.util.Arrays;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
-import net.sayaya.ui.style.StyleTextBox;
+import net.sayaya.ui.style.StyleChip;
 import net.sayaya.ui.widget.InputBase;
 import net.sayaya.ui.widget.chip.ChipDeletable;
 
 public class ChipBox extends Composite implements InputBase<String[], ChipBox> {
 	private final FlowPanel widget;
-	private final com.google.gwt.user.client.ui.TextBox textbox;
+	private final InputBase<String, ?> textbox;
+	private final HorizontalPanel hp = new HorizontalPanel();
 	private final Set<String> chips = Sets.newHashSet();
-	public ChipBox() {
+	public ChipBox(InputBase<String, ?> elem) {
 		widget = new FlowPanel();
-		textbox = new com.google.gwt.user.client.ui.TextBox();
+		textbox = elem;
 		initWidget(widget);
 		style(this);
-		textbox.addValueChangeHandler(evt->{
-			String value = evt.getValue();
+		textbox.asWidget().addDomHandler(evt->{
+			if(evt.getNativeEvent().getKeyCode() != 13) return;
+			String value = textbox.getValue();
 			chips.add(value);
-			widget.add(new ChipDeletable(value, evt2->chips.remove(evt2)));
-		});
+			ChipDeletable chip = new ChipDeletable(value, evt2->chips.remove(evt2));
+			hp.add(chip);
+			chip.addStyleName(StyleChip.GSS.fadeIn());
+		}, KeyPressEvent.getType());
 		widget.add(textbox);
+		ScrollPanel sp = new ScrollPanel();
+		widget.add(sp);
+		sp.add(hp);
+		widget.getElement().getStyle().setDisplay(Display.FLEX);
+		sp.getElement().getStyle().setOverflow(Overflow.AUTO);
+		hp.setSpacing(10);
+	}
+	public ChipBox() {
+		this(new TextBox());
 	}
 	
 	@Override
 	public ChipBox style(ChipBox widet) {
-		textbox.setStyleName(StyleTextBox.GSS.textbox());
 		return this;
 	}
 
@@ -41,7 +59,7 @@ public class ChipBox extends Composite implements InputBase<String[], ChipBox> {
 		Arrays.stream(value)
 		.peek(chips::add)
 		.map(v->new ChipDeletable(v, evt->chips.remove(evt)))
-		.forEach(widget::add);
+		.forEach(hp::add);
 		return this;
 	}
 
