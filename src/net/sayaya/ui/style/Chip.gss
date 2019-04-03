@@ -3,7 +3,7 @@
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	background-color: rgba(35, 47, 52, 0.12);
-	font-family: 'Open Sans', 'Noto Sans KR';
+	font-family: 'Work Sans', 'Sunflower';
 	font-weight: normal;
 	font-size: 14px;
 	color: #232F34;

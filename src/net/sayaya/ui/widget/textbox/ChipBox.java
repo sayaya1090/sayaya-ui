@@ -7,8 +7,12 @@ import com.google.common.collect.Sets;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -19,6 +23,7 @@ import net.sayaya.ui.widget.InputBase;
 import net.sayaya.ui.widget.chip.ChipDeletable;
 
 public class ChipBox extends Composite implements InputBase<String[], ChipBox> {
+	private final EventBus bus = new SimpleEventBus();
 	private final FlowPanel widget;
 	private final InputBase<String, ?> textbox;
 	private final HorizontalPanel hp = new HorizontalPanel();
@@ -35,6 +40,7 @@ public class ChipBox extends Composite implements InputBase<String[], ChipBox> {
 			ChipDeletable chip = new ChipDeletable(value, evt2->chips.remove(evt2));
 			hp.add(chip);
 			chip.addStyleName(StyleChip.GSS.fadeIn());
+			ValueChangeEvent.fire(ChipBox.this, getValue());
 		}, KeyPressEvent.getType());
 		widget.add(textbox);
 		ScrollPanel sp = new ScrollPanel();
@@ -57,7 +63,10 @@ public class ChipBox extends Composite implements InputBase<String[], ChipBox> {
 	public ChipBox setValue(String... value) {
 		Arrays.stream(value)
 		.peek(chips::add)
-		.map(v->new ChipDeletable(v, evt->chips.remove(evt)))
+		.map(v->new ChipDeletable(v, evt->{
+			chips.remove(evt);
+			ValueChangeEvent.fire(ChipBox.this, getValue());
+		}))
 		.forEach(hp::add);
 		return this;
 	}
@@ -71,11 +80,16 @@ public class ChipBox extends Composite implements InputBase<String[], ChipBox> {
 	public boolean isEmpty() {
 		return chips.isEmpty();
 	}
+	
+	@Override
+	public void fireEvent(GwtEvent<?> event) {
+		if(event instanceof ValueChangeEvent) bus.fireEvent(event);
+		else super.fireEvent(event);
+	}
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String[]> handler) {
-		// TODO Auto-generated method stub
-		return null;
+		return bus.addHandler(ValueChangeEvent.getType(), handler);
 	}
 
 	@Override
