@@ -1,10 +1,14 @@
 .chip {
+	white-space:nowrap;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
-	background-color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
-	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorText1()");
+	background-color: rgba(35, 47, 52, 0.12);
+	font-family: 'Open Sans', 'Noto Sans KR';
+	font-weight: normal;
+	font-size: 14px;
+	color: #232F34;
 	border: 1px solid transparent;
-	border-radius: 13px;
+	border-radius: 14px;
 	cursor: pointer;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -16,7 +20,6 @@
 	padding-left: 10px;
 	padding-right: 10px;
 	letter-spacing: 1px;
-	font-size: 12px;
 	margin-left: 5px;
 	margin-right: 5px;
 }
@@ -37,12 +40,100 @@
 	color: eval("net.sayaya.ui.style.color.Palette.getInstance().getColorDevider()");
 }
 
+.delete {
+	padding-right: 5px;
+}
+
+.delete div:last-child {
+	font-weight: bold;
+	margin-left: 5px;
+	font-size: 15px;
+}
+
+.fade-in {
+	opacity: 0;
+	animation-duration: 0.4s;
+	animation-name: fi;
+	animation-fill-mode: forwards;
+}
+
+.fade-out {
+	animation-duration: 0.4s;
+	animation-name: fo;
+	animation-fill-mode: forwards;
+}
+
+@keyframes fi {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fo {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+.toggle {
+	pading-left: 5px;
+}
+
+.toggle div:first-child {
+	opacity: 0;
+	width: 0px;
+	margin-right: 0px;
+}
+
+.toggle-false div:first-child {
+	opacity: 0;
+	animation-duration: 0.4s;
+	animation-name: collapse;
+	animation-fill-mode: forwards;
+}
+
 .toggle-true:enabled {
 	font-weight: bold;
 	background-color: rgba(0, 0, 0, 0.15);
 	box-shadow : inset 0 3px 6px rgba(0,0,0,0.19), inset 0 1px 2px rgba(0,0,0,0.23);
 }
 
+.toggle-true div:first-child {
+	animation-duration: 0.4s;
+	animation-name: wide;
+	animation-fill-mode: forwards;
+}
+
 .toggle-true:hover:enabled {
 	background-color: rgba(0, 0, 0, 0.15);
+}
+
+@keyframes wide {
+	from {
+		width: 0px;
+		opacity: 0;
+		margin-right: 0px;
+	}
+	to {
+		width: 15px;
+		opacity: 1;
+		margin-right: 5px;
+	}
+}
+
+@keyframes collapse {
+	from {
+		width: 15px;
+		margin-right: 5px;
+	}
+	to {
+		width: 0px;
+		margin-right: 0px;
+	}
 }

@@ -15,19 +15,18 @@ import net.sayaya.ui.widget.Chip;
 
 public class ChipToggle extends Chip implements HasValue<Boolean>, HasValueChangeHandlers<Boolean> {
 	private final EventBus bus = new SimpleEventBus();
-	private final Icon check = Icon.create(Icon.GSS.check());
+	private final Icon icon = Icon.create(Icon.GSS.check());
 	private boolean value = false;
-	private String text = null;
 	
 	public ChipToggle(String text) {
-		super();
-		setValue(text);
-		this.text = text;
+		super(text);
+		this.getElement().insertFirst(icon.getElement());
 	}
 	
 	@Override
 	public ChipToggle style(Chip widet) {
 		setStyleName(StyleChip.GSS.chip());
+		addStyleName(StyleChip.GSS.toggle());
 		addClickHandler(evt->{if(isEnabled()) toggle();});
 		return this;
 	}
@@ -42,10 +41,10 @@ public class ChipToggle extends Chip implements HasValue<Boolean>, HasValueChang
 		this.value = value;
 		if(value) {
 			addStyleName(StyleChip.GSS.toggleTrue());
-			setValue(check, text);
+			removeStyleName(StyleChip.GSS.toggleFalse());
 		} else {
+			addStyleName(StyleChip.GSS.toggleFalse());
 			removeStyleName(StyleChip.GSS.toggleTrue());
-			setValue(text);
 		}
 		ValueChangeEvent.fire(this, value);
 		return this;

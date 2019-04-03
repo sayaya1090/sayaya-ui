@@ -31,39 +31,26 @@ import com.google.gwt.event.dom.client.TouchCancelHandler;
 import com.google.gwt.event.dom.client.TouchEndHandler;
 import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.event.dom.client.TouchStartHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.ui.Composite;
 
 import net.sayaya.ui.handler.HasStyle;
-import net.sayaya.ui.icon.Icon;
 import net.sayaya.ui.style.StyleChip;
 
 public class Chip extends Composite implements HasStyle<Chip>, HasClickHandlers, HasDoubleClickHandlers
 	, HasAllDragAndDropHandlers, HasAllFocusHandlers, HasAllGestureHandlers
 	, HasAllMouseHandlers, HasAllTouchHandlers {
+	private final EventBus bus = new SimpleEventBus();
 	private final com.google.gwt.user.client.ui.Button widget = new com.google.gwt.user.client.ui.Button();
-	public Chip() {
+	public Chip(String text) {
 		initWidget(widget);
 		style(this);
-	}
-	public Chip(String text) {
-		this();
-		setText(text);
-	}
-	
-	public Chip(Icon icon) {
-		this();
-		setValue(icon);
-	}
-	
-	public Chip(Icon icon, String text) {
-		this();
-		setValue(icon, text);
-	}
-	
-	public Chip(String text, Icon icon) {
-		this();
-		setValue(text, icon);
+		assert text!=null && !text.trim().isEmpty();
+		setValue(text);
 	}
 	
 	@Override
@@ -77,26 +64,6 @@ public class Chip extends Composite implements HasStyle<Chip>, HasClickHandlers,
 		return this;
 	}
 	
-	public Chip setValue(Icon icon) {
-		widget.setHTML(icon.toString());
-		return this;
-	}
-	
-	public Chip setValue(Icon icon, String text) {
-		widget.setHTML(icon.toString() + " " + text);
-		return this;
-	}
-	
-	public Chip setValue(String text, Icon icon) {
-		widget.setHTML(text + " " + icon.toString());
-		return this;
-	}
-	
-	public Chip setText(String text) {
-		widget.setText(text);
-		return this;
-	}
-	
 	public Chip setEnabled(boolean enabled) {
 		widget.setEnabled(enabled);
 		return this;
@@ -104,6 +71,12 @@ public class Chip extends Composite implements HasStyle<Chip>, HasClickHandlers,
 	
 	public boolean isEnabled() {
 		return widget.isEnabled();
+	}
+	
+	@Override
+	public void fireEvent(GwtEvent<?> event) {
+		if(event instanceof ValueChangeEvent) bus.fireEvent(event);
+		else super.fireEvent(event);
 	}
 
 	@Override

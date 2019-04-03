@@ -11,6 +11,14 @@ public class StyleChip {
 		
 		public static interface Style extends CssResource {
 			String chip();
+			String delete();
+			@CssResource.ClassName("fade-in")
+			String fadeIn();
+			@CssResource.ClassName("fade-out")
+			String fadeOut();
+			String toggle();
+			@CssResource.ClassName("toggle-false")
+			String toggleFalse();
 			@CssResource.ClassName("toggle-true")
 			String toggleTrue();
 		}

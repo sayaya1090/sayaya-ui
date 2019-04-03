@@ -18,6 +18,7 @@ public class Icon extends HTML {
 		return new Icon(gss);
 	}
 	private String code = null;
+	private String style = null;
 	public Icon() {
 		setStyleName(Resource.instance.style().icon());
 	}
@@ -34,11 +35,16 @@ public class Icon extends HTML {
 				Scheduler.get().scheduleDeferred(()->code = getCode(getElement()).replace("\"", ""));
 			});
 		}
+		style = icon;
 		return this;
 	}
 	
 	public String getCode() {
 		return code;
+	}
+	
+	public String getIcon() {
+		return style;
 	}
 
 	public native static String getCode(Element em) /*-{
