@@ -37,7 +37,10 @@ public class ChipBox extends Composite implements InputBase<String[], ChipBox> {
 			if(evt.getNativeEvent().getKeyCode() != 13) return;
 			String value = textbox.getValue();
 			chips.add(value);
-			ChipDeletable chip = new ChipDeletable(value, evt2->chips.remove(evt2));
+			ChipDeletable chip = new ChipDeletable(value, evt2->{
+				chips.remove(evt2);
+				ValueChangeEvent.fire(ChipBox.this, getValue());
+			});
 			hp.add(chip);
 			chip.addStyleName(StyleChip.GSS.fadeIn());
 			ValueChangeEvent.fire(ChipBox.this, getValue());

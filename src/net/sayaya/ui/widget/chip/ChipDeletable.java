@@ -33,8 +33,8 @@ public class ChipDeletable extends Chip {
 	public ChipDeletable delete() {
 		addStyleName(StyleChip.GSS.fadeOut());
 		Scheduler.get().scheduleFixedDelay(()->{
-			removeFromParent();
 			callback.onSuccess(text);
+			removeFromParent();
 			return false;
 		}, 500);
 		return this;
