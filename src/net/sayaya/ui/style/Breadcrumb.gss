@@ -35,7 +35,7 @@
 .anchor {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
-	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
+	font-family: 'Noto Sans KR', sans-serif;
 	text-decoration: unset;
 }
 
