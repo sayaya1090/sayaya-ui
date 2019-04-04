@@ -1,6 +1,5 @@
 package net.sayaya.ui.widget.textbox;
 
-import java.util.Arrays;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -63,14 +62,15 @@ public class ChipBox extends Composite implements InputBase<String[], ChipBox> {
 	}
 
 	@Override
-	public ChipBox setValue(String... value) {
-		Arrays.stream(value)
-		.peek(chips::add)
-		.map(v->new ChipDeletable(v, evt->{
-			chips.remove(evt);
-			ValueChangeEvent.fire(ChipBox.this, getValue());
-		}))
-		.forEach(hp::add);
+	public ChipBox setValue(String[] value) {
+		for(String v: value) {
+			chips.add(v);
+			ChipDeletable chip = new ChipDeletable(v, evt->{
+				chips.remove(evt);
+				ValueChangeEvent.fire(ChipBox.this, getValue());
+			});
+			hp.add(chip);
+		}
 		return this;
 	}
 
