@@ -63,6 +63,8 @@ public class ChipBox extends Composite implements InputBase<String[], ChipBox> {
 
 	@Override
 	public ChipBox setValue(String[] value) {
+		chips.clear();
+		hp.clear();
 		for(String v: value) {
 			chips.add(v);
 			ChipDeletable chip = new ChipDeletable(v, evt->{
@@ -71,6 +73,17 @@ public class ChipBox extends Composite implements InputBase<String[], ChipBox> {
 			});
 			hp.add(chip);
 		}
+		return this;
+	}
+	
+	public ChipBox addValue(String value) {
+		if(chips.contains(value)) return this;
+		chips.add(value);
+		ChipDeletable chip = new ChipDeletable(value, evt->{
+			chips.remove(evt);
+			ValueChangeEvent.fire(ChipBox.this, getValue());
+		});
+		hp.add(chip);
 		return this;
 	}
 
