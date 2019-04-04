@@ -2,7 +2,8 @@
 	white-space:nowrap;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
-	background-color: rgba(35, 47, 52, 0.12);
+	border-color: rgba(35, 47, 52, 0.23);
+	background-color: transparent;
 	font-family: 'Work Sans', 'Sunflower';
 	font-weight: normal;
 	font-size: 14px;
@@ -25,7 +26,7 @@
 }
 
 .chip:hover:enabled {
-	background-color: rgba(0, 0, 0, 0.05);
+	border-color: eval("net.sayaya.ui.style.color.Palette.toRGBA(net.sayaya.ui.style.color.Palette.getInstance().getColor2(), 0.25)");
 }
 
 .chip:first-of-type {
