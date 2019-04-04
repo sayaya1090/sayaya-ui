@@ -35,5 +35,10 @@
 .anchor {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
-	font-family: 'Noto Sans KR', sans-serif;
+	font-family: 'Open Sans', 'Noto Sans KR', sans-serif;
+	text-decoration: unset;
+}
+
+.anchor:hover {
+	text-decoration: underline;
 }
