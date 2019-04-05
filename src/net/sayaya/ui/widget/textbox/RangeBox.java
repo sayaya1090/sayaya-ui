@@ -1,9 +1,9 @@
 package net.sayaya.ui.widget.textbox;
 
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 
 import net.sayaya.ui.style.StyleTextBox;
@@ -12,7 +12,8 @@ import net.sayaya.ui.widget.InputBase;
 public final class RangeBox extends Composite implements InputBase<String, RangeBox> {
 	private final com.google.gwt.user.client.ui.TextBox widget;
 	public RangeBox(Double min, Double max, Double step) {
-		Element elem = DOM.createElement("input");
+		Element elem = Document.get().createElement("input");
+		Document.get().getBody().appendChild(elem);
 		widget = com.google.gwt.user.client.ui.TextBox.wrap(elem);
 		elem.setPropertyString("type", "range");
 		setMin(min);
