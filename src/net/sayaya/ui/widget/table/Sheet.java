@@ -5,8 +5,6 @@ import java.util.Date;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.layout.client.Layout.Layer;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
