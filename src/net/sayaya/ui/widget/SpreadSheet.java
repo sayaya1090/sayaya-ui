@@ -1362,12 +1362,12 @@ public final class SpreadSheet extends ResizeComposite {
 	
 	@JsFunction
 	public static interface EditorCreateElement {
-		Element create();
+		Element create(SpreadSheet instance);
 	}
 	
 	@JsFunction
-	public static interface EditorPrepare {
-		void apply(Element elem);
+	public static interface EditorPrepare<T> {
+		void apply(SpreadSheet instance, Element td, int row, int col, String prop, T value, Element elem);
 	}
 	
 	@JsFunction
@@ -1390,7 +1390,7 @@ public final class SpreadSheet extends ResizeComposite {
 		@JsProperty(name="create")
 		private EditorCreateElement create;
 		@JsProperty(name="prepare_")
-		private EditorPrepare prepare;
+		private EditorPrepare<T> prepare;
 		@JsProperty(name="open_")
 		private EditorOpen open;
 		@JsProperty(name="getValue_")
@@ -1407,7 +1407,7 @@ public final class SpreadSheet extends ResizeComposite {
 		}
 
 		@JsOverlay
-		public Prototype<T> setPrepare(EditorPrepare prepare) {
+		public Prototype<T> setPrepare(EditorPrepare<T> prepare) {
 			this.prepare = prepare;
 			return this;
 		}
@@ -1470,7 +1470,7 @@ public final class SpreadSheet extends ResizeComposite {
 	public static native <T> PrototypeEditor<T> createBaseEditor(Class<T> clazz) /*-{
 		var tmp = $wnd.Handsontable.editors.BaseEditor.prototype.extend();
 		tmp.prototype.init=function() {
-			this.element = tmp.prototype.create();
+			this.element = tmp.prototype.create(this.instance);
 			this.element.style.position='absolute';
 			this.element.style.margin = '0px';
 			this.element.style.padding = '0px';
@@ -1480,7 +1480,7 @@ public final class SpreadSheet extends ResizeComposite {
 			$wnd.Handsontable.editors.BaseEditor.prototype.prepare.apply(this, arguments);
 			$wnd.Handsontable.dom.empty(this.element);
 			try {
-				tmp.prototype.prepare_(this.element);
+				tmp.prototype.prepare_(this.instance, this.TD, this.row, this.col, this.prop, this.originalValue, this.element);
 			} catch(ignore){};
 		}
 		tmp.prototype.open=function() {
