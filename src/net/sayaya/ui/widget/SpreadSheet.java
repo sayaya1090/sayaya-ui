@@ -140,7 +140,7 @@ public final class SpreadSheet extends ResizeComposite {
 	
 	@JsFunction
 	public static interface AutoComplete {
-		void exec(String query, Callback<String[]> callback);
+		void exec(SpreadSheetTable instance, int row, int col, String prop, Object value, String query, Callback<String[]> process);
 	}
 	
 	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
@@ -202,6 +202,8 @@ public final class SpreadSheet extends ResizeComposite {
 		private String format;
 		@JsProperty(name="dateFormat")
 		private String dateFormat;
+		@JsProperty(name="autocomplete_source")
+		private Object autocompleteSource;
 		@JsProperty(name="source")
 		private Object source;
 		@JsProperty(name="strict")
@@ -242,16 +244,16 @@ public final class SpreadSheet extends ResizeComposite {
 					if(this.isAllowEmpty()) callback.exec(true);
 					else callback.exec(false);
 				} else {
-					if(source instanceof String[]) {
-						String[] sources = (String[])source;
+					if(autocompleteSource instanceof String[]) {
+						String[] sources = (String[])autocompleteSource;
 						if(Arrays.stream(sources).anyMatch(s->s.equals(value))) callback.exec(true);
 						else callback.exec(false);
-					} else if(source instanceof AutoComplete) {
-						Callback<String[]> callback2 = list->{
+					} else if(autocompleteSource instanceof AutoComplete) {
+						/*Callback<String[]> callback2 = list->{
 							if(Arrays.stream(list).anyMatch(s->s.equals(value))) callback.exec(true);
 							else callback.exec(false);
 						};
-						((AutoComplete)source).exec((String)value, callback2);
+						((AutoComplete)autocompleteSource).exec(null, null, (String)value, callback2);*/
 					}
 				}
 			}); else if("dropdown".equalsIgnoreCase(type)) setValidator((value, callback)->{
@@ -259,8 +261,14 @@ public final class SpreadSheet extends ResizeComposite {
 				else if(value == null || "".equals(value)){
 					if(this.isAllowEmpty()) callback.exec(true);
 					else callback.exec(false);
+				} else if(autocompleteSource instanceof AutoComplete) {
+					/*Callback<String[]> callback2 = list->{
+						if(Arrays.stream(list).anyMatch(s->s.equals(value))) callback.exec(true);
+						else callback.exec(false);
+					};
+					((AutoComplete)autocompleteSource).exec(null, null, (String)value, callback2);*/
 				} else {
-					String[] sources = (String[])source;
+					String[] sources = (String[])autocompleteSource;
 					if(Arrays.stream(sources).anyMatch(s->s.equals(value))) callback.exec(true);
 					else callback.exec(false);
 				}
@@ -322,16 +330,18 @@ public final class SpreadSheet extends ResizeComposite {
 		}
 		@JsOverlay
 		public Object getSource() {
-			return source;
+			return autocompleteSource;
 		}
 		@JsOverlay
 		public ColumnInfo setSource(String[] source) {
 			this.source = source;
+			this.autocompleteSource = source;
 			return this;
 		}
 		@JsOverlay
 		public ColumnInfo setSource(AutoComplete source) {
-			this.source = source;
+			this.autocompleteSource = source;
+			this.source = toSource(source);
 			return this;
 		}
 		@JsOverlay
@@ -764,6 +774,7 @@ public final class SpreadSheet extends ResizeComposite {
 			return this;
 		}
 	}
+	
 	
 	@JsType(isNative = true, namespace= JsPackage.GLOBAL, name="Object")
 	public final static class ContextMenuSub {
@@ -1564,4 +1575,16 @@ public final class SpreadSheet extends ResizeComposite {
 		};
 		return tmp;
 	}-*/;
+
+	public static native Object toSource(AutoComplete exec) /*-{
+		return function(query, process) {
+			var instance = this.instance;
+			var row = this.row;
+			var col = this.col;
+			var prop = this.prop;
+			var value = instance.getDataAtCell(row, col);
+			exec(instance, row, col, prop, value, query, process);
+		};
+	}-*/;
+	
 }
