@@ -1,11 +1,6 @@
 package net.sayaya.ui.activity;
 
-import java.util.HashSet;
-
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 
@@ -13,22 +8,10 @@ public interface Presenter {
 	void goTo(Place place);
 	Place getCurrentPlace();
 	
-	final static ClientFactory clientFactory = GWT.create(ClientFactory.class);
-	final static Presenter presenter = new PresenterImpl(clientFactory);
-	final static HashSet<ValueChangeHandler<Place>> handlers = new HashSet<>();
+	final static ClientFactory CLIENT_FACTORY = GWT.create(ClientFactory.class);
+	final static Presenter PRESENTER = new PresenterImpl(CLIENT_FACTORY);
 	public static void go(Place place) {
-		presenter.goTo(place);
-		ValueChangeEvent<Place> evt = new ValueChangeEvent<Place>(place) {};
-		handlers.forEach(handler->handler.onValueChange(evt));
-	}
-	public static void replace(Place place) {
-		ValueChangeEvent<Place> evt = new ValueChangeEvent<Place>(place) {};
-		handlers.forEach(handler->handler.onValueChange(evt));
-	}
-	
-	public static HandlerRegistration addValueChangeHandler(ValueChangeHandler<Place> handler) {
-		handlers.add(handler);
-		return ()->handlers.remove(handler);
+		PRESENTER.goTo(place);
 	}
 	
 	public static class PresenterImpl implements Presenter {

@@ -10,17 +10,17 @@ public interface ClientFactory {
 	PlaceController getPlaceController();
 	
 	public static class ClientFactoryImpl implements ClientFactory {
-		private static final EventBus eventBus = GWT.create(SimpleEventBus.class);
-		private static final PlaceController placeController = new PlaceController(eventBus);
+		private static final EventBus EVENT_BUS = GWT.create(SimpleEventBus.class);
+		private static final PlaceController PLACE_CONTROLLER = new PlaceController(EVENT_BUS);
 
 		@Override
 		public EventBus getEventBus() {
-			return eventBus;
+			return EVENT_BUS;
 		}
 		
 		@Override
 		public PlaceController getPlaceController() {
-			return placeController;
+			return PLACE_CONTROLLER;
 		}
 	}
 }
