@@ -28,6 +28,7 @@ public class Icon extends HTML {
 	}
 	
 	public Icon setIcon(String icon) {
+		if(style!=null) removeStyleName(style);
 		if(icon!=null) {
 			addStyleName(icon);
 			addAttachHandler(evt->{
