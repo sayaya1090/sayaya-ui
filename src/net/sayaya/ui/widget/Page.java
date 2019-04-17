@@ -9,6 +9,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
@@ -39,7 +40,6 @@ public class Page extends Composite implements HasValue<net.sayaya.ui.dto.Page>,
 	private Label rppLabel = new Label("Rows per Page");
 	public Page() {
 		initWidget(layout);
-		layout();
 		style();
 		first.addDomHandler(evt->{
 			pageBox.setValue(1, true);
@@ -62,22 +62,40 @@ public class Page extends Composite implements HasValue<net.sayaya.ui.dto.Page>,
 			setShow(evt.getValue());
 			ValueChangeEvent.fire(this, value);
 		});
+		Window.addResizeHandler(resize->layout());
+		addAttachHandler(attach->{
+			if(isAttached()) layout();
+		});
 	}
 	
 	private void layout() {
-		layout.add(first);
-		layout.add(prev);
-		layout.add(pageLabel);
-		layout.add(pageBox);
-		layout.add(pageMaxLabel);
-		layout.add(next);
-		layout.add(last);
-		
-		layout.add(idx1Label);
-		layout.add(idx2Label);
-		layout.add(totalLabel);
-		layout.add(showBox);
-		layout.add(rppLabel);
+		layout.clear();
+		if(getOffsetWidth() > 560) {
+			first.getElement().getStyle().clearProperty("marginLeft");
+			last.getElement().getStyle().clearProperty("marginRight");
+			layout.add(first);
+			layout.add(prev);
+			layout.add(pageLabel);
+			layout.add(pageBox);
+			layout.add(pageMaxLabel);
+			layout.add(next);
+			layout.add(last);
+			layout.add(idx1Label);
+			layout.add(idx2Label);
+			layout.add(totalLabel);
+			layout.add(showBox);
+			layout.add(rppLabel);
+		} else {
+			first.getElement().getStyle().setProperty("marginLeft", "auto");
+			last.getElement().getStyle().setProperty("marginRight", "auto");
+			layout.add(first);
+			layout.add(prev);
+			layout.add(pageLabel);
+			layout.add(pageBox);
+			layout.add(pageMaxLabel);
+			layout.add(next);
+			layout.add(last);
+		}
 	}
 	
 	private void style() {
