@@ -17,6 +17,7 @@ import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 
+import jsinterop.annotations.JsConstructor;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsOverlay;
 import jsinterop.annotations.JsPackage;
@@ -845,7 +846,7 @@ public final class SpreadSheet extends ResizeComposite {
 		@JsProperty(name="width")
 		private Integer width;
 		@JsProperty(name="height")
-		private Integer height;
+		private Object height;
 		@JsProperty(name="minRows")
 		private Integer minRows;
 		@JsProperty(name="maxRows")
@@ -916,6 +917,8 @@ public final class SpreadSheet extends ResizeComposite {
 		private AfterPaste afterPaste;
 		@JsProperty(name="afterFilter")
 		private AfterFilter afterFilter;
+		@JsConstructor
+		public SheetSetting() {}
 		@JsOverlay
 		public Data[] getData() {
 			return data;
@@ -968,13 +971,19 @@ public final class SpreadSheet extends ResizeComposite {
 		}
 
 		@JsOverlay
-		public Integer getHeight() {
+		public Object getHeight() {
 			return height;
 		}
 
 		@JsOverlay
 		public SheetSetting setHeight(Integer height) {
 			this.height = height;
+			return this;
+		}
+		
+		@JsOverlay
+		public SheetSetting setHeightAuto() {
+			this.height = "auto";
 			return this;
 		}
 
