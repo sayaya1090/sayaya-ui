@@ -79,7 +79,6 @@ public class Page extends Composite implements HasValue<net.sayaya.ui.dto.Page>,
 		layout.add(pageMaxLabel);
 		layout.add(next);
 		layout.add(last);
-		GWT.log(getOffsetWidth() + "!");
 		if(getOffsetWidth() > 560) {
 			first.getElement().getStyle().clearProperty("marginLeft");
 			layout.add(idx1Label);
