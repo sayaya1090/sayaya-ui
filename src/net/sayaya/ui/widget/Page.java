@@ -1,5 +1,7 @@
 package net.sayaya.ui.widget;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -64,22 +66,22 @@ public class Page extends Composite implements HasValue<net.sayaya.ui.dto.Page>,
 		});
 		Window.addResizeHandler(resize->layout());
 		addAttachHandler(attach->{
-			if(isAttached()) layout();
+			if(isAttached()) Scheduler.get().scheduleDeferred(()->layout());
 		});
 	}
 	
 	private void layout() {
 		layout.clear();
+		layout.add(first);
+		layout.add(prev);
+		layout.add(pageLabel);
+		layout.add(pageBox);
+		layout.add(pageMaxLabel);
+		layout.add(next);
+		layout.add(last);
+		GWT.log(getOffsetWidth() + "!");
 		if(getOffsetWidth() > 560) {
 			first.getElement().getStyle().clearProperty("marginLeft");
-			last.getElement().getStyle().clearProperty("marginRight");
-			layout.add(first);
-			layout.add(prev);
-			layout.add(pageLabel);
-			layout.add(pageBox);
-			layout.add(pageMaxLabel);
-			layout.add(next);
-			layout.add(last);
 			layout.add(idx1Label);
 			layout.add(idx2Label);
 			layout.add(totalLabel);
@@ -87,15 +89,8 @@ public class Page extends Composite implements HasValue<net.sayaya.ui.dto.Page>,
 			layout.add(rppLabel);
 		} else {
 			first.getElement().getStyle().setProperty("marginLeft", "auto");
-			last.getElement().getStyle().setProperty("marginRight", "auto");
-			layout.add(first);
-			layout.add(prev);
-			layout.add(pageLabel);
-			layout.add(pageBox);
-			layout.add(pageMaxLabel);
-			layout.add(next);
-			layout.add(last);
 		}
+		layout.setWidth("100%");
 	}
 	
 	private void style() {
@@ -125,7 +120,7 @@ public class Page extends Composite implements HasValue<net.sayaya.ui.dto.Page>,
 		rppLabel.addStyleName(StylePage.GSS.item());
 		pageBox.addStyleName(StylePage.GSS.item());
 		showBox.addStyleName(StylePage.GSS.item());
-		idx1Label.getElement().getStyle().setProperty("marginLeft", "auto");
+		last.getElement().getStyle().setProperty("marginRight", "auto");
 		rppLabel.getElement().getStyle().setWidth(100, Unit.PX);
 	}
 	
