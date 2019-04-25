@@ -18,6 +18,9 @@ hs_err_pid*
 .project
 .settings/
 
+# IntelliJ
+.idea
+
 # GWT
 war/WEB-INF/classes
 war/WEB-INF/lib
