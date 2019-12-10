@@ -539,13 +539,13 @@ public final class SpreadSheet extends ResizeComposite {
 			Object current = get(key);
 			if(origin instanceof String) {
 				String cast = (String)origin;
-				if(cast!=null) cast = cast.trim();
+				if(cast!=null) cast = cast.replace("\r", "").trim();
 				if(cast.isEmpty()) origin = null;
 				else origin = cast;
 			}
 			if(current instanceof String) {
 				String cast = (String)current;
-				if(cast!=null) cast = cast.trim();
+				if(cast!=null) cast = cast.replace("\r", "").trim();
 				if(cast.isEmpty()) current = null;
 				else current = cast;
 			}
@@ -553,6 +553,10 @@ public final class SpreadSheet extends ResizeComposite {
 			if(origin == null) return true;
 			if(current == null) return true;
 			return !origin.equals(current);
+		}
+		@JsOverlay
+		public <T> T getOrigin(String prop) {
+			return SpreadSheet.get(this.origin, prop);
 		}
 	}
 	private static native <T> T put(T data, String property, Object value) /*-{
