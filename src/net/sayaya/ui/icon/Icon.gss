@@ -573,6 +573,18 @@
 .sitemap:before {
 	content: "\f0e8";
 }
+.sort-alpha-up:before {
+	content: "\f15e";
+}
+.sort-alpha-down:before {
+	content: "\f15d";
+}
+.sort-numeric-up:before {
+	content: "\f163";
+}
+.sort-numeric-down:before {
+	content: "\f162";
+}
 .square:before {
 	content: "\f0c8";
 }

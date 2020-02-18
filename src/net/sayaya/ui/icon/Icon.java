@@ -358,6 +358,14 @@ public class Icon extends HTML {
 			@CssResource.ClassName("sign-out-alt")
 			String signoOutAlt();
 			String sitemap();
+			@CssResource.ClassName("sort-alpha-up")
+			String sortAlphaUp();
+			@CssResource.ClassName("sort-alpha-down")
+			String sortAlphaDown();
+			@CssResource.ClassName("sort-numeric-up")
+			String sortNumericUp();
+			@CssResource.ClassName("sort-numeric-down")
+			String sortNumericDown();
 			String square();
 			String stop();
 			@CssResource.ClassName("stop-circle")
