@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='ripple'>
+    <inherits name='dev.sayaya.Ui'/>
+    <entry-point class='dev.sayaya.ui.RippleElementTest'/>
+    <source path="ui"/>
+</module>
