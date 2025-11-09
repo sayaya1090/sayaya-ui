@@ -38,6 +38,16 @@ public class IconElementBuilder implements HTMLElementStyleMethods<MdIconElement
         return that();
     }
 
+    // Filled variant
+    public IconElementBuilder filled(boolean filled) {
+        if (filled) {
+            element().setAttribute("filled", "");
+        } else {
+            element().removeAttribute("filled");
+        }
+        return that();
+    }
+
     @Override
     public MdIconElement element() {
         return that.element();

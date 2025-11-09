@@ -8,6 +8,7 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 @JsType(isNative = true)
 public class MdChipElement extends HTMLElement {
     public boolean disabled;
+    public boolean softDisabled;
     public boolean alwaysFocusable;
     public String label;
 
