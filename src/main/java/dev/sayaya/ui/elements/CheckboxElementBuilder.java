@@ -1,10 +1,7 @@
 package dev.sayaya.ui.elements;
 
 import dev.sayaya.ui.dom.MdCheckboxElement;
-import dev.sayaya.ui.elements.interfaces.Disableable;
-import dev.sayaya.ui.elements.interfaces.FormAssociable;
-import dev.sayaya.ui.elements.interfaces.HasAriaLabel;
-import dev.sayaya.ui.elements.interfaces.Selectable;
+import dev.sayaya.ui.elements.interfaces.*;
 import elemental2.dom.Event;
 import org.jboss.elemento.*;
 
@@ -12,7 +9,7 @@ import static org.jboss.elemento.Elements.htmlElement;
 
 public class CheckboxElementBuilder implements ElementAttributeMethods<MdCheckboxElement, CheckboxElementBuilder>, ElementClassListMethods<MdCheckboxElement, CheckboxElementBuilder>, ElementEventMethods<MdCheckboxElement, CheckboxElementBuilder>,
         HTMLElementStyleMethods<MdCheckboxElement, CheckboxElementBuilder>, HTMLElementVisibilityMethods<MdCheckboxElement, CheckboxElementBuilder>,
-        HasAriaLabel<MdCheckboxElement, CheckboxElementBuilder>, Selectable<MdCheckboxElement, CheckboxElementBuilder>, Disableable<MdCheckboxElement, CheckboxElementBuilder>, FormAssociable<MdCheckboxElement, CheckboxElementBuilder> {
+        HasAriaLabel<MdCheckboxElement, CheckboxElementBuilder>, Selectable<MdCheckboxElement, CheckboxElementBuilder>, Disableable<MdCheckboxElement, CheckboxElementBuilder>, FormAssociable<MdCheckboxElement, CheckboxElementBuilder>, Requireable<MdCheckboxElement, CheckboxElementBuilder> {
     public static CheckboxElementBuilder checkbox() {
         return new CheckboxElementBuilder();
     }
@@ -64,7 +61,7 @@ public class CheckboxElementBuilder implements ElementAttributeMethods<MdCheckbo
     public boolean isDisabled() {
         return element().disabled;
     }
-    public CheckboxElementBuilder required(boolean required) {
+    @Override public CheckboxElementBuilder required(boolean required) {
         element().required = required;
         return this;
     }

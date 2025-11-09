@@ -1,5 +1,4 @@
 import org.docstr.gwt.GwtPluginExtension
-import kotlin.jvm.java
 
 plugins {
     kotlin("jvm") version "2.2.21"
@@ -52,7 +51,6 @@ tasks {
         modules = listOf("dev.sayaya.Ui")
         devMode {
             modules = listOf(
-                "dev.sayaya.Ui",
                 "dev.sayaya.ButtonElementTest",
                 "dev.sayaya.CheckboxElementTest",
                 "dev.sayaya.ChipElementTest",
@@ -60,6 +58,7 @@ tasks {
                 "dev.sayaya.FocusRingElementTest",
                 "dev.sayaya.IconElementTest",
                 "dev.sayaya.RippleElementTest",
+                "dev.sayaya.TextFieldElementTest",
             )
             war = file("src/test/webapp")
         }
