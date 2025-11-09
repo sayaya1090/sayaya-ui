@@ -2,18 +2,19 @@ package dev.sayaya.ui.textfield;
 
 import org.jboss.elemento.InputType;
 
+import static dev.sayaya.ui.TestHelper.*;
 import static dev.sayaya.ui.elements.TextFieldElementBuilder.textField;
 import static elemental2.dom.DomGlobal.console;
 import static org.jboss.elemento.Elements.*;
 
 public class CustomValidationTest {
     public static void test() {
-        TestHelper.printSectionHeader("6. 사용자 정의 검증 (Custom Validation)");
-        TestHelper.printDescription("사용자 정의 검증 메시지와 동적 에러 관리:");
-        TestHelper.printDescription("- setCustomValidity(): 커스텀 에러 메시지");
-        TestHelper.printDescription("- error 속성: 동적 에러 상태 변경");
-        TestHelper.printDescription("- errorText 속성: 동적 에러 메시지");
-        TestHelper.printSeparator();
+        printSectionHeader("6. 사용자 정의 검증 (Custom Validation)");
+        printDescription("사용자 정의 검증 메시지와 동적 에러 관리:");
+        printDescription("- setCustomValidity(): 커스텀 에러 메시지");
+        printDescription("- error 속성: 동적 에러 상태 변경");
+        printDescription("- errorText 속성: 동적 에러 메시지");
+        printSeparator();
 
         var customSection = div()
                 .style("margin", "20px")
@@ -26,7 +27,7 @@ public class CustomValidationTest {
         customSection.appendChild(h(3).text("Custom Validation").element());
 
         // setCustomValidity() test
-        TestHelper.addExampleCode(customSection,
+        addExampleCode(customSection,
             "📘 setCustomValidity() - 서버 검증",
             "서버에서 검증 후 커스텀 에러를 설정할 수 있습니다 (예: 중복 확인).",
             """
@@ -62,13 +63,13 @@ public class CustomValidationTest {
         // Validation tests
         customField.value = "admin";
         customField.setCustomValidity("이미 사용 중인 사용자명입니다");
-        TestHelper.assertFalse("custom validation: 커스텀 에러 설정 시 invalid", customField.checkValidity());
+        assertFalse("custom validation: 커스텀 에러 설정 시 invalid", customField.checkValidity());
 
         customField.setCustomValidity("");
-        TestHelper.assertTrue("custom validation: 에러 제거 시 valid", customField.checkValidity());
+        assertTrue("custom validation: 에러 제거 시 valid", customField.checkValidity());
 
         // Test 3: Manual error state
-        TestHelper.addExampleCode(customSection,
+        addExampleCode(customSection,
             "📘 즉시 에러 표시",
             "빌더 패턴에서 바로 에러를 설정할 수 있습니다.",
             """
@@ -85,12 +86,12 @@ public class CustomValidationTest {
                 .element();
         customSection.appendChild(manualErrorField);
 
-        TestHelper.assertTrue("manual error: error 상태여야 함", manualErrorField.error);
-        TestHelper.assertEquals("manual error: errorText가 설정되어야 함",
+        assertTrue("manual error: error 상태여야 함", manualErrorField.error);
+        assertEquals("manual error: errorText가 설정되어야 함",
                 "비밀번호가 너무 짧습니다", manualErrorField.errorText);
 
         // Dynamic error update test
-        TestHelper.addExampleCode(customSection,
+        addExampleCode(customSection,
             "📘 동적 에러 상태 변경",
             "실시간으로 에러 상태를 변경할 수 있습니다.",
             """
@@ -139,13 +140,13 @@ public class CustomValidationTest {
         customSection.appendChild(dynamicField);
 
         // Validation tests
-        TestHelper.assertFalse("dynamic error: 초기 상태는 에러 없음", dynamicField.error);
+        assertFalse("dynamic error: 초기 상태는 에러 없음", dynamicField.error);
 
         dynamicField.value = "100";
         dynamicField.error = true;
         dynamicField.errorText = "최소 금액은 1000원입니다";
-        TestHelper.assertTrue("dynamic error: error 상태로 변경되어야 함", dynamicField.error);
-        TestHelper.assertEquals("dynamic error: errorText가 업데이트되어야 함",
+        assertTrue("dynamic error: error 상태로 변경되어야 함", dynamicField.error);
+        assertEquals("dynamic error: errorText가 업데이트되어야 함",
                 "최소 금액은 1000원입니다", dynamicField.errorText);
     }
 }

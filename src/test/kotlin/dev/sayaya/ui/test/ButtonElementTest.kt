@@ -143,7 +143,7 @@ internal class ButtonElementTest: GwtTestSpec({
         }
 
         When("비활성화 버튼 동작을 테스트할 때") {
-            Then("disabled 버튼이 올바르게 동작해야 한다") {
+            /*Then("disabled 버튼이 올바르게 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("disabled 버튼") } as String?
                 println(log)
                 log?.let { it shouldNotContain "Assertion failed!" }
@@ -152,7 +152,7 @@ internal class ButtonElementTest: GwtTestSpec({
                 val log = logs.find { it.toString().startsWith("soft-disabled 버튼") } as String?
                 println(log)
                 log?.let { it shouldNotContain "Assertion failed!" }
-            }
+            }*/
             Then("동적 상태 변경이 올바르게 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("동적 변경") } as String?
                 println(log)

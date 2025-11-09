@@ -1,6 +1,6 @@
 package dev.sayaya.ui.elements.interfaces;
 
-// import dev.sayaya.ui.elements.IconButtonElementBuilder;
+import dev.sayaya.ui.elements.IconButtonElementBuilder;
 import dev.sayaya.ui.elements.IconElementBuilder;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
@@ -15,9 +15,9 @@ public interface HasIconSlot<E extends HTMLElement, SELF extends HasIconSlot<E, 
     default SELF icon(IconElementBuilder icon) {
         return icon(icon.element());
     }
-    /*default SELF icon(IconButtonElementBuilder<?, ?> icon) {
+    default SELF icon(IconButtonElementBuilder<?, ?> icon) {
         return icon(icon.element());
-    }*/
+    }
     default SELF icon(HTMLElementBuilder<HTMLImageElement> icon) {
         return icon(icon.element());
     }

@@ -2,6 +2,9 @@ package dev.sayaya.ui;
 
 import com.google.gwt.core.client.EntryPoint;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static dev.sayaya.ui.elements.CheckboxElementBuilder.checkbox;
 import static elemental2.dom.DomGlobal.console;
 import static org.jboss.elemento.Elements.*;
@@ -140,10 +143,10 @@ public class CheckboxElementTest implements EntryPoint {
 
     private static void testEventHandling() {
         // onChange event
-        var changeTriggered = new boolean[]{false};
+        var changeTriggered = new AtomicBoolean();
         var changeCheckbox = checkbox()
                 .ariaLabel("Change Test")
-                .onChange(evt -> changeTriggered[0] = true)
+                .onChange(evt -> changeTriggered.set(true))
                 .element();
         body().add(changeCheckbox);
 
@@ -151,13 +154,13 @@ public class CheckboxElementTest implements EntryPoint {
         changeCheckbox.checked = true;
         changeCheckbox.dispatchEvent(new elemental2.dom.Event("change"));
 
-        assertTrue("onChange 이벤트: 발생해야 함", changeTriggered[0]);
+        assertTrue("onChange 이벤트: 발생해야 함", changeTriggered.get());
 
         // onInput event
-        var inputTriggered = new boolean[]{false};
+        var inputTriggered = new AtomicBoolean();
         var inputCheckbox = checkbox()
                 .ariaLabel("Input Test")
-                .onInput(evt -> inputTriggered[0] = true)
+                .onInput(evt -> inputTriggered.set(true))
                 .element();
         body().add(inputCheckbox);
 
@@ -165,15 +168,15 @@ public class CheckboxElementTest implements EntryPoint {
         inputCheckbox.checked = true;
         inputCheckbox.dispatchEvent(new elemental2.dom.Event("input"));
 
-        assertTrue("onInput 이벤트: 발생해야 함", inputTriggered[0]);
+        assertTrue("onInput 이벤트: 발생해야 함", inputTriggered.get());
 
         // Multiple event handlers
-        var changeCount = new int[]{0};
-        var inputCount = new int[]{0};
+        var changeCount = new AtomicInteger(0);
+        var inputCount = new AtomicInteger(0);
         var multiEventCheckbox = checkbox()
                 .ariaLabel("Multi Event Test")
-                .onChange(evt -> changeCount[0]++)
-                .onInput(evt -> inputCount[0]++)
+                .onChange(evt -> changeCount.incrementAndGet())
+                .onInput(evt -> inputCount.incrementAndGet())
                 .element();
         body().add(multiEventCheckbox);
 
@@ -181,8 +184,8 @@ public class CheckboxElementTest implements EntryPoint {
         multiEventCheckbox.dispatchEvent(new elemental2.dom.Event("change"));
         multiEventCheckbox.dispatchEvent(new elemental2.dom.Event("input"));
 
-        assertEquals("다중 이벤트: change 카운트는 1이어야 함", 1, changeCount[0]);
-        assertEquals("다중 이벤트: input 카운트는 1이어야 함", 1, inputCount[0]);
+        assertEquals("다중 이벤트: change 카운트는 1이어야 함", 1, changeCount.get());
+        assertEquals("다중 이벤트: input 카운트는 1이어야 함", 1, inputCount.get());
     }
 
     private static void testAccessibility() {
@@ -470,17 +473,17 @@ public class CheckboxElementTest implements EntryPoint {
         assertFalse("클릭 동작: disabled 체크박스는 클릭해도 상태 변화 없음", checkbox4.checked);
 
         // 테스트 5: 클릭 시 change 이벤트 발생 확인
-        var changeTriggered = new boolean[]{false};
+        var changeTriggered = new AtomicBoolean();
         var checkbox5 = checkbox()
                 .ariaLabel("클릭 테스트 5")
                 .onChange(evt -> {
-                    changeTriggered[0] = true;
+                    changeTriggered.set(true);
                 })
                 .element();
         body().add(checkbox5);
 
         checkbox5.click();
-        assertTrue("클릭 동작: 클릭 시 change 이벤트 발생", changeTriggered[0]);
+        assertTrue("클릭 동작: 클릭 시 change 이벤트 발생", changeTriggered.get());
     }
 
     private static void testIndeterminateClickBehavior() {
@@ -553,13 +556,13 @@ public class CheckboxElementTest implements EntryPoint {
         assertFalse("Select All 패턴: 두 번째 클릭 후 모두 해제됨", selectAllCheckbox.checked);
 
         // 테스트 4: indeterminate 체크박스의 상태 변경 및 이벤트 확인
-        var eventCount = new int[]{0};
+        var eventCount = new AtomicInteger(0);
         var checkbox3Builder = checkbox()
                 .indeterminate()
                 .ariaLabel("Indeterminate 이벤트 테스트")
                 .onChange(evt -> {
                     console.log("Change event fired!");
-                    eventCount[0]++;
+                    eventCount.incrementAndGet();
                 });
         var checkbox3 = checkbox3Builder.element();
         body().add(checkbox3);
@@ -577,7 +580,7 @@ public class CheckboxElementTest implements EntryPoint {
 
         // Material Web 컴포넌트는 click() 시 내부적으로 change 이벤트를 발생시킴
         // 만약 이벤트가 발생하지 않았다면 상태 변경이라도 확인
-        console.log("Event count: " + eventCount[0]);
+        console.log("Event count: " + eventCount.get());
         assertTrue("indeterminate 이벤트: 상태가 올바르게 변경됨",
                 checkbox3.checked && !checkbox3.indeterminate);
     }

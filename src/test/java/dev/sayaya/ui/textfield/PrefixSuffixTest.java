@@ -1,15 +1,16 @@
 package dev.sayaya.ui.textfield;
 
+import static dev.sayaya.ui.TestHelper.*;
 import static dev.sayaya.ui.elements.TextFieldElementBuilder.textField;
 import static org.jboss.elemento.Elements.*;
 
 public class PrefixSuffixTest {
     public static void test() {
-        TestHelper.printSectionHeader("8. 접두사/접미사 (Prefix & Suffix)");
-        TestHelper.printDescription("텍스트 입력 앞뒤에 고정 텍스트:");
-        TestHelper.printDescription("- prefixText: 앞 텍스트");
-        TestHelper.printDescription("- suffixText: 뒤 텍스트");
-        TestHelper.printSeparator();
+        printSectionHeader("8. 접두사/접미사 (Prefix & Suffix)");
+        printDescription("텍스트 입력 앞뒤에 고정 텍스트:");
+        printDescription("- prefixText: 앞 텍스트");
+        printDescription("- suffixText: 뒤 텍스트");
+        printSeparator();
 
         var prefixSection = div()
                 .style("margin", "20px")
@@ -22,7 +23,7 @@ public class PrefixSuffixTest {
         prefixSection.appendChild(h(3).text("Prefix & Suffix").element());
 
         // Prefix text
-        TestHelper.addExampleCode(prefixSection,
+        addExampleCode(prefixSection,
             "📘 Prefix Text (접두사)",
             "입력 필드 앞에 고정 텍스트를 표시합니다. URL이나 통화 기호 등에 유용합니다.",
             """
@@ -36,11 +37,11 @@ public class PrefixSuffixTest {
                 .prefixText("https://")
                 .element();
         prefixSection.appendChild(prefixField);
-        TestHelper.assertEquals("prefixText 속성: 'https://'여야 함",
+        assertEquals("prefixText 속성: 'https://'여야 함",
                 "https://", prefixField.prefixText);
 
         // Suffix text
-        TestHelper.addExampleCode(prefixSection,
+        addExampleCode(prefixSection,
             "📘 Suffix Text (접미사)",
             "입력 필드 뒤에 고정 텍스트를 표시합니다. 단위나 통화 기호 등에 유용합니다.",
             """
@@ -54,11 +55,11 @@ public class PrefixSuffixTest {
                 .suffixText("원")
                 .element();
         prefixSection.appendChild(suffixField);
-        TestHelper.assertEquals("suffixText 속성: '원'이어야 함",
+        assertEquals("suffixText 속성: '원'이어야 함",
                 "원", suffixField.suffixText);
 
         // Both prefix and suffix
-        TestHelper.addExampleCode(prefixSection,
+        addExampleCode(prefixSection,
             "📘 Prefix + Suffix 조합",
             "접두사와 접미사를 함께 사용할 수 있습니다.",
             """
@@ -74,9 +75,9 @@ public class PrefixSuffixTest {
                 .suffixText("%")
                 .element();
         prefixSection.appendChild(bothField);
-        TestHelper.assertEquals("prefix와 suffix: prefixText는 '-'여야 함",
+        assertEquals("prefix와 suffix: prefixText는 '-'여야 함",
                 "-", bothField.prefixText);
-        TestHelper.assertEquals("prefix와 suffix: suffixText는 '%'여야 함",
+        assertEquals("prefix와 suffix: suffixText는 '%'여야 함",
                 "%", bothField.suffixText);
     }
 }

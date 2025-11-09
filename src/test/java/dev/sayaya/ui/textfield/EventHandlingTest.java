@@ -2,17 +2,18 @@ package dev.sayaya.ui.textfield;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static dev.sayaya.ui.TestHelper.*;
 import static dev.sayaya.ui.elements.TextFieldElementBuilder.textField;
 import static elemental2.dom.DomGlobal.console;
 import static org.jboss.elemento.Elements.*;
 
 public class EventHandlingTest {
     public static void test() {
-        TestHelper.printSectionHeader("10. 이벤트 처리 (Event Handling)");
-        TestHelper.printDescription("TextField의 이벤트:");
-        TestHelper.printDescription("- onChange: 값 변경 완료");
-        TestHelper.printDescription("- onInput: 입력 중");
-        TestHelper.printSeparator();
+        printSectionHeader("10. 이벤트 처리 (Event Handling)");
+        printDescription("TextField의 이벤트:");
+        printDescription("- onChange: 값 변경 완료");
+        printDescription("- onInput: 입력 중");
+        printSeparator();
 
         var eventSection = div()
                 .style("margin", "20px")
@@ -25,7 +26,7 @@ public class EventHandlingTest {
         eventSection.appendChild(h(3).text("Event Handling").element());
 
         // onChange event
-        TestHelper.addExampleCode(eventSection,
+        addExampleCode(eventSection,
             "📘 onChange 이벤트",
             "값 변경이 완료되었을 때 (포커스를 잃었을 때) 발생합니다. 서버 요청이나 검증 등에 사용됩니다.",
             """
@@ -45,10 +46,10 @@ public class EventHandlingTest {
 
         changeField.value("새 값");
         changeField.element().dispatchEvent(new elemental2.dom.Event("change"));
-        TestHelper.assertEquals("onChange 이벤트: 발생해야 함", 1, changeCount.get());
+        assertEquals("onChange 이벤트: 발생해야 함", 1, changeCount.get());
 
         // onInput event
-        TestHelper.addExampleCode(eventSection,
+        addExampleCode(eventSection,
             "📘 onInput 이벤트",
             "사용자가 입력할 때마다 실시간으로 발생합니다. 실시간 검색이나 자동완성 등에 사용됩니다.",
             """
@@ -60,7 +61,7 @@ public class EventHandlingTest {
                 })
                 .element();
             """);
-        TestHelper.addExampleCode(eventSection,
+        addExampleCode(eventSection,
             "📘 onChange vs onInput",
             "onChange는 입력 완료 시, onInput은 입력 중 매번 발생합니다.",
             """
@@ -83,6 +84,6 @@ public class EventHandlingTest {
         eventSection.appendChild(inputField);
 
         inputField.dispatchEvent(new elemental2.dom.Event("input"));
-        TestHelper.assertEquals("onInput 이벤트: 발생해야 함", 1, inputCount.get());
+        assertEquals("onInput 이벤트: 발생해야 함", 1, inputCount.get());
     }
 }

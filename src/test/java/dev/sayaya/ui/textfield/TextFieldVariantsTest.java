@@ -1,15 +1,16 @@
 package dev.sayaya.ui.textfield;
 
+import static dev.sayaya.ui.TestHelper.*;
 import static dev.sayaya.ui.elements.TextFieldElementBuilder.textField;
 import static org.jboss.elemento.Elements.*;
 
 public class TextFieldVariantsTest {
     public static void test() {
-        TestHelper.printSectionHeader("1. TextField 변형 (TextField Variants)");
-        TestHelper.printDescription("Material Design은 2가지 TextField 스타일을 제공합니다:");
-        TestHelper.printDescription("- Filled: 채워진 배경, 더 강조됨");
-        TestHelper.printDescription("- Outlined: 테두리만, 더 가벼움");
-        TestHelper.printSeparator();
+        printSectionHeader("1. TextField 변형 (TextField Variants)");
+        printDescription("Material Design은 2가지 TextField 스타일을 제공합니다:");
+        printDescription("- Filled: 채워진 배경, 더 강조됨");
+        printDescription("- Outlined: 테두리만, 더 가벼움");
+        printSeparator();
 
         var variantsSection = div()
                 .style("margin", "20px")
@@ -22,7 +23,7 @@ public class TextFieldVariantsTest {
         variantsSection.appendChild(h(3).text("TextField Variants").element());
 
         // Filled TextField
-        TestHelper.addExampleCode(variantsSection,
+        addExampleCode(variantsSection,
             "📘 Filled TextField",
             "채워진 배경 스타일. 주요 입력 필드나 검색창 등에 적합합니다.",
             """
@@ -34,11 +35,11 @@ public class TextFieldVariantsTest {
                 .label("이름")
                 .element();
         variantsSection.appendChild(filled);
-        TestHelper.assertEquals("filled 텍스트 필드: 태그명은 MD-FILLED-TEXT-FIELD여야 함",
+        assertEquals("filled 텍스트 필드: 태그명은 MD-FILLED-TEXT-FIELD여야 함",
                 "MD-FILLED-TEXT-FIELD", filled.tagName);
 
         // Outlined TextField
-        TestHelper.addExampleCode(variantsSection,
+        addExampleCode(variantsSection,
             "📘 Outlined TextField",
             "테두리 스타일. 설정 화면이나 폼에서 가벼운 느낌을 원할 때 사용합니다.",
             """
@@ -50,7 +51,7 @@ public class TextFieldVariantsTest {
                 .label("이메일")
                 .element();
         variantsSection.appendChild(outlined);
-        TestHelper.assertEquals("outlined 텍스트 필드: 태그명은 MD-OUTLINED-TEXT-FIELD여야 함",
+        assertEquals("outlined 텍스트 필드: 태그명은 MD-OUTLINED-TEXT-FIELD여야 함",
                 "MD-OUTLINED-TEXT-FIELD", outlined.tagName);
     }
 }

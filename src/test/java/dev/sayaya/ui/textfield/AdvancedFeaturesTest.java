@@ -1,17 +1,18 @@
 package dev.sayaya.ui.textfield;
 
+import static dev.sayaya.ui.TestHelper.*;
 import static dev.sayaya.ui.elements.TextFieldElementBuilder.textField;
 import static org.jboss.elemento.Elements.*;
 
 public class AdvancedFeaturesTest {
     public static void test() {
-        TestHelper.printSectionHeader("9. 고급 기능 (Advanced Features)");
-        TestHelper.printDescription("다중행, 읽기전용 등의 고급 기능:");
-        TestHelper.printDescription("- rows/cols: 다중행 텍스트");
-        TestHelper.printDescription("- readOnly: 읽기전용");
-        TestHelper.printDescription("- autocomplete: 자동완성");
-        TestHelper.printDescription("- inputMode: 입력 모드");
-        TestHelper.printSeparator();
+        printSectionHeader("9. 고급 기능 (Advanced Features)");
+        printDescription("다중행, 읽기전용 등의 고급 기능:");
+        printDescription("- rows/cols: 다중행 텍스트");
+        printDescription("- readOnly: 읽기전용");
+        printDescription("- autocomplete: 자동완성");
+        printDescription("- inputMode: 입력 모드");
+        printSeparator();
 
         var advancedSection = div()
                 .style("margin", "20px")
@@ -24,7 +25,7 @@ public class AdvancedFeaturesTest {
         advancedSection.appendChild(h(3).text("Advanced Features").element());
 
         // Rows and cols
-        TestHelper.addExampleCode(advancedSection,
+        addExampleCode(advancedSection,
             "📘 Multiline (rows, cols)",
             "rows와 cols 속성을 사용하여 여러 줄 입력 필드를 만들 수 있습니다.",
             """
@@ -40,11 +41,11 @@ public class AdvancedFeaturesTest {
                 .cols(40)
                 .element();
         advancedSection.appendChild(multilineField);
-        TestHelper.assertEquals("rows 속성: 5여야 함", 5, multilineField.rows);
-        TestHelper.assertEquals("cols 속성: 40이어야 함", 40, multilineField.cols);
+        assertEquals("rows 속성: 5여야 함", 5, multilineField.rows);
+        assertEquals("cols 속성: 40이어야 함", 40, multilineField.cols);
 
         // ReadOnly
-        TestHelper.addExampleCode(advancedSection,
+        addExampleCode(advancedSection,
             "📘 Read-only",
             "readOnly 속성은 값을 보여주되 수정할 수 없게 합니다. disabled와 달리 선택 및 복사가 가능합니다.",
             """
@@ -60,10 +61,10 @@ public class AdvancedFeaturesTest {
                 .readOnly(true)
                 .element();
         advancedSection.appendChild(readOnlyField);
-        TestHelper.assertTrue("readOnly 속성: true여야 함", readOnlyField.readOnly);
+        assertTrue("readOnly 속성: true여야 함", readOnlyField.readOnly);
 
         // Autocomplete
-        TestHelper.addExampleCode(advancedSection,
+        addExampleCode(advancedSection,
             "📘 Autocomplete",
             "브라우저 자동완성 기능을 제어합니다. 'email', 'name', 'tel' 등 표준 값을 사용할 수 있습니다.",
             """
@@ -77,11 +78,11 @@ public class AdvancedFeaturesTest {
                 .autocomplete("email")
                 .element();
         advancedSection.appendChild(autocompleteField);
-        TestHelper.assertEquals("autocomplete 속성: 'email'이어야 함",
+        assertEquals("autocomplete 속성: 'email'이어야 함",
                 "email", autocompleteField.autocomplete);
 
         // Input mode
-        TestHelper.addExampleCode(advancedSection,
+        addExampleCode(advancedSection,
             "📘 Input Mode",
             "모바일 기기에서 표시할 키보드 타입을 지정합니다. 'numeric', 'tel', 'email', 'url' 등을 사용할 수 있습니다.",
             """
@@ -95,7 +96,7 @@ public class AdvancedFeaturesTest {
                 .inputMode("tel")
                 .element();
         advancedSection.appendChild(inputModeField);
-        TestHelper.assertEquals("inputMode 속성: 'tel'이어야 함",
+        assertEquals("inputMode 속성: 'tel'이어야 함",
                 "tel", inputModeField.inputMode);
     }
 }

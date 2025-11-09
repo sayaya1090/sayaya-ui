@@ -1,4 +1,4 @@
-package dev.sayaya.ui.textfield;
+package dev.sayaya.ui;
 
 import static elemental2.dom.DomGlobal.console;
 

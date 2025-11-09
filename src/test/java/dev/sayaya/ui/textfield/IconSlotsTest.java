@@ -2,16 +2,17 @@ package dev.sayaya.ui.textfield;
 
 import org.jboss.elemento.InputType;
 
+import static dev.sayaya.ui.TestHelper.*;
 import static dev.sayaya.ui.elements.TextFieldElementBuilder.textField;
 import static org.jboss.elemento.Elements.*;
 
 public class IconSlotsTest {
     public static void test() {
-        TestHelper.printSectionHeader("7. 아이콘 슬롯 (Icon Slots)");
-        TestHelper.printDescription("TextField에 아이콘을 추가:");
-        TestHelper.printDescription("- iconLeading(): 앞 아이콘");
-        TestHelper.printDescription("- iconTrailing(): 뒤 아이콘");
-        TestHelper.printSeparator();
+        printSectionHeader("7. 아이콘 슬롯 (Icon Slots)");
+        printDescription("TextField에 아이콘을 추가:");
+        printDescription("- iconLeading(): 앞 아이콘");
+        printDescription("- iconTrailing(): 뒤 아이콘");
+        printSeparator();
 
         var iconSection = div()
                 .style("margin", "20px")
@@ -24,7 +25,7 @@ public class IconSlotsTest {
         iconSection.appendChild(h(3).text("Icon Slots").element());
 
         // Leading icon
-        TestHelper.addExampleCode(iconSection,
+        addExampleCode(iconSection,
             "📘 Leading Icon (앞 아이콘)",
             "입력 필드 앞에 아이콘을 배치합니다. Material Symbols 아이콘명을 사용합니다.",
             """
@@ -39,10 +40,10 @@ public class IconSlotsTest {
                 .element();
         iconSection.appendChild(leadingIconField);
         var leadingIcon = leadingIconField.querySelector("[slot='leading-icon']");
-        TestHelper.assertNotNull("leading icon: 아이콘이 존재해야 함", leadingIcon);
+        assertNotNull("leading icon: 아이콘이 존재해야 함", leadingIcon);
 
         // Trailing icon
-        TestHelper.addExampleCode(iconSection,
+        addExampleCode(iconSection,
             "📘 Trailing Icon (뒤 아이콘)",
             "입력 필드 뒤에 아이콘을 배치합니다. 비밀번호 표시/숨김 등에 사용됩니다.",
             """
@@ -59,10 +60,10 @@ public class IconSlotsTest {
                 .element();
         iconSection.appendChild(trailingIconField);
         var trailingIcon = trailingIconField.querySelector("[slot='trailing-icon']");
-        TestHelper.assertNotNull("trailing icon: 아이콘이 존재해야 함", trailingIcon);
+        assertNotNull("trailing icon: 아이콘이 존재해야 함", trailingIcon);
 
         // Both icons
-        TestHelper.addExampleCode(iconSection,
+        addExampleCode(iconSection,
             "📘 양쪽 아이콘",
             "앞뒤 모두 아이콘을 배치할 수 있습니다.",
             """
@@ -80,7 +81,7 @@ public class IconSlotsTest {
         iconSection.appendChild(bothIconsField);
         var leading = bothIconsField.querySelector("[slot='leading-icon']");
         var trailing = bothIconsField.querySelector("[slot='trailing-icon']");
-        TestHelper.assertNotNull("both icons: leading 아이콘이 존재해야 함", leading);
-        TestHelper.assertNotNull("both icons: trailing 아이콘이 존재해야 함", trailing);
+        assertNotNull("both icons: leading 아이콘이 존재해야 함", leading);
+        assertNotNull("both icons: trailing 아이콘이 존재해야 함", trailing);
     }
 }
