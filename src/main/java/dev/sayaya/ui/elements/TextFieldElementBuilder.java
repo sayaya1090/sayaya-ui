@@ -4,14 +4,13 @@ import dev.sayaya.ui.dom.MdTextFieldElement;
 import dev.sayaya.ui.dom.MdTextFieldElement.MdFilledTextFieldElement;
 import dev.sayaya.ui.dom.MdTextFieldElement.MdOutlinedTextFieldElement;
 import dev.sayaya.ui.elements.interfaces.*;
-import elemental2.dom.Event;
 import org.jboss.elemento.*;
 
 import static org.jboss.elemento.Elements.htmlContainer;
 
 public interface TextFieldElementBuilder<E extends MdTextFieldElement, SELF extends TextFieldElementBuilder<E, SELF>> extends ElementAttributeMethods<E, SELF>, ElementClassListMethods<E, SELF>, ElementConsumerMethods<E, SELF>,
         ElementEventMethods<E, SELF>, ElementTextMethods<E, SELF>, HTMLElementStyleMethods<E, SELF>, HTMLElementVisibilityMethods<E, SELF>, HasLeadingIconSlot<E, SELF>, HasTrailingIconSlot<E, SELF>, HasAriaLabel<E, SELF>,
-        Requireable<E, SELF>, Disableable<E, SELF> {
+        Requireable<E, SELF>, Disableable<E, SELF>, HasInputEvent<E, SELF>, HasChangeEvent<E, SELF> {
     static TextFieldPrepareElementBuilder textField() {
         return new TextFieldPrepareElementBuilder();
     }
@@ -119,14 +118,6 @@ public interface TextFieldElementBuilder<E extends MdTextFieldElement, SELF exte
     }
     default SELF inputMode(String inputMode) {
         element().inputMode = inputMode;
-        return that();
-    }
-    default SELF onChange(EventCallbackFn<Event> callback) {
-        element().addEventListener("change", callback::onEvent);
-        return that();
-    }
-    default SELF onInput(EventCallbackFn<Event> callback) {
-        element().addEventListener("input", callback::onEvent);
         return that();
     }
     default boolean checkValidity() {

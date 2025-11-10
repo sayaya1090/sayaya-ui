@@ -87,7 +87,7 @@ public class ChipsElementBuilder implements HTMLElementStyleMethods<MdChipSetEle
             return that();
         }
     }
-    public final static class FilterChipElementBuilder implements ChipElementBuilder<MdFilterChipElement, FilterChipElementBuilder>, Elevatable<MdFilterChipElement, FilterChipElementBuilder>, Selectable<MdFilterChipElement, FilterChipElementBuilder> {
+    public final static class FilterChipElementBuilder implements ChipElementBuilder<MdFilterChipElement, FilterChipElementBuilder>, Elevatable<MdFilterChipElement, FilterChipElementBuilder>, Selectable<MdFilterChipElement, FilterChipElementBuilder>, HasRemoveEvent<MdFilterChipElement, FilterChipElementBuilder> {
         private final HTMLContainerBuilder<MdFilterChipElement> that;
         private final ChipsElementBuilder parent;
         private FilterChipElementBuilder(ChipsElementBuilder parent) {
@@ -127,7 +127,7 @@ public class ChipsElementBuilder implements HTMLElementStyleMethods<MdChipSetEle
             return that();
         }
     }
-    public final static class InputChipElementBuilder implements ChipElementBuilder<MdInputChipElement, InputChipElementBuilder>, Selectable<MdInputChipElement, InputChipElementBuilder>, Linkable<MdInputChipElement, InputChipElementBuilder> {
+    public final static class InputChipElementBuilder implements ChipElementBuilder<MdInputChipElement, InputChipElementBuilder>, Selectable<MdInputChipElement, InputChipElementBuilder>, Linkable<MdInputChipElement, InputChipElementBuilder>, HasRemoveEvent<MdInputChipElement, InputChipElementBuilder> {
         private final HTMLContainerBuilder<MdInputChipElement> that;
         private final ChipsElementBuilder parent;
         private InputChipElementBuilder(ChipsElementBuilder parent) {

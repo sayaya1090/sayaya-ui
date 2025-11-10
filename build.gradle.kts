@@ -58,6 +58,7 @@ tasks {
                 "dev.sayaya.FocusRingElementTest",
                 "dev.sayaya.IconElementTest",
                 "dev.sayaya.RippleElementTest",
+                "dev.sayaya.SelectElementTest",
                 "dev.sayaya.TextFieldElementTest",
             )
             war = file("src/test/webapp")

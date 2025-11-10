@@ -2,14 +2,14 @@ package dev.sayaya.ui.elements;
 
 import dev.sayaya.ui.dom.MdCheckboxElement;
 import dev.sayaya.ui.elements.interfaces.*;
-import elemental2.dom.Event;
 import org.jboss.elemento.*;
 
 import static org.jboss.elemento.Elements.htmlElement;
 
 public class CheckboxElementBuilder implements ElementAttributeMethods<MdCheckboxElement, CheckboxElementBuilder>, ElementClassListMethods<MdCheckboxElement, CheckboxElementBuilder>, ElementEventMethods<MdCheckboxElement, CheckboxElementBuilder>,
         HTMLElementStyleMethods<MdCheckboxElement, CheckboxElementBuilder>, HTMLElementVisibilityMethods<MdCheckboxElement, CheckboxElementBuilder>,
-        HasAriaLabel<MdCheckboxElement, CheckboxElementBuilder>, Selectable<MdCheckboxElement, CheckboxElementBuilder>, Disableable<MdCheckboxElement, CheckboxElementBuilder>, FormAssociable<MdCheckboxElement, CheckboxElementBuilder>, Requireable<MdCheckboxElement, CheckboxElementBuilder> {
+        HasAriaLabel<MdCheckboxElement, CheckboxElementBuilder>, Selectable<MdCheckboxElement, CheckboxElementBuilder>, Disableable<MdCheckboxElement, CheckboxElementBuilder>, FormAssociable<MdCheckboxElement, CheckboxElementBuilder>, Requireable<MdCheckboxElement, CheckboxElementBuilder>,
+        HasInputEvent<MdCheckboxElement, CheckboxElementBuilder>, HasChangeEvent<MdCheckboxElement, CheckboxElementBuilder> {
     public static CheckboxElementBuilder checkbox() {
         return new CheckboxElementBuilder();
     }
@@ -73,12 +73,6 @@ public class CheckboxElementBuilder implements ElementAttributeMethods<MdCheckbo
     }
     public String name() {
         return element().name;
-    }
-    public CheckboxElementBuilder onChange(EventCallbackFn<Event> callback) {
-        return on(EventType.change, callback);
-    }
-    public CheckboxElementBuilder onInput(EventCallbackFn<Event> callback) {
-        return on(EventType.input, callback);
     }
     private enum CheckboxState {
         UNCHECKED, CHECKED, INDETERMINATE
