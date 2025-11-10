@@ -52,9 +52,7 @@ public class TestHelper {
     }
 
     public static void printSectionHeader(String header) {
-        console.log("\n" + "=".repeat(60));
         console.log(header);
-        console.log("=".repeat(60));
     }
 
     public static void printDescription(String description) {
