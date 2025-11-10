@@ -1,0 +1,58 @@
+name: GitHub Pages에 샘플 코드 배포
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 24
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Build sample code
+        env:
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gradle test
+
+      - name: Prepare deployment directory
+        run: |
+          mkdir -p pages
+          # Copy entire test/webapp directory structure (HTML + JS files)
+          cp -r src/test/webapp/* pages/
+          # Create index.html with links to all test pages
+          echo "<!DOCTYPE html>" > pages/index.html
+          echo "<html><head>" >> pages/index.html
+          echo "<meta charset='UTF-8'>" >> pages/index.html
+          echo "<title>UI Component Tests</title>" >> pages/index.html
+          echo "<style>body{font-family:sans-serif;max-width:800px;margin:40px auto;padding:0 20px}a{color:#0066cc;text-decoration:none}a:hover{text-decoration:underline}li{margin:10px 0}</style>" >> pages/index.html
+          echo "</head><body>" >> pages/index.html
+          echo "<h1>UI Component Tests</h1><ul>" >> pages/index.html
+          find pages -maxdepth 1 -name "*.html" ! -name "index.html" | while read html; do
+            echo "<li><a href='$(basename $html)'>$(basename $html .html)</a></li>" >> pages/index.html
+          done
+          echo "</ul></body></html>" >> pages/index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./pages
+          publish_branch: gh-pages

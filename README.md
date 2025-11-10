@@ -43,16 +43,18 @@ dependencies {
 
 ## 지원 컴포넌트
 
-| 컴포넌트 | 빌더 | 설명 |
-|---------|------|-----|
-| **Button** | `button()` | Elevated, Filled, Filled Tonal, Outlined, Text |
-| **Icon Button** | `button().icon()` | Standard, Filled, Filled Tonal, Outlined, Toggle |
-| **Checkbox** | `checkbox()` | indeterminate 상태를 지원하는 선택 컨트롤 |
-| **Chip** | `chips()` | Assist, Filter, Input, Suggestion 칩 |
-| **Divider** | `divider()` | 가로 및 세로 구분선 |
-| **Icon** | `icon()` | Material Symbols 통합 |
-| **Focus Ring** | `focusRing()` | 접근성을 위한 포커스 표시 |
-| **Ripple** | `ripple()` | 인터랙티브 리플 효과 |
+| 컴포넌트 | 빌더 | 설명 | 데모 |
+|---------|------|-----|-----|
+| **Button** | `button()` | Elevated, Filled, Filled Tonal, Outlined, Text | [🔗](https://sayaya1090.github.io/sayaya-ui/button.html) |
+| **Icon Button** | `button().icon()` | Standard, Filled, Filled Tonal, Outlined, Toggle | [🔗](https://sayaya1090.github.io/sayaya-ui/button.html) |
+| **Checkbox** | `checkbox()` | indeterminate 상태를 지원하는 선택 컨트롤 | [🔗](https://sayaya1090.github.io/sayaya-ui/checkbox.html) |
+| **Chip** | `chips()` | Assist, Filter, Input, Suggestion 칩 | [🔗](https://sayaya1090.github.io/sayaya-ui/chip.html) |
+| **Divider** | `divider()` | 가로 및 세로 구분선 | [🔗](https://sayaya1090.github.io/sayaya-ui/divider.html) |
+| **Icon** | `icon()` | Material Symbols 통합 | [🔗](https://sayaya1090.github.io/sayaya-ui/icon.html) |
+| **Focus Ring** | `focusRing()` | 접근성을 위한 포커스 표시 | [🔗](https://sayaya1090.github.io/sayaya-ui/focus_ring.html) |
+| **Ripple** | `ripple()` | 인터랙티브 리플 효과 | [🔗](https://sayaya1090.github.io/sayaya-ui/ripple.html) |
+| **Select** | `select()` | Filled, Outlined 드롭다운 선택 | [🔗](https://sayaya1090.github.io/sayaya-ui/select.html) |
+| **Text Field** | `textField()` | Filled, Outlined 텍스트 입력 | [🔗](https://sayaya1090.github.io/sayaya-ui/text_field.html) |
 
 ## 사용 예제
 
@@ -243,14 +245,7 @@ sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제�
 ./gradlew gwtDevMode
 ```
 
-다음 URL로 접속:
-- Button: http://localhost:8888/button.html
-- Checkbox: http://localhost:8888/checkbox.html
-- Chip: http://localhost:8888/chip.html
-- Divider: http://localhost:8888/divider.html
-- Focus Ring: http://localhost:8888/focus_ring.html
-- Icon: http://localhost:8888/icon.html
-- Ripple: http://localhost:8888/ripple.html
+로컬에서 개발 모드로 실행하거나, [라이브 데모](https://sayaya1090.github.io/sayaya-ui/)에서 모든 컴포넌트를 확인할 수 있습니다.
 
 ## 아키텍처
 
