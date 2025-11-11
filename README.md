@@ -49,6 +49,7 @@ dependencies {
 | | `button().icon()` | Standard, Filled, Filled Tonal, Outlined, Toggle | |
 | **Checkbox** | `checkbox()` | indeterminate 상태를 지원하는 선택 컨트롤 | [🔗](https://sayaya1090.github.io/sayaya-ui/checkbox.html) |
 | **Chip** | `chips()` | Assist, Filter, Input, Suggestion 칩 | [🔗](https://sayaya1090.github.io/sayaya-ui/chip.html) |
+| **Dialog** | `dialog()` | Modal 다이얼로그, Alert 다이얼로그 | [🔗](https://sayaya1090.github.io/sayaya-ui/dialog.html) |
 | **Divider** | `divider()` | 가로 및 세로 구분선 | [🔗](https://sayaya1090.github.io/sayaya-ui/divider.html) |
 | **Icon** | `icon()` | Material Symbols 통합 | [🔗](https://sayaya1090.github.io/sayaya-ui/icon.html) |
 | **Focus Ring** | `focusRing()` | 접근성을 위한 포커스 표시 | [🔗](https://sayaya1090.github.io/sayaya-ui/focus_ring.html) |
@@ -130,6 +131,60 @@ var tagChips = chips()
         .removable(true)
         .onRemove(e -> removeTag("프론트엔드"))
         .done()
+    .element();
+```
+
+### Dialog
+
+```java
+import static dev.sayaya.ui.elements.DialogElementBuilder.dialog;
+import static dev.sayaya.ui.elements.DialogElementBuilder.alert;
+
+// 기본 다이얼로그
+var confirmDialog = dialog()
+    .headline("작업 확인")
+    .content("정말로 이 작업을 수행하시겠습니까?")
+    .actions(div()
+        .add(button().text("취소").attr("value", "cancel"))
+        .add(button().text("확인").attr("value", "ok")))
+    .element();
+
+// 버튼을 클릭하면 다이얼로그 열기
+var openButton = button().text("다이얼로그 열기").element();
+openButton.addEventListener("click", evt -> {
+    confirmDialog.show();
+    confirmDialog.close().then(result -> {
+        if ("ok".equals(confirmDialog.returnValue)) {
+            console.log("작업이 실행되었습니다");
+        }
+        return null;
+    });
+});
+
+// Alert 다이얼로그
+var alertDialog = alert()
+    .headline("경고")
+    .content("중요한 알림 메시지입니다")
+    .actions(div().add(button().text("확인")))
+    .element();
+
+// 폼이 있는 다이얼로그
+var formDialog = dialog()
+    .headline("정보 입력")
+    .content(form()
+        .add(textField().filled().label("이름"))
+        .add(textField().filled().label("이메일")))
+    .actions(div()
+        .add(button().text("취소"))
+        .add(button().text("제출").attr("value", "submit")))
+    .onClosed(evt -> console.log("다이얼로그가 닫혔습니다"))
+    .element();
+
+// 빠른 전환 (애니메이션 없음)
+var quickDialog = dialog()
+    .headline("알림")
+    .content("즉시 표시됩니다")
+    .quick(true)
     .element();
 ```
 
@@ -219,6 +274,11 @@ sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제�
 - **`Elevatable`** - 높이가 있는 컴포넌트
 - **`HasAriaLabel`** - ARIA 레이블을 지원하는 컴포넌트
 - **`HasIconSlot`** - 아이콘 슬롯이 있는 컴포넌트
+- **`HasHeadlineSlot`** - 제목 슬롯이 있는 컴포넌트
+- **`HasContentSlot`** - 본문 슬롯이 있는 컴포넌트
+- **`HasActionsSlot`** - 액션 버튼 슬롯이 있는 컴포넌트
+- **`HasDialogEvents`** - Dialog 이벤트를 지원하는 컴포넌트
+- **`HasMenuEvents`** - 메뉴 이벤트를 지원하는 컴포넌트
 
 ## 개발
 
@@ -256,14 +316,17 @@ sayaya-ui/
 │   │   ├── MdButtonElement.java
 │   │   ├── MdCheckboxElement.java
 │   │   ├── MdChipElement.java
+│   │   ├── MdDialogElement.java
 │   │   └── ...
 │   └── elements/         # 유창한 빌더 API
 │       ├── ButtonElementBuilder.java
 │       ├── CheckboxElementBuilder.java
 │       ├── ChipsElementBuilder.java
+│       ├── DialogElementBuilder.java
 │       └── interfaces/   # 재사용 가능한 빌더 특성
 │           ├── Disableable.java
 │           ├── Selectable.java
+│           ├── HasDialogEvents.java
 │           └── ...
 └── src/test/
     ├── java/             # GWT 테스트 진입점
