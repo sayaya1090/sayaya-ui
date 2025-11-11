@@ -28,7 +28,7 @@ public class EventHandlingTest {
         eventSection.appendChild(h(3).text("Event Handling").element());
 
         // Change Event
-        addExampleCode(eventSection,
+        var changeExample = addExampleCode(eventSection,
             "📘 Change Event (변경 이벤트)",
             "사용자가 옵션을 선택하면 발생하는 이벤트입니다.",
             """
@@ -52,7 +52,11 @@ public class EventHandlingTest {
                 }).option().value("a").headline("A").end()
                 .option().value("b").headline("B").end()
                 .element();
-        eventSection.appendChild(changeSelect);
+        var changeState = changeExample.addInteractiveDemo(changeSelect);
+        changeState.textContent = "선택 횟수: " + changeCount.get() + " | 현재 값: " + changeSelect.value;
+        changeSelect.addEventListener("change", evt -> {
+            changeState.textContent = "선택 횟수: " + changeCount.get() + " | 현재 값: " + changeSelect.value;
+        });
 
         assertEquals("초기 변경 횟수", 0, changeCount.get());
         changeSelect.select("a");
@@ -61,7 +65,7 @@ public class EventHandlingTest {
         assertEquals("두 번째 변경", 2, changeCount.get());
 
         // Input Event
-        addExampleCode(eventSection,
+        var inputExample = addExampleCode(eventSection,
             "📘 Input Event (입력 이벤트)",
             "값이 변경될 때마다 발생하는 이벤트입니다.",
             """
@@ -86,13 +90,17 @@ public class EventHandlingTest {
                 .option().value("1").headline("옵션 1").end()
                 .option().value("2").headline("옵션 2").end()
                 .element();
-        eventSection.appendChild(inputSelect);
+        var inputState = inputExample.addInteractiveDemo(inputSelect);
+        inputState.textContent = "입력 횟수: " + inputCount.get() + " | 현재 값: " + inputSelect.value;
+        inputSelect.addEventListener("input", evt -> {
+            inputState.textContent = "입력 횟수: " + inputCount.get() + " | 현재 값: " + inputSelect.value;
+        });
 
         inputSelect.select("1");
         assertTrue("input 이벤트 발생", inputCount.get() > 0);
 
         // Menu Open/Close Events
-        addExampleCode(eventSection,
+        var menuExample = addExampleCode(eventSection,
             "📘 Menu Events (메뉴 이벤트)",
             "메뉴가 열리고 닫힐 때 발생하는 이벤트들입니다.",
             """
@@ -141,7 +149,21 @@ public class EventHandlingTest {
                 }).option().value("x").headline("X").end()
                 .option().value("y").headline("Y").end()
                 .element();
-        eventSection.appendChild(menuEventSelect);
+        var menuState = menuExample.addInteractiveDemo(menuEventSelect);
+        var updateMenuState = new Runnable() {
+            @Override
+            public void run() {
+                menuState.textContent = "opening: " + openingCount.get() +
+                    " | opened: " + openedCount.get() +
+                    " | closing: " + closingCount.get() +
+                    " | closed: " + closedCount.get();
+            }
+        };
+        updateMenuState.run();
+        menuEventSelect.addEventListener("opening", evt -> updateMenuState.run());
+        menuEventSelect.addEventListener("opened", evt -> updateMenuState.run());
+        menuEventSelect.addEventListener("closing", evt -> updateMenuState.run());
+        menuEventSelect.addEventListener("closed", evt -> updateMenuState.run());
 
         // 메뉴 열기
         menuEventSelect.showPicker();

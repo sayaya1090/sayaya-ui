@@ -27,7 +27,7 @@ public class BasicPropertiesTest {
         propertiesSection.appendChild(h(3).text("Basic Properties").element());
 
         // Label
-        addExampleCode(propertiesSection,
+        var labelExample = addExampleCode(propertiesSection,
             "📘 Label (라벨)",
             "Select 필드의 라벨을 지정합니다.",
             """
@@ -42,12 +42,12 @@ public class BasicPropertiesTest {
                 .option().value("kr").headline("한국").end()
                 .option().value("us").headline("미국").end()
                 .element();
-        propertiesSection.appendChild(labelSelect);
+        labelExample.addInteractiveDemo(labelSelect, false);
         assertEquals("label 속성: '국가 선택'이어야 함",
                 "국가 선택", labelSelect.label);
 
         // Required
-        addExampleCode(propertiesSection,
+        var requiredExample = addExampleCode(propertiesSection,
             "📘 Required (필수 선택)",
             "필수 선택 필드로 지정합니다. 선택하지 않으면 검증 실패합니다.",
             """
@@ -64,11 +64,11 @@ public class BasicPropertiesTest {
                 .option().value("opt1").headline("옵션 1").end()
                 .option().value("opt2").headline("옵션 2").end()
                 .element();
-        propertiesSection.appendChild(requiredSelect);
+        requiredExample.addInteractiveDemo(requiredSelect, false);
         assertTrue("required 속성: true여야 함", requiredSelect.required);
 
         // Disabled
-        addExampleCode(propertiesSection,
+        var disabledExample = addExampleCode(propertiesSection,
             "📘 Disabled (비활성화)",
             "Select를 비활성화하여 선택할 수 없게 합니다.",
             """
@@ -83,11 +83,11 @@ public class BasicPropertiesTest {
                 .disabled(true)
                 .option().value("val").headline("값").end()
                 .element();
-        propertiesSection.appendChild(disabledSelect);
+        disabledExample.addInteractiveDemo(disabledSelect, false);
         assertTrue("disabled 속성: true여야 함", disabledSelect.disabled);
 
         // Supporting Text
-        addExampleCode(propertiesSection,
+        var supportingTextExample = addExampleCode(propertiesSection,
             "📘 Supporting Text (도움말 텍스트)",
             "Select 아래에 표시되는 도움말 텍스트입니다.",
             """
@@ -104,12 +104,12 @@ public class BasicPropertiesTest {
                 .option().value("a").headline("A").end()
                 .option().value("b").headline("B").end()
                 .element();
-        propertiesSection.appendChild(supportingTextSelect);
+        supportingTextExample.addInteractiveDemo(supportingTextSelect, false);
         assertEquals("supportingText 속성",
                 "원하는 옵션을 선택하세요", supportingTextSelect.supportingText);
 
         // Error Text
-        addExampleCode(propertiesSection,
+        var errorTextExample = addExampleCode(propertiesSection,
             "📘 Error Text (에러 메시지)",
             "검증 실패 시 표시할 에러 메시지를 지정합니다.",
             """
@@ -128,7 +128,7 @@ public class BasicPropertiesTest {
                 .error(true)
                 .option().value("1").headline("옵션 1").end()
                 .element();
-        propertiesSection.appendChild(errorSelect);
+        errorTextExample.addInteractiveDemo(errorSelect, false);
         assertEquals("errorText 속성",
                 "반드시 선택해야 합니다", errorSelect.errorText);
         assertTrue("error 속성: true", errorSelect.error);

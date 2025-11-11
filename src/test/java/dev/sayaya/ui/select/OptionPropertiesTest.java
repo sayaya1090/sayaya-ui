@@ -26,7 +26,7 @@ public class OptionPropertiesTest {
         optionSection.appendChild(h(3).text("Option Properties").element());
 
         // Basic Option
-        addExampleCode(optionSection,
+        var basicExample = addExampleCode(optionSection,
             "📘 Basic Option (기본 옵션)",
             "value와 headline을 가진 기본 옵션입니다.",
             """
@@ -53,7 +53,7 @@ public class OptionPropertiesTest {
                     .headline("바나나")
                 .end()
                 .element();
-        optionSection.appendChild(basicSelect);
+        basicExample.addInteractiveDemo(basicSelect, false);
 
         basicSelect.getUpdateComplete().then(result -> {
             var options = basicSelect.options;
@@ -63,7 +63,7 @@ public class OptionPropertiesTest {
         });
 
         // Selected Option
-        addExampleCode(optionSection,
+        var selectedExample = addExampleCode(optionSection,
             "📘 Selected Option (초기 선택)",
             "초기에 선택된 상태로 표시되는 옵션입니다.",
             """
@@ -92,7 +92,7 @@ public class OptionPropertiesTest {
                     .select(true)
                 .end()
                 .element();
-        optionSection.appendChild(selectedSelect);
+        selectedExample.addInteractiveDemo(selectedSelect, false);
 
         selectedSelect.getUpdateComplete().then(result -> {
             assertEquals("선택된 값", "blue", selectedSelect.value);
@@ -101,7 +101,7 @@ public class OptionPropertiesTest {
         });
 
         // Disabled Option
-        addExampleCode(optionSection,
+        var disabledOptionExample = addExampleCode(optionSection,
             "📘 Disabled Option (비활성화 옵션)",
             "선택할 수 없는 비활성화된 옵션입니다.",
             """
@@ -130,7 +130,7 @@ public class OptionPropertiesTest {
                     .disabled(true)
                 .end()
                 .element();
-        optionSection.appendChild(disabledOptionSelect);
+        disabledOptionExample.addInteractiveDemo(disabledOptionSelect, false);
 
         disabledOptionSelect.getUpdateComplete().then(result -> {
             assertTrue("두 번째 옵션 비활성화", disabledOptionSelect.options[1].disabled);
@@ -138,7 +138,7 @@ public class OptionPropertiesTest {
         });
 
         // Option with Supporting Text
-        addExampleCode(optionSection,
+        var supportingTextExample = addExampleCode(optionSection,
             "📘 Supporting Text (부가 설명)",
             "옵션에 부가 설명 텍스트를 추가할 수 있습니다.",
             """
@@ -169,7 +169,7 @@ public class OptionPropertiesTest {
                     .supportingTextSlot("업무용으로 사용")
                 .end()
                 .element();
-        optionSection.appendChild(supportingSelect);
+        supportingTextExample.addInteractiveDemo(supportingSelect, false);
 
         supportingSelect.getUpdateComplete().then(result -> {
             assertNotNull("supporting text 슬롯이 있는 첫 번째 옵션",

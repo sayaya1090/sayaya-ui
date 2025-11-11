@@ -27,7 +27,7 @@ public class AdvancedFeaturesTest {
         advancedSection.appendChild(h(3).text("Advanced Features").element());
 
         // Leading Icon
-        addExampleCode(advancedSection,
+        var iconExample = addExampleCode(advancedSection,
             "📘 Leading Icon (선행 아이콘)",
             "Select 앞에 아이콘을 표시합니다.",
             """
@@ -44,14 +44,14 @@ public class AdvancedFeaturesTest {
                 .option().value("home").headline("집").end()
                 .option().value("office").headline("사무실").end()
                 .element();
-        advancedSection.appendChild(iconSelect);
+        iconExample.addInteractiveDemo(iconSelect, false);
 
         assertNotNull("선행 아이콘 존재",
                 iconSelect.querySelector("[slot='leading-icon']"));
         assertTrue("hasLeadingIcon 속성", iconSelect.hasLeadingIcon);
 
         // Quick Menu
-        addExampleCode(advancedSection,
+        var quickExample = addExampleCode(advancedSection,
             "📘 Quick Menu (빠른 메뉴)",
             "애니메이션 없이 즉시 메뉴를 엽니다.",
             """
@@ -68,12 +68,12 @@ public class AdvancedFeaturesTest {
                 .option().value("1").headline("옵션 1").end()
                 .option().value("2").headline("옵션 2").end()
                 .element();
-        advancedSection.appendChild(quickSelect);
+        quickExample.addInteractiveDemo(quickSelect, false);
 
         assertTrue("quick 속성: true", quickSelect.quick);
 
         // Clamp Menu Width
-        addExampleCode(advancedSection,
+        var clampExample = addExampleCode(advancedSection,
             "📘 Clamp Menu Width (메뉴 너비 제한)",
             "메뉴의 너비를 Select 너비로 제한합니다.",
             """
@@ -102,12 +102,12 @@ public class AdvancedFeaturesTest {
                     .headline("매우 매우 긴 옵션 텍스트입니다")
                 .end()
                 .element();
-        advancedSection.appendChild(clampSelect);
+        clampExample.addInteractiveDemo(clampSelect, false);
 
         assertTrue("clampMenuWidth 속성: true", clampSelect.clampMenuWidth);
 
         // Typeahead Delay
-        addExampleCode(advancedSection,
+        var typeaheadExample = addExampleCode(advancedSection,
             "📘 Typeahead Delay (타입어헤드 지연)",
             "키보드로 옵션을 검색할 때의 지연 시간을 설정합니다.",
             """
@@ -126,12 +126,12 @@ public class AdvancedFeaturesTest {
                 .option().value("b").headline("Banana").end()
                 .option().value("c").headline("Cherry").end()
                 .element();
-        advancedSection.appendChild(typeaheadSelect);
+        typeaheadExample.addInteractiveDemo(typeaheadSelect, false);
 
         assertEquals("typeaheadDelay: 500ms", 500.0, typeaheadSelect.typeaheadDelay);
 
         // Form Association
-        addExampleCode(advancedSection,
+        var formExample = addExampleCode(advancedSection,
             "📘 Form Association (폼 연결)",
             "Select를 특정 폼과 연결합니다. 폼 밖에 있어도 작동합니다.",
             """
@@ -156,7 +156,7 @@ public class AdvancedFeaturesTest {
                 .option().value("yes").headline("예").end()
                 .option().value("no").headline("아니오").end()
                 .element();
-        advancedSection.appendChild(formSelect);
+        formExample.addInteractiveDemo(formSelect, false);
 
         assertEquals("name 속성", "preference", formSelect.name);
         assertEquals("form 속성",

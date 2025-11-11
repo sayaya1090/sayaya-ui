@@ -24,7 +24,7 @@ public class SelectionMethodsTest {
         selectionSection.appendChild(h(3).text("Selection Methods").element());
 
         // Select by Value
-        addExampleCode(selectionSection,
+        var valueExample = addExampleCode(selectionSection,
             "📘 Select by Value (값으로 선택)",
             "특정 값을 가진 옵션을 프로그래밍 방식으로 선택합니다.",
             """
@@ -43,7 +43,7 @@ public class SelectionMethodsTest {
                 .option().value("en").headline("English").end()
                 .option().value("ja").headline("日本語").end()
                 .element();
-        selectionSection.appendChild(valueSelect);
+        valueExample.addInteractiveDemo(valueSelect, false);
 
         valueSelect.getUpdateComplete().then(result -> {
             valueSelect.select("en");
@@ -54,7 +54,7 @@ public class SelectionMethodsTest {
         });
 
         // Select by Index
-        addExampleCode(selectionSection,
+        var indexExample = addExampleCode(selectionSection,
             "📘 Select by Index (인덱스로 선택)",
             "인덱스로 옵션을 선택합니다. 인덱스는 0부터 시작합니다.",
             """
@@ -73,7 +73,7 @@ public class SelectionMethodsTest {
                 .option().value("m").headline("Medium").end()
                 .option().value("l").headline("Large").end()
                 .element();
-        selectionSection.appendChild(indexSelect);
+        indexExample.addInteractiveDemo(indexSelect, false);
 
         indexSelect.getUpdateComplete().then(result -> {
             indexSelect.selectIndex(1);
@@ -85,7 +85,7 @@ public class SelectionMethodsTest {
         });
 
         // Reset
-        addExampleCode(selectionSection,
+        var resetExample = addExampleCode(selectionSection,
             "📘 Reset (초기화)",
             "Select를 초기값으로 되돌립니다.",
             """
@@ -106,7 +106,7 @@ public class SelectionMethodsTest {
                 .option().value("draft").headline("임시저장").select(true).end()
                 .option().value("published").headline("발행됨").end()
                 .element();
-        selectionSection.appendChild(resetSelect);
+        resetExample.addInteractiveDemo(resetSelect, false);
 
         resetSelect.getUpdateComplete().then(result -> {
             resetSelect.select("published");

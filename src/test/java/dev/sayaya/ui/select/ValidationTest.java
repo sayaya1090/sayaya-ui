@@ -25,7 +25,7 @@ public class ValidationTest {
         validationSection.appendChild(h(3).text("Validation").element());
 
         // Required Validation
-        addExampleCode(validationSection,
+        var requiredExample = addExampleCode(validationSection,
             "📘 Required Validation (필수 검증)",
             "필수 필드로 지정하고 검증합니다.",
             """
@@ -50,7 +50,12 @@ public class ValidationTest {
                 .option().value("opt1").headline("옵션 1").end()
                 .option().value("opt2").headline("옵션 2").end()
                 .element();
-        validationSection.appendChild(requiredSelect);
+        var requiredState = requiredExample.addInteractiveDemo(requiredSelect);
+        requiredState.textContent = "valid: " + requiredSelect.checkValidity() + " | value: " + requiredSelect.value;
+        requiredSelect.addEventListener("change", evt -> {
+            requiredState.textContent = "valid: " + requiredSelect.checkValidity() + " | value: " + requiredSelect.value;
+        });
+        requiredSelect.reportValidity();
 
         assertFalse("빈 필수 필드는 invalid", requiredSelect.checkValidity());
 
@@ -58,7 +63,7 @@ public class ValidationTest {
         assertTrue("값이 있으면 valid", requiredSelect.checkValidity());
 
         // Custom Validity
-        addExampleCode(validationSection,
+        var customExample = addExampleCode(validationSection,
             "📘 Custom Validity (커스텀 검증)",
             "프로그래밍 방식으로 커스텀 검증 메시지를 설정합니다.",
             """
@@ -95,8 +100,11 @@ public class ValidationTest {
             }
             customSelectBuilder.reportValidity();
         }).element();
-        validationSection.appendChild(customSelect);
-
+        var customState = customExample.addInteractiveDemo(customSelect);
+        customState.textContent = "valid: " + customSelect.checkValidity() + " | value: " + customSelect.value;
+        customSelect.addEventListener("change", evt -> {
+            customState.textContent = "valid: " + customSelect.checkValidity() + " | value: " + customSelect.value;
+        });
         customSelect.setCustomValidity("골드 등급만 선택 가능합니다");
         assertFalse("커스텀 에러가 있으면 invalid", customSelect.checkValidity());
 
@@ -104,7 +112,7 @@ public class ValidationTest {
         assertTrue("커스텀 에러 제거 후 valid", customSelect.checkValidity());
 
         // Report Validity
-        addExampleCode(validationSection,
+        var reportExample = addExampleCode(validationSection,
             "📘 Report Validity (검증 결과 표시)",
             "검증 결과를 사용자에게 시각적으로 표시합니다.",
             """
@@ -130,7 +138,11 @@ public class ValidationTest {
                 .option().value("seoul").headline("서울").end()
                 .option().value("busan").headline("부산").end()
                 .element();
-        validationSection.appendChild(reportSelect);
+        var reportState = reportExample.addInteractiveDemo(reportSelect);
+        reportState.textContent = "valid: " + reportSelect.checkValidity() + " | value: " + reportSelect.value;
+        reportSelect.addEventListener("change", evt -> {
+            reportState.textContent = "valid: " + reportSelect.checkValidity() + " | value: " + reportSelect.value;
+        });
 
         assertFalse("reportValidity는 false 반환", reportSelect.reportValidity());
 

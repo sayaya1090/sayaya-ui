@@ -23,7 +23,7 @@ public class SelectVariantsTest {
         variantsSection.appendChild(h(3).text("Select Variants").element());
 
         // Filled Select
-        addExampleCode(variantsSection,
+        var filledExample = addExampleCode(variantsSection,
             "📘 Filled Select (채워진 Select)",
             "배경이 채워진 스타일의 Select입니다. 강조가 필요한 경우 사용합니다.",
             """
@@ -50,12 +50,12 @@ public class SelectVariantsTest {
                     .headline("바나나")
                 .end()
                 .element();
-        variantsSection.appendChild(filled);
+        filledExample.addInteractiveDemo(filled, false);
         assertEquals("filled select: 태그명은 md-filled-select",
                 "MD-FILLED-SELECT", filled.tagName);
 
         // Outlined Select
-        addExampleCode(variantsSection,
+        var outlinedExample = addExampleCode(variantsSection,
             "📘 Outlined Select (외곽선 Select)",
             "외곽선만 있는 스타일의 Select입니다. 일반적인 폼 필드에 사용합니다.",
             """
@@ -82,7 +82,7 @@ public class SelectVariantsTest {
                     .headline("파랑")
                 .end()
                 .element();
-        variantsSection.appendChild(outlined);
+        outlinedExample.addInteractiveDemo(outlined, false);
         assertEquals("outlined select: 태그명은 md-outlined-select",
                 "MD-OUTLINED-SELECT", outlined.tagName);
     }
