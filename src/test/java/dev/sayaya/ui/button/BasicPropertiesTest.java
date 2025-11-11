@@ -26,7 +26,7 @@ public class BasicPropertiesTest {
         propertiesSection.appendChild(h(3).text("Basic Properties").element());
 
         // Disabled
-        addExampleCode(propertiesSection,
+        var disabledExample = addExampleCode(propertiesSection,
             "📘 Disabled (비활성화)",
             "버튼을 완전히 비활성화합니다. 클릭 이벤트가 발생하지 않으며 키보드 포커스도 받을 수 없습니다.",
             """
@@ -39,11 +39,11 @@ public class BasicPropertiesTest {
                 .disabled(true)
                 .text("Disabled")
                 .element();
-        propertiesSection.appendChild(disabledBtn);
+        disabledExample.addInteractiveDemo(disabledBtn, false);
         assertTrue("disabled 속성: true여야 함", disabledBtn.disabled);
 
         // Soft Disabled
-        addExampleCode(propertiesSection,
+        var softDisabledExample = addExampleCode(propertiesSection,
             "📘 Soft Disabled (소프트 비활성화)",
             "시각적으로는 비활성화되지만 키보드 포커스를 받을 수 있습니다. 접근성을 위해 사용합니다.",
             """
@@ -56,11 +56,11 @@ public class BasicPropertiesTest {
                 .softDisabled(true)
                 .text("Soft Disabled")
                 .element();
-        propertiesSection.appendChild(softDisabledBtn);
+        softDisabledExample.addInteractiveDemo(softDisabledBtn, false);
         assertTrue("softDisabled 속성: true여야 함", softDisabledBtn.softDisabled);
 
         // Href (Link Button)
-        addExampleCode(propertiesSection,
+        var hrefExample = addExampleCode(propertiesSection,
             "📘 Href (링크 버튼)",
             "버튼을 링크로 동작하게 합니다. 클릭 시 지정된 URL로 이동합니다.",
             """
@@ -73,12 +73,12 @@ public class BasicPropertiesTest {
                 .href("https://example.com")
                 .text("Link")
                 .element();
-        propertiesSection.appendChild(linkBtn);
+        hrefExample.addInteractiveDemo(linkBtn, false);
         assertEquals("href 속성: https://example.com이어야 함",
                 "https://example.com", linkBtn.href);
 
         // Target
-        addExampleCode(propertiesSection,
+        var targetExample = addExampleCode(propertiesSection,
             "📘 Target (링크 열기 방식)",
             "링크를 열 방식을 지정합니다. _blank는 새 탭에서 열기입니다.",
             """
@@ -93,11 +93,11 @@ public class BasicPropertiesTest {
                 .target("_blank")
                 .text("New Tab")
                 .element();
-        propertiesSection.appendChild(targetBtn);
+        targetExample.addInteractiveDemo(targetBtn, false);
         assertEquals("target 속성: _blank여야 함", "_blank", targetBtn.target);
 
         // Download
-        addExampleCode(propertiesSection,
+        var downloadExample = addExampleCode(propertiesSection,
             "📘 Download (다운로드)",
             "링크를 다운로드 링크로 만듭니다. 파일명을 지정할 수 있습니다.",
             """
@@ -112,7 +112,7 @@ public class BasicPropertiesTest {
                 .download("document.pdf")
                 .text("Download")
                 .element();
-        propertiesSection.appendChild(downloadBtn);
+        downloadExample.addInteractiveDemo(downloadBtn, false);
         assertEquals("download 속성: document.pdf여야 함",
                 "document.pdf", downloadBtn.download);
     }

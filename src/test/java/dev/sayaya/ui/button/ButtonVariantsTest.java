@@ -26,7 +26,7 @@ public class ButtonVariantsTest {
         variantsSection.appendChild(h(3).text("Button Variants").element());
 
         // Elevated Button
-        addExampleCode(variantsSection,
+        var elevatedExample = addExampleCode(variantsSection,
             "📘 Elevated Button (고양된 버튼)",
             "패턴 배경에서 시각적으로 분리하기 위해 사용합니다. 그림자 효과가 있습니다.",
             """
@@ -37,12 +37,12 @@ public class ButtonVariantsTest {
         var elevated = button().elevated()
                 .text("Elevated")
                 .element();
-        variantsSection.appendChild(elevated);
+        elevatedExample.addInteractiveDemo(elevated, false);
         assertEquals("elevated 버튼: 태그명은 md-elevated-button이어야 함",
                 "MD-ELEVATED-BUTTON", elevated.tagName);
 
         // Filled Button
-        addExampleCode(variantsSection,
+        var filledExample = addExampleCode(variantsSection,
             "📘 Filled Button (채워진 버튼)",
             "가장 높은 시각적 임팩트를 제공합니다. 중요한 최종 액션(저장, 제출 등)에 사용합니다.",
             """
@@ -53,12 +53,12 @@ public class ButtonVariantsTest {
         var filled = button().filled()
                 .text("Filled")
                 .element();
-        variantsSection.appendChild(filled);
+        filledExample.addInteractiveDemo(filled, false);
         assertEquals("filled 버튼: 태그명은 md-filled-button이어야 함",
                 "MD-FILLED-BUTTON", filled.tagName);
 
         // Filled Tonal Button
-        addExampleCode(variantsSection,
+        var filledTonalExample = addExampleCode(variantsSection,
             "📘 Filled Tonal Button (토널 버튼)",
             "Filled와 Outlined의 중간 강조 수준입니다. 부드러운 배경색을 가집니다.",
             """
@@ -69,12 +69,12 @@ public class ButtonVariantsTest {
         var filledTonal = button().filledTonal()
                 .text("Filled Tonal")
                 .element();
-        variantsSection.appendChild(filledTonal);
+        filledTonalExample.addInteractiveDemo(filledTonal, false);
         assertEquals("filled-tonal 버튼: 태그명은 md-filled-tonal-button이어야 함",
                 "MD-FILLED-TONAL-BUTTON", filledTonal.tagName);
 
         // Outlined Button
-        addExampleCode(variantsSection,
+        var outlinedExample = addExampleCode(variantsSection,
             "📘 Outlined Button (외곽선 버튼)",
             "중간 수준의 강조입니다. 중요하지만 주요하지 않은 액션(취소 등)에 사용합니다.",
             """
@@ -85,12 +85,12 @@ public class ButtonVariantsTest {
         var outlined = button().outlined()
                 .text("Outlined")
                 .element();
-        variantsSection.appendChild(outlined);
+        outlinedExample.addInteractiveDemo(outlined, false);
         assertEquals("outlined 버튼: 태그명은 md-outlined-button이어야 함",
                 "MD-OUTLINED-BUTTON", outlined.tagName);
 
         // Text Button
-        addExampleCode(variantsSection,
+        var textExample = addExampleCode(variantsSection,
             "📘 Text Button (텍스트 버튼)",
             "가장 낮은 우선순위입니다. 다중 옵션 표시나 덜 중요한 액션에 사용합니다.",
             """
@@ -101,7 +101,7 @@ public class ButtonVariantsTest {
         var text = button().text()
                 .text("Text")
                 .element();
-        variantsSection.appendChild(text);
+        textExample.addInteractiveDemo(text, false);
         assertEquals("text 버튼: 태그명은 md-text-button이어야 함",
                 "MD-TEXT-BUTTON", text.tagName);
     }

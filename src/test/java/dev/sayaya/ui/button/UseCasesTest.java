@@ -25,7 +25,7 @@ public class UseCasesTest {
         useCasesSection.appendChild(h(3).text("Use Cases").element());
 
         // Dialog Actions
-        addExampleCode(useCasesSection,
+        var dialogExample = addExampleCode(useCasesSection,
             "📘 Dialog Actions (다이얼로그 버튼)",
             "다이얼로그에서는 주요 액션에 Filled, 보조 액션에 Outlined를 사용합니다.",
             """
@@ -44,7 +44,6 @@ public class UseCasesTest {
                 .style("gap", "8px")
                 .style("justify-content", "flex-end")
                 .element();
-        useCasesSection.appendChild(confirmDialog);
 
         var primaryAction = button().filled()
                 .text("Confirm")
@@ -55,6 +54,7 @@ public class UseCasesTest {
 
         confirmDialog.appendChild(secondaryAction);
         confirmDialog.appendChild(primaryAction);
+        dialogExample.addInteractiveDemo(confirmDialog, false);
 
         assertEquals("다이얼로그: 주요 버튼은 filled",
                 "MD-FILLED-BUTTON", primaryAction.tagName);
@@ -62,7 +62,7 @@ public class UseCasesTest {
                 "MD-OUTLINED-BUTTON", secondaryAction.tagName);
 
         // Form Submit
-        addExampleCode(useCasesSection,
+        var submitExample = addExampleCode(useCasesSection,
             "📘 Form Submit (폼 제출)",
             "폼의 주요 제출 버튼은 Filled를 사용합니다.",
             """
@@ -75,7 +75,6 @@ public class UseCasesTest {
             form.appendChild(submitBtn);
             """);
         var submitForm = form().id("user-form").element();
-        useCasesSection.appendChild(submitForm);
 
         var submitButton = button().filled()
                 .type("submit")
@@ -83,12 +82,13 @@ public class UseCasesTest {
                 .text("Create Account")
                 .element();
         submitForm.appendChild(submitButton);
+        submitExample.addInteractiveDemo(submitForm, false);
 
         assertEquals("폼 제출: submit 타입", "submit", submitButton.type);
         assertEquals("폼 제출: filled 버튼", "MD-FILLED-BUTTON", submitButton.tagName);
 
         // External Link
-        addExampleCode(useCasesSection,
+        var linkExample = addExampleCode(useCasesSection,
             "📘 External Link (외부 링크)",
             "외부 문서나 사이트로 연결하는 버튼은 Text나 Outlined를 사용합니다.",
             """
@@ -105,14 +105,14 @@ public class UseCasesTest {
                 .href("https://material.io/components/buttons")
                 .target("_blank")
                 .element();
-        useCasesSection.appendChild(linkButton);
+        linkExample.addInteractiveDemo(linkButton, false);
 
         assertEquals("외부 링크: href 설정",
                 "https://material.io/components/buttons", linkButton.href);
         assertEquals("외부 링크: 새 탭에서 열기", "_blank", linkButton.target);
 
         // Multiple Options
-        addExampleCode(useCasesSection,
+        var optionsExample = addExampleCode(useCasesSection,
             "📘 Multiple Options (다중 옵션)",
             "여러 개의 선택지를 제공할 때는 Text 버튼을 사용합니다.",
             """
@@ -128,7 +128,6 @@ public class UseCasesTest {
                 .style("display", "flex")
                 .style("gap", "8px")
                 .element();
-        useCasesSection.appendChild(optionsContainer);
 
         var option1 = button().text().text("Option 1").element();
         var option2 = button().text().text("Option 2").element();
@@ -137,13 +136,14 @@ public class UseCasesTest {
         optionsContainer.appendChild(option1);
         optionsContainer.appendChild(option2);
         optionsContainer.appendChild(option3);
+        optionsExample.addInteractiveDemo(optionsContainer, false);
 
         assertEquals("다중 옵션: text 버튼", "MD-TEXT-BUTTON", option1.tagName);
         assertEquals("다중 옵션: text 버튼", "MD-TEXT-BUTTON", option2.tagName);
         assertEquals("다중 옵션: text 버튼", "MD-TEXT-BUTTON", option3.tagName);
 
         // Elevated on Pattern
-        addExampleCode(useCasesSection,
+        var elevatedExample = addExampleCode(useCasesSection,
             "📘 Elevated on Pattern (패턴 배경)",
             "패턴이나 이미지 배경 위에서는 Elevated 버튼이 시각적으로 분리됩니다.",
             """
@@ -159,18 +159,18 @@ public class UseCasesTest {
                 .style("padding", "20px")
                 .style("background", "repeating-linear-gradient(45deg, #f0f0f0, #f0f0f0 10px, #e0e0e0 10px, #e0e0e0 20px)")
                 .element();
-        useCasesSection.appendChild(patternedBackground);
 
         var elevatedOnPattern = button().elevated()
                 .text("Get Started")
                 .element();
         patternedBackground.appendChild(elevatedOnPattern);
+        elevatedExample.addInteractiveDemo(patternedBackground, false);
 
         assertEquals("패턴 배경: elevated 버튼",
                 "MD-ELEVATED-BUTTON", elevatedOnPattern.tagName);
 
         // Download Button
-        addExampleCode(useCasesSection,
+        var downloadExample = addExampleCode(useCasesSection,
             "📘 Download Button (다운로드 버튼)",
             "파일 다운로드는 아이콘과 함께 명확하게 표시합니다.",
             """
@@ -187,7 +187,7 @@ public class UseCasesTest {
                 .href("/reports/annual.pdf")
                 .download("annual_report.pdf")
                 .element();
-        useCasesSection.appendChild(downloadButton);
+        downloadExample.addInteractiveDemo(downloadButton, false);
 
         assertEquals("다운로드: download 속성",
                 "annual_report.pdf", downloadButton.download);

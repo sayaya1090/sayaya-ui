@@ -23,7 +23,7 @@ public class IconSupportTest {
         iconSection.appendChild(h(3).text("Icon Support").element());
 
         // Leading Icon
-        addExampleCode(iconSection,
+        var leadingExample = addExampleCode(iconSection,
             "📘 Leading Icon (선행 아이콘)",
             "버튼 텍스트 앞에 아이콘을 표시합니다. 액션의 의미를 시각적으로 강화합니다.",
             """
@@ -36,7 +36,7 @@ public class IconSupportTest {
                 .icon("send")
                 .text("Send")
                 .element();
-        iconSection.appendChild(leadingBtn);
+        leadingExample.addInteractiveDemo(leadingBtn, false);
 
         var leadingIcon = leadingBtn.querySelector("md-icon");
         assertNotNull("선행 아이콘: 아이콘 요소가 존재해야 함", leadingIcon);
@@ -46,7 +46,7 @@ public class IconSupportTest {
                 leadingBtn.trailingIcon);
 
         // Trailing Icon
-        addExampleCode(iconSection,
+        var trailingExample = addExampleCode(iconSection,
             "📘 Trailing Icon (후행 아이콘)",
             "버튼 텍스트 뒤에 아이콘을 표시합니다. 다음 단계나 방향을 나타낼 때 유용합니다.",
             """
@@ -59,7 +59,7 @@ public class IconSupportTest {
                 .text("Next")
                 .icon("arrow_forward", true)
                 .element();
-        iconSection.appendChild(trailingBtn);
+        trailingExample.addInteractiveDemo(trailingBtn, false);
 
         var trailingIcon = trailingBtn.querySelector("md-icon");
         assertNotNull("후행 아이콘: 아이콘 요소가 존재해야 함", trailingIcon);
@@ -69,7 +69,7 @@ public class IconSupportTest {
                 trailingBtn.trailingIcon);
 
         // Icon with Download
-        addExampleCode(iconSection,
+        var downloadExample = addExampleCode(iconSection,
             "📘 Icon with Link (아이콘과 링크)",
             "아이콘을 포함한 링크 버튼입니다. 다운로드나 외부 링크에 유용합니다.",
             """
@@ -86,7 +86,7 @@ public class IconSupportTest {
                 .href("/reports/annual.pdf")
                 .download("annual_report.pdf")
                 .element();
-        iconSection.appendChild(downloadBtn);
+        downloadExample.addInteractiveDemo(downloadBtn, false);
 
         var downloadIcon = downloadBtn.querySelector("md-icon");
         assertNotNull("다운로드 버튼: 아이콘이 존재해야 함", downloadIcon);

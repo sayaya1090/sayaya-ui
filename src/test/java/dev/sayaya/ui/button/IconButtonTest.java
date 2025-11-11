@@ -32,50 +32,50 @@ public class IconButtonTest {
         iconVariantsSection.appendChild(h(3).text("Icon Button Variants").element());
 
         // Standard Icon Button
-        addExampleCode(iconVariantsSection,
+        var standardExample = addExampleCode(iconVariantsSection,
             "📘 Standard Icon Button (기본 아이콘 버튼)",
             "가장 기본적인 아이콘 버튼입니다. 낮은 우선순위 액션에 사용합니다.",
             """
             var button = button().icon("settings").element();
             """);
         var standard = button().icon("settings").element();
-        iconVariantsSection.appendChild(standard);
+        standardExample.addInteractiveDemo(standard, false);
         assertEquals("standard 아이콘 버튼: md-icon-button",
                 "MD-ICON-BUTTON", standard.tagName);
 
         // Filled Icon Button
-        addExampleCode(iconVariantsSection,
+        var filledExample = addExampleCode(iconVariantsSection,
             "📘 Filled Icon Button (채워진 아이콘 버튼)",
             "가장 높은 시각적 임팩트를 제공합니다. 중요한 액션에 사용합니다.",
             """
             var button = button().icon("favorite").filled().element();
             """);
         var filled = button().icon("favorite").filled().element();
-        iconVariantsSection.appendChild(filled);
+        filledExample.addInteractiveDemo(filled, false);
         assertEquals("filled 아이콘 버튼: md-filled-icon-button",
                 "MD-FILLED-ICON-BUTTON", filled.tagName);
 
         // Filled Tonal Icon Button
-        addExampleCode(iconVariantsSection,
+        var filledTonalExample = addExampleCode(iconVariantsSection,
             "📘 Filled Tonal Icon Button (토널 아이콘 버튼)",
             "Filled와 Standard의 중간 강조 수준입니다.",
             """
             var button = button().icon("edit").filledTonal().element();
             """);
         var filledTonal = button().icon("edit").filledTonal().element();
-        iconVariantsSection.appendChild(filledTonal);
+        filledTonalExample.addInteractiveDemo(filledTonal, false);
         assertEquals("filled-tonal 아이콘 버튼: md-filled-tonal-icon-button",
                 "MD-FILLED-TONAL-ICON-BUTTON", filledTonal.tagName);
 
         // Outlined Icon Button
-        addExampleCode(iconVariantsSection,
+        var outlinedExample = addExampleCode(iconVariantsSection,
             "📘 Outlined Icon Button (외곽선 아이콘 버튼)",
             "중간 수준의 강조입니다. 명확한 경계가 필요할 때 사용합니다.",
             """
             var button = button().icon("delete").outlined().element();
             """);
         var outlined = button().icon("delete").outlined().element();
-        iconVariantsSection.appendChild(outlined);
+        outlinedExample.addInteractiveDemo(outlined, false);
         assertEquals("outlined 아이콘 버튼: md-outlined-icon-button",
                 "MD-OUTLINED-ICON-BUTTON", outlined.tagName);
     }
@@ -92,31 +92,31 @@ public class IconButtonTest {
         iconPropsSection.appendChild(h(3).text("Icon Button Properties").element());
 
         // Icon with String
-        addExampleCode(iconPropsSection,
+        var iconExample = addExampleCode(iconPropsSection,
             "📘 Icon (아이콘 설정)",
             "Material Icons의 아이콘 이름을 지정합니다.",
             """
             var button = button().icon("search").element();
             """);
         var iconBtn = button().icon("search").element();
-        iconPropsSection.appendChild(iconBtn);
+        iconExample.addInteractiveDemo(iconBtn, false);
 
         var icon = iconBtn.querySelector("md-icon");
         assertNotNull("아이콘: 존재해야 함", icon);
 
         // Disabled Icon Button
-        addExampleCode(iconPropsSection,
+        var disabledExample = addExampleCode(iconPropsSection,
             "📘 Disabled (비활성화)",
             "아이콘 버튼을 비활성화합니다.",
             """
             var button = button().icon("close").disabled(true).element();
             """);
         var disabledBtn = button().icon("close").disabled(true).element();
-        iconPropsSection.appendChild(disabledBtn);
+        disabledExample.addInteractiveDemo(disabledBtn, false);
         assertTrue("disabled: true", disabledBtn.disabled);
 
         // Link Icon Button
-        addExampleCode(iconPropsSection,
+        var linkExample = addExampleCode(iconPropsSection,
             "📘 Icon Button as Link (링크 아이콘 버튼)",
             "아이콘 버튼을 링크로 사용합니다.",
             """
@@ -129,13 +129,13 @@ public class IconButtonTest {
                 .href("https://example.com")
                 .target("_blank")
                 .element();
-        iconPropsSection.appendChild(linkBtn);
+        linkExample.addInteractiveDemo(linkBtn, false);
 
         assertEquals("링크: href 설정", "https://example.com", linkBtn.href);
         assertEquals("링크: target _blank", "_blank", linkBtn.target);
 
         // Aria Label (Accessibility)
-        addExampleCode(iconPropsSection,
+        var ariaExample = addExampleCode(iconPropsSection,
             "📘 Accessibility (접근성)",
             "아이콘 버튼은 반드시 aria-label을 제공해야 합니다.",
             """
@@ -146,7 +146,7 @@ public class IconButtonTest {
         var ariaBtn = button().icon("info")
                 .ariaLabel("More information")
                 .element();
-        iconPropsSection.appendChild(ariaBtn);
+        ariaExample.addInteractiveDemo(ariaBtn, false);
 
         assertEquals("aria-label: More information",
                 "More information",
@@ -165,7 +165,7 @@ public class IconButtonTest {
         toggleSection.appendChild(h(3).text("Toggle Icon Button").element());
 
         // Basic Toggle
-        addExampleCode(toggleSection,
+        var basicToggleExample = addExampleCode(toggleSection,
             "📘 Basic Toggle (기본 토글)",
             "on/off 상태를 가지는 토글 버튼입니다. 두 가지 아이콘을 번갈아 표시합니다.",
             """
@@ -178,26 +178,34 @@ public class IconButtonTest {
                 .toggle(true)
                 .toggle("visibility_off", false)
                 .element();
-        toggleSection.appendChild(toggleBtn1);
+        var basicToggleState = basicToggleExample.addInteractiveDemo(toggleBtn1);
+        basicToggleState.textContent = "Selected: " + toggleBtn1.selected;
+        toggleBtn1.addEventListener("click", evt -> {
+            basicToggleState.textContent = "Selected: " + toggleBtn1.selected;
+        });
 
         assertTrue("toggle: true", toggleBtn1.toggle);
         assertFalse("초기 selected: false", toggleBtn1.selected);
 
         // Pre-selected Toggle
-        addExampleCode(toggleSection,
+        var preselectedToggleExample = addExampleCode(toggleSection,
             "📘 Pre-selected Toggle (초기 선택 상태)",
             "토글 버튼의 초기 상태를 선택됨으로 설정합니다.",
             """
-            var button = button().icon("favorite_border")
+            var button = button().icon("circle")
                 .toggle(true)
-                .toggle("favorite", true)
+                .toggle("check_circle", true)
                 .element();
             """);
-        var toggleBtn2 = button().icon("favorite_border")
+        var toggleBtn2 = button().icon("circle")
                 .toggle(true)
-                .toggle("favorite", true)
+                .toggle("check_circle", true)
                 .element();
-        toggleSection.appendChild(toggleBtn2);
+        var preselectedToggleState = preselectedToggleExample.addInteractiveDemo(toggleBtn2);
+        preselectedToggleState.textContent = "Selected: " + toggleBtn2.selected;
+        toggleBtn2.addEventListener("click", evt -> {
+            preselectedToggleState.textContent = "Selected: " + toggleBtn2.selected;
+        });
 
         assertTrue("toggle: true", toggleBtn2.toggle);
         assertTrue("초기 selected: true", toggleBtn2.selected);
@@ -206,33 +214,42 @@ public class IconButtonTest {
         assertNotNull("selected 아이콘: 존재해야 함", selectedIcon);
 
         // Toggle with Aria Labels
-        addExampleCode(toggleSection,
+        var ariaToggleExample = addExampleCode(toggleSection,
             "📘 Toggle Accessibility (토글 접근성)",
             "각 상태에 대한 aria-label을 별도로 지정할 수 있습니다.",
             """
-            var button = button().icon()
-                .toggle(true)
-                .add("bookmark_border")
-                .toggle("bookmark")
-                .ariaLabel("Bookmark")
-                .ariaLabelSelected("Remove bookmark")
+            var button = button().icon("circle")
+                .toggle("check_circle", true)
+                .ariaLabel("Checked")
+                .ariaLabelSelected("Unchecked")
                 .element();
             """);
-        var toggleBtn3 = button().icon("bookmark_border")
+        var toggleBtn3 = button().icon("circle")
                 .toggle(true)
-                .toggle("bookmark")
-                .ariaLabel("Bookmark")
-                .ariaLabelSelected("Remove bookmark")
+                .toggle("check_circle")
+                .ariaLabel("Unchecked")
+                .ariaLabelSelected("Checked")
                 .element();
-        toggleSection.appendChild(toggleBtn3);
+        var ariaToggleState = ariaToggleExample.addInteractiveDemo(toggleBtn3);
+        var updateAriaToggleState = new Runnable() {
+            @Override
+            public void run() {
+                var currentLabel = toggleBtn3.selected ?
+                    toggleBtn3.getAttribute("aria-label-selected") :
+                    toggleBtn3.getAttribute("aria-label");
+                ariaToggleState.textContent = "Selected: " + toggleBtn3.selected + " | aria-label: " + currentLabel;
+            }
+        };
+        updateAriaToggleState.run();
+        toggleBtn3.addEventListener("click", evt -> updateAriaToggleState.run());
 
-        assertEquals("aria-label: Bookmark",
-                "Bookmark", toggleBtn3.getAttribute("aria-label"));
-        assertEquals("aria-label-selected: Remove bookmark",
-                "Remove bookmark", toggleBtn3.getAttribute("aria-label-selected"));
+        assertEquals("aria-label: Unchecked",
+                "Unchecked", toggleBtn3.getAttribute("aria-label"));
+        assertEquals("aria-label-selected: Checked",
+                "Checked", toggleBtn3.getAttribute("aria-label-selected"));
 
         // Filled Tonal Toggle
-        addExampleCode(toggleSection,
+        var styledToggleExample = addExampleCode(toggleSection,
             "📘 Styled Toggle (스타일이 적용된 토글)",
             "토글 버튼도 다양한 스타일을 적용할 수 있습니다.",
             """
@@ -250,7 +267,11 @@ public class IconButtonTest {
                 .ariaLabel("Enable notifications")
                 .ariaLabelSelected("Disable notifications")
                 .element();
-        toggleSection.appendChild(toggleBtn4);
+        var styledToggleState = styledToggleExample.addInteractiveDemo(toggleBtn4);
+        styledToggleState.textContent = "Selected: " + toggleBtn4.selected + " | Style: " + toggleBtn4.tagName;
+        toggleBtn4.addEventListener("click", evt -> {
+            styledToggleState.textContent = "Selected: " + toggleBtn4.selected + " | Style: " + toggleBtn4.tagName;
+        });
 
         assertEquals("스타일 토글: md-filled-tonal-icon-button",
                 "MD-FILLED-TONAL-ICON-BUTTON", toggleBtn4.tagName);

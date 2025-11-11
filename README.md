@@ -46,7 +46,7 @@ dependencies {
 | 컴포넌트 | 빌더 | 설명 | 데모 |
 |---------|------|-----|-----|
 | **Button** | `button()` | Elevated, Filled, Filled Tonal, Outlined, Text | [🔗](https://sayaya1090.github.io/sayaya-ui/button.html) |
-| **Icon Button** | `button().icon()` | Standard, Filled, Filled Tonal, Outlined, Toggle | [🔗](https://sayaya1090.github.io/sayaya-ui/button.html) |
+| | `button().icon()` | Standard, Filled, Filled Tonal, Outlined, Toggle | |
 | **Checkbox** | `checkbox()` | indeterminate 상태를 지원하는 선택 컨트롤 | [🔗](https://sayaya1090.github.io/sayaya-ui/checkbox.html) |
 | **Chip** | `chips()` | Assist, Filter, Input, Suggestion 칩 | [🔗](https://sayaya1090.github.io/sayaya-ui/chip.html) |
 | **Divider** | `divider()` | 가로 및 세로 구분선 | [🔗](https://sayaya1090.github.io/sayaya-ui/divider.html) |

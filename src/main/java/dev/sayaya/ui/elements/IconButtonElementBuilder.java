@@ -22,6 +22,10 @@ public interface IconButtonElementBuilder<E extends MdIconButtonElement, SELF ex
         element().toggle = toggle;
         return that();
     }
+    @Override default SELF icon(Element icon) {
+        this.add(icon);
+        return that();
+    }
     default SELF toggle(String icon) {
         return toggle(icon, false);
     }
@@ -60,14 +64,23 @@ public interface IconButtonElementBuilder<E extends MdIconButtonElement, SELF ex
 
     final class PlainIconButtonElementBuilder implements IconButtonElementBuilder<MdIconButtonElement, PlainIconButtonElementBuilder> {
         private final HTMLContainerBuilder<MdIconButtonElement> that = htmlContainer("md-icon-button", MdIconButtonElement.class);
+        private <T extends IconButtonElementBuilder<?, T>> T copy(T builder) {
+            for(var child: this.element().childNodes.asList()) builder.element().append(child);
+            var source = this.element();
+            var target = builder.element();
+            target.disabled = source.disabled;
+            if (source.href != null) target.href = source.href;
+            if (source.target != null) target.target = source.target;
+            return builder;
+        }
         public FilledIconButtonElementBuilder filled() {
-            return new FilledIconButtonElementBuilder();
+            return copy(new FilledIconButtonElementBuilder());
         }
         public FilledTonalIconButtonElementBuilder filledTonal() {
-            return new FilledTonalIconButtonElementBuilder();
+            return copy(new FilledTonalIconButtonElementBuilder());
         }
         public OutlinedIconButtonElementBuilder outlined() {
-            return new OutlinedIconButtonElementBuilder();
+            return copy(new OutlinedIconButtonElementBuilder());
         }
 
         @Override

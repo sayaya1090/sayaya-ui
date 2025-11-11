@@ -25,7 +25,7 @@ public class FormPropertiesTest {
         formSection.appendChild(h(3).text("Form Properties").element());
 
         // Type - Submit
-        addExampleCode(formSection,
+        var submitExample = addExampleCode(formSection,
             "📘 Type - Submit (제출 버튼)",
             "폼을 제출하는 버튼입니다. 클릭 시 폼의 submit 이벤트가 발생합니다.",
             """
@@ -37,16 +37,16 @@ public class FormPropertiesTest {
             form.appendChild(button);
             """);
         var formElement1 = form().id("test-form-1").element();
-        formSection.appendChild(formElement1);
         var submitBtn = button().filled()
                 .type("submit")
                 .text("Submit")
                 .element();
         formElement1.appendChild(submitBtn);
+        submitExample.addInteractiveDemo(formElement1, false);
         assertEquals("type 속성: submit이어야 함", "submit", submitBtn.type);
 
         // Type - Reset
-        addExampleCode(formSection,
+        var resetExample = addExampleCode(formSection,
             "📘 Type - Reset (초기화 버튼)",
             "폼의 모든 필드를 초기값으로 되돌립니다.",
             """
@@ -58,16 +58,16 @@ public class FormPropertiesTest {
             form.appendChild(button);
             """);
         var formElement2 = form().id("test-form-2").element();
-        formSection.appendChild(formElement2);
         var resetBtn = button().outlined()
                 .type("reset")
                 .text("Reset")
                 .element();
         formElement2.appendChild(resetBtn);
+        resetExample.addInteractiveDemo(formElement2, false);
         assertEquals("type 속성: reset이어야 함", "reset", resetBtn.type);
 
         // Name
-        addExampleCode(formSection,
+        var nameExample = addExampleCode(formSection,
             "📘 Name (필드명)",
             "폼 데이터에서 이 버튼을 식별하는 이름입니다.",
             """
@@ -80,11 +80,11 @@ public class FormPropertiesTest {
                 .name("action")
                 .text("Action")
                 .element();
-        formSection.appendChild(namedBtn);
+        nameExample.addInteractiveDemo(namedBtn, false);
         assertEquals("name 속성: action이어야 함", "action", namedBtn.name);
 
         // Value
-        addExampleCode(formSection,
+        var valueExample = addExampleCode(formSection,
             "📘 Value (값)",
             "폼 제출 시 이 버튼이 전송할 값입니다.",
             """
@@ -99,11 +99,11 @@ public class FormPropertiesTest {
                 .value("save")
                 .text("Save")
                 .element();
-        formSection.appendChild(valueBtn);
+        valueExample.addInteractiveDemo(valueBtn, false);
         assertEquals("value 속성: save여야 함", "save", valueBtn.value);
 
         // Form
-        addExampleCode(formSection,
+        var formExample = addExampleCode(formSection,
             "📘 Form (폼 연결)",
             "버튼을 특정 폼 요소와 연결합니다. 폼 밖에 있어도 작동합니다.",
             """
@@ -120,7 +120,10 @@ public class FormPropertiesTest {
                 .form(formElement3)
                 .text("Form Button")
                 .element();
-        formSection.appendChild(formBtn);
+        var formDemo = div().style("display", "flex").style("flex-direction", "column").style("gap", "8px").element();
+        formDemo.appendChild(formElement3);
+        formDemo.appendChild(formBtn);
+        formExample.addInteractiveDemo(formDemo, false);
         assertEquals("form 속성: 속성을 통해 폼 요소를 참조해야 함",
                 "test-form-3", formBtn.getAttribute("form"));
     }
