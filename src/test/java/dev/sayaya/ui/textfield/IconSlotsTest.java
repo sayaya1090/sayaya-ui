@@ -25,7 +25,7 @@ public class IconSlotsTest {
         iconSection.appendChild(h(3).text("Icon Slots").element());
 
         // Leading icon
-        addExampleCode(iconSection,
+        var leadingIconExample = addExampleCode(iconSection,
             "📘 Leading Icon (앞 아이콘)",
             "입력 필드 앞에 아이콘을 배치합니다. Material Symbols 아이콘명을 사용합니다.",
             """
@@ -38,12 +38,12 @@ public class IconSlotsTest {
                 .label("검색")
                 .iconLeading("search")
                 .element();
-        iconSection.appendChild(leadingIconField);
+        leadingIconExample.addInteractiveDemo(leadingIconField, false);
         var leadingIcon = leadingIconField.querySelector("[slot='leading-icon']");
         assertNotNull("leading icon: 아이콘이 존재해야 함", leadingIcon);
 
         // Trailing icon
-        addExampleCode(iconSection,
+        var trailingIconExample = addExampleCode(iconSection,
             "📘 Trailing Icon (뒤 아이콘)",
             "입력 필드 뒤에 아이콘을 배치합니다. 비밀번호 표시/숨김 등에 사용됩니다.",
             """
@@ -58,12 +58,12 @@ public class IconSlotsTest {
                 .type(InputType.password)
                 .iconTrailing("visibility")
                 .element();
-        iconSection.appendChild(trailingIconField);
+        trailingIconExample.addInteractiveDemo(trailingIconField, false);
         var trailingIcon = trailingIconField.querySelector("[slot='trailing-icon']");
         assertNotNull("trailing icon: 아이콘이 존재해야 함", trailingIcon);
 
         // Both icons
-        addExampleCode(iconSection,
+        var bothIconsExample = addExampleCode(iconSection,
             "📘 양쪽 아이콘",
             "앞뒤 모두 아이콘을 배치할 수 있습니다.",
             """
@@ -78,7 +78,7 @@ public class IconSlotsTest {
                 .iconLeading("attach_money")
                 .iconTrailing("info")
                 .element();
-        iconSection.appendChild(bothIconsField);
+        bothIconsExample.addInteractiveDemo(bothIconsField, false);
         var leading = bothIconsField.querySelector("[slot='leading-icon']");
         var trailing = bothIconsField.querySelector("[slot='trailing-icon']");
         assertNotNull("both icons: leading 아이콘이 존재해야 함", leading);

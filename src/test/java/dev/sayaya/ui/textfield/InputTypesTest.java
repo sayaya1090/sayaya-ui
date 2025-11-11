@@ -28,7 +28,7 @@ public class InputTypesTest {
         typesSection.appendChild(h(3).text("Input Types").element());
 
         // Email type
-        addExampleCode(typesSection,
+        var emailExample = addExampleCode(typesSection,
             "📘 Email 입력",
             "이메일 형식 검증이 자동으로 적용됩니다. 입력을 마치면(포커스 이동 시) 자동으로 검증됩니다.",
             """
@@ -53,7 +53,7 @@ public class InputTypesTest {
             emailField.reportValidity();
             return null;
         };
-        typesSection.appendChild(emailField);
+        emailExample.addInteractiveDemo(emailField, false);
         assertEquals("type 속성: 'email'이어야 함",
                 "email", emailField.type);
 
@@ -65,7 +65,7 @@ public class InputTypesTest {
         assertTrue("email validation: 올바른 이메일은 valid", emailField.checkValidity());
 
         // Password type
-        addExampleCode(typesSection,
+        var passwordExample = addExampleCode(typesSection,
             "📘 Password 입력",
             "입력한 텍스트가 자동으로 마스킹됩니다.",
             """
@@ -78,12 +78,12 @@ public class InputTypesTest {
                 .type(InputType.password)
                 .label("비밀번호")
                 .element();
-        typesSection.appendChild(passwordField);
+        passwordExample.addInteractiveDemo(passwordField, false);
         assertEquals("type 속성: 'password'여야 함",
                 "password", passwordField.type);
 
         // Number type
-        addExampleCode(typesSection,
+        var numberExample = addExampleCode(typesSection,
             "📘 Number 입력 (min, max, step)",
             "숫자 입력 시 최소값, 최대값, 증감 단위를 설정할 수 있습니다. 범위를 벗어나면 자동으로 검증됩니다.",
             """
@@ -110,7 +110,7 @@ public class InputTypesTest {
             numberField.reportValidity();
             return null;
         };
-        typesSection.appendChild(numberField);
+        numberExample.addInteractiveDemo(numberField, false);
         assertEquals("type 속성: 'number'여야 함",
                 "number", numberField.type);
         assertEquals("min 속성: '0'이어야 함", "0", numberField.min);
@@ -128,7 +128,7 @@ public class InputTypesTest {
         assertTrue("number validation: 범위 내 값은 valid", numberField.checkValidity());
 
         // Tel type
-        addExampleCode(typesSection,
+        var telExample = addExampleCode(typesSection,
             "📘 Tel 입력",
             "전화번호 입력 필드입니다. 모바일에서 숫자 키패드가 표시됩니다.",
             """
@@ -143,12 +143,12 @@ public class InputTypesTest {
                 .label("전화번호")
                 .placeholder("010-1234-5678")
                 .element();
-        typesSection.appendChild(telField);
+        telExample.addInteractiveDemo(telField, false);
         assertEquals("type 속성: 'tel'이어야 함",
                 "tel", telField.type);
 
         // URL type
-        addExampleCode(typesSection,
+        var urlExample = addExampleCode(typesSection,
             "📘 URL 입력",
             "웹 주소 입력 필드입니다. URL 형식 검증이 자동으로 적용됩니다 (프로토콜 포함 필수).",
             """
@@ -173,7 +173,7 @@ public class InputTypesTest {
             urlField.reportValidity();
             return null;
         };
-        typesSection.appendChild(urlField);
+        urlExample.addInteractiveDemo(urlField, false);
         assertEquals("type 속성: 'url'이어야 함",
                 "url", urlField.type);
 

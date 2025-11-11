@@ -27,7 +27,7 @@ public class CustomValidationTest {
         customSection.appendChild(h(3).text("Custom Validation").element());
 
         // setCustomValidity() test
-        addExampleCode(customSection,
+        var customValidityExample = addExampleCode(customSection,
             "📘 setCustomValidity() - 서버 검증",
             "서버에서 검증 후 커스텀 에러를 설정할 수 있습니다 (예: 중복 확인).",
             """
@@ -41,7 +41,7 @@ public class CustomValidationTest {
                 } else {
                     usernameField.setCustomValidity("");  // 에러 제거
                 }
- 
+
                 return null;
             };
             """);
@@ -58,7 +58,7 @@ public class CustomValidationTest {
             customField.reportValidity();
             return null;
         };
-        customSection.appendChild(customField);
+        customValidityExample.addInteractiveDemo(customField, false);
 
         // Validation tests
         customField.value = "admin";
@@ -69,7 +69,7 @@ public class CustomValidationTest {
         assertTrue("custom validation: 에러 제거 시 valid", customField.checkValidity());
 
         // Test 3: Manual error state
-        addExampleCode(customSection,
+        var manualErrorExample = addExampleCode(customSection,
             "📘 즉시 에러 표시",
             "빌더 패턴에서 바로 에러를 설정할 수 있습니다.",
             """
@@ -84,14 +84,14 @@ public class CustomValidationTest {
                 .value("123")
                 .error("비밀번호가 너무 짧습니다")
                 .element();
-        customSection.appendChild(manualErrorField);
+        manualErrorExample.addInteractiveDemo(manualErrorField, false);
 
         assertTrue("manual error: error 상태여야 함", manualErrorField.error);
         assertEquals("manual error: errorText가 설정되어야 함",
                 "비밀번호가 너무 짧습니다", manualErrorField.errorText);
 
         // Dynamic error update test
-        addExampleCode(customSection,
+        var dynamicErrorExample = addExampleCode(customSection,
             "📘 동적 에러 상태 변경",
             "실시간으로 에러 상태를 변경할 수 있습니다.",
             """
@@ -137,7 +137,7 @@ public class CustomValidationTest {
             }
             return null;
         };
-        customSection.appendChild(dynamicField);
+        dynamicErrorExample.addInteractiveDemo(dynamicField, false);
 
         // Validation tests
         assertFalse("dynamic error: 초기 상태는 에러 없음", dynamicField.error);

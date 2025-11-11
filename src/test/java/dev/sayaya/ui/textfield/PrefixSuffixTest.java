@@ -23,7 +23,7 @@ public class PrefixSuffixTest {
         prefixSection.appendChild(h(3).text("Prefix & Suffix").element());
 
         // Prefix text
-        addExampleCode(prefixSection,
+        var prefixExample = addExampleCode(prefixSection,
             "📘 Prefix Text (접두사)",
             "입력 필드 앞에 고정 텍스트를 표시합니다. URL이나 통화 기호 등에 유용합니다.",
             """
@@ -36,12 +36,12 @@ public class PrefixSuffixTest {
                 .label("웹사이트")
                 .prefixText("https://")
                 .element();
-        prefixSection.appendChild(prefixField);
+        prefixExample.addInteractiveDemo(prefixField, false);
         assertEquals("prefixText 속성: 'https://'여야 함",
                 "https://", prefixField.prefixText);
 
         // Suffix text
-        addExampleCode(prefixSection,
+        var suffixExample = addExampleCode(prefixSection,
             "📘 Suffix Text (접미사)",
             "입력 필드 뒤에 고정 텍스트를 표시합니다. 단위나 통화 기호 등에 유용합니다.",
             """
@@ -54,12 +54,12 @@ public class PrefixSuffixTest {
                 .label("가격")
                 .suffixText("원")
                 .element();
-        prefixSection.appendChild(suffixField);
+        suffixExample.addInteractiveDemo(suffixField, false);
         assertEquals("suffixText 속성: '원'이어야 함",
                 "원", suffixField.suffixText);
 
         // Both prefix and suffix
-        addExampleCode(prefixSection,
+        var bothExample = addExampleCode(prefixSection,
             "📘 Prefix + Suffix 조합",
             "접두사와 접미사를 함께 사용할 수 있습니다.",
             """
@@ -74,7 +74,7 @@ public class PrefixSuffixTest {
                 .prefixText("-")
                 .suffixText("%")
                 .element();
-        prefixSection.appendChild(bothField);
+        bothExample.addInteractiveDemo(bothField, false);
         assertEquals("prefix와 suffix: prefixText는 '-'여야 함",
                 "-", bothField.prefixText);
         assertEquals("prefix와 suffix: suffixText는 '%'여야 함",

@@ -23,7 +23,7 @@ public class TextFieldVariantsTest {
         variantsSection.appendChild(h(3).text("TextField Variants").element());
 
         // Filled TextField
-        addExampleCode(variantsSection,
+        var filledExample = addExampleCode(variantsSection,
             "📘 Filled TextField",
             "채워진 배경 스타일. 주요 입력 필드나 검색창 등에 적합합니다.",
             """
@@ -34,12 +34,12 @@ public class TextFieldVariantsTest {
         var filled = textField().filled()
                 .label("이름")
                 .element();
-        variantsSection.appendChild(filled);
+        filledExample.addInteractiveDemo(filled, false);
         assertEquals("filled 텍스트 필드: 태그명은 MD-FILLED-TEXT-FIELD여야 함",
                 "MD-FILLED-TEXT-FIELD", filled.tagName);
 
         // Outlined TextField
-        addExampleCode(variantsSection,
+        var outlinedExample = addExampleCode(variantsSection,
             "📘 Outlined TextField",
             "테두리 스타일. 설정 화면이나 폼에서 가벼운 느낌을 원할 때 사용합니다.",
             """
@@ -50,7 +50,7 @@ public class TextFieldVariantsTest {
         var outlined = textField().outlined()
                 .label("이메일")
                 .element();
-        variantsSection.appendChild(outlined);
+        outlinedExample.addInteractiveDemo(outlined, false);
         assertEquals("outlined 텍스트 필드: 태그명은 MD-OUTLINED-TEXT-FIELD여야 함",
                 "MD-OUTLINED-TEXT-FIELD", outlined.tagName);
     }

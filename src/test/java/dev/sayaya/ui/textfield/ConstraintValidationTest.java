@@ -26,7 +26,7 @@ public class ConstraintValidationTest {
         constraintSection.appendChild(h(3).text("Constraint Validation").element());
 
         // checkValidity() test
-        addExampleCode(constraintSection,
+        var checkValidityExample = addExampleCode(constraintSection,
             "📘 checkValidity() - 유효성 검사",
             "HTML5 표준 검증을 수행하고 true/false를 반환합니다. onChange에서 검증 여부를 확인할 수 있습니다.",
             """
@@ -55,7 +55,7 @@ public class ConstraintValidationTest {
             }
             return null;
         };
-        constraintSection.appendChild(checkValidityField);
+        checkValidityExample.addInteractiveDemo(checkValidityField, false);
 
         // Validation tests
         checkValidityField.value = "test@example.com";
@@ -65,7 +65,7 @@ public class ConstraintValidationTest {
         assertFalse("checkValidity: 잘못된 이메일은 invalid", checkValidityField.checkValidity());
 
         // reportValidity() test
-        addExampleCode(constraintSection,
+        var reportValidityExample = addExampleCode(constraintSection,
             "📘 reportValidity() - 검증 + 에러 표시",
             "유효성 검사 후 자동으로 에러 메시지를 표시합니다.",
             """
@@ -86,7 +86,7 @@ public class ConstraintValidationTest {
             reportValidityField.reportValidity();
             return null;
         };
-        constraintSection.appendChild(reportValidityField);
+        reportValidityExample.addInteractiveDemo(reportValidityField, false);
 
         // Validation tests
         assertFalse("reportValidity: 빈 필수 필드는 false 반환", reportValidityField.reportValidity());
@@ -95,7 +95,7 @@ public class ConstraintValidationTest {
         assertTrue("reportValidity: 값이 있으면 true 반환", reportValidityField.reportValidity());
 
         // Test 5: Pattern with suffix-text
-        addExampleCode(constraintSection,
+        var patternSuffixExample = addExampleCode(constraintSection,
             "📘 Pattern + Suffix 조합",
             "패턴 검증과 접미사를 조합하여 도메인이 고정된 이메일 입력을 만들 수 있습니다.",
             """
@@ -120,7 +120,7 @@ public class ConstraintValidationTest {
             emailPattern.reportValidity();
             return null;
         };
-        constraintSection.appendChild(emailPattern);
+        patternSuffixExample.addInteractiveDemo(emailPattern, false);
 
         var patternValid = emailPattern.checkValidity();
         assertTrue("pattern + suffix: 'johndoe'는 유효한 패턴", patternValid);
@@ -129,9 +129,10 @@ public class ConstraintValidationTest {
         emailPattern.value = "invalid@email";
         var patternInvalid = !emailPattern.checkValidity();
         assertTrue("pattern + suffix: '@' 포함 시 패턴 불일치", patternInvalid);
+        emailPattern.reportValidity();
 
         // ValidityState test
-        addExampleCode(constraintSection,
+        var validityStateExample = addExampleCode(constraintSection,
             "📘 ValidityState 객체",
             "validity 속성으로 다양한 검증 상태를 확인할 수 있습니다 (valueMissing, typeMismatch, patternMismatch 등).",
             """
@@ -163,7 +164,7 @@ public class ConstraintValidationTest {
             elemental2.dom.DomGlobal.console.log("valid: " + stateCheck.validity.valid);
             return null;
         };
-        constraintSection.appendChild(stateCheck);
+        validityStateExample.addInteractiveDemo(stateCheck, false);
 
         assertNotNull("ValidityState: validity 객체가 존재해야 함", stateCheck.validity);
     }

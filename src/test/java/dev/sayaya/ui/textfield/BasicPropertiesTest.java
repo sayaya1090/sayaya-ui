@@ -27,7 +27,7 @@ public class BasicPropertiesTest {
         propertiesSection.appendChild(h(3).text("Basic Properties").element());
 
         // Label
-        addExampleCode(propertiesSection,
+        var labelExample = addExampleCode(propertiesSection,
             "📘 Label (라벨)",
             "입력 필드의 라벨을 지정합니다.",
             """
@@ -38,12 +38,12 @@ public class BasicPropertiesTest {
         var labelField = textField().filled()
                 .label("사용자명")
                 .element();
-        propertiesSection.appendChild(labelField);
+        labelExample.addInteractiveDemo(labelField, false);
         assertEquals("label 속성: '사용자명'이어야 함",
                 "사용자명", labelField.label);
 
         // Value
-        addExampleCode(propertiesSection,
+        var valueExample = addExampleCode(propertiesSection,
             "📘 Value (초기값)",
             "필드의 초기값을 설정합니다.",
             """
@@ -56,12 +56,12 @@ public class BasicPropertiesTest {
                 .label("초기값 예시")
                 .value("초기값")
                 .element();
-        propertiesSection.appendChild(valueField);
+        valueExample.addInteractiveDemo(valueField, false);
         assertEquals("value 속성: '초기값'이어야 함",
                 "초기값", valueField.value);
 
         // Placeholder
-        addExampleCode(propertiesSection,
+        var placeholderExample = addExampleCode(propertiesSection,
             "📘 Placeholder (힌트 텍스트)",
             "필드가 비어있을 때 보여줄 힌트 텍스트입니다.",
             """
@@ -74,12 +74,12 @@ public class BasicPropertiesTest {
                 .label("Placeholder 예시")
                 .placeholder("텍스트를 입력하세요")
                 .element();
-        propertiesSection.appendChild(placeholderField);
+        placeholderExample.addInteractiveDemo(placeholderField, false);
         assertEquals("placeholder 속성: '텍스트를 입력하세요'여야 함",
                 "텍스트를 입력하세요", placeholderField.placeholder);
 
         // Required
-        addExampleCode(propertiesSection,
+        var requiredExample = addExampleCode(propertiesSection,
             "📘 Required (필수 입력)",
             "필수 입력 필드로 지정합니다. 비어있으면 검증 실패합니다.",
             """
@@ -100,7 +100,7 @@ public class BasicPropertiesTest {
             requiredField.reportValidity();
             return null;
         };
-        propertiesSection.appendChild(requiredField);
+        requiredExample.addInteractiveDemo(requiredField, false);
         assertTrue("required 속성: true여야 함", requiredField.required);
 
         // Required validation test
@@ -110,7 +110,7 @@ public class BasicPropertiesTest {
         assertTrue("required validation: 값이 있으면 valid", requiredField.checkValidity());
 
         // Disabled
-        addExampleCode(propertiesSection,
+        var disabledExample = addExampleCode(propertiesSection,
             "📘 Disabled (비활성화)",
             "필드를 비활성화하여 입력과 선택을 모두 차단합니다.",
             """
@@ -125,11 +125,11 @@ public class BasicPropertiesTest {
                 .value("수정 불가")
                 .disabled(true)
                 .element();
-        propertiesSection.appendChild(disabledField);
+        disabledExample.addInteractiveDemo(disabledField, false);
         assertTrue("disabled 속성: true여야 함", disabledField.disabled);
 
         // Name
-        addExampleCode(propertiesSection,
+        var nameExample = addExampleCode(propertiesSection,
             "📘 Name (폼 필드명)",
             "폼 제출 시 사용될 필드 이름을 지정합니다.",
             """
@@ -142,7 +142,7 @@ public class BasicPropertiesTest {
                 .label("Name 속성")
                 .name("username")
                 .element();
-        propertiesSection.appendChild(nameField);
+        nameExample.addInteractiveDemo(nameField, false);
         assertEquals("name 속성: 'username'이어야 함",
                 "username", nameField.name);
     }
