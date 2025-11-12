@@ -58,6 +58,7 @@ tasks {
                 "dev.sayaya.DividerElementTest",
                 "dev.sayaya.FocusRingElementTest",
                 "dev.sayaya.IconElementTest",
+                "dev.sayaya.RadioElementTest",
                 "dev.sayaya.RippleElementTest",
                 "dev.sayaya.SelectElementTest",
                 "dev.sayaya.TextFieldElementTest",

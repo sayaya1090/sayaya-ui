@@ -49,6 +49,7 @@ dependencies {
 | | `button().icon()` | Standard, Filled, Filled Tonal, Outlined, Toggle | |
 | **Checkbox** | `checkbox()` | indeterminate 상태를 지원하는 선택 컨트롤 | [🔗](https://sayaya1090.github.io/sayaya-ui/checkbox.html) |
 | **Chip** | `chips()` | Assist, Filter, Input, Suggestion 칩 | [🔗](https://sayaya1090.github.io/sayaya-ui/chip.html) |
+| **Radio** | `radio()` | 그룹 내에서 단일 선택을 위한 라디오 버튼 | [🔗](https://sayaya1090.github.io/sayaya-ui/radio.html) |
 | **Dialog** | `dialog()` | Modal 다이얼로그, Alert 다이얼로그 | [🔗](https://sayaya1090.github.io/sayaya-ui/dialog.html) |
 | **Divider** | `divider()` | 가로 및 세로 구분선 | [🔗](https://sayaya1090.github.io/sayaya-ui/divider.html) |
 | **Icon** | `icon()` | Material Symbols 통합 | [🔗](https://sayaya1090.github.io/sayaya-ui/icon.html) |
@@ -103,6 +104,45 @@ var agreeCheckbox = checkbox()
 var selectAllCheckbox = checkbox()
     .indeterminate(true)
     .ariaLabel("전체 선택")
+    .element();
+```
+
+### Radio
+
+```java
+import static dev.sayaya.ui.elements.RadioElementBuilder.radio;
+
+// 라디오 버튼 그룹
+var radioGroup = div()
+    .add(label()
+        .add("소형: ")
+        .add(radio()
+            .name("size")
+            .value("small")
+            .ariaLabel("소형")))
+    .add(label()
+        .add("중형: ")
+        .add(radio()
+            .name("size")
+            .value("medium")
+            .select(true)
+            .ariaLabel("중형")))
+    .add(label()
+        .add("대형: ")
+        .add(radio()
+            .name("size")
+            .value("large")
+            .ariaLabel("대형")))
+    .element();
+
+// 이벤트 처리
+var optionRadio = radio()
+    .name("option")
+    .value("option1")
+    .onChange(e -> handleSelection())
+    .onInput(e -> handleInput())
+    .required(true)
+    .ariaLabel("옵션 1")
     .element();
 ```
 
@@ -267,6 +307,7 @@ sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제�
 
 - **`Disableable`** - 비활성화 가능한 컴포넌트
 - **`Selectable`** - 선택 상태가 있는 컴포넌트
+- **`Requireable`** - 필수 입력이 가능한 컴포넌트
 - **`Toggleable`** - 토글 기능이 있는 컴포넌트
 - **`Linkable`** - 링크로 동작할 수 있는 컴포넌트
 - **`FormAssociable`** - 폼과 통합되는 컴포넌트
@@ -277,6 +318,8 @@ sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제�
 - **`HasHeadlineSlot`** - 제목 슬롯이 있는 컴포넌트
 - **`HasContentSlot`** - 본문 슬롯이 있는 컴포넌트
 - **`HasActionsSlot`** - 액션 버튼 슬롯이 있는 컴포넌트
+- **`HasInputEvent`** - Input 이벤트를 지원하는 컴포넌트
+- **`HasChangeEvent`** - Change 이벤트를 지원하는 컴포넌트
 - **`HasDialogEvents`** - Dialog 이벤트를 지원하는 컴포넌트
 - **`HasMenuEvents`** - 메뉴 이벤트를 지원하는 컴포넌트
 
@@ -315,21 +358,30 @@ sayaya-ui/
 │   ├── dom/              # Material Web 요소에 대한 JsInterop 바인딩
 │   │   ├── MdButtonElement.java
 │   │   ├── MdCheckboxElement.java
+│   │   ├── MdRadioElement.java
 │   │   ├── MdChipElement.java
 │   │   ├── MdDialogElement.java
 │   │   └── ...
 │   └── elements/         # 유창한 빌더 API
 │       ├── ButtonElementBuilder.java
 │       ├── CheckboxElementBuilder.java
+│       ├── RadioElementBuilder.java
 │       ├── ChipsElementBuilder.java
 │       ├── DialogElementBuilder.java
 │       └── interfaces/   # 재사용 가능한 빌더 특성
 │           ├── Disableable.java
 │           ├── Selectable.java
+│           ├── Requireable.java
+│           ├── FormAssociable.java
+│           ├── HasInputEvent.java
+│           ├── HasChangeEvent.java
 │           ├── HasDialogEvents.java
 │           └── ...
 └── src/test/
     ├── java/             # GWT 테스트 진입점
+    │   └── dev/sayaya/ui/
+    │       ├── radio/    # Radio 테스트 케이스
+    │       └── ...
     ├── kotlin/           # Kotest 명세
     └── webapp/           # 테스트 HTML 페이지
 ```
