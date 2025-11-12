@@ -32,6 +32,7 @@ public interface ButtonElementBuilder<E extends MdButtonElement, SELF extends Bu
     }
     default SELF icon(MdIconElement icon, boolean trailing) {
         this.add(icon);
+        icon.setAttribute("slot", "icon");
         element().trailingIcon = trailing;
         return that();
     }
