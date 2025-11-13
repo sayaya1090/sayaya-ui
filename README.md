@@ -54,8 +54,11 @@ dependencies {
 | **Divider** | `divider()` | 가로 및 세로 구분선 | [🔗](https://sayaya1090.github.io/sayaya-ui/divider.html) |
 | **Icon** | `icon()` | Material Symbols 통합 | [🔗](https://sayaya1090.github.io/sayaya-ui/icon.html) |
 | **Focus Ring** | `focusRing()` | 접근성을 위한 포커스 표시 | [🔗](https://sayaya1090.github.io/sayaya-ui/focus_ring.html) |
+| **Progress** | `progress()` | Linear, Circular 진행률 표시 | [🔗](https://sayaya1090.github.io/sayaya-ui/progress.html) |
 | **Ripple** | `ripple()` | 인터랙티브 리플 효과 | [🔗](https://sayaya1090.github.io/sayaya-ui/ripple.html) |
 | **Select** | `select()` | Filled, Outlined 드롭다운 선택 | [🔗](https://sayaya1090.github.io/sayaya-ui/select.html) |
+| **Slider** | `slider()` | Continuous, Discrete, Range 슬라이더 | [🔗](https://sayaya1090.github.io/sayaya-ui/slider.html) |
+| **Switch** | `sw()` | 아이콘 지원 토글 스위치 | [🔗](https://sayaya1090.github.io/sayaya-ui/switch.html) |
 | **Text Field** | `textField()` | Filled, Outlined 텍스트 입력 | [🔗](https://sayaya1090.github.io/sayaya-ui/text_field.html) |
 
 ## 사용 예제
@@ -171,6 +174,132 @@ var tagChips = chips()
         .removable(true)
         .onRemove(e -> removeTag("프론트엔드"))
         .done()
+    .element();
+```
+
+### Slider
+
+```java
+import static dev.sayaya.ui.elements.SliderElementBuilder.slider;
+
+// 연속 슬라이더
+var volumeSlider = slider()
+    .min(0)
+    .max(100)
+    .value(50)
+    .labeled(true)
+    .onInput(e -> updateVolume(volumeSlider.value))
+    .element();
+
+// 불연속 슬라이더 (틱 마크)
+var stepSlider = slider()
+    .min(0)
+    .max(10)
+    .ticks(1)
+    .value(5)
+    .labeled(true)
+    .element();
+
+// 범위 슬라이더
+var priceRangeSlider = slider()
+    .min(0)
+    .max(1000)
+    .range()
+    .valueStart(200)
+    .valueEnd(800)
+    .labeled(true)
+    .ariaLabelStart("최소 가격")
+    .ariaLabelEnd("최대 가격")
+    .element();
+
+// 틱이 있는 범위 슬라이더
+var temperatureRange = slider()
+    .min(10)
+    .max(30)
+    .range()
+    .valueStart(18)
+    .valueEnd(24)
+    .ticks(2)
+    .labeled(true)
+    .element();
+```
+
+### Switch
+
+```java
+import static dev.sayaya.ui.elements.SwitchElementBuilder.sw;
+
+// 기본 스위치
+var notificationSwitch = sw()
+    .ariaLabel("알림 활성화")
+    .onChange(e -> toggleNotifications(notificationSwitch.selected))
+    .element();
+
+// 아이콘이 있는 스위치
+var wifiSwitch = sw()
+    .icons(true)
+    .select(true)
+    .ariaLabel("Wi-Fi")
+    .element();
+
+// 선택된 아이콘만 표시
+var darkModeSwitch = sw()
+    .showOnlySelectedIcon(true)
+    .ariaLabel("다크 모드")
+    .onInput(e -> updateTheme(darkModeSwitch.selected))
+    .element();
+
+// 필수 스위치 (폼 제출용)
+var termsSwitch = sw()
+    .name("terms")
+    .value("accepted")
+    .required(true)
+    .ariaLabel("약관 동의")
+    .element();
+```
+
+### Progress
+
+```java
+import static dev.sayaya.ui.elements.ProgressElementBuilder.progress;
+
+// 선형 진행률
+var downloadProgress = progress()
+    .linear()
+    .value(0.65)
+    .max(1.0)
+    .ariaLabel("다운로드 진행률: 65%")
+    .element();
+
+// 버퍼를 포함한 선형 진행률
+var videoProgress = progress()
+    .linear()
+    .value(0.3)
+    .buffer(0.7)
+    .ariaLabel("재생 중")
+    .element();
+
+// 원형 진행률
+var uploadProgress = progress()
+    .circular()
+    .value(45)
+    .max(100)
+    .ariaLabel("업로드 45%")
+    .element();
+
+// 무한 로딩 (선형)
+var loadingLinear = progress()
+    .linear()
+    .indeterminate(true)
+    .ariaLabel("로딩 중")
+    .element();
+
+// 무한 로딩 (원형, 4색)
+var loadingCircular = progress()
+    .circular()
+    .indeterminate(true)
+    .fourColor(true)
+    .ariaLabel("처리 중")
     .element();
 ```
 

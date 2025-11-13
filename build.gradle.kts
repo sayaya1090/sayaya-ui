@@ -46,6 +46,8 @@ tasks {
         this.configureClasspath(project)
     }
     gwt {
+        minHeapSize = "1024M"
+        maxHeapSize = "2048M"
         gwtVersion = "2.12.2"
         sourceLevel = "auto"
         modules = listOf("dev.sayaya.Ui")
@@ -58,9 +60,12 @@ tasks {
                 "dev.sayaya.DividerElementTest",
                 "dev.sayaya.FocusRingElementTest",
                 "dev.sayaya.IconElementTest",
+                "dev.sayaya.ProgressElementTest",
                 "dev.sayaya.RadioElementTest",
                 "dev.sayaya.RippleElementTest",
                 "dev.sayaya.SelectElementTest",
+                "dev.sayaya.SliderElementTest",
+                "dev.sayaya.SwitchElementTest",
                 "dev.sayaya.TextFieldElementTest",
             )
             war = file("src/test/webapp")
