@@ -24,8 +24,23 @@ public abstract class TabsElementBuilder<SELF extends TabsElementBuilder<SELF>> 
     public MdTabsElement element() {
         return that.element();
     }
+
     public SELF autoActivate() {
-        element().autoActivate = true;
+        return autoActivate(true);
+    }
+    public SELF autoActivate(boolean autoActivate) {
+        element().autoActivate = autoActivate;
+        return that();
+    }
+    public boolean isAutoActivate() {
+        return element().autoActivate;
+    }
+
+    public int getActiveTabIndex() {
+        return element().activeTabIndex;
+    }
+    public SELF activeTabIndex(int index) {
+        element().activeTabIndex = index;
         return that();
     }
 
@@ -70,11 +85,19 @@ public abstract class TabsElementBuilder<SELF extends TabsElementBuilder<SELF>> 
     }
 
     private interface TabElementBuilder<E extends MdTabElement, P extends TabsElementBuilder<?>, SELF extends TabElementBuilder<E, P, SELF>> extends HTMLElementStyleMethods<E, SELF>, HTMLElementVisibilityMethods<E, SELF>,
-            ElementAttributeMethods<E, SELF>, ElementClassListMethods<E, SELF>, ElementEventMethods<E, SELF>, HasAriaLabel<E, SELF>, HasIconSlot<E, SELF> {
+            ElementAttributeMethods<E, SELF>, ElementClassListMethods<E, SELF>, ElementEventMethods<E, SELF>, HasAriaLabel<E, SELF>, HasIconSlot<E, SELF>,
+            ElementTextMethods<E, SELF> {
         P end();
+
+        default SELF active() {
+            return active(true);
+        }
         default SELF active(boolean active) {
             element().active = active;
             return that();
+        }
+        default boolean isActive() {
+            return element().active;
         }
         default SELF panel(HTMLContainerBuilder<?> container) {
             return panel(container.element());
@@ -105,9 +128,15 @@ public abstract class TabsElementBuilder<SELF extends TabsElementBuilder<SELF>> 
             this.parent = parent;
             parent.that.add(this);
     	}
+        public PrimaryTabElementBuilder inlineIcon() {
+            return inlineIcon(true);
+        }
         public PrimaryTabElementBuilder inlineIcon(boolean inline) {
             element().inlineIcon = inline;
             return this;
+        }
+        public boolean isInlineIcon() {
+            return element().inlineIcon;
         }
         @Override public TabsPrimaryElementBuilder end() {
             return parent;

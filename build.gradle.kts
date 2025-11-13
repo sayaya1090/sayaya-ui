@@ -66,6 +66,7 @@ tasks {
                 "dev.sayaya.SelectElementTest",
                 "dev.sayaya.SliderElementTest",
                 "dev.sayaya.SwitchElementTest",
+                "dev.sayaya.TabsElementTest",
                 "dev.sayaya.TextFieldElementTest",
             )
             war = file("src/test/webapp")

@@ -59,6 +59,7 @@ dependencies {
 | **Select** | `select()` | Filled, Outlined 드롭다운 선택 | [🔗](https://sayaya1090.github.io/sayaya-ui/select.html) |
 | **Slider** | `slider()` | Continuous, Discrete, Range 슬라이더 | [🔗](https://sayaya1090.github.io/sayaya-ui/slider.html) |
 | **Switch** | `sw()` | 아이콘 지원 토글 스위치 | [🔗](https://sayaya1090.github.io/sayaya-ui/switch.html) |
+| **Tabs** | `tabs()` | Primary, Secondary 탭 네비게이션 | [🔗](https://sayaya1090.github.io/sayaya-ui/tabs.html) |
 | **Text Field** | `textField()` | Filled, Outlined 텍스트 입력 | [🔗](https://sayaya1090.github.io/sayaya-ui/text_field.html) |
 
 ## 사용 예제
@@ -300,6 +301,62 @@ var loadingCircular = progress()
     .indeterminate(true)
     .fourColor(true)
     .ariaLabel("처리 중")
+    .element();
+```
+
+### Tabs
+
+```java
+import static dev.sayaya.ui.elements.TabsElementBuilder.tabs;
+import static org.jboss.elemento.Elements.div;
+
+// Primary 탭
+var primaryTabs = tabs().primary()
+    .tab().text("Video").icon("videocam").end()
+    .tab().text("Photos").icon("photo").end()
+    .tab().text("Audio").icon("audiotrack").end()
+    .element();
+
+// Secondary 탭
+var secondaryTabs = tabs().secondary()
+    .tab().text("Flights").end()
+    .tab().text("Trips").end()
+    .tab().text("Explore").end()
+    .element();
+
+// 인라인 아이콘이 있는 탭
+var inlineTabs = tabs().primary()
+    .tab().text("Flights").icon("flight").inlineIcon().end()
+    .tab().text("Trips").icon("luggage").inlineIcon().end()
+    .tab().text("Explore").icon("explore").inlineIcon().end()
+    .element();
+
+// 패널과 연결된 탭
+HTMLDivElement panel1 = div().textContent("Video 콘텐츠").element();
+HTMLDivElement panel2 = div().textContent("Photos 콘텐츠").element();
+HTMLDivElement panel3 = div().textContent("Audio 콘텐츠").element();
+
+var tabsWithPanels = tabs().primary()
+    .tab().text("Video").icon("videocam").panel(panel1).end()
+    .tab().text("Photos").icon("photo").panel(panel2).end()
+    .tab().text("Audio").icon("audiotrack").panel(panel3).end()
+    .activeTabIndex(0)
+    .autoActivate(true)
+    .element();
+
+// 활성 탭 설정
+var activeTabs = tabs().primary()
+    .tab().text("Tab 1").end()
+    .tab().text("Tab 2").active().end()
+    .tab().text("Tab 3").end()
+    .element();
+
+// 수동 활성화 (Enter/Space 키 필요)
+var manualTabs = tabs().primary()
+    .tab().text("Tab 1").end()
+    .tab().text("Tab 2").end()
+    .tab().text("Tab 3").end()
+    .autoActivate(false)
     .element();
 ```
 
