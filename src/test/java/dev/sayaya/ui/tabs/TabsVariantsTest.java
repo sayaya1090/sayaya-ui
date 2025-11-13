@@ -1,6 +1,7 @@
 package dev.sayaya.ui.tabs;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static dev.sayaya.ui.TestHelper.*;
 import static dev.sayaya.ui.elements.TabsElementBuilder.tabs;
@@ -31,21 +32,23 @@ public class TabsVariantsTest {
             """
             var tabsElem = tabs()
                 .primary()
-                .tab().text("홈").end()
-                .tab().text("제품").end()
-                .tab().text("서비스").end()
+                .tab().text("홈").done()
+                .tab().text("제품").done()
+                .tab().text("서비스").done()
                 .element();
             """);
         var primaryTabs = tabs()
                 .primary()
-                .tab().text("홈").end()
-                .tab().text("제품").end()
-                .tab().text("서비스").end()
+                .tab().text("홈").done()
+                .tab().text("제품").done()
+                .tab().text("서비스").done()
                 .element();
 
         primaryExample.addInteractiveDemo(primaryTabs, false);
-
-        assertEquals("탭 개수: 3개여야 함", 3, primaryTabs.tabs.length);
+        primaryTabs.getUpdateComplete().then(result ->{
+            assertEquals("탭 개수: 3개여야 함", 3, primaryTabs.tabs.length);
+            return Promise.resolve(result);
+        });
 
         // Secondary Tabs
         var secondaryExample = addExampleCode(variantsSection,
@@ -54,21 +57,23 @@ public class TabsVariantsTest {
             """
             var tabsElem = tabs()
                 .secondary()
-                .tab().text("전체").end()
-                .tab().text("진행 중").end()
-                .tab().text("완료").end()
+                .tab().text("전체").done()
+                .tab().text("진행 중").done()
+                .tab().text("완료").done()
                 .element();
             """);
         var secondaryTabs = tabs()
                 .secondary()
-                .tab().text("전체").end()
-                .tab().text("진행 중").end()
-                .tab().text("완료").end()
+                .tab().text("전체").done()
+                .tab().text("진행 중").done()
+                .tab().text("완료").done()
                 .element();
 
         secondaryExample.addInteractiveDemo(secondaryTabs, false);
-
-        assertEquals("Secondary 탭 개수: 3개여야 함", 3, secondaryTabs.tabs.length);
+        secondaryTabs.getUpdateComplete().then(result ->{
+            assertEquals("Secondary 탭 개수: 3개여야 함", 3, secondaryTabs.tabs.length);
+            return Promise.resolve(result);
+        });
 
         // Primary Tabs with Icons
         var iconsExample = addExampleCode(variantsSection,
@@ -77,21 +82,23 @@ public class TabsVariantsTest {
             """
             var tabsElem = tabs()
                 .primary()
-                .tab().text("홈").icon("home").end()
-                .tab().text("알림").icon("notifications").end()
-                .tab().text("설정").icon("settings").end()
+                .tab().text("홈").icon("home").done()
+                .tab().text("알림").icon("notifications").done()
+                .tab().text("설정").icon("settings").done()
                 .element();
             """);
         var iconTabs = tabs()
                 .primary()
-                .tab().text("홈").icon("home").end()
-                .tab().text("알림").icon("notifications").end()
-                .tab().text("설정").icon("settings").end()
+                .tab().text("홈").icon("home").done()
+                .tab().text("알림").icon("notifications").done()
+                .tab().text("설정").icon("settings").done()
                 .element();
 
         iconsExample.addInteractiveDemo(iconTabs, false);
-
-        assertEquals("아이콘 탭 개수: 3개여야 함", 3, iconTabs.tabs.length);
+        iconTabs.getUpdateComplete().then(result ->{
+            assertEquals("아이콘 탭 개수: 3개여야 함", 3, iconTabs.tabs.length);
+            return Promise.resolve(result);
+        });
 
         return variantsSection;
     }

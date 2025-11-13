@@ -1,19 +1,19 @@
 package dev.sayaya.ui.elements;
 
 import dev.sayaya.ui.dom.MdRippleElement;
+import dev.sayaya.ui.elements.interfaces.Disableable;
 import elemental2.dom.HTMLElement;
-import org.jboss.elemento.HTMLElementBuilder;
-import org.jboss.elemento.HTMLElementStyleMethods;
-import org.jboss.elemento.HTMLElementVisibilityMethods;
-import org.jboss.elemento.IsElement;
+import org.jboss.elemento.*;
 
 import static org.jboss.elemento.Elements.htmlElement;
 
-public class RippleElementBuilder implements HTMLElementStyleMethods<MdRippleElement, RippleElementBuilder>, HTMLElementVisibilityMethods<MdRippleElement, RippleElementBuilder> {
+public class RippleElementBuilder implements HTMLElementStyleMethods<MdRippleElement, RippleElementBuilder>, HTMLElementVisibilityMethods<MdRippleElement, RippleElementBuilder>,
+        ElementAttributeMethods<MdRippleElement, RippleElementBuilder>, ElementClassListMethods<MdRippleElement, RippleElementBuilder>, ElementEventMethods<MdRippleElement, RippleElementBuilder>, Disableable<MdRippleElement, RippleElementBuilder> {
     public static RippleElementBuilder ripple() {
         return new RippleElementBuilder();
     }
     private final HTMLElementBuilder<MdRippleElement> that = htmlElement("md-ripple", MdRippleElement.class);
+    @Override
     public RippleElementBuilder disabled(boolean disabled) {
         element().disabled = disabled;
         return that();

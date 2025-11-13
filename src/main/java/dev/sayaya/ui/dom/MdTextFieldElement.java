@@ -1,5 +1,6 @@
 package dev.sayaya.ui.dom;
 
+import dev.sayaya.ui.elements.interfaces.Validatable;
 import elemental2.dom.*;
 import jsinterop.annotations.JsType;
 
@@ -8,7 +9,7 @@ import java.util.Date;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
 @JsType(isNative = true)
-public class MdTextFieldElement extends HTMLElement {
+public class MdTextFieldElement extends HTMLElement implements Validatable {
     public boolean disabled;
     public boolean error;
     public String errorText;

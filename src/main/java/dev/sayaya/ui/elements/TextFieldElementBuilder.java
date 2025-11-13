@@ -10,17 +10,13 @@ import static org.jboss.elemento.Elements.htmlContainer;
 
 public interface TextFieldElementBuilder<E extends MdTextFieldElement, SELF extends TextFieldElementBuilder<E, SELF>> extends ElementAttributeMethods<E, SELF>, ElementClassListMethods<E, SELF>, ElementConsumerMethods<E, SELF>,
         ElementEventMethods<E, SELF>, ElementTextMethods<E, SELF>, HTMLElementStyleMethods<E, SELF>, HTMLElementVisibilityMethods<E, SELF>, HasLeadingIconSlot<E, SELF>, HasTrailingIconSlot<E, SELF>, HasAriaLabel<E, SELF>,
-        Requireable<E, SELF>, Disableable<E, SELF>, HasInputEvent<E, SELF>, HasChangeEvent<E, SELF> {
+        Requireable<E, SELF>, Disableable<E, SELF>, FormAssociable<E, SELF>, HasInputEvent<E, SELF>, HasChangeEvent<E, SELF>, HasCustomValidity<E, SELF> {
     static TextFieldPrepareElementBuilder textField() {
         return new TextFieldPrepareElementBuilder();
     }
     HTMLContainerBuilder<E> delegate();
     default SELF style(String style) {
         delegate().style(style);
-        return that();
-    }
-    default SELF name(String name) {
-        element().name = name;
         return that();
     }
     default SELF label(String label) {
@@ -120,12 +116,7 @@ public interface TextFieldElementBuilder<E extends MdTextFieldElement, SELF exte
         element().inputMode = inputMode;
         return that();
     }
-    default boolean checkValidity() {
-        return element().checkValidity();
-    }
-    default boolean reportValidity() {
-        return element().reportValidity();
-    }
+    @Override
     default SELF setCustomValidity(String error) {
         element().setCustomValidity(error);
         return that();

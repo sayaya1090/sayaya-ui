@@ -1,5 +1,6 @@
 package dev.sayaya.ui.dom;
 
+import dev.sayaya.ui.elements.interfaces.Validatable;
 import elemental2.dom.*;
 import elemental2.promise.Promise;
 import jsinterop.annotations.JsType;
@@ -7,7 +8,7 @@ import jsinterop.annotations.JsType;
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
 @JsType(isNative = true)
-public class MdSelectElement extends HTMLElement {
+public class MdSelectElement extends HTMLElement implements Validatable {
     public boolean quick;
     public boolean required;
     public boolean disabled;

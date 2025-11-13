@@ -35,11 +35,11 @@ public class OptionPropertiesTest {
                 .option()
                     .value("apple")
                     .headline("사과")
-                .end()
+                .done()
                 .option()
                     .value("banana")
                     .headline("바나나")
-                .end()
+                .done()
                 .element();
             """);
         var basicSelect = select().filled()
@@ -47,11 +47,11 @@ public class OptionPropertiesTest {
                 .option()
                     .value("apple")
                     .headline("사과")
-                .end()
+                .done()
                 .option()
                     .value("banana")
                     .headline("바나나")
-                .end()
+                .done()
                 .element();
         basicExample.addInteractiveDemo(basicSelect, false);
 
@@ -72,12 +72,12 @@ public class OptionPropertiesTest {
                 .option()
                     .value("red")
                     .headline("빨강")
-                .end()
+                .done()
                 .option()
                     .value("blue")
                     .headline("파랑")
                     .select(true)
-                .end()
+                .done()
                 .element();
             """);
         var selectedSelect = select().outlined()
@@ -85,12 +85,12 @@ public class OptionPropertiesTest {
                 .option()
                     .value("red")
                     .headline("빨강")
-                .end()
+                .done()
                 .option()
                     .value("blue")
                     .headline("파랑")
                     .select(true)
-                .end()
+                .done()
                 .element();
         selectedExample.addInteractiveDemo(selectedSelect, false);
 
@@ -110,12 +110,12 @@ public class OptionPropertiesTest {
                 .option()
                     .value("seoul")
                     .headline("서울")
-                .end()
+                .done()
                 .option()
                     .value("busan")
                     .headline("부산 (품절)")
                     .disabled(true)
-                .end()
+                .done()
                 .element();
             """);
         var disabledOptionSelect = select().filled()
@@ -123,12 +123,12 @@ public class OptionPropertiesTest {
                 .option()
                     .value("seoul")
                     .headline("서울")
-                .end()
+                .done()
                 .option()
                     .value("busan")
                     .headline("부산 (품절)")
                     .disabled(true)
-                .end()
+                .done()
                 .element();
         disabledOptionExample.addInteractiveDemo(disabledOptionSelect, false);
 
@@ -148,12 +148,12 @@ public class OptionPropertiesTest {
                     .value("personal")
                     .headline("개인 계정")
                     .supportingTextSlot("개인용으로 사용")
-                .end()
+                .done()
                 .option()
                     .value("business")
                     .headline("비즈니스 계정")
                     .supportingTextSlot("업무용으로 사용")
-                .end()
+                .done()
                 .element();
             """);
         var supportingSelect = select().outlined()
@@ -161,13 +161,13 @@ public class OptionPropertiesTest {
                 .option()
                     .value("personal")
                     .headline("개인 계정")
-                    .supportingTextSlot("개인용으로 사용")
-                .end()
+                    .supportingText("개인용으로 사용")
+                .done()
                 .option()
                     .value("business")
                     .headline("비즈니스 계정")
-                    .supportingTextSlot("업무용으로 사용")
-                .end()
+                    .supportingText("업무용으로 사용")
+                .done()
                 .element();
         supportingTextExample.addInteractiveDemo(supportingSelect, false);
 

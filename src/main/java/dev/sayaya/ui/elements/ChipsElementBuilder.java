@@ -62,10 +62,10 @@ public class ChipsElementBuilder implements HTMLElementStyleMethods<MdChipSetEle
             this.element().alwaysFocusable = alwaysFocusable;
             return that();
         }
-        ChipsElementBuilder end();
+        ChipsElementBuilder done();
         @Override E element();
     }
-    public final static class AssistChipElementBuilder implements ChipElementBuilder<MdAssistChipElement, AssistChipElementBuilder>, Elevatable<MdAssistChipElement, AssistChipElementBuilder>, Linkable<MdAssistChipElement, AssistChipElementBuilder> {
+    public final static class AssistChipElementBuilder implements ChipElementBuilder<MdAssistChipElement, AssistChipElementBuilder>, Elevatable<MdAssistChipElement, AssistChipElementBuilder>, Linkable<MdAssistChipElement, AssistChipElementBuilder>, Clickable<MdAssistChipElement, AssistChipElementBuilder> {
         private final HTMLContainerBuilder<MdAssistChipElement> that;
         private final ChipsElementBuilder parent;
         private AssistChipElementBuilder(ChipsElementBuilder parent) {
@@ -73,7 +73,7 @@ public class ChipsElementBuilder implements HTMLElementStyleMethods<MdChipSetEle
             this.parent = parent;
             parent.that.add(this);
     	}
-        @Override public ChipsElementBuilder end() {
+        @Override public ChipsElementBuilder done() {
             return parent;
         }
         @Override public MdAssistChipElement element() {
@@ -95,7 +95,7 @@ public class ChipsElementBuilder implements HTMLElementStyleMethods<MdChipSetEle
             this.parent = parent;
             parent.that.add(this);
         }
-        @Override public ChipsElementBuilder end() {
+        @Override public ChipsElementBuilder done() {
             return parent;
         }
         @Override public MdFilterChipElement element() {
@@ -139,7 +139,7 @@ public class ChipsElementBuilder implements HTMLElementStyleMethods<MdChipSetEle
             element().avatar = true;
             return that();
         }
-        @Override public ChipsElementBuilder end() {
+        @Override public ChipsElementBuilder done() {
             return parent;
         }
         @Override public MdInputChipElement element() {
@@ -167,7 +167,7 @@ public class ChipsElementBuilder implements HTMLElementStyleMethods<MdChipSetEle
             return that();
         }
     }
-    public final static class SuggestionChipElementBuilder implements ChipElementBuilder<MdSuggestionChipElement, SuggestionChipElementBuilder>, Elevatable<MdSuggestionChipElement, SuggestionChipElementBuilder>, Linkable<MdSuggestionChipElement, SuggestionChipElementBuilder> {
+    public final static class SuggestionChipElementBuilder implements ChipElementBuilder<MdSuggestionChipElement, SuggestionChipElementBuilder>, Elevatable<MdSuggestionChipElement, SuggestionChipElementBuilder>, Linkable<MdSuggestionChipElement, SuggestionChipElementBuilder>, Clickable<MdSuggestionChipElement, SuggestionChipElementBuilder> {
         private final HTMLContainerBuilder<MdSuggestionChipElement> that;
         private final ChipsElementBuilder parent;
         private SuggestionChipElementBuilder(ChipsElementBuilder parent) {
@@ -175,7 +175,7 @@ public class ChipsElementBuilder implements HTMLElementStyleMethods<MdChipSetEle
             this.parent = parent;
             parent.that.add(this);
         }
-        @Override public ChipsElementBuilder end() {
+        @Override public ChipsElementBuilder done() {
             return parent;
         }
         @Override public MdSuggestionChipElement element() {

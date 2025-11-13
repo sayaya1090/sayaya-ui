@@ -26,15 +26,15 @@ public class ChipSetTest {
             "여러 Chip을 포함하는 세트입니다.",
             """
             var chipSet = chips()
-                .assist().label("Chip 1").end()
-                .assist().label("Chip 2").end()
-                .assist().label("Chip 3").end()
+                .assist().label("Chip 1").done()
+                .assist().label("Chip 2").done()
+                .assist().label("Chip 3").done()
                 .element();
             """);
         var chipSet = chips()
-                .assist().label("Chip 1").end()
-                .assist().label("Chip 2").end()
-                .assist().label("Chip 3").end()
+                .assist().label("Chip 1").done()
+                .assist().label("Chip 2").done()
+                .assist().label("Chip 3").done()
                 .element();
         basicExample.addInteractiveDemo(chipSet, false);
         assertEquals("칩셋: 태그명은 md-chip-set",
@@ -49,14 +49,14 @@ public class ChipSetTest {
             """
             var chipSet = chips()
                 .ariaLabel("Filter options")
-                .filter().label("Option 1").end()
-                .filter().label("Option 2").end()
+                .filter().label("Option 1").done()
+                .filter().label("Option 2").done()
                 .element();
             """);
         var labeledChipSet = chips()
                 .ariaLabel("Filter options")
-                .filter().label("Option 1").end()
-                .filter().label("Option 2").end()
+                .filter().label("Option 1").done()
+                .filter().label("Option 2").done()
                 .element();
         ariaLabelExample.addInteractiveDemo(labeledChipSet, false);
         assertEquals("칩셋 aria-label: Filter options",
@@ -71,15 +71,15 @@ public class ChipSetTest {
             var labelElement = span().id("chip-set-label").text("Categories").element();
             var chipSet = chips()
                 .ariaLabelledBy("chip-set-label")
-                .filter().label("Category 1").end()
-                .filter().label("Category 2").end()
+                .filter().label("Category 1").done()
+                .filter().label("Category 2").done()
                 .element();
             """);
         var labelElement = span().id("chip-set-label").text("Categories").element();
         var labelledByChipSet = chips()
                 .ariaLabelledBy("chip-set-label")
-                .filter().label("Category 1").end()
-                .filter().label("Category 2").end()
+                .filter().label("Category 1").done()
+                .filter().label("Category 2").done()
                 .element();
         var demoContainer = ariaLabelledByExample.addInteractiveDemo(labelledByChipSet);
         demoContainer.append(labelElement);

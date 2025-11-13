@@ -33,14 +33,14 @@ public class BasicPropertiesTest {
             """
             var select = select().filled()
                 .label("국가 선택")
-                .option().value("kr").headline("한국").end()
-                .option().value("us").headline("미국").end()
+                .option().value("kr").headline("한국").done()
+                .option().value("us").headline("미국").done()
                 .element();
             """);
         var labelSelect = select().filled()
                 .label("국가 선택")
-                .option().value("kr").headline("한국").end()
-                .option().value("us").headline("미국").end()
+                .option().value("kr").headline("한국").done()
+                .option().value("us").headline("미국").done()
                 .element();
         labelExample.addInteractiveDemo(labelSelect, false);
         assertEquals("label 속성: '국가 선택'이어야 함",
@@ -54,15 +54,15 @@ public class BasicPropertiesTest {
             var select = select().filled()
                 .label("필수 선택")
                 .required(true)
-                .option().value("opt1").headline("옵션 1").end()
-                .option().value("opt2").headline("옵션 2").end()
+                .option().value("opt1").headline("옵션 1").done()
+                .option().value("opt2").headline("옵션 2").done()
                 .element();
             """);
         var requiredSelect = select().filled()
                 .label("필수 선택")
                 .required(true)
-                .option().value("opt1").headline("옵션 1").end()
-                .option().value("opt2").headline("옵션 2").end()
+                .option().value("opt1").headline("옵션 1").done()
+                .option().value("opt2").headline("옵션 2").done()
                 .element();
         requiredExample.addInteractiveDemo(requiredSelect, false);
         assertTrue("required 속성: true여야 함", requiredSelect.required);
@@ -75,13 +75,13 @@ public class BasicPropertiesTest {
             var select = select().outlined()
                 .label("비활성화")
                 .disabled(true)
-                .option().value("val").headline("값").end()
+                .option().value("val").headline("값").done()
                 .element();
             """);
         var disabledSelect = select().outlined()
                 .label("비활성화")
                 .disabled(true)
-                .option().value("val").headline("값").end()
+                .option().value("val").headline("값").done()
                 .element();
         disabledExample.addInteractiveDemo(disabledSelect, false);
         assertTrue("disabled 속성: true여야 함", disabledSelect.disabled);
@@ -94,15 +94,15 @@ public class BasicPropertiesTest {
             var select = select().filled()
                 .label("옵션 선택")
                 .supportingText("원하는 옵션을 선택하세요")
-                .option().value("a").headline("A").end()
-                .option().value("b").headline("B").end()
+                .option().value("a").headline("A").done()
+                .option().value("b").headline("B").done()
                 .element();
             """);
         var supportingTextSelect = select().filled()
                 .label("옵션 선택")
                 .supportingText("원하는 옵션을 선택하세요")
-                .option().value("a").headline("A").end()
-                .option().value("b").headline("B").end()
+                .option().value("a").headline("A").done()
+                .option().value("b").headline("B").done()
                 .element();
         supportingTextExample.addInteractiveDemo(supportingTextSelect, false);
         assertEquals("supportingText 속성",
@@ -118,7 +118,7 @@ public class BasicPropertiesTest {
                 .required(true)
                 .errorText("반드시 선택해야 합니다")
                 .error(true)
-                .option().value("1").headline("옵션 1").end()
+                .option().value("1").headline("옵션 1").done()
                 .element();
             """);
         var errorSelect = select().outlined()
@@ -126,7 +126,7 @@ public class BasicPropertiesTest {
                 .required(true)
                 .errorText("반드시 선택해야 합니다")
                 .error(true)
-                .option().value("1").headline("옵션 1").end()
+                .option().value("1").headline("옵션 1").done()
                 .element();
         errorTextExample.addInteractiveDemo(errorSelect, false);
         assertEquals("errorText 속성",

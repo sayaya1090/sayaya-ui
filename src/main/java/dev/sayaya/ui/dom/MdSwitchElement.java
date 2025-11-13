@@ -1,12 +1,13 @@
 package dev.sayaya.ui.dom;
 
+import dev.sayaya.ui.elements.interfaces.Validatable;
 import elemental2.dom.*;
 import jsinterop.annotations.JsType;
 
 import static jsinterop.annotations.JsPackage.GLOBAL;
 
 @JsType(isNative = true, namespace = GLOBAL, name = "HTMLElement")
-public class MdSwitchElement extends HTMLElement {
+public class MdSwitchElement extends HTMLElement implements Validatable {
     public boolean disabled;
     public boolean selected;
     public boolean icons;

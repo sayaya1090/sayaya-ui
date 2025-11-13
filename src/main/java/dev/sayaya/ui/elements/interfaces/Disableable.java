@@ -6,10 +6,7 @@ import org.jboss.elemento.IsElement;
 public interface Disableable<E extends HTMLElement, SELF extends Disableable<E, SELF>> extends IsElement<E> {
     SELF that();
 
-    default SELF disabled(boolean disabled) {
-        element().setAttribute("disabled", String.valueOf(disabled));
-        return that();
-    }
+    SELF disabled(boolean disabled);
 
     default SELF disabled() {
         return disabled(true);
@@ -21,5 +18,9 @@ public interface Disableable<E extends HTMLElement, SELF extends Disableable<E, 
 
     default SELF enabled(boolean enabled) {
         return disabled(!enabled);
+    }
+
+    default boolean isDisabled() {
+        return element().hasAttribute("disabled");
     }
 }

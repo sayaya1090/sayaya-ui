@@ -32,11 +32,11 @@ public class SelectVariantsTest {
                 .option()
                     .value("apple")
                     .headline("사과")
-                .end()
+                .done()
                 .option()
                     .value("banana")
                     .headline("바나나")
-                .end()
+                .done()
                 .element();
             """);
         var filled = select().filled()
@@ -44,11 +44,11 @@ public class SelectVariantsTest {
                 .option()
                     .value("apple")
                     .headline("사과")
-                .end()
+                .done()
                 .option()
                     .value("banana")
                     .headline("바나나")
-                .end()
+                .done()
                 .element();
         filledExample.addInteractiveDemo(filled, false);
         assertEquals("filled select: 태그명은 md-filled-select",
@@ -64,11 +64,11 @@ public class SelectVariantsTest {
                 .option()
                     .value("red")
                     .headline("빨강")
-                .end()
+                .done()
                 .option()
                     .value("blue")
                     .headline("파랑")
-                .end()
+                .done()
                 .element();
             """);
         var outlined = select().outlined()
@@ -76,11 +76,11 @@ public class SelectVariantsTest {
                 .option()
                     .value("red")
                     .headline("빨강")
-                .end()
+                .done()
                 .option()
                     .value("blue")
                     .headline("파랑")
-                .end()
+                .done()
                 .element();
         outlinedExample.addInteractiveDemo(outlined, false);
         assertEquals("outlined select: 태그명은 md-outlined-select",

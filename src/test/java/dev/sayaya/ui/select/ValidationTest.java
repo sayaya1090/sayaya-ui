@@ -33,8 +33,8 @@ public class ValidationTest {
                 .label("필수 선택")
                 .required(true)
                 .errorText("반드시 선택해야 합니다")
-                .option().value("opt1").headline("옵션 1").end()
-                .option().value("opt2").headline("옵션 2").end()
+                .option().value("opt1").headline("옵션 1").done()
+                .option().value("opt2").headline("옵션 2").done()
                 .element();
 
             // 검증
@@ -47,8 +47,8 @@ public class ValidationTest {
                 .label("필수 선택")
                 .required(true)
                 .errorText("반드시 선택해야 합니다")
-                .option().value("opt1").headline("옵션 1").end()
-                .option().value("opt2").headline("옵션 2").end()
+                .option().value("opt1").headline("옵션 1").done()
+                .option().value("opt2").headline("옵션 2").done()
                 .element();
         var requiredState = requiredExample.addInteractiveDemo(requiredSelect);
         requiredState.textContent = "valid: " + requiredSelect.checkValidity() + " | value: " + requiredSelect.value;
@@ -69,9 +69,9 @@ public class ValidationTest {
             """
             var select = select().outlined()
                 .label("등급 선택")
-                .option().value("bronze").headline("브론즈").end()
-                .option().value("silver").headline("실버").end()
-                .option().value("gold").headline("골드").end()
+                .option().value("bronze").headline("브론즈").done()
+                .option().value("silver").headline("실버").done()
+                .option().value("gold").headline("골드").done()
                 .setCustomValidity("골드 등급만 선택 가능합니다")
                 .element();
 
@@ -88,9 +88,9 @@ public class ValidationTest {
             """);
         var customSelectBuilder = select().outlined()
                 .label("등급 선택")
-                .option().value("bronze").headline("브론즈").end()
-                .option().value("silver").headline("실버").end()
-                .option().value("gold").headline("골드").end();
+                .option().value("bronze").headline("브론즈").done()
+                .option().value("silver").headline("실버").done()
+                .option().value("gold").headline("골드").done();
         var customSelect = customSelectBuilder.onChange(evt -> {
             var value = customSelectBuilder.value();
             if (!"gold".equals(value)) {
@@ -120,8 +120,8 @@ public class ValidationTest {
                 .label("도시")
                 .required(true)
                 .errorText("도시를 선택해주세요")
-                .option().value("seoul").headline("서울").end()
-                .option().value("busan").headline("부산").end()
+                .option().value("seoul").headline("서울").done()
+                .option().value("busan").headline("부산").done()
                 .element();
 
             // 폼 제출 시 검증
@@ -135,8 +135,8 @@ public class ValidationTest {
                 .label("도시")
                 .required(true)
                 .errorText("도시를 선택해주세요")
-                .option().value("seoul").headline("서울").end()
-                .option().value("busan").headline("부산").end()
+                .option().value("seoul").headline("서울").done()
+                .option().value("busan").headline("부산").done()
                 .element();
         var reportState = reportExample.addInteractiveDemo(reportSelect);
         reportState.textContent = "valid: " + reportSelect.checkValidity() + " | value: " + reportSelect.value;

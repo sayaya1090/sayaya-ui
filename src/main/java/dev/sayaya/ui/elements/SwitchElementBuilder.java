@@ -10,7 +10,8 @@ public class SwitchElementBuilder implements ElementAttributeMethods<MdSwitchEle
         HTMLElementStyleMethods<MdSwitchElement, SwitchElementBuilder>, HTMLElementVisibilityMethods<MdSwitchElement, SwitchElementBuilder>,
         HasAriaLabel<MdSwitchElement, SwitchElementBuilder>,
         Selectable<MdSwitchElement, SwitchElementBuilder>, Requireable<MdSwitchElement, SwitchElementBuilder>, Disableable<MdSwitchElement, SwitchElementBuilder>,
-        FormAssociable<MdSwitchElement, SwitchElementBuilder>, HasInputEvent<MdSwitchElement, SwitchElementBuilder>, HasChangeEvent<MdSwitchElement, SwitchElementBuilder> {
+        FormAssociable<MdSwitchElement, SwitchElementBuilder>, HasInputEvent<MdSwitchElement, SwitchElementBuilder>, HasChangeEvent<MdSwitchElement, SwitchElementBuilder>,
+        HasCustomValidity<MdSwitchElement, SwitchElementBuilder> {
     public static SwitchElementBuilder sw() {
         return new SwitchElementBuilder();
     }
@@ -68,13 +69,7 @@ public class SwitchElementBuilder implements ElementAttributeMethods<MdSwitchEle
     public String name() {
         return element().name;
     }
-
-    public boolean checkValidity() {
-        return element().checkValidity();
-    }
-    public boolean reportValidity() {
-        return element().reportValidity();
-    }
+    @Override
     public SwitchElementBuilder setCustomValidity(String message) {
         element().setCustomValidity(message);
         return that();

@@ -87,7 +87,7 @@ public abstract class TabsElementBuilder<SELF extends TabsElementBuilder<SELF>> 
     private interface TabElementBuilder<E extends MdTabElement, P extends TabsElementBuilder<?>, SELF extends TabElementBuilder<E, P, SELF>> extends HTMLElementStyleMethods<E, SELF>, HTMLElementVisibilityMethods<E, SELF>,
             ElementAttributeMethods<E, SELF>, ElementClassListMethods<E, SELF>, ElementEventMethods<E, SELF>, HasAriaLabel<E, SELF>, HasIconSlot<E, SELF>,
             ElementTextMethods<E, SELF> {
-        P end();
+        P done();
 
         default SELF active() {
             return active(true);
@@ -108,7 +108,7 @@ public abstract class TabsElementBuilder<SELF extends TabsElementBuilder<SELF>> 
             element().setAttribute("aria-controls", panel.id);
             panel.setAttribute("role", "tabpanel");
             panel.setAttribute("aria-labelledby", element().id);
-            end().element().addEventListener("change", evt->{
+            done().element().addEventListener("change", evt->{
                 Scheduler.get().scheduleDeferred(()->{
                     if(element().tabIndex<0) panel.setAttribute("hidden", true);
                     else panel.removeAttribute("hidden");
@@ -138,7 +138,7 @@ public abstract class TabsElementBuilder<SELF extends TabsElementBuilder<SELF>> 
         public boolean isInlineIcon() {
             return element().inlineIcon;
         }
-        @Override public TabsPrimaryElementBuilder end() {
+        @Override public TabsPrimaryElementBuilder done() {
             return parent;
         }
         @Override public MdPrimaryTabElement element() {
@@ -156,7 +156,7 @@ public abstract class TabsElementBuilder<SELF extends TabsElementBuilder<SELF>> 
             this.parent = parent;
             parent.that.add(this);
         }
-        @Override public TabsSecondaryElementBuilder end() {
+        @Override public TabsSecondaryElementBuilder done() {
             return parent;
         }
         @Override public MdSecondaryTabElement element() {

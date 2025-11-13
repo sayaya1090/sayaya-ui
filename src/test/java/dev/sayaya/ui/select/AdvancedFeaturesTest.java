@@ -34,15 +34,15 @@ public class AdvancedFeaturesTest {
             var select = select().filled()
                 .label("위치")
                 .iconLeading(icon("location_on"))
-                .option().value("home").headline("집").end()
-                .option().value("office").headline("사무실").end()
+                .option().value("home").headline("집").done()
+                .option().value("office").headline("사무실").done()
                 .element();
             """);
         var iconSelect = select().filled()
                 .label("위치")
                 .iconLeading(icon("location_on"))
-                .option().value("home").headline("집").end()
-                .option().value("office").headline("사무실").end()
+                .option().value("home").headline("집").done()
+                .option().value("office").headline("사무실").done()
                 .element();
         iconExample.addInteractiveDemo(iconSelect, false);
 
@@ -58,15 +58,15 @@ public class AdvancedFeaturesTest {
             var select = select().outlined()
                 .label("빠른 선택")
                 .quick(true)
-                .option().value("1").headline("옵션 1").end()
-                .option().value("2").headline("옵션 2").end()
+                .option().value("1").headline("옵션 1").done()
+                .option().value("2").headline("옵션 2").done()
                 .element();
             """);
         var quickSelect = select().outlined()
                 .label("빠른 선택")
                 .quick(true)
-                .option().value("1").headline("옵션 1").end()
-                .option().value("2").headline("옵션 2").end()
+                .option().value("1").headline("옵션 1").done()
+                .option().value("2").headline("옵션 2").done()
                 .element();
         quickExample.addInteractiveDemo(quickSelect, false);
 
@@ -83,11 +83,11 @@ public class AdvancedFeaturesTest {
                 .option()
                     .value("short")
                     .headline("짧은 옵션")
-                .end()
+                .done()
                 .option()
                     .value("long")
                     .headline("매우 매우 긴 옵션 텍스트입니다")
-                .end()
+                .done()
                 .element();
             """);
         var clampSelect = select().filled()
@@ -96,11 +96,11 @@ public class AdvancedFeaturesTest {
                 .option()
                     .value("short")
                     .headline("짧은 옵션")
-                .end()
+                .done()
                 .option()
                     .value("long")
                     .headline("매우 매우 긴 옵션 텍스트입니다")
-                .end()
+                .done()
                 .element();
         clampExample.addInteractiveDemo(clampSelect, false);
 
@@ -114,17 +114,17 @@ public class AdvancedFeaturesTest {
             var select = select().outlined()
                 .label("검색 가능")
                 .typeaheadDelay(500)  // 500ms 지연
-                .option().value("a").headline("Apple").end()
-                .option().value("b").headline("Banana").end()
-                .option().value("c").headline("Cherry").end()
+                .option().value("a").headline("Apple").done()
+                .option().value("b").headline("Banana").done()
+                .option().value("c").headline("Cherry").done()
                 .element();
             """);
         var typeaheadSelect = select().outlined()
                 .label("검색 가능")
                 .typeaheadDelay(500)
-                .option().value("a").headline("Apple").end()
-                .option().value("b").headline("Banana").end()
-                .option().value("c").headline("Cherry").end()
+                .option().value("a").headline("Apple").done()
+                .option().value("b").headline("Banana").done()
+                .option().value("c").headline("Cherry").done()
                 .element();
         typeaheadExample.addInteractiveDemo(typeaheadSelect, false);
 
@@ -141,8 +141,8 @@ public class AdvancedFeaturesTest {
                 .label("선호도")
                 .name("preference")
                 .form(form)
-                .option().value("yes").headline("예").end()
-                .option().value("no").headline("아니오").end()
+                .option().value("yes").headline("예").done()
+                .option().value("no").headline("아니오").done()
                 .element();
             """);
         var formElement = form().id("select-test-form").element();
@@ -153,8 +153,8 @@ public class AdvancedFeaturesTest {
                 .name("preference")
                 .value("yes")
                 .form(formElement)
-                .option().value("yes").headline("예").end()
-                .option().value("no").headline("아니오").end()
+                .option().value("yes").headline("예").done()
+                .option().value("no").headline("아니오").done()
                 .element();
         formExample.addInteractiveDemo(formSelect, false);
 

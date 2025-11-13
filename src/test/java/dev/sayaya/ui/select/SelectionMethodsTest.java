@@ -30,18 +30,18 @@ public class SelectionMethodsTest {
             """
             var select = select().filled()
                 .label("언어")
-                .option().value("ko").headline("한국어").end()
-                .option().value("en").headline("English").end()
-                .option().value("ja").headline("日本語").end()
+                .option().value("ko").headline("한국어").done()
+                .option().value("en").headline("English").done()
+                .option().value("ja").headline("日本語").done()
                 .element();
 
             select.select("en");  // English 선택
             """);
         var valueSelect = select().filled()
                 .label("언어")
-                .option().value("ko").headline("한국어").end()
-                .option().value("en").headline("English").end()
-                .option().value("ja").headline("日本語").end()
+                .option().value("ko").headline("한국어").done()
+                .option().value("en").headline("English").done()
+                .option().value("ja").headline("日本語").done()
                 .element();
         valueExample.addInteractiveDemo(valueSelect, false);
 
@@ -60,18 +60,18 @@ public class SelectionMethodsTest {
             """
             var select = select().outlined()
                 .label("크기")
-                .option().value("s").headline("Small").end()
-                .option().value("m").headline("Medium").end()
-                .option().value("l").headline("Large").end()
+                .option().value("s").headline("Small").done()
+                .option().value("m").headline("Medium").done()
+                .option().value("l").headline("Large").done()
                 .element();
 
             select.selectIndex(1);  // Medium 선택 (인덱스 1)
             """);
         var indexSelect = select().outlined()
                 .label("크기")
-                .option().value("s").headline("Small").end()
-                .option().value("m").headline("Medium").end()
-                .option().value("l").headline("Large").end()
+                .option().value("s").headline("Small").done()
+                .option().value("m").headline("Medium").done()
+                .option().value("l").headline("Large").done()
                 .element();
         indexExample.addInteractiveDemo(indexSelect, false);
 
@@ -91,8 +91,8 @@ public class SelectionMethodsTest {
             """
             var select = select().filled()
                 .label("상태")
-                .option().value("draft").headline("임시저장").select(true).end()
-                .option().value("published").headline("발행됨").end()
+                .option().value("draft").headline("임시저장").select(true).done()
+                .option().value("published").headline("발행됨").done()
                 .element();
 
             // 다른 값 선택
@@ -103,8 +103,8 @@ public class SelectionMethodsTest {
             """);
         var resetSelect = select().filled()
                 .label("상태")
-                .option().value("draft").headline("임시저장").select(true).end()
-                .option().value("published").headline("발행됨").end()
+                .option().value("draft").headline("임시저장").select(true).done()
+                .option().value("published").headline("발행됨").done()
                 .element();
         resetExample.addInteractiveDemo(resetSelect, false);
 

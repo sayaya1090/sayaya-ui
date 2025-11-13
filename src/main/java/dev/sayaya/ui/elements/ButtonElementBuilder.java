@@ -4,14 +4,13 @@ import dev.sayaya.ui.dom.MdButtonElement;
 import dev.sayaya.ui.dom.MdButtonElement.*;
 import dev.sayaya.ui.dom.MdIconElement;
 import dev.sayaya.ui.elements.interfaces.*;
-import elemental2.dom.MouseEvent;
 import org.jboss.elemento.*;
 
 import static org.jboss.elemento.Elements.htmlContainer;
 
 public interface ButtonElementBuilder<E extends MdButtonElement, SELF extends ButtonElementBuilder<E, SELF>> extends HTMLElementStyleMethods<E, SELF>,
         HTMLElementVisibilityMethods<E, SELF>, ElementAttributeMethods<E, SELF>, ElementClassListMethods<E, SELF>, ElementContainerMethods<E, SELF>, ElementEventMethods<E, SELF>,
-        ElementTextMethods<E, SELF>, ElementIdMethods<E, SELF>, HasIconSlot<E, SELF>, HasAriaLabel<E, SELF>, Disableable<E, SELF>, Linkable<E, SELF>, FormAssociable<E, SELF>, Typeable<E, SELF> {
+        ElementTextMethods<E, SELF>, ElementIdMethods<E, SELF>, HasIconSlot<E, SELF>, HasAriaLabel<E, SELF>, Disableable<E, SELF>, Linkable<E, SELF>, FormAssociable<E, SELF>, Typeable<E, SELF>, Clickable<E, SELF> {
     static ButtonPrepareElementBuilder button() {
         return new ButtonPrepareElementBuilder();
     }
@@ -47,9 +46,6 @@ public interface ButtonElementBuilder<E extends MdButtonElement, SELF extends Bu
     default SELF download(String filename) {
         element().download = filename;
         return that();
-    }
-    default SELF onClick(EventCallbackFn<MouseEvent> callback) {
-        return on(EventType.click, callback);
     }
     default SELF text(String text) {
         element().append(elemental2.dom.DomGlobal.document.createTextNode(text));

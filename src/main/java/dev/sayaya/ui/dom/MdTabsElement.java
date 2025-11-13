@@ -13,5 +13,6 @@ public class MdTabsElement extends HTMLElement {
     public boolean autoActivate;
     public int activeTabIndex;
 
+    public native Promise<Boolean> getUpdateComplete();
     public native Promise<Void> scrollToTab(int index);
 }

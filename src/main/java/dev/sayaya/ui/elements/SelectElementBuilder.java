@@ -12,7 +12,7 @@ import static org.jboss.elemento.Elements.htmlContainer;
 public interface SelectElementBuilder<E extends MdSelectElement, SELF extends SelectElementBuilder<E, SELF>> extends HTMLElementStyleMethods<E, SELF>, HTMLElementVisibilityMethods<E, SELF>,
         ElementAttributeMethods<E, SELF>, ElementClassListMethods<E, SELF>, ElementContainerMethods<E, SELF>, ElementEventMethods<E, SELF>, ElementTextMethods<E, SELF>,
         Requireable<E, SELF>, Disableable<E, SELF>, FormAssociable<E, SELF>, HasLeadingIconSlot<E, SELF>,
-        HasInputEvent<E, SELF>, HasChangeEvent<E, SELF>, HasMenuEvents<E, SELF> {
+        HasInputEvent<E, SELF>, HasChangeEvent<E, SELF>, HasMenuEvents<E, SELF>, HasCustomValidity<E, SELF> {
     static SelectPrepareElementBuilder select() {
         return new SelectPrepareElementBuilder();
     }
@@ -78,12 +78,7 @@ public interface SelectElementBuilder<E extends MdSelectElement, SELF extends Se
     default void showPicker() {
         element().showPicker();
     }
-    default boolean checkValidity() {
-        return element().checkValidity();
-    }
-    default boolean reportValidity() {
-        return element().reportValidity();
-    }
+    @Override
     default SELF setCustomValidity(String error) {
         element().setCustomValidity(error);
         return that();
@@ -110,7 +105,7 @@ public interface SelectElementBuilder<E extends MdSelectElement, SELF extends Se
             this.parent = parent;
             parent.add(this);
         }
-        public SelectElementBuilder<?, P> end() {
+        public SelectElementBuilder<?, P> done() {
             return parent;
         }
         public SelectOptionElementBuilder<P> value(String value) {
@@ -123,6 +118,10 @@ public interface SelectElementBuilder<E extends MdSelectElement, SELF extends Se
         }
         @Override public boolean isSelected() {
             return element().selected;
+        }
+        @Override public SelectOptionElementBuilder<P> disabled(boolean disabled) {
+            element().disabled = disabled;
+            return that();
         }
         @Override public MdSelectOptionElement element() {
             return that.element();

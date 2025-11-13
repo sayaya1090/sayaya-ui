@@ -1,6 +1,7 @@
 package dev.sayaya.ui.elements;
 
 import dev.sayaya.ui.dom.MdDividerElement;
+import dev.sayaya.ui.elements.interfaces.HasAriaLabel;
 import org.jboss.elemento.*;
 
 import static org.jboss.elemento.Elements.htmlElement;
@@ -9,7 +10,8 @@ public class DividerElementBuilder implements HTMLElementStyleMethods<MdDividerE
         HTMLElementVisibilityMethods<MdDividerElement, DividerElementBuilder>,
         ElementAttributeMethods<MdDividerElement, DividerElementBuilder>,
         ElementClassListMethods<MdDividerElement, DividerElementBuilder>,
-        ElementEventMethods<MdDividerElement, DividerElementBuilder> {
+        ElementEventMethods<MdDividerElement, DividerElementBuilder>,
+        HasAriaLabel<MdDividerElement, DividerElementBuilder> {
     public static DividerElementBuilder divider() {
         return new DividerElementBuilder();
     }

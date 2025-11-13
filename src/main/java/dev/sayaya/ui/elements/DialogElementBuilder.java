@@ -4,14 +4,15 @@ import dev.sayaya.ui.dom.MdDialogElement;
 import dev.sayaya.ui.elements.interfaces.*;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
-import org.jboss.elemento.HTMLElementBuilder;
-import org.jboss.elemento.HTMLElementStyleMethods;
-import org.jboss.elemento.HTMLElementVisibilityMethods;
+import org.jboss.elemento.*;
 
 import static org.jboss.elemento.Elements.htmlElement;
 
 public class DialogElementBuilder implements HTMLElementStyleMethods<MdDialogElement, DialogElementBuilder>,
         HTMLElementVisibilityMethods<MdDialogElement, DialogElementBuilder>,
+        ElementAttributeMethods<MdDialogElement, DialogElementBuilder>,
+        ElementClassListMethods<MdDialogElement, DialogElementBuilder>,
+        ElementEventMethods<MdDialogElement, DialogElementBuilder>,
         HasHeadlineSlot<MdDialogElement, DialogElementBuilder>,
         HasContentSlot<MdDialogElement, DialogElementBuilder>,
         HasActionsSlot<MdDialogElement, DialogElementBuilder>,

@@ -34,9 +34,9 @@ public class TabsPanelTest {
             HTMLDivElement panel3 = div().textContent("Audio 콘텐츠").element();
 
             var tabsElem = tabs().primary()
-                .tab().text("Video").icon("videocam").panel(panel1).end()
-                .tab().text("Photos").icon("photo").panel(panel2).end()
-                .tab().text("Audio").icon("audiotrack").panel(panel3).end()
+                .tab().text("Video").icon("videocam").panel(panel1).done()
+                .tab().text("Photos").icon("photo").panel(panel2).done()
+                .tab().text("Audio").icon("audiotrack").panel(panel3).done()
                 .element();
             """);
 
@@ -66,9 +66,9 @@ public class TabsPanelTest {
                 .element();
 
         var primaryTabs = tabs().primary()
-                .tab().text("Video").icon("videocam").panel(panel1).end()
-                .tab().text("Photos").icon("photo").panel(panel2).end()
-                .tab().text("Audio").icon("audiotrack").panel(panel3).end()
+                .tab().text("Video").icon("videocam").panel(panel1).done()
+                .tab().text("Photos").icon("photo").panel(panel2).done()
+                .tab().text("Audio").icon("audiotrack").panel(panel3).done()
                 .element();
 
         var primaryContainer = div()
@@ -90,9 +90,9 @@ public class TabsPanelTest {
             HTMLDivElement secPanel3 = div().textContent("Explore 콘텐츠").element();
 
             var tabsElem = tabs().secondary()
-                .tab().text("Flights").panel(secPanel1).end()
-                .tab().text("Trips").panel(secPanel2).end()
-                .tab().text("Explore").panel(secPanel3).end()
+                .tab().text("Flights").panel(secPanel1).done()
+                .tab().text("Trips").panel(secPanel2).done()
+                .tab().text("Explore").panel(secPanel3).done()
                 .element();
             """);
 
@@ -122,9 +122,9 @@ public class TabsPanelTest {
                 .element();
 
         var secondaryTabs = tabs().secondary()
-                .tab().text("Flights").panel(secPanel1).end()
-                .tab().text("Trips").panel(secPanel2).end()
-                .tab().text("Explore").panel(secPanel3).end()
+                .tab().text("Flights").panel(secPanel1).done()
+                .tab().text("Trips").panel(secPanel2).done()
+                .tab().text("Explore").panel(secPanel3).done()
                 .element();
 
         var secondaryContainer = div()
@@ -147,9 +147,9 @@ public class TabsPanelTest {
                 .element();
 
             var tabsElem = tabs().primary()
-                .tab().text("Overview").panel(complexPanel1).end()
-                .tab().text("Features").panel(complexPanel2).end()
-                .tab().text("Settings").panel(complexPanel3).end()
+                .tab().text("Overview").panel(complexPanel1).done()
+                .tab().text("Features").panel(complexPanel2).done()
+                .tab().text("Settings").panel(complexPanel3).done()
                 .element();
             """);
 
@@ -184,9 +184,9 @@ public class TabsPanelTest {
                 .element();
 
         var complexTabs = tabs().primary()
-                .tab().text("Overview").panel(complexPanel1).end()
-                .tab().text("Features").panel(complexPanel2).end()
-                .tab().text("Settings").panel(complexPanel3).end()
+                .tab().text("Overview").panel(complexPanel1).done()
+                .tab().text("Features").panel(complexPanel2).done()
+                .tab().text("Settings").panel(complexPanel3).done()
                 .activeTabIndex(0)
                 .element();
 

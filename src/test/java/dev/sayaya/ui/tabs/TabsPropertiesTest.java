@@ -1,6 +1,7 @@
 package dev.sayaya.ui.tabs;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 
 import static dev.sayaya.ui.TestHelper.*;
 import static dev.sayaya.ui.elements.TabsElementBuilder.tabs;
@@ -31,22 +32,24 @@ public class TabsPropertiesTest {
             "탭 클릭 시 자동으로 활성화됩니다 (기본 동작).",
             """
             var tabsElem = tabs().primary()
-                .tab().text("Tab 1").end()
-                .tab().text("Tab 2").end()
-                .tab().text("Tab 3").end()
+                .tab().text("Tab 1").done()
+                .tab().text("Tab 2").done()
+                .tab().text("Tab 3").done()
                 .autoActivate()
                 .element();
             """);
         var autoActivateTabs = tabs().primary()
-                .tab().text("Tab 1").end()
-                .tab().text("Tab 2").end()
-                .tab().text("Tab 3").end()
+                .tab().text("Tab 1").done()
+                .tab().text("Tab 2").done()
+                .tab().text("Tab 3").done()
                 .autoActivate()
                 .element();
 
         autoActivateExample.addInteractiveDemo(autoActivateTabs, false);
-
-        assertTrue("Auto-activate가 활성화되어야 함", autoActivateTabs.autoActivate);
+        autoActivateTabs.getUpdateComplete().then(ignore ->{
+            assertTrue("Auto-activate가 활성화되어야 함", autoActivateTabs.autoActivate);
+            return null;
+        });
 
         // Manual activate property test
         var manualActivateExample = addExampleCode(propertiesSection,
@@ -54,22 +57,24 @@ public class TabsPropertiesTest {
             "Enter/Space 키를 눌러야 활성화됩니다.",
             """
             var tabsElem = tabs().primary()
-                .tab().text("Tab 1").end()
-                .tab().text("Tab 2").end()
-                .tab().text("Tab 3").end()
+                .tab().text("Tab 1").done()
+                .tab().text("Tab 2").done()
+                .tab().text("Tab 3").done()
                 .autoActivate(false)
                 .element();
             """);
         var manualActivateTabs = tabs().primary()
-                .tab().text("Tab 1").end()
-                .tab().text("Tab 2").end()
-                .tab().text("Tab 3").end()
+                .tab().text("Tab 1").done()
+                .tab().text("Tab 2").done()
+                .tab().text("Tab 3").done()
                 .autoActivate(false)
                 .element();
 
         manualActivateExample.addInteractiveDemo(manualActivateTabs, false);
-
-        assertFalse("Auto-activate가 비활성화되어야 함", manualActivateTabs.autoActivate);
+        manualActivateTabs.getUpdateComplete().then(result ->{
+            assertFalse("Auto-activate가 비활성화되어야 함", manualActivateTabs.autoActivate);
+            return Promise.resolve(result);
+        });
 
         // Active tab index test
         var indexExample = addExampleCode(propertiesSection,
@@ -77,22 +82,24 @@ public class TabsPropertiesTest {
             "두 번째 탭 (인덱스 1)이 기본으로 활성화됩니다.",
             """
             var tabsElem = tabs().primary()
-                .tab().text("Tab 1").end()
-                .tab().text("Tab 2").end()
-                .tab().text("Tab 3").end()
+                .tab().text("Tab 1").done()
+                .tab().text("Tab 2").done()
+                .tab().text("Tab 3").done()
                 .activeTabIndex(1)
                 .element();
             """);
         var indexTabs = tabs().primary()
-                .tab().text("Tab 1").end()
-                .tab().text("Tab 2").end()
-                .tab().text("Tab 3").end()
+                .tab().text("Tab 1").done()
+                .tab().text("Tab 2").done()
+                .tab().text("Tab 3").done()
                 .activeTabIndex(1)
                 .element();
 
         indexExample.addInteractiveDemo(indexTabs, false);
-
-        assertEquals("활성 탭 인덱스: 1이어야 함", 1, indexTabs.activeTabIndex);
+        indexTabs.getUpdateComplete().then(result ->{
+            assertEquals("활성 탭 인덱스: 1이어야 함", 1, indexTabs.activeTabIndex);
+            return Promise.resolve(result);
+        });
 
         // Inline icon test
         var inlineIconExample = addExampleCode(propertiesSection,
@@ -100,15 +107,15 @@ public class TabsPropertiesTest {
             "아이콘이 텍스트 옆에 표시됩니다.",
             """
             var tabsElem = tabs().primary()
-                .tab().text("Flights").icon("flight").inlineIcon().end()
-                .tab().text("Trips").icon("luggage").inlineIcon().end()
-                .tab().text("Explore").icon("explore").inlineIcon().end()
+                .tab().text("Flights").icon("flight").inlineIcon().done()
+                .tab().text("Trips").icon("luggage").inlineIcon().done()
+                .tab().text("Explore").icon("explore").inlineIcon().done()
                 .element();
             """);
         var inlineIconTabs = tabs().primary()
-                .tab().text("Flights").icon("flight").inlineIcon().end()
-                .tab().text("Trips").icon("luggage").inlineIcon().end()
-                .tab().text("Explore").icon("explore").inlineIcon().end()
+                .tab().text("Flights").icon("flight").inlineIcon().done()
+                .tab().text("Trips").icon("luggage").inlineIcon().done()
+                .tab().text("Explore").icon("explore").inlineIcon().done()
                 .element();
 
         inlineIconExample.addInteractiveDemo(inlineIconTabs, false);
@@ -119,15 +126,15 @@ public class TabsPropertiesTest {
             "아이콘이 텍스트 위에 표시됩니다 (기본 동작).",
             """
             var tabsElem = tabs().primary()
-                .tab().text("Flights").icon("flight").end()
-                .tab().text("Trips").icon("luggage").end()
-                .tab().text("Explore").icon("explore").end()
+                .tab().text("Flights").icon("flight").done()
+                .tab().text("Trips").icon("luggage").done()
+                .tab().text("Explore").icon("explore").done()
                 .element();
             """);
         var stackedIconTabs = tabs().primary()
-                .tab().text("Flights").icon("flight").end()
-                .tab().text("Trips").icon("luggage").end()
-                .tab().text("Explore").icon("explore").end()
+                .tab().text("Flights").icon("flight").done()
+                .tab().text("Trips").icon("luggage").done()
+                .tab().text("Explore").icon("explore").done()
                 .element();
 
         stackedIconExample.addInteractiveDemo(stackedIconTabs, false);

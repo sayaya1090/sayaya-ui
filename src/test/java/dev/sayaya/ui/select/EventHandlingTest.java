@@ -39,8 +39,8 @@ public class EventHandlingTest {
                     changeCount.incrementAndGet();
                     console.log("선택 변경됨");
                 })
-                .option().value("a").headline("A").end()
-                .option().value("b").headline("B").end()
+                .option().value("a").headline("A").done()
+                .option().value("b").headline("B").done()
                 .element();
             """);
         var changeCount = new AtomicInteger(0);
@@ -49,8 +49,8 @@ public class EventHandlingTest {
                 .onChange(evt -> {
                     changeCount.incrementAndGet();
                     console.log("선택 변경됨");
-                }).option().value("a").headline("A").end()
-                .option().value("b").headline("B").end()
+                }).option().value("a").headline("A").done()
+                .option().value("b").headline("B").done()
                 .element();
         var changeState = changeExample.addInteractiveDemo(changeSelect);
         changeState.textContent = "선택 횟수: " + changeCount.get() + " | 현재 값: " + changeSelect.value;
@@ -76,8 +76,8 @@ public class EventHandlingTest {
                     inputCount.incrementAndGet();
                     console.log("선택 변경됨");
                 })
-                .option().value("1").headline("옵션 1").end()
-                .option().value("2").headline("옵션 2").end()
+                .option().value("1").headline("옵션 1").done()
+                .option().value("2").headline("옵션 2").done()
                 .element();
             """);
         var inputCount = new AtomicInteger(0);
@@ -87,8 +87,8 @@ public class EventHandlingTest {
                     inputCount.incrementAndGet();
                     console.log("선택 변경됨");
                 })
-                .option().value("1").headline("옵션 1").end()
-                .option().value("2").headline("옵션 2").end()
+                .option().value("1").headline("옵션 1").done()
+                .option().value("2").headline("옵션 2").done()
                 .element();
         var inputState = inputExample.addInteractiveDemo(inputSelect);
         inputState.textContent = "입력 횟수: " + inputCount.get() + " | 현재 값: " + inputSelect.value;
@@ -123,8 +123,8 @@ public class EventHandlingTest {
                 }).onClosed(evt -> {
                     closedCount.incrementAndGet();
                     console.log("closed 이벤트 발생");
-                }).option().value("x").headline("X").end()
-                .option().value("y").headline("Y").end()
+                }).option().value("x").headline("X").done()
+                .option().value("y").headline("Y").done()
                 .element();
             """);
         var openingCount = new AtomicInteger(0);
@@ -146,8 +146,8 @@ public class EventHandlingTest {
                 }).onClosed(evt -> {
                     closedCount.incrementAndGet();
                     console.log("closed 이벤트 발생");
-                }).option().value("x").headline("X").end()
-                .option().value("y").headline("Y").end()
+                }).option().value("x").headline("X").done()
+                .option().value("y").headline("Y").done()
                 .element();
         var menuState = menuExample.addInteractiveDemo(menuEventSelect);
         var updateMenuState = new Runnable() {

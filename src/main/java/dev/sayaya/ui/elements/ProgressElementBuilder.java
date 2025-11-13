@@ -4,13 +4,12 @@ import dev.sayaya.ui.dom.MdProgressElement;
 import dev.sayaya.ui.dom.MdProgressElement.MdCircularProgressElement;
 import dev.sayaya.ui.dom.MdProgressElement.MdLinearProgressElement;
 import dev.sayaya.ui.elements.interfaces.HasAriaLabel;
-import org.jboss.elemento.HTMLContainerBuilder;
-import org.jboss.elemento.HTMLElementStyleMethods;
-import org.jboss.elemento.HTMLElementVisibilityMethods;
+import org.jboss.elemento.*;
 
 import static org.jboss.elemento.Elements.htmlContainer;
 
-public interface ProgressElementBuilder<E extends MdProgressElement, SELF extends ProgressElementBuilder<E, SELF>> extends HTMLElementStyleMethods<E, SELF>, HTMLElementVisibilityMethods<E, SELF>, HasAriaLabel<E, SELF> {
+public interface ProgressElementBuilder<E extends MdProgressElement, SELF extends ProgressElementBuilder<E, SELF>> extends HTMLElementStyleMethods<E, SELF>, HTMLElementVisibilityMethods<E, SELF>,
+        ElementAttributeMethods<E, SELF>, ElementClassListMethods<E, SELF>, HasAriaLabel<E, SELF> {
     static ProgressPrepareElementBuilder progress() {
         return new ProgressPrepareElementBuilder();
     }

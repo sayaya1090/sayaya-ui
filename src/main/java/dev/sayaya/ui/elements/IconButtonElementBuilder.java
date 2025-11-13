@@ -7,13 +7,12 @@ import dev.sayaya.ui.dom.MdIconButtonElement.MdOutlinedIconButtonElement;
 import dev.sayaya.ui.elements.interfaces.*;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
-import elemental2.dom.MouseEvent;
 import org.jboss.elemento.*;
 
 import static org.jboss.elemento.Elements.htmlContainer;
 
 public interface IconButtonElementBuilder<E extends MdIconButtonElement, SELF extends IconButtonElementBuilder<E, SELF>> extends HTMLElementStyleMethods<E, SELF>, HTMLElementVisibilityMethods<E, SELF>,
-        ElementAttributeMethods<E, SELF>, ElementClassListMethods<E, SELF>, ElementConsumerMethods<E, SELF>, ElementContainerMethods<E, SELF>, ElementEventMethods<E, SELF>, ElementTextMethods<E, SELF>, HasAriaLabel<E, SELF>, HasIconSlot<E, SELF>, Disableable<E, SELF>, Linkable<E, SELF> {
+        ElementAttributeMethods<E, SELF>, ElementClassListMethods<E, SELF>, ElementConsumerMethods<E, SELF>, ElementContainerMethods<E, SELF>, ElementEventMethods<E, SELF>, ElementTextMethods<E, SELF>, HasAriaLabel<E, SELF>, HasIconSlot<E, SELF>, Disableable<E, SELF>, Linkable<E, SELF>, Clickable<E, SELF> {
     @Override default SELF disabled(boolean disabled) {
         element().disabled = disabled;
         return that();
@@ -56,9 +55,6 @@ public interface IconButtonElementBuilder<E extends MdIconButtonElement, SELF ex
     default SELF ariaLabelSelected(String label) {
         element().setAttribute("aria-label-selected", label);
         return that();
-    }
-    default SELF onClick(EventCallbackFn<MouseEvent> callback) {
-        return on(EventType.click, callback);
     }
     E element();
 
