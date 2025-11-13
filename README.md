@@ -61,6 +61,8 @@ dependencies {
 | **Switch** | `sw()` | 아이콘 지원 토글 스위치 | [🔗](https://sayaya1090.github.io/sayaya-ui/switch.html) |
 | **Tabs** | `tabs()` | Primary, Secondary 탭 네비게이션 | [🔗](https://sayaya1090.github.io/sayaya-ui/tabs.html) |
 | **Text Field** | `textField()` | Filled, Outlined 텍스트 입력 | [🔗](https://sayaya1090.github.io/sayaya-ui/text_field.html) |
+| **List** | `list()` | 단일/다중 선택, 아이콘, 아바타 지원 | [🔗](https://sayaya1090.github.io/sayaya-ui/list.html) |
+| **Menu** | `menu()` | 드롭다운 메뉴, 서브메뉴 지원 | [🔗](https://sayaya1090.github.io/sayaya-ui/menu.html) |
 
 ## 사용 예제
 
@@ -487,6 +489,149 @@ var noRipple = ripple()
     .element();
 ```
 
+### List
+
+```java
+import static dev.sayaya.ui.elements.ListElementBuilder.list;
+
+// 기본 리스트
+var basicList = list()
+    .item()
+        .headline("사과")
+        .supportingText("신선하고 달콤한 과일")
+    .done()
+    .item()
+        .headline("바나나")
+        .supportingText("에너지가 풍부한 과일")
+    .done()
+    .item()
+        .headline("오렌지")
+        .supportingText("비타민 C가 풍부한 과일")
+    .done()
+    .element();
+
+// 아이콘이 있는 리스트
+var iconList = list()
+    .item()
+        .start(icon("folder"))
+        .headline("문서")
+    .done()
+    .item()
+        .start(icon("image"))
+        .headline("사진")
+    .done()
+    .item()
+        .start(icon("music_note"))
+        .headline("음악")
+    .done()
+    .element();
+
+// 링크로 동작하는 리스트 항목
+var linkList = list()
+    .item()
+        .headline("Google")
+        .type("link")
+        .href("https://google.com")
+        .targetBlank()
+    .done()
+    .item()
+        .headline("GitHub")
+        .type("link")
+        .href("https://github.com")
+        .targetBlank()
+    .done()
+    .element();
+
+// 구분선이 있는 리스트
+var dividedList = list()
+    .item().headline("항목 1").done()
+    .divider()
+    .item().headline("항목 2").done()
+    .divider()
+    .item().headline("항목 3").done()
+    .element();
+```
+
+### Menu
+
+```java
+import static dev.sayaya.ui.elements.MenuElementBuilder.menu;
+import static dev.sayaya.ui.elements.ButtonElementBuilder.button;
+
+// 기본 메뉴
+var anchor = button().filled()
+    .text("메뉴 열기")
+    .id("menu-anchor")
+    .element();
+
+var simpleMenu = menu()
+    .anchor("menu-anchor")
+    .positioning(MenuElementBuilder.Position.Fixed)
+    .item()
+        .headline("잘라내기")
+        .start(icon("content_cut"))
+    .done()
+    .item()
+        .headline("복사")
+        .start(icon("content_copy"))
+    .done()
+    .item()
+        .headline("붙여넣기")
+        .start(icon("content_paste"))
+    .done()
+    .element();
+
+anchor.addEventListener("click", e -> simpleMenu.open = !simpleMenu.open);
+
+// 서브메뉴가 있는 메뉴
+var submenuAnchor = button().filled()
+    .text("파일")
+    .id("file-menu-anchor")
+    .element();
+
+var fileMenu = menu()
+    .anchor("file-menu-anchor")
+    .positioning(MenuElementBuilder.Position.Fixed)
+    .overflow() // 서브메뉴 사용 시 필수!
+    .item()
+        .headline("새 파일")
+    .done()
+    .sub()
+        .item()
+            .headline("열기")
+            .end(icon("arrow_right"))
+        .done()
+        .menu()
+            .item().headline("최근 파일 1").done()
+            .item().headline("최근 파일 2").done()
+        .done()
+    .done()
+    .item()
+        .headline("저장")
+    .done()
+    .element();
+
+submenuAnchor.addEventListener("click", e -> fileMenu.open = !fileMenu.open);
+
+// keepOpen으로 메뉴 열린 상태 유지
+var filterMenu = menu()
+    .anchor("filter-anchor")
+    .positioning(MenuElementBuilder.Position.Fixed)
+    .item()
+        .headline("전체")
+        .keepOpen()
+    .done()
+    .item()
+        .headline("진행 중")
+        .keepOpen()
+    .done()
+    .item()
+        .headline("완료")
+        .keepOpen()
+    .done()
+    .element();
+```
+
 ## 빌더 인터페이스
 
 sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제공합니다:
@@ -499,11 +644,21 @@ sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제�
 - **`FormAssociable`** - 폼과 통합되는 컴포넌트
 - **`Typeable`** - 타입 변형이 있는 컴포넌트
 - **`Elevatable`** - 높이가 있는 컴포넌트
+- **`Clickable`** - 클릭 이벤트를 지원하는 컴포넌트
+- **`Validatable`** - 유효성 검사를 지원하는 컴포넌트
 - **`HasAriaLabel`** - ARIA 레이블을 지원하는 컴포넌트
 - **`HasIconSlot`** - 아이콘 슬롯이 있는 컴포넌트
 - **`HasHeadlineSlot`** - 제목 슬롯이 있는 컴포넌트
 - **`HasContentSlot`** - 본문 슬롯이 있는 컴포넌트
 - **`HasActionsSlot`** - 액션 버튼 슬롯이 있는 컴포넌트
+- **`HasStartSlot`** - 시작 위치 슬롯이 있는 컴포넌트
+- **`HasEndSlot`** - 끝 위치 슬롯이 있는 컴포넌트
+- **`HasSupportingTextSlot`** - 보조 텍스트 슬롯이 있는 컴포넌트
+- **`HasLabel`** - 레이블을 지원하는 컴포넌트
+- **`HasValue`** - 값을 가지는 컴포넌트
+- **`HasRange`** - 범위(min/max)를 지원하는 컴포넌트
+- **`HasErrorState`** - 에러 상태를 지원하는 컴포넌트
+- **`HasCustomValidity`** - 커스텀 유효성 검사를 지원하는 컴포넌트
 - **`HasInputEvent`** - Input 이벤트를 지원하는 컴포넌트
 - **`HasChangeEvent`** - Change 이벤트를 지원하는 컴포넌트
 - **`HasDialogEvents`** - Dialog 이벤트를 지원하는 컴포넌트
@@ -547,6 +702,8 @@ sayaya-ui/
 │   │   ├── MdRadioElement.java
 │   │   ├── MdChipElement.java
 │   │   ├── MdDialogElement.java
+│   │   ├── MdListElement.java
+│   │   ├── MdMenuElement.java
 │   │   └── ...
 │   └── elements/         # 유창한 빌더 API
 │       ├── ButtonElementBuilder.java
@@ -554,11 +711,18 @@ sayaya-ui/
 │       ├── RadioElementBuilder.java
 │       ├── ChipsElementBuilder.java
 │       ├── DialogElementBuilder.java
+│       ├── ListElementBuilder.java
+│       ├── MenuElementBuilder.java
 │       └── interfaces/   # 재사용 가능한 빌더 특성
 │           ├── Disableable.java
 │           ├── Selectable.java
 │           ├── Requireable.java
+│           ├── Validatable.java
+│           ├── Clickable.java
 │           ├── FormAssociable.java
+│           ├── HasStartSlot.java
+│           ├── HasEndSlot.java
+│           ├── HasSupportingTextSlot.java
 │           ├── HasInputEvent.java
 │           ├── HasChangeEvent.java
 │           ├── HasDialogEvents.java
@@ -567,6 +731,8 @@ sayaya-ui/
     ├── java/             # GWT 테스트 진입점
     │   └── dev/sayaya/ui/
     │       ├── radio/    # Radio 테스트 케이스
+    │       ├── list/     # List 테스트 케이스
+    │       ├── menu/     # Menu 테스트 케이스
     │       └── ...
     ├── kotlin/           # Kotest 명세
     └── webapp/           # 테스트 HTML 페이지

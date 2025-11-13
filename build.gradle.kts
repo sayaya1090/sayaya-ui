@@ -61,6 +61,7 @@ tasks {
                 "dev.sayaya.FocusRingElementTest",
                 "dev.sayaya.IconElementTest",
                 "dev.sayaya.ListElementTest",
+                "dev.sayaya.MenuElementTest",
                 "dev.sayaya.ProgressElementTest",
                 "dev.sayaya.RadioElementTest",
                 "dev.sayaya.RippleElementTest",
