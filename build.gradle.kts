@@ -1,5 +1,3 @@
-import org.docstr.gwt.GwtPluginExtension
-
 plugins {
     kotlin("jvm") version "2.2.21"
     id("dev.sayaya.gwt") version "2.2.7"
@@ -69,25 +67,6 @@ tasks {
         into("src/test/webapp")
     }
 
-    gwtDevMode {
-        val extension = project.extensions.getByType(GwtPluginExtension::class.java)
-        val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
-        val mainSourceSet = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME)
-        val testSourceSet = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME)
-
-        extension.devMode.extraSourceDirs.from(
-            mainSourceSet.allSource.sourceDirectories,
-            mainSourceSet.resources.sourceDirectories,
-            mainSourceSet.output,
-
-            testSourceSet.allSource.sourceDirectories,
-            testSourceSet.resources.sourceDirectories,
-            testSourceSet.output,
-            testSourceSet.runtimeClasspath
-        )
-        this.configureClasspath(project)
-        dependsOn(copyLabsBundleToTest)
-    }
     gwt {
         minHeapSize = "1024M"
         maxHeapSize = "2048M"
@@ -96,6 +75,7 @@ tasks {
         modules = listOf("dev.sayaya.Ui")
         devMode {
             modules = listOf(
+                "dev.sayaya.BadgeElementTest",
                 "dev.sayaya.ButtonElementTest",
                 "dev.sayaya.DialogElementTest",
                 "dev.sayaya.CardElementTest",

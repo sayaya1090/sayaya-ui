@@ -65,6 +65,7 @@ dependencies {
 | **List** | `list()` | 단일/다중 선택, 아이콘, 아바타 지원 | [🔗](https://sayaya1090.github.io/sayaya-ui/list.html) |
 | **Menu** | `menu()` | 드롭다운 메뉴, 서브메뉴 지원 | [🔗](https://sayaya1090.github.io/sayaya-ui/menu.html) |
 | **Card** | `card()` | Elevated, Filled, Outlined 카드 컨테이너 | [🔗](https://sayaya1090.github.io/sayaya-ui/card.html) |
+| **Badge** | `badge()` | 알림이나 상태를 나타내는 배지 | [🔗](https://sayaya1090.github.io/sayaya-ui/badge.html) |
 
 ## 사용 예제
 
@@ -707,6 +708,52 @@ var clickableCard = card().elevated()
     .element();
 ```
 
+### Badge
+
+```java
+import static dev.sayaya.ui.elements.BadgeElementBuilder.badge;
+import static dev.sayaya.ui.elements.IconElementBuilder.icon;
+
+// 숫자 배지
+var iconElem = icon("notifications").element();
+var container = div()
+    .style("position", "relative")
+    .style("display", "inline-block")
+    .add(iconElem)
+    .add(badge()
+        .value(3)
+        .anchorElement(iconElem)
+        .style("position", "absolute")
+        .style("top", "calc(0px - var(--_large-size))")
+        .style("right", "calc(var(--_large-size) - 5px)")
+    )
+    .element();
+
+// 점 배지 (빈 배지)
+var personIcon = icon("person").element();
+var dotBadge = div()
+    .style("position", "relative")
+    .style("display", "inline-block")
+    .add(personIcon)
+    .add(badge()
+        .anchorElement(personIcon)
+        .style("position", "absolute")
+        .style("top", "calc(0px - var(--_size))")
+        .style("right", "calc(var(--_size) - 2px)")
+    )
+    .element();
+
+// 텍스트 배지
+var textBadge = badge()
+    .value("NEW")
+    .element();
+
+// 숫자 값이 있는 배지
+var numberBadge = badge()
+    .value(99)
+    .element();
+```
+
 ## 빌더 인터페이스
 
 sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제공합니다:
@@ -771,10 +818,11 @@ sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제�
 
 ### Material Web Labs 번들
 
-Card와 같은 Labs 컴포넌트는 별도 번들로 제공됩니다:
+Card, Badge와 같은 Labs 컴포넌트는 별도 번들로 제공됩니다:
 - 소스: `src/main/webapp/labs-bundle/`
 - 출력: `src/main/webapp/labs.bundle.js`
 - 자동 빌드: Gradle 빌드 시 자동으로 npm을 통해 번들 생성
+- 포함 컴포넌트: Card (elevated/filled/outlined), Badge
 
 ## 아키텍처
 
@@ -786,12 +834,14 @@ sayaya-ui/
 │   │   │   ├── MdButtonElement.java
 │   │   │   ├── MdCheckboxElement.java
 │   │   │   ├── MdCardElement.java
+│   │   │   ├── MdBadgeElement.java
 │   │   │   ├── MdListElement.java
 │   │   │   └── ...
 │   │   └── elements/         # 유창한 빌더 API
 │   │       ├── ButtonElementBuilder.java
 │   │       ├── CheckboxElementBuilder.java
 │   │       ├── CardElementBuilder.java
+│   │       ├── BadgeElementBuilder.java
 │   │       ├── ListElementBuilder.java
 │   │       └── interfaces/   # 재사용 가능한 빌더 특성
 │   │           ├── Disableable.java
@@ -808,6 +858,7 @@ sayaya-ui/
     ├── java/             # GWT 테스트 진입점
     │   └── dev/sayaya/ui/
     │       ├── card/     # Card 테스트 케이스
+    │       ├── badge/    # Badge 테스트 케이스
     │       ├── list/     # List 테스트 케이스
     │       └── ...
     ├── kotlin/           # Kotest 명세
