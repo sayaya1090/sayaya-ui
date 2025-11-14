@@ -71,9 +71,9 @@ public interface ButtonElementBuilder<E extends MdButtonElement, SELF extends Bu
         public IconButtonElementBuilder.PlainIconButtonElementBuilder icon(String icon) {
             return new IconButtonElementBuilder.PlainIconButtonElementBuilder().icon(icon);
         }
-        /*public FabElementBuilder.PlainFabElementBuilder fab() {
+        public FabElementBuilder.PlainFabElementBuilder fab() {
             return new FabElementBuilder.PlainFabElementBuilder();
-        }*/
+        }
     }
     final class ElevatedButtonElementBuilder implements ButtonElementBuilder<MdElevatedButtonElement, ElevatedButtonElementBuilder> {
         private final HTMLContainerBuilder<MdElevatedButtonElement> that = htmlContainer("md-elevated-button", MdElevatedButtonElement.class);

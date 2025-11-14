@@ -274,5 +274,100 @@ internal class ButtonElementTest: GwtTestSpec({
                 log?.let { it shouldNotContain "Assertion failed!" }
             }
         }
+
+        When("FAB 크기를 테스트할 때") {
+            Then("small FAB이 올바르게 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("small FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+            Then("medium FAB이 올바르게 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("medium FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+            Then("large FAB이 올바르게 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("large FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+        }
+
+        When("FAB variant를 테스트할 때") {
+            Then("surface FAB이 올바르게 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("surface FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+            Then("primary FAB이 올바르게 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("primary FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+            Then("secondary FAB이 올바르게 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("secondary FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+            Then("tertiary FAB이 올바르게 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("tertiary FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+        }
+
+        When("Extended FAB을 테스트할 때") {
+            Then("label이 있는 extended FAB이 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("extended FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+            Then("label만 있는 FAB이 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("label-only FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+            Then("스타일이 적용된 extended FAB이 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("styled extended FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+        }
+
+        When("Branded FAB을 테스트할 때") {
+            Then("medium branded FAB이 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("medium branded FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+            Then("large branded FAB이 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("large branded FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+            Then("extended branded FAB이 생성되어야 한다") {
+                val log = logs.find { it.toString().startsWith("extended branded FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+        }
+
+        When("FAB 속성을 테스트할 때") {
+            Then("lowered 속성이 적용되어야 한다") {
+                val log = logs.find { it.toString().startsWith("lowered FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+            Then("touch target 속성이 적용되어야 한다") {
+                val log = logs.find { it.toString().startsWith("touch target FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+            Then("FAB의 aria-label이 적용되어야 한다") {
+                val log = logs.find { it.toString().startsWith("a11y FAB") } as String?
+                println(log)
+                log?.let { it shouldNotContain "Assertion failed!" }
+            }
+        }
     }
 })

@@ -47,6 +47,7 @@ dependencies {
 |---------|------|-----|-----|
 | **Button** | `button()` | Elevated, Filled, Filled Tonal, Outlined, Text | [🔗](https://sayaya1090.github.io/sayaya-ui/button.html) |
 | | `button().icon()` | Standard, Filled, Filled Tonal, Outlined, Toggle | |
+| | `button().fab()` | Plain FAB (3가지 크기), Branded FAB, Extended FAB | |
 | **Checkbox** | `checkbox()` | indeterminate 상태를 지원하는 선택 컨트롤 | [🔗](https://sayaya1090.github.io/sayaya-ui/checkbox.html) |
 | **Chip** | `chips()` | Assist, Filter, Input, Suggestion 칩 | [🔗](https://sayaya1090.github.io/sayaya-ui/chip.html) |
 | **Radio** | `radio()` | 그룹 내에서 단일 선택을 위한 라디오 버튼 | [🔗](https://sayaya1090.github.io/sayaya-ui/radio.html) |
@@ -92,6 +93,30 @@ var favoriteButton = button().icon()
     .toggle("favorite")
     .ariaLabel("즐겨찾기에 추가")
     .ariaLabelSelected("즐겨찾기에서 제거")
+    .element();
+
+// FAB (Floating Action Button)
+var addFab = button().fab()
+    .variant(FabElementBuilder.Variant.Primary)
+    .size(PlainFabElementBuilder.Size.Large)
+    .icon("add")
+    .ariaLabel("추가")
+    .onClick(e -> create())
+    .element();
+
+// Extended FAB
+var composeFab = button().fab()
+    .icon("edit")
+    .label("Compose")
+    .ariaLabel("새 글 작성")
+    .element();
+
+// Branded FAB
+var brandedFab = button().fab().branded()
+    .size(BrandedFabElementBuilder.Size.Large)
+    .icon("local_fire_department")
+    .label("Brand")
+    .ariaLabel("브랜드 홍보")
     .element();
 ```
 

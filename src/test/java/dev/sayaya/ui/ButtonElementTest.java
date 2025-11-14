@@ -14,5 +14,6 @@ public class ButtonElementTest implements EntryPoint {
         AccessibilityTest.test();
         UseCasesTest.test();
         IconButtonTest.test();
+        FabTest.test();
     }
 }
