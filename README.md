@@ -64,6 +64,7 @@ dependencies {
 | **Text Field** | `textField()` | Filled, Outlined 텍스트 입력 | [🔗](https://sayaya1090.github.io/sayaya-ui/text_field.html) |
 | **List** | `list()` | 단일/다중 선택, 아이콘, 아바타 지원 | [🔗](https://sayaya1090.github.io/sayaya-ui/list.html) |
 | **Menu** | `menu()` | 드롭다운 메뉴, 서브메뉴 지원 | [🔗](https://sayaya1090.github.io/sayaya-ui/menu.html) |
+| **Card** | `card()` | Elevated, Filled, Outlined 카드 컨테이너 | [🔗](https://sayaya1090.github.io/sayaya-ui/card.html) |
 
 ## 사용 예제
 
@@ -657,6 +658,55 @@ var filterMenu = menu()
     .element();
 ```
 
+### Card
+
+```java
+import static dev.sayaya.ui.elements.CardElementBuilder.card;
+
+// Elevated 카드
+var elevatedCard = card().elevated()
+    .style("width", "300px")
+    .add(div()
+        .style("padding", "16px")
+        .add(h(3).text("Elevated Card"))
+        .add(p().text("그림자 효과가 있는 카드입니다."))
+    )
+    .element();
+
+// Filled 카드
+var filledCard = card().filled()
+    .style("width", "300px")
+    .add(div()
+        .style("padding", "16px")
+        .add(h(3).text("Filled Card"))
+        .add(p().text("배경색이 채워진 카드입니다."))
+    )
+    .element();
+
+// Outlined 카드
+var outlinedCard = card().outlined()
+    .style("width", "300px")
+    .add(div()
+        .style("padding", "16px")
+        .add(h(3).text("Outlined Card"))
+        .add(p().text("외곽선이 있는 카드입니다."))
+    )
+    .element();
+
+// 클릭 가능한 카드
+var clickableCard = card().elevated()
+    .style("width", "300px")
+    .style("cursor", "pointer")
+    .onClick(e -> handleCardClick())
+    .ariaLabel("제품 정보 카드")
+    .add(div()
+        .style("padding", "16px")
+        .add(h(3).text("Clickable Card"))
+        .add(p().text("이 카드를 클릭해보세요."))
+    )
+    .element();
+```
+
 ## 빌더 인터페이스
 
 sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제공합니다:
@@ -695,12 +745,15 @@ sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제�
 
 - JDK 11+
 - Gradle 7.0+
+- Node.js & npm (Material Web Labs 번들 빌드용)
 
 ### 빌드
 
 ```bash
 ./gradlew build
 ```
+
+빌드 시 자동으로 Material Web Labs 컴포넌트(Card 등)가 번들링됩니다.
 
 ### 테스트 실행
 
@@ -716,51 +769,50 @@ sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제�
 
 로컬에서 개발 모드로 실행하거나, [라이브 데모](https://sayaya1090.github.io/sayaya-ui/)에서 모든 컴포넌트를 확인할 수 있습니다.
 
+### Material Web Labs 번들
+
+Card와 같은 Labs 컴포넌트는 별도 번들로 제공됩니다:
+- 소스: `src/main/webapp/labs-bundle/`
+- 출력: `src/main/webapp/labs.bundle.js`
+- 자동 빌드: Gradle 빌드 시 자동으로 npm을 통해 번들 생성
+
 ## 아키텍처
 
 ```
 sayaya-ui/
-├── src/main/java/dev/sayaya/ui/
-│   ├── dom/              # Material Web 요소에 대한 JsInterop 바인딩
-│   │   ├── MdButtonElement.java
-│   │   ├── MdCheckboxElement.java
-│   │   ├── MdRadioElement.java
-│   │   ├── MdChipElement.java
-│   │   ├── MdDialogElement.java
-│   │   ├── MdListElement.java
-│   │   ├── MdMenuElement.java
-│   │   └── ...
-│   └── elements/         # 유창한 빌더 API
-│       ├── ButtonElementBuilder.java
-│       ├── CheckboxElementBuilder.java
-│       ├── RadioElementBuilder.java
-│       ├── ChipsElementBuilder.java
-│       ├── DialogElementBuilder.java
-│       ├── ListElementBuilder.java
-│       ├── MenuElementBuilder.java
-│       └── interfaces/   # 재사용 가능한 빌더 특성
-│           ├── Disableable.java
-│           ├── Selectable.java
-│           ├── Requireable.java
-│           ├── Validatable.java
-│           ├── Clickable.java
-│           ├── FormAssociable.java
-│           ├── HasStartSlot.java
-│           ├── HasEndSlot.java
-│           ├── HasSupportingTextSlot.java
-│           ├── HasInputEvent.java
-│           ├── HasChangeEvent.java
-│           ├── HasDialogEvents.java
-│           └── ...
+├── src/main/
+│   ├── java/dev/sayaya/ui/
+│   │   ├── dom/              # Material Web 요소에 대한 JsInterop 바인딩
+│   │   │   ├── MdButtonElement.java
+│   │   │   ├── MdCheckboxElement.java
+│   │   │   ├── MdCardElement.java
+│   │   │   ├── MdListElement.java
+│   │   │   └── ...
+│   │   └── elements/         # 유창한 빌더 API
+│   │       ├── ButtonElementBuilder.java
+│   │       ├── CheckboxElementBuilder.java
+│   │       ├── CardElementBuilder.java
+│   │       ├── ListElementBuilder.java
+│   │       └── interfaces/   # 재사용 가능한 빌더 특성
+│   │           ├── Disableable.java
+│   │           ├── Clickable.java
+│   │           ├── HasAriaLabel.java
+│   │           └── ...
+│   └── webapp/
+│       ├── labs-bundle/      # Material Web Labs 번들 빌드
+│       │   ├── package.json
+│       │   ├── rollup.config.js
+│       │   └── src/index.js
+│       └── labs.bundle.js    # 빌드된 Labs 컴포넌트 번들
 └── src/test/
     ├── java/             # GWT 테스트 진입점
     │   └── dev/sayaya/ui/
-    │       ├── radio/    # Radio 테스트 케이스
+    │       ├── card/     # Card 테스트 케이스
     │       ├── list/     # List 테스트 케이스
-    │       ├── menu/     # Menu 테스트 케이스
     │       └── ...
     ├── kotlin/           # Kotest 명세
     └── webapp/           # 테스트 HTML 페이지
+        └── labs.bundle.js    # 복사된 Labs 번들
 ```
 
 ## 의존성

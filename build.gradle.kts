@@ -27,6 +27,48 @@ dependencies {
     testImplementation("dev.sayaya:gwt-test:2.2.7")
 }
 tasks {
+    // Labs bundle npm install 태스크
+    val installLabsBundleDeps by registering(Exec::class) {
+        group = "build"
+        description = "Install labs-bundle npm dependencies"
+        workingDir = file("src/main/webapp/labs-bundle")
+
+        if (System.getProperty("os.name").lowercase().contains("windows")) {
+            commandLine("cmd", "/c", "npm", "install")
+        } else {
+            commandLine("sh", "-c", "npm install")
+        }
+
+        // node_modules가 이미 있으면 skip
+        onlyIf {
+            !file("src/main/webapp/labs-bundle/node_modules").exists()
+        }
+    }
+
+    // Labs bundle 빌드 태스크
+    val buildLabsBundle by registering(Exec::class) {
+        group = "build"
+        description = "Build Material Web Labs bundle"
+        dependsOn(installLabsBundleDeps)
+        workingDir = file("src/main/webapp/labs-bundle")
+
+        if (System.getProperty("os.name").lowercase().contains("windows")) {
+            commandLine("cmd", "/c", "npm", "run", "build")
+        } else {
+            commandLine("sh", "-c", "npm run build")
+        }
+    }
+
+    // 테스트용 labs bundle 복사 태스크
+    val copyLabsBundleToTest by registering(Copy::class) {
+        group = "build"
+        description = "Copy labs.bundle.js to test webapp"
+        dependsOn(buildLabsBundle)
+
+        from("src/main/webapp/labs.bundle.js")
+        into("src/test/webapp")
+    }
+
     gwtDevMode {
         val extension = project.extensions.getByType(GwtPluginExtension::class.java)
         val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
@@ -44,6 +86,7 @@ tasks {
             testSourceSet.runtimeClasspath
         )
         this.configureClasspath(project)
+        dependsOn(copyLabsBundleToTest)
     }
     gwt {
         minHeapSize = "1024M"
@@ -55,6 +98,7 @@ tasks {
             modules = listOf(
                 "dev.sayaya.ButtonElementTest",
                 "dev.sayaya.DialogElementTest",
+                "dev.sayaya.CardElementTest",
                 "dev.sayaya.CheckboxElementTest",
                 "dev.sayaya.ChipElementTest",
                 "dev.sayaya.DividerElementTest",
@@ -85,5 +129,14 @@ tasks {
     jar {
         exclude("**/*.class")
         from(sourceSets.main.get().allSource)
+        dependsOn(buildLabsBundle)
+    }
+
+    // 빌드 태스크에도 labs bundle 빌드 추가
+    gwtCompile {
+        dependsOn(buildLabsBundle)
+    }
+    gwtGenerateTestHtml {
+        dependsOn(copyLabsBundleToTest)
     }
 }
