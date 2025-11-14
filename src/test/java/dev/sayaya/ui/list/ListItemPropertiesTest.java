@@ -53,7 +53,10 @@ public class ListItemPropertiesTest {
                 .done()
                 .element();
         disabledExample.addInteractiveDemo(disabledList, false);
-        assertTrue("disabled 항목: disabled 속성 true", disabledList.items[1].disabled);
+        disabledList.getUpdateComplete().then(result -> {
+            assertTrue("disabled 항목: disabled 속성 true", disabledList.items[1].disabled);
+            return null;
+        });
 
         // Tabindex Control
         var tabindexExample = addExampleCode(propertiesSection,
@@ -90,7 +93,10 @@ public class ListItemPropertiesTest {
                 .done()
                 .element();
         tabindexExample.addInteractiveDemo(tabindexList, false);
-        assertEquals("첫 번째 항목 tabindex", 0, tabindexList.items[0].tabindex);
-        assertEquals("두 번째 항목 tabindex", -1, tabindexList.items[1].tabindex);
+        tabindexList.getUpdateComplete().then(result -> {
+            assertEquals("첫 번째 항목 tabindex", 0, tabindexList.items[0].tabindex);
+            assertEquals("두 번째 항목 tabindex", -1, tabindexList.items[1].tabindex);
+            return null;
+        });
     }
 }

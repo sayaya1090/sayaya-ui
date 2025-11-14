@@ -1,5 +1,9 @@
 package dev.sayaya.ui.list;
 
+import elemental2.promise.Promise;
+
+import java.util.List;
+
 import static dev.sayaya.ui.TestHelper.*;
 import static dev.sayaya.ui.elements.ListElementBuilder.list;
 import static org.jboss.elemento.Elements.*;
@@ -50,7 +54,12 @@ public class BasicListTest {
                 .element();
         simpleExample.addInteractiveDemo(simpleList, false);
         assertEquals("list: 태그명은 md-list", "MD-LIST", simpleList.tagName);
-        assertTrue("list: items가 3개", simpleList.items.length == 3);
+        simpleList.getUpdateComplete().then(s->{
+            log(String.valueOf(List.of(simpleList.items)));
+            assertTrue("list: items가 3개", simpleList.items.length == 3);
+            return Promise.resolve(s);
+        });
+
 
         // List with Supporting Text
         var supportingTextExample = addExampleCode(basicSection,
