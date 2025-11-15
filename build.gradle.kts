@@ -107,7 +107,6 @@ tasks {
         useJUnitPlatform()
     }
     jar {
-        exclude("**/*.class")
         from(sourceSets.main.get().allSource)
         dependsOn(buildLabsBundle)
     }
@@ -118,5 +117,25 @@ tasks {
     }
     gwtGenerateTestHtml {
         dependsOn(copyLabsBundleToTest)
+    }
+}
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/sayaya1090/maven")
+            credentials {
+                username = project.findProperty("github_username") as String? ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("github_password") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+    publications {
+        register("maven", MavenPublication::class) {
+            groupId = project.group.toString()
+            artifactId = "ui"
+            version = project.version.toString()
+            from(project.components["java"])
+        }
     }
 }
