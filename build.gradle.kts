@@ -1,7 +1,9 @@
 plugins {
     kotlin("jvm") version "2.2.21"
     id("dev.sayaya.gwt") version "2.2.7"
+    signing
     id("maven-publish")
+    id("com.vanniktech.maven.publish") version "0.35.0"
 }
 repositories {
     mavenCentral()
@@ -118,6 +120,16 @@ tasks {
     gwtGenerateTestHtml {
         dependsOn(copyLabsBundleToTest)
     }
+    afterEvaluate {
+        named<Jar>("sourcesJar") {
+            dependsOn(compileJava)
+        }
+    }
+}
+signing {
+    val signingKey = project.findProperty("signing.secretKey") as String? ?: System.getenv("GPG_PRIVATE_KEY")
+    val signingPassword = project.findProperty("signing.passphrase") as String? ?: System.getenv("GPG_PASSWORD")
+    useInMemoryPgpKeys(signingKey, signingPassword)
 }
 publishing {
     repositories {
@@ -130,12 +142,36 @@ publishing {
             }
         }
     }
-    publications {
-        register("maven", MavenPublication::class) {
-            groupId = project.group.toString()
-            artifactId = "ui"
-            version = project.version.toString()
-            from(project.components["java"])
+}
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+    coordinates(group.toString(), "ui", version.toString())
+
+    pom {
+        name.set("sayaya-ui")
+        description.set("Material Design Web Components wrapper for GWT")
+        url.set("https://github.com/sayaya1090/sayaya-ui")
+
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+
+        developers {
+            developer {
+                id.set("sayaya1090")
+                name.set("sayaya")
+                email.set("sayaya1090@gmail.com")
+            }
+        }
+
+        scm {
+            connection.set("scm:git:git://github.com/sayaya1090/sayaya-ui.git")
+            developerConnection.set("scm:git:ssh://github.com/sayaya1090/sayaya-ui.git")
+            url.set("https://github.com/sayaya1090/sayaya-ui")
         }
     }
 }
