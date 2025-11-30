@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.sayaya:sayaya-ui:2.4.1")
+    implementation("dev.sayaya:sayaya-ui:2.4.1.1")
 }
 ```
 
@@ -892,4 +892,4 @@ sayaya-ui는 Material Web Components와 동일한 브라우저를 지원합니�
 
 ## 버전
 
-현재 버전: **2.4.1**
+현재 버전: **2.4.1.1**

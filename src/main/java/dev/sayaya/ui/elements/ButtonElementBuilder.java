@@ -71,6 +71,9 @@ public interface ButtonElementBuilder<E extends MdButtonElement, SELF extends Bu
         public IconButtonElementBuilder.PlainIconButtonElementBuilder icon(String icon) {
             return new IconButtonElementBuilder.PlainIconButtonElementBuilder().icon(icon);
         }
+        public IconButtonElementBuilder.PlainIconButtonElementBuilder icon(IconElementBuilder icon) {
+            return new IconButtonElementBuilder.PlainIconButtonElementBuilder().icon(icon);
+        }
         public FabElementBuilder.PlainFabElementBuilder fab() {
             return new FabElementBuilder.PlainFabElementBuilder();
         }
