@@ -8,7 +8,7 @@ import io.kotest.matchers.string.shouldNotContain
 internal class MenuElementTest: GwtTestSpec({
     Given("Material Design Menu") {
         Thread.sleep(5000) // 비동기 작업 대기
-        val logs = document.getConsoleLogs()
+        val logs = page.getConsoleLogs()
         println(logs)
 
         When("기본 메뉴를 생성할 때") {

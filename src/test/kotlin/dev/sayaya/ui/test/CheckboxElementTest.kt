@@ -8,7 +8,7 @@ import io.kotest.matchers.string.shouldNotContain
 internal class CheckboxElementTest: GwtTestSpec({
     Given("Material Design Checkbox") {
         Thread.sleep(5000) // 비동기 작업 대기
-        val logs = document.getConsoleLogs()
+        val logs = page.getConsoleLogs()
         println(logs)
         When("체크박스 상태를 설정할 때") {
             Then("unchecked 상태가 올바르게 설정되어야 한다") {

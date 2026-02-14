@@ -8,7 +8,7 @@ import io.kotest.matchers.string.shouldNotContain
 internal class ChipElementTest: GwtTestSpec({
     Given("Material Design Chip") {
         Thread.sleep(5000) // 비동기 작업 대기
-        val logs = document.getConsoleLogs()
+        val logs = page.getConsoleLogs()
         println(logs)
 
         When("칩 타입을 생성할 때") {

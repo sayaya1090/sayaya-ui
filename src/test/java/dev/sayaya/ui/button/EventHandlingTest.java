@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static dev.sayaya.ui.TestHelper.*;
 import static dev.sayaya.ui.elements.ButtonElementBuilder.button;
 import static elemental2.dom.DomGlobal.console;
+import static elemental2.dom.DomGlobal.setTimeout;
 import static org.jboss.elemento.Elements.*;
 
 public class EventHandlingTest {
@@ -57,8 +58,10 @@ public class EventHandlingTest {
         clickBtn.click();
         assertEquals("onClick 이벤트: 첫 번째 클릭", 1, clickCount.get());
 
-        clickBtn.click();
-        assertEquals("onClick 이벤트: 두 번째 클릭", 2, clickCount.get());
+        setTimeout((p0) -> {
+            clickBtn.click();
+            assertEquals("onClick 이벤트: 두 번째 클릭", 2, clickCount.get());
+        }, 200);
 
         // Multiple Handlers
         var multiHandlerExample = addExampleCode(eventSection,
@@ -143,8 +146,10 @@ public class EventHandlingTest {
             softDisabledState.textContent = "Click count: " + softDisabledClickCount.get() + " (softDisabled: " + softDisabledBtn.softDisabled + ")";
         });
 
-        softDisabledBtn.click();
-        assertEquals("soft-disabled 버튼: 클릭 시 이벤트 발생함", 1, softDisabledClickCount.get());
+        setTimeout((p0) -> {
+            softDisabledBtn.click();
+            assertEquals("soft-disabled 버튼: 클릭 시 이벤트 발생함", 1, softDisabledClickCount.get());
+        }, 100);
 
         // Form Submit Prevention
         var submitExample = addExampleCode(eventSection,

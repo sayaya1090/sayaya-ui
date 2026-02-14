@@ -8,7 +8,7 @@ import io.kotest.matchers.string.shouldNotContain
 internal class ButtonElementTest: GwtTestSpec({
     Given("Material Design Button") {
         Thread.sleep(5000) // 비동기 작업 대기
-        val logs = document.getConsoleLogs()
+        val logs = page.getConsoleLogs()
         println(logs)
         When("버튼 변형을 생성할 때") {
             Then("elevated 버튼이 생성되어야 한다") {

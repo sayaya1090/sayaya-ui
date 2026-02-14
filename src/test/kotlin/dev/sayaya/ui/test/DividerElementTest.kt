@@ -8,7 +8,7 @@ import io.kotest.matchers.string.shouldNotContain
 internal class DividerElementTest: GwtTestSpec({
     Given("Material Design Divider") {
         Thread.sleep(5000) // 비동기 작업 대기
-        val logs = document.getConsoleLogs()
+        val logs = page.getConsoleLogs()
         println(logs)
 
         When("기본 구분선을 생성할 때") {

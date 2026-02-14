@@ -8,7 +8,7 @@ import io.kotest.matchers.string.shouldNotContain
 internal class TextFieldElementTest: GwtTestSpec({
     Given("Material Design Text Field") {
         Thread.sleep(5000) // 비동기 작업 대기
-        val logs = document.getConsoleLogs()
+        val logs = page.getConsoleLogs()
         println(logs)
 
         When("텍스트 필드 변형을 생성할 때") {

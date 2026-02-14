@@ -8,7 +8,7 @@ import io.kotest.matchers.string.shouldNotContain
 internal class SliderElementTest: GwtTestSpec({
     Given("Material Design Slider") {
         Thread.sleep(5000) // 비동기 작업 대기
-        val logs = document.getConsoleLogs()
+        val logs = page.getConsoleLogs()
         println(logs)
 
         When("Slider 변형을 생성할 때") {

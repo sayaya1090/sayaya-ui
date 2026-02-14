@@ -8,7 +8,7 @@ import io.kotest.matchers.string.shouldNotContain
 internal class RippleElementTest: GwtTestSpec({
     Given("Material Design Ripple") {
         Thread.sleep(5000) // 비동기 작업 대기
-        val logs = document.getConsoleLogs()
+        val logs = page.getConsoleLogs()
         println(logs)
 
         When("기본 ripple을 생성할 때") {

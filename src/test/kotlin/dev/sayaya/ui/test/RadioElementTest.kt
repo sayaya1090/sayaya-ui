@@ -8,7 +8,7 @@ import io.kotest.matchers.string.shouldNotContain
 internal class RadioElementTest: GwtTestSpec({
     Given("Material Design Radio") {
         Thread.sleep(5000) // 비동기 작업 대기
-        val logs = document.getConsoleLogs()
+        val logs = page.getConsoleLogs()
         println(logs)
 
         When("기본 사용법을 적용할 때") {

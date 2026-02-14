@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "2.3.10"
-    id("dev.sayaya.gwt") version "2.2.7"
+    id("dev.sayaya.gwt") version "2.2.9"
     signing
     id("maven-publish")
     id("com.vanniktech.maven.publish") version "0.36.0"
@@ -24,7 +24,7 @@ dependencies {
     implementation("org.jboss.elemento:elemento-core:2.4.8")
     implementation("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
-    testImplementation("dev.sayaya:gwt-test:2.2.7")
+    testImplementation("dev.sayaya:gwt-test:2.2.9")
 }
 tasks {
     // Labs bundle npm install 태스크

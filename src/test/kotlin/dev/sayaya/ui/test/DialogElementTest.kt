@@ -8,7 +8,7 @@ import io.kotest.matchers.string.shouldNotContain
 internal class DialogElementTest: GwtTestSpec({
     Given("Material Design Dialog") {
         Thread.sleep(5000) // 비동기 작업 대기
-        val logs = document.getConsoleLogs()
+        val logs = page.getConsoleLogs()
         println(logs)
 
         When("Dialog 기본 속성을 설정할 때") {

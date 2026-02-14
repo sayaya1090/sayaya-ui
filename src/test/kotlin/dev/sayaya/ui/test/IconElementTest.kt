@@ -8,7 +8,7 @@ import io.kotest.matchers.string.shouldNotContain
 internal class IconElementTest: GwtTestSpec({
     Given("Material Design Icon") {
         Thread.sleep(5000)
-        val logs = document.getConsoleLogs()
+        val logs = page.getConsoleLogs()
         println(logs)
 
         When("아이콘을 생성할 때") {
