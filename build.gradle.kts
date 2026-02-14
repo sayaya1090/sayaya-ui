@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") version "2.3.0"
+    kotlin("jvm") version "2.3.10"
     id("dev.sayaya.gwt") version "2.2.7"
     signing
     id("maven-publish")
-    id("com.vanniktech.maven.publish") version "0.35.0"
+    id("com.vanniktech.maven.publish") version "0.36.0"
 }
 repositories {
     mavenCentral()
@@ -18,10 +18,10 @@ repositories {
     }
 }
 group = "dev.sayaya"
-version = "2.4.1.2"
+version = "2.4.1.3"
 
 dependencies {
-    implementation("org.jboss.elemento:elemento-core:2.4.4")
+    implementation("org.jboss.elemento:elemento-core:2.4.8")
     implementation("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
     testImplementation("dev.sayaya:gwt-test:2.2.7")
@@ -72,7 +72,7 @@ tasks {
     gwt {
         minHeapSize = "1024M"
         maxHeapSize = "2048M"
-        gwtVersion = "2.12.2"
+        gwtVersion = "2.13.0"
         sourceLevel = "auto"
         modules = listOf("dev.sayaya.Ui")
         devMode {
