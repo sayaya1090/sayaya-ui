@@ -8,6 +8,7 @@ import io.kotest.matchers.string.shouldNotContain
 @GwtHtml("feedback.html") // 테스트 서버 루트는 war(src/test/webapp)
 internal class FeedbackElementTest: GwtTestSpec({
     val checks = listOf(
+        "snackbar 하단 여백 8px",
         "rich tooltip 최대 너비 320px",
         "tooltip 최소 너비 40px",
         "button-group 속성 설정",

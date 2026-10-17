@@ -137,8 +137,8 @@ export class MdSnackbar extends LitElement {
     longAction: {type: Boolean, attribute: 'long-action', reflect: true}, // 액션을 다음 줄로
   };
   static styles = css`
-    :host { position: fixed; z-index: 1001; left: 50%; bottom: 16px; transform: translateX(-50%); /* [토큰 외] */
-      display: none; box-sizing: border-box; width: max-content; max-width: min(600px, calc(100vw - 32px)); /* [토큰 외] Compose ContainerMaxWidth 600dp. 화면 하단 16px 위치는 공식 상수 미확인 */ }
+    :host { position: fixed; z-index: 1001; left: 50%; bottom: 8px; transform: translateX(-50%); /* [토큰 외] MDC-Android m3_snackbar_margin 8dp */
+      display: none; box-sizing: border-box; width: max-content; max-width: min(600px, calc(100vw - 16px)); /* [토큰 외] Compose ContainerMaxWidth 600dp, 좌우 여백 m3_snackbar_margin 8dp */ }
     :host([open]) { display: block; }
     .container { display: flex; align-items: center; flex-wrap: wrap; box-sizing: border-box;
       min-height: 48px; padding: 0 8px 0 16px; gap: 0 4px;

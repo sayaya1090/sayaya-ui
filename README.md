@@ -877,7 +877,7 @@ var range = buttonGroup().connected().size(ButtonGroupSize.Small).selection(Butt
 
 `md-tooltip`, `md-snackbar`, `md-button-group` 은 Material Web 에 없어 sayaya-ui 가 직접 구현한 엘리먼트입니다(`labs-bundle/src/sayaya-feedback.js`).
 색·모양·타이포·높이·간격은 `@material/web` 2.5.0 의 `md-comp-{plain-tooltip,rich-tooltip,snackbar,button-group-*}` 토큰 값을 따릅니다.
-토큰에 없는 레이아웃 값은 m3.material.io 스펙 페이지와 Compose Material3(`Tooltip.kt`, `Snackbar.kt`) 상수로 대조했습니다: plain tooltip 높이 24dp·패딩 8dp·최대 너비 200dp, rich tooltip 패딩 12/16/8dp·최대 너비 320dp, tooltip 최소 너비 40dp·앵커 간격 4dp, snackbar 최대 너비 600dp. snackbar 의 화면 하단 16px 위치는 공식 상수를 찾지 못해 미확인입니다.
+토큰에 없는 레이아웃 값은 m3.material.io 스펙 페이지와 Compose Material3(`Tooltip.kt`, `Snackbar.kt`) 상수로 대조했습니다: plain tooltip 높이 24dp·패딩 8dp·최대 너비 200dp, rich tooltip 패딩 12/16/8dp·최대 너비 320dp, tooltip 최소 너비 40dp·앵커 간격 4dp, snackbar 최대 너비 600dp, 화면 가장자리 여백 8dp(material-components-android `m3_snackbar_margin`).
 
 ## 빌더 인터페이스
 

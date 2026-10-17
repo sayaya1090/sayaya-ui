@@ -126,6 +126,7 @@ public class FeedbackComponentsTest {
                 assertTrue("fb: snackbar 그림자(elevation 3)", !"none".equals(cs(c).getPropertyValue("box-shadow")));
                 assertEquals("fb: snackbar 본문 14px", "14px", cs(inner(sb, ".text")).getPropertyValue("font-size"));
                 assertEquals("fb: snackbar role status", "status", sb.getAttribute("role"));
+                assertEquals("fb: snackbar 하단 여백 8px", "8px", cs(sb).getPropertyValue("bottom"));
                 sbMulti.show(); // sb 를 대체
                 later(100, () -> {
                     assertTrue("fb: snackbar 두 줄 높이 68px", Math.round(inner(sbMulti, ".container").getBoundingClientRect().height) == 68);
