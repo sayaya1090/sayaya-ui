@@ -902,7 +902,7 @@ filters.show();
 `md-side-sheet` 는 Material Web 에 없어 sayaya-ui 가 직접 구현한 엘리먼트입니다(`labs-bundle/src/sayaya-sheet.js`).
 색·모양·너비(256dp)·elevation·헤드라인은 `md-comp-sheet-side` 토큰, 패딩(24/16dp)·요소 간격 12dp·최대 너비 400dp·detached 여백 16dp·하단 액션 패딩(16/24dp)은
 m3.material.io side sheet 스펙 페이지(MDC-Android `m3_side_sheet_margin_detached` 16dp 와 일치)를 따릅니다.
-스펙의 하단 액션 높이 72dp 는 40dp 버튼과 위/아래 패딩 16/24dp 를 함께 쓰면 80dp 가 되어 동시에 만족할 수 없으므로 패딩을 우선했습니다.
+하단 액션 영역은 높이 72dp(위 16 + XSmall 버튼 32 + 아래 24)로, 그 안의 Material 버튼은 XSmall 토큰(`md-comp-button-xsmall` 32dp) 높이로 맞춥니다.
 
 ## 빌더 인터페이스
 

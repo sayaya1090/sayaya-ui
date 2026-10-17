@@ -54,9 +54,13 @@ export class MdSideSheet extends LitElement {
       letter-spacing: var(--md-sys-typescale-title-large-tracking, 0); }
     .content { flex: 1; min-height: 0; overflow: auto; padding: 0 24px; }
     .actions { display: none; box-sizing: border-box; align-items: center; justify-content: flex-start; gap: 8px;
-      min-height: 72px; padding: 16px 24px 24px; }  /* [스펙] 위 16, 아래 24, 왼쪽 정렬. 스펙의 높이 72dp 는 40dp 버튼과 함께 16+40+24=80 이 되어 동시에 만족 불가 */
+      height: 72px; padding: 16px 24px 24px;  /* [스펙] 높이 72, 위 16, 아래 24, 왼쪽 정렬 */
+      /* 16 + 32 + 24 = 72: 하단 액션 버튼은 XSmall(토큰 _md-comp-button-xsmall container-height 32px) */
+      --md-filled-button-container-height: 32px; --md-outlined-button-container-height: 32px;
+      --md-text-button-container-height: 32px; --md-filled-tonal-button-container-height: 32px;
+      --md-elevated-button-container-height: 32px; }
     .actions.has { display: flex; }
-    :host([divider]) .actions.has { border-top: 1px solid var(--md-sys-color-outline, #79747e); }
+    :host([divider]) .actions.has { box-shadow: inset 0 1px 0 var(--md-sys-color-outline, #79747e); } /* 높이 72 에 더해지지 않도록 */
   `;
   constructor() {
     super();

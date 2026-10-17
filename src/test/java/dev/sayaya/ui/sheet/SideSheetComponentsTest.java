@@ -64,8 +64,9 @@ public class SideSheetComponentsTest {
             assertTrue("ss: 닫기 아이콘 버튼 항상 있음", inner(std, ".close") != null);
             var a = inner(std, ".actions");
             var firstAction = (HTMLElement) std.querySelector("[slot='actions']");
-            assertEquals("ss: 액션 영역 높이 = 위16 + 버튼 + 아래24 (+구분선 1)", (int) (16 + h(firstAction) + 24 + 1), (int) h(a));
-            assertTrue("ss: 액션 영역 최소 높이 72px", h(a) >= 72);
+            assertEquals("ss: 액션 영역 높이 72px", 72, (int) h(a));
+            assertEquals("ss: 액션 버튼 높이 32px(XSmall)", 32, (int) h(firstAction));
+            assertTrue("ss: 액션 위 구분선 표시", !"none".equals(cs(a).getPropertyValue("box-shadow")));
             assertEquals("ss: 액션 위 패딩 16px", "16px", cs(a).getPropertyValue("padding-top"));
             assertEquals("ss: 액션 아래 패딩 24px", "24px", cs(a).getPropertyValue("padding-bottom"));
             assertEquals("ss: 액션 왼쪽 정렬", "flex-start", cs(a).getPropertyValue("justify-content"));
