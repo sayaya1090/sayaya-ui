@@ -64,11 +64,18 @@ export class MdTooltip extends LitElement {
   `;
   constructor() {
     super();
-    this.variant = 'plain'; this.position = 'top'; this.delay = 500; this.open = false; this.persistent = false;
+    this.variant = 'plain'; this.position = ''; // '' = 자동: plain 위쪽, rich 오른쪽 아래(가이드) this.delay = 500; this.open = false; this.persistent = false;
     this._anchor = null; this._timer = 0; this._hide = 0;
     this._enter = () => this._schedule(true);
     this._leave = () => this._schedule(false);
     this._key = (e) => { if (e.key === 'Escape') this.hide(); };
+    // persistent rich: 클릭으로 열고, 다른 요소와 상호작용하면 닫는다(가이드 Persistent rich tooltips)
+    this._click = () => { if (this._isPersistent()) { this.open ? this.hide() : this.show(); } };
+    this._outside = (e) => {
+      const path = e.composedPath ? e.composedPath() : [];
+      if (path.includes(this) || (this._anchor && path.includes(this._anchor))) return;
+      this.hide();
+    };
   }
   get anchor() { return this._anchor; }
   set anchor(el) { this._bind(el); }
@@ -77,15 +84,17 @@ export class MdTooltip extends LitElement {
   updated(changed) { if (changed.has('for') && this.isConnected && this.for) this._bind(document.getElementById(this.for)); }
   _bind(el) {
     const a = this._anchor;
-    if (a) { ['pointerenter','focusin'].forEach(t => a.removeEventListener(t, this._enter)); ['pointerleave','focusout'].forEach(t => a.removeEventListener(t, this._leave)); a.removeEventListener('keydown', this._key); }
+    if (a) { ['pointerenter','focusin'].forEach(t => a.removeEventListener(t, this._enter)); ['pointerleave','focusout'].forEach(t => a.removeEventListener(t, this._leave)); a.removeEventListener('keydown', this._key); a.removeEventListener('click', this._click); }
     this._anchor = el || null;
-    if (el) { ['pointerenter','focusin'].forEach(t => el.addEventListener(t, this._enter)); ['pointerleave','focusout'].forEach(t => el.addEventListener(t, this._leave)); el.addEventListener('keydown', this._key);
+    if (el) { ['pointerenter','focusin'].forEach(t => el.addEventListener(t, this._enter)); ['pointerleave','focusout'].forEach(t => el.addEventListener(t, this._leave)); el.addEventListener('keydown', this._key); el.addEventListener('click', this._click);
       if (this.variant === 'plain' && !el.hasAttribute('aria-describedby') && this.id) el.setAttribute('aria-describedby', this.id); }
   }
+  _isPersistent() { return this.variant === 'rich' && this.persistent; }
   _schedule(show) {
+    if (this._isPersistent()) return; // persistent rich 는 hover/포커스로 열고 닫지 않는다
     clearTimeout(this._timer); clearTimeout(this._hide);
     if (show) this._timer = setTimeout(() => this.show(), this.delay);
-    else if (!(this.variant === 'rich' && this.persistent && this.matches(':hover'))) this._hide = setTimeout(() => this.hide(), this.variant === 'rich' && this.persistent ? 300 : 0);
+    else this._hide = setTimeout(() => this.hide(), 1500); // 가이드: 대상을 벗어나고 1.5초 뒤 사라진다
   }
   /** 즉시 표시. autoHideMs > 0 이면 그 뒤 닫는다(handbook showImmediate). */
   show(autoHideMs = 0) {
@@ -93,12 +102,14 @@ export class MdTooltip extends LitElement {
     currentTooltip = this;
     this.setAttribute('role', 'tooltip');
     this.open = true;
+    if (this._isPersistent()) setTimeout(() => { document.addEventListener('pointerdown', this._outside, true); document.addEventListener('focusin', this._outside, true); });
     this.updateComplete.then(() => this._place());
     this.dispatchEvent(new Event('opened', {bubbles: true, composed: true}));
     if (autoHideMs > 0) { clearTimeout(this._hide); this._hide = setTimeout(() => this.hide(), autoHideMs); }
   }
   hide() {
     clearTimeout(this._timer); clearTimeout(this._hide);
+    document.removeEventListener('pointerdown', this._outside, true); document.removeEventListener('focusin', this._outside, true);
     if (!this.open) return;
     this.open = false;
     if (currentTooltip === this) currentTooltip = null;
@@ -109,9 +120,10 @@ export class MdTooltip extends LitElement {
     const gap = 4; // [토큰 외] Compose SpacingBetweenTooltipAndAnchor
     const r = this._anchor.getBoundingClientRect(), t = this.getBoundingClientRect();
     const rtl = getComputedStyle(this).direction === 'rtl';
-    let x, y, p = this.position;
+    let x, y, p = this.position || (this.variant === 'rich' ? 'bottom-end' : 'top');
     if (p === 'start') p = rtl ? 'right' : 'left'; else if (p === 'end') p = rtl ? 'left' : 'right';
-    if (p === 'bottom') { x = r.left + r.width / 2 - t.width / 2; y = r.bottom + gap; }
+    if (p === 'bottom-end') { x = rtl ? r.left + r.width / 2 - t.width : r.left + r.width / 2; y = r.bottom + gap; } // rich 기본: 오른쪽 아래
+    else if (p === 'bottom') { x = r.left + r.width / 2 - t.width / 2; y = r.bottom + gap; }
     else if (p === 'left') { x = r.left - t.width - gap; y = r.top + r.height / 2 - t.height / 2; }
     else if (p === 'right') { x = r.right + gap; y = r.top + r.height / 2 - t.height / 2; }
     else { x = r.left + r.width / 2 - t.width / 2; y = r.top - t.height - gap; if (y < 0) y = r.bottom + gap; }

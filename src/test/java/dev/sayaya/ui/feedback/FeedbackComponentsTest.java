@@ -134,6 +134,8 @@ public class FeedbackComponentsTest {
                 assertEquals("fb: plain tooltip role", "tooltip", plain.getAttribute("role"));
                 // rich tooltip 토큰: corner-medium 12, elevation level2, subhead title-small 14
                 rich.show();
+                // 같은 시각에 도는 버튼 그룹 자동 클릭이 포커스를 옮기면 persistent rich tooltip 은 가이드대로 닫히므로 즉시 확인한다
+                assertTrue("fb: tooltip 창에 하나만", rich.open && !plain.open);
                 later(100, () -> {
                     var r = cs(rich);
                     assertEquals("fb: rich tooltip 모서리 12px", "12px", r.getPropertyValue("border-top-left-radius"));
@@ -141,14 +143,14 @@ public class FeedbackComponentsTest {
                     assertEquals("fb: rich tooltip 본문 14px", "14px", r.getPropertyValue("font-size"));
                     assertEquals("fb: rich tooltip 최대 너비 320px", "320px", r.getPropertyValue("max-width"));
                     assertEquals("fb: tooltip 최소 너비 40px", "40px", r.getPropertyValue("min-width"));
-                    assertTrue("fb: tooltip 창에 하나만", rich.open && !plain.open);
                     rich.hide();
                     // 포커스로 표시 (delay 100ms 후)
                     anchor1.focus();
                     later(400, () -> {
                         assertTrue("fb: tooltip 포커스 시 지연 후 표시", plain.open && opened[0] >= 2);
                         anchor1.blur();
-                        later(100, () -> assertTrue("fb: tooltip 포커스 해제 시 닫힘", !plain.open));
+                        later(300, () -> assertTrue("fb: tooltip 떠난 뒤 1.5초 동안 유지", plain.open));
+                        later(1700, () -> assertTrue("fb: tooltip 포커스 해제 시 닫힘", !plain.open));
                     });
                 });
             });
@@ -263,6 +265,27 @@ public class FeedbackComponentsTest {
                         assertEquals("fb: standard 선택 시 모서리 12px", "12px", prop(s0, "--md-filled-button-container-shape-start-start"));
                         assertTrue("fb: 선택된 filled 버튼 primary 색", prop(s0, "--md-filled-button-container-color").contains("primary"));
                         assertTrue("fb: standard 뗀 뒤 너비 복원", Math.abs(s0.getBoundingClientRect().width - w0) < 1.5);
+                    });
+                });
+            });
+        });
+        // persistent rich tooltip(액션 있음): hover 가 아니라 클릭으로 열리고, 다른 요소와 상호작용할 때 닫힘. 기본 위치는 오른쪽 아래
+        later(5000, () -> {
+            if (!isAutomated()) return;
+            rich.hide();
+            anchor2.dispatchEvent(new elemental2.dom.Event("pointerenter"));
+            later(700, () -> {
+                assertTrue("fb: persistent rich tooltip 은 hover 로 열리지 않음", !rich.open);
+                anchor2.click();
+                later(200, () -> {
+                    assertTrue("fb: persistent rich tooltip 클릭으로 열림", rich.open);
+                    var ar = anchor2.getBoundingClientRect(); var tr = rich.getBoundingClientRect();
+                    assertTrue("fb: rich tooltip 기본 위치 오른쪽 아래", tr.top >= ar.bottom - 0.5 && tr.left >= ar.left + ar.width / 2 - 0.5);
+                    anchor2.dispatchEvent(new elemental2.dom.Event("pointerleave"));
+                    later(1700, () -> {
+                        assertTrue("fb: persistent rich tooltip 은 떠나도 유지", rich.open);
+                        DomGlobal.document.body.dispatchEvent(new elemental2.dom.Event("pointerdown", Js.uncheckedCast(jsinterop.base.JsPropertyMap.of("bubbles", true, "composed", true))));
+                        later(100, () -> assertTrue("fb: persistent rich tooltip 바깥 상호작용으로 닫힘", !rich.open));
                     });
                 });
             });

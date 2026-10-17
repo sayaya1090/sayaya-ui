@@ -8,6 +8,12 @@ import io.kotest.matchers.string.shouldNotContain
 @GwtHtml("feedback.html") // 테스트 서버 루트는 war(src/test/webapp)
 internal class FeedbackElementTest: GwtTestSpec({
     val checks = listOf(
+        "tooltip 떠난 뒤 1.5초 동안 유지",
+        "persistent rich tooltip 은 hover 로 열리지 않음",
+        "persistent rich tooltip 클릭으로 열림",
+        "rich tooltip 기본 위치 오른쪽 아래",
+        "persistent rich tooltip 은 떠나도 유지",
+        "persistent rich tooltip 바깥 상호작용으로 닫힘",
         "connected XS 안쪽 모서리 4px",
         "connected XS 최소 너비 48px",
         "connected 기본으로 단일 선택",
@@ -72,7 +78,7 @@ internal class FeedbackElementTest: GwtTestSpec({
     )
     Given("M3 tooltip / snackbar / button group") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
-        page.waitForTimeout(6000.0)
+        page.waitForTimeout(9000.0)
         val logs = page.getConsoleLogs().map { it.toString() }
         println(logs)
         for (c in checks) {
