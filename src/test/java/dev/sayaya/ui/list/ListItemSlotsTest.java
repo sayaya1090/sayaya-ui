@@ -58,6 +58,7 @@ public class ListItemSlotsTest {
                 .done()
                 .element();
         startSlotExample.addInteractiveDemo(startSlotList, false);
+        assertEquals("Start Slot (시작 슬롯): 항목마다 start 슬롯", 3, startSlotList.querySelectorAll("[slot='start']").length);
 
         // End Slot
         var endSlotExample = addExampleCode(slotsSection,
@@ -86,6 +87,7 @@ public class ListItemSlotsTest {
                 .done()
                 .element();
         endSlotExample.addInteractiveDemo(endSlotList, false);
+        assertEquals("End Slot (끝 슬롯): 항목마다 end 슬롯", 2, endSlotList.querySelectorAll("[slot='end']").length);
 
         // Start and End Slots
         var bothSlotsExample = addExampleCode(slotsSection,
@@ -122,5 +124,6 @@ public class ListItemSlotsTest {
                 .done()
                 .element();
         bothSlotsExample.addInteractiveDemo(bothSlotsList, false);
+        assertTrue("Start and End Slots (시작과 끝 슬롯): start 2개, end 2개", bothSlotsList.querySelectorAll("[slot='start']").length == 2 && bothSlotsList.querySelectorAll("[slot='end']").length == 2);
     }
 }

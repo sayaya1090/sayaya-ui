@@ -57,6 +57,12 @@ public class ListWithDividersTest {
                 .done()
                 .element();
         fullDividerExample.addInteractiveDemo(fullDividerList, false);
+        {
+            var dividers = fullDividerList.querySelectorAll("md-divider");
+            boolean ok = dividers.length == 2;
+            for (int i = 0; i < dividers.length; i++) ok = ok && !Boolean.TRUE.equals(jsinterop.base.Js.asPropertyMap(dividers.item(i)).get("inset"));
+            assertTrue("Full Divider (전체 너비 구분선): md-divider 2개, inset 없음", ok);
+        }
 
         // Inset Divider
         var insetDividerExample = addExampleCode(dividersSection,
@@ -103,6 +109,12 @@ public class ListWithDividersTest {
                 .done()
                 .element();
         insetDividerExample.addInteractiveDemo(insetDividerList, false);
+        {
+            var dividers = insetDividerList.querySelectorAll("md-divider");
+            boolean ok = dividers.length == 2;
+            for (int i = 0; i < dividers.length; i++) ok = ok && Boolean.TRUE.equals(jsinterop.base.Js.asPropertyMap(dividers.item(i)).get("inset"));
+            assertTrue("Inset Divider (여백이 있는 구분선): md-divider 2개, inset", ok);
+        }
 
         // Inset Start Divider
         var insetStartDividerExample = addExampleCode(dividersSection,
@@ -143,5 +155,11 @@ public class ListWithDividersTest {
                 .done()
                 .element();
         insetStartDividerExample.addInteractiveDemo(insetStartDividerList, false);
+        {
+            var dividers = insetStartDividerList.querySelectorAll("md-divider");
+            boolean ok = dividers.length == 2;
+            for (int i = 0; i < dividers.length; i++) ok = ok && Boolean.TRUE.equals(jsinterop.base.Js.asPropertyMap(dividers.item(i)).get("insetStart"));
+            assertTrue("Inset Start Divider (시작 여백이 있는 구분선): md-divider 2개, insetStart", ok);
+        }
     }
 }

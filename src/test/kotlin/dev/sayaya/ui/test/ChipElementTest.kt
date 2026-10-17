@@ -2,12 +2,14 @@ package dev.sayaya.ui.test
 
 import dev.sayaya.gwt.test.GwtHtml
 import dev.sayaya.gwt.test.GwtTestSpec
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldNotContain
 
-@GwtHtml("src/test/webapp/chip.html")
+@GwtHtml("chip.html") // 테스트 서버 루트는 war(src/test/webapp)
 internal class ChipElementTest: GwtTestSpec({
     Given("Material Design Chip") {
-        Thread.sleep(5000) // 비동기 작업 대기
+        // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
+        page.waitForTimeout(5000.0)
         val logs = page.getConsoleLogs()
         println(logs)
 
@@ -15,22 +17,26 @@ internal class ChipElementTest: GwtTestSpec({
             Then("assist 칩이 생성되어야 한다") {
                 val log = logs.find { it.toString().startsWith("assist 칩") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("filter 칩이 생성되어야 한다") {
                 val log = logs.find { it.toString().startsWith("filter 칩") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("input 칩이 생성되어야 한다") {
                 val log = logs.find { it.toString().startsWith("input 칩") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("suggestion 칩이 생성되어야 한다") {
                 val log = logs.find { it.toString().startsWith("suggestion 칩") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -38,17 +44,20 @@ internal class ChipElementTest: GwtTestSpec({
             Then("label 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("칩 label") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("disabled 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("칩 disabled") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("alwaysFocusable 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("칩 alwaysFocusable") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -56,17 +65,20 @@ internal class ChipElementTest: GwtTestSpec({
             Then("elevated 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("assist 칩 elevated") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("href 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("assist 칩 href") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("target 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("assist 칩 target") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -74,22 +86,26 @@ internal class ChipElementTest: GwtTestSpec({
             Then("elevated 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("filter 칩 elevated") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("selected 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("filter 칩 selected") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("removable 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("filter 칩 removable") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("ariaLabelRemove 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("filter 칩 ariaLabelRemove") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -97,32 +113,38 @@ internal class ChipElementTest: GwtTestSpec({
             Then("avatar 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("input 칩 avatar") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("selected 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("input 칩 selected") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("removeOnly 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("input 칩 removeOnly") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("href 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("input 칩 href") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("target 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("input 칩 target") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("ariaLabelRemove 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("input 칩 ariaLabelRemove") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -130,17 +152,20 @@ internal class ChipElementTest: GwtTestSpec({
             Then("elevated 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("suggestion 칩 elevated") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("href 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("suggestion 칩 href") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("target 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("suggestion 칩 target") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -148,22 +173,26 @@ internal class ChipElementTest: GwtTestSpec({
             Then("칩셋이 올바르게 생성되어야 한다") {
                 val log = logs.find { it.toString().startsWith("칩셋: 태그명") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("칩셋에 칩이 포함되어야 한다") {
                 val log = logs.find { it.toString().startsWith("칩셋: 3개") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("aria-label이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("칩셋 aria-label") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("aria-labelledby가 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("칩셋 aria-labelledby") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -171,17 +200,20 @@ internal class ChipElementTest: GwtTestSpec({
             Then("칩에 아이콘이 추가되어야 한다") {
                 val log = logs.find { it.toString().startsWith("칩 아이콘: 아이콘이") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("아이콘 slot이 올바르게 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("칩 아이콘: slot") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("filter 칩에 아이콘이 추가되어야 한다") {
                 val log = logs.find { it.toString().startsWith("filter 칩 아이콘") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -189,12 +221,14 @@ internal class ChipElementTest: GwtTestSpec({
             Then("aria-label이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("칩 aria-label") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("disabled 상태에서도 aria-label이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("disabled 칩 aria-label") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -202,27 +236,32 @@ internal class ChipElementTest: GwtTestSpec({
             Then("filter 칩 초기 선택 상태가 올바르게 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("칩 선택: 초기") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("filter 칩 선택이 올바르게 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("칩 선택: select(true)") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("filter 칩 선택 해제가 올바르게 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("칩 선택: select(false)") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("input 칩 초기 선택 상태가 올바르게 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("input 칩 선택: 초기") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("input 칩 선택이 올바르게 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("input 칩 선택: select()") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -230,22 +269,26 @@ internal class ChipElementTest: GwtTestSpec({
             Then("removable filter 칩이 올바르게 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("removable filter 칩: removable") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("removable filter 칩의 ariaLabelRemove가 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("removable filter 칩: ariaLabelRemove") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("removeOnly input 칩이 올바르게 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("removeOnly input 칩: removeOnly") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("removeOnly input 칩의 ariaLabelRemove가 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("removeOnly input 칩: ariaLabelRemove") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -253,27 +296,32 @@ internal class ChipElementTest: GwtTestSpec({
             Then("disabled assist 칩이 올바르게 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("disabled assist 칩") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("toggle 칩 초기 상태가 활성화되어야 한다") {
                 val log = logs.find { it.toString().startsWith("toggle 칩: 초기") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("toggle 칩 disable이 올바르게 동작해야 한다") {
-                val log = logs.find { it.toString().startsWith("toggle 칩: disable(true)") } as String?
+                val log = logs.find { it.toString().startsWith("toggle 칩: disabled(true)") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("toggle 칩 enable이 올바르게 동작해야 한다") {
-                val log = logs.find { it.toString().startsWith("toggle 칩: enable()") } as String?
+                val log = logs.find { it.toString().startsWith("toggle 칩: enabled()") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("toggle 칩 enable(false)가 올바르게 동작해야 한다") {
-                val log = logs.find { it.toString().startsWith("toggle 칩: enable(false)") } as String?
+                val log = logs.find { it.toString().startsWith("toggle 칩: enabled(false)") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
     }

@@ -197,5 +197,19 @@ public class CheckboxEventHandlingTest {
         });
 
         assertTrue("불확정 클릭: 초기 상태는 indeterminate", indeterminateCheckbox.indeterminate);
+
+        // indeterminate 이벤트: 업그레이드 후 내부 input을 실제로 클릭하면 change가 발생하고 indeterminate가 해제되어야 함
+        var indeterminateChanged = new java.util.concurrent.atomic.AtomicBoolean(false);
+        indeterminateCheckbox.addEventListener("change", evt -> indeterminateChanged.set(true));
+        elemental2.dom.DomGlobal.setTimeout(ignore -> {
+            Object root = jsinterop.base.Js.asPropertyMap(indeterminateCheckbox).get("shadowRoot");
+            elemental2.dom.HTMLElement input = root == null ? null
+                    : jsinterop.base.Js.uncheckedCast(((elemental2.dom.ShadowRoot) jsinterop.base.Js.uncheckedCast(root)).querySelector("input"));
+            if (input != null) input.click();
+            assertTrue("indeterminate 이벤트: 내부 input 존재", input != null);
+            assertTrue("indeterminate 이벤트: change 발생", indeterminateChanged.get());
+            assertTrue("indeterminate 이벤트: 클릭 후 indeterminate 해제", !indeterminateCheckbox.indeterminate);
+            assertTrue("indeterminate 이벤트: 클릭 후 checked", indeterminateCheckbox.checked);
+        }, 1000);
     }
 }

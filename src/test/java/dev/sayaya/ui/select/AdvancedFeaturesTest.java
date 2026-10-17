@@ -48,7 +48,11 @@ public class AdvancedFeaturesTest {
 
         assertNotNull("선행 아이콘 존재",
                 iconSelect.querySelector("[slot='leading-icon']"));
-        assertTrue("hasLeadingIcon 속성", iconSelect.hasLeadingIcon);
+        // hasLeadingIcon은 leading-icon 슬롯의 slotchange 처리 후 갱신된다
+        iconSelect.getUpdateComplete().then(r -> {
+            elemental2.dom.DomGlobal.setTimeout(ignore -> assertTrue("hasLeadingIcon 속성", iconSelect.hasLeadingIcon), 300);
+            return null;
+        });
 
         // Quick Menu
         var quickExample = addExampleCode(advancedSection,
@@ -162,5 +166,63 @@ public class AdvancedFeaturesTest {
         assertEquals("form 속성",
                 "select-test-form", formSelect.getAttribute("form"));
         assertEquals("value 속성", "yes", formSelect.getAttribute("value"));
+
+        // ---- 명세 커버리지: 옵션/선택 메서드/메뉴 이벤트/검증/포커스 ----
+        int[] opened = {0}, closing = {0}, closed = {0};
+        var spec = select().outlined().label("과일").quick(true)
+                .option().value("a").headline("사과").supportingText("빨강").done()
+                .option().value("b").headline("바나나").done()
+                .option().value("c").headline("체리").disabled(true).done()
+                .element();
+        spec.addEventListener("opened", e -> opened[0]++);
+        spec.addEventListener("closing", e -> closing[0]++);
+        spec.addEventListener("closed", e -> closed[0]++);
+        var required = select().filled().label("필수").required(true)
+                .option().value("x").headline("X").done()
+                .element();
+        var errSelect = select().filled().label("에러").error(true).errorText("잘못된 값")
+                .option().value("x").headline("X").done()
+                .element();
+        body().add(div().add(spec).add(required).add(errSelect));
+
+        spec.getUpdateComplete().then(r -> {
+            var opts = spec.options;
+            assertTrue("옵션 headline: 첫 옵션 텍스트에 사과", opts.length == 3 && opts[0].textContent.contains("사과"));
+            assertNotNull("옵션 supportingText: supporting-text 슬롯", opts[0].querySelector("[slot='supporting-text']"));
+            assertTrue("옵션 disabled: 세 번째 옵션 비활성화", opts[2].disabled);
+
+            spec.select("b");
+            assertEquals("select() 메서드: 값 b", "b", spec.value);
+            assertTrue("옵션 selected: 두 번째 옵션 selected", opts[1].selected && !opts[0].selected);
+            spec.selectIndex(0);
+            assertEquals("selectIndex() 메서드: 인덱스 0 → 값 a", "a", spec.value);
+            assertTrue("selectedOptions: 1개이며 값 a", spec.selectedOptions.length == 1 && "a".equals(spec.selectedOptions[0].value));
+
+            assertNotNull("ValidityState: validity 객체 존재", required.validity);
+            assertTrue("required 검증: 값이 없으면 valueMissing", required.validity.valueMissing && !required.checkValidity());
+
+            assertTrue("수동 에러: error true, errorText 설정", errSelect.error && "잘못된 값".equals(errSelect.errorText));
+            errSelect.error = false;
+            boolean cleared = !errSelect.error;
+            errSelect.error = true;
+            assertTrue("동적 에러: false → true 갱신", cleared && errSelect.error);
+
+            spec.focus();
+            assertTrue("focus(): activeElement가 select", elemental2.dom.DomGlobal.document.activeElement == spec);
+            spec.blur();
+            assertTrue("blur(): activeElement가 select 아님", elemental2.dom.DomGlobal.document.activeElement != spec);
+
+            spec.showPicker();
+            elemental2.dom.DomGlobal.setTimeout(t1 -> {
+                assertTrue("showPicker: 메뉴 열림(open)", Boolean.TRUE.equals(jsinterop.base.Js.asPropertyMap(spec).get("open")));
+                assertTrue("opened 이벤트: 1회 이상", opened[0] >= 1);
+                jsinterop.base.Js.asPropertyMap(spec).set("open", false);
+                elemental2.dom.DomGlobal.setTimeout(t2 -> {
+                    assertTrue("closing 이벤트: 1회 이상", closing[0] >= 1);
+                    assertTrue("closed 이벤트: 1회 이상", closed[0] >= 1);
+                }, 800);
+            }, 800);
+            return null;
+        });
     }
 }

@@ -67,7 +67,7 @@ public class MenuAdvancedTest {
         var positioningContainer = div().add(anchor12).add(positioningMenu).element();
         positioningExample.addInteractiveDemo(positioningContainer, false);
         positioningMenu.getUpdateComplete().then(result -> {
-            assertEquals("positioning 속성", "fixed", positioningMenu.positioning);
+            assertEquals("positioning 속성: fixed", "fixed", positioningMenu.positioning);
             return null;
         });
 
@@ -112,8 +112,8 @@ public class MenuAdvancedTest {
         var offsetContainer = div().add(anchor13).add(offsetMenu).element();
         offsetExample.addInteractiveDemo(offsetContainer, false);
         offsetMenu.getUpdateComplete().then(result -> {
-            assertEquals("xOffset 속성", 20.0, offsetMenu.xOffset);
-            assertEquals("yOffset 속성", 10.0, offsetMenu.yOffset);
+            assertEquals("xOffset 속성: 20", 20.0, offsetMenu.xOffset);
+            assertEquals("yOffset 속성: 10", 10.0, offsetMenu.yOffset);
             return null;
         });
 
@@ -254,7 +254,7 @@ public class MenuAdvancedTest {
         var typeaheadContainer = div().add(anchor16).add(typeaheadMenu).element();
         typeaheadExample.addInteractiveDemo(typeaheadContainer, false);
         typeaheadMenu.getUpdateComplete().then(result -> {
-            assertEquals("typeaheadDelay 속성", 500.0, typeaheadMenu.typeaheadDelay);
+            assertEquals("typeaheadDelay 속성: 500", 500.0, typeaheadMenu.typeaheadDelay);
             return null;
         });
 
@@ -301,8 +301,8 @@ public class MenuAdvancedTest {
         var cornerContainer = div().add(anchor17).add(cornerMenu).element();
         cornerExample.addInteractiveDemo(cornerContainer, false);
         cornerMenu.getUpdateComplete().then(result -> {
-            assertEquals("anchorCorner 속성", "end-start", cornerMenu.anchorCorner);
-            assertEquals("menuCorner 속성", "start-start", cornerMenu.menuCorner);
+            assertEquals("anchorCorner 속성: end-start", "end-start", cornerMenu.anchorCorner);
+            assertEquals("menuCorner 속성: start-start", "start-start", cornerMenu.menuCorner);
             return null;
         });
     }

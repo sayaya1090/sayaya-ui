@@ -238,8 +238,8 @@ public class MenuItemPropertiesTest {
         var linkContainer = div().add(anchor7).add(linkMenu).element();
         linkExample.addInteractiveDemo(linkContainer, false);
         linkMenu.getUpdateComplete().then(result -> {
-            assertEquals("첫 번째 항목: href 속성", "https://google.com", linkMenu.items[0].href);
-            assertEquals("첫 번째 항목: target 속성", "_blank", linkMenu.items[0].target);
+            assertEquals("첫 번째 항목: href 속성 google.com", "https://google.com", linkMenu.items[0].href);
+            assertEquals("첫 번째 항목: target 속성 _blank", "_blank", linkMenu.items[0].target);
             return null;
         });
 
@@ -288,8 +288,8 @@ public class MenuItemPropertiesTest {
         var typeContainer = div().add(anchor8).add(typeMenu).element();
         typeExample.addInteractiveDemo(typeContainer, false);
         typeMenu.getUpdateComplete().then(result -> {
-            assertEquals("첫 번째 항목: type 속성", "button", typeMenu.items[0].type);
-            assertEquals("두 번째 항목: type 속성", "link", typeMenu.items[1].type);
+            assertEquals("첫 번째 항목: type 속성 button", "button", typeMenu.items[0].type);
+            assertEquals("두 번째 항목: type 속성 link", "link", typeMenu.items[1].type);
             return null;
         });
     }

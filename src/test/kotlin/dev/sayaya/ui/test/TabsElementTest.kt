@@ -2,12 +2,14 @@ package dev.sayaya.ui.test
 
 import dev.sayaya.gwt.test.GwtHtml
 import dev.sayaya.gwt.test.GwtTestSpec
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldNotContain
 
-@GwtHtml("src/test/webapp/tabs.html")
+@GwtHtml("tabs.html") // 테스트 서버 루트는 war(src/test/webapp)
 internal class TabsElementTest: GwtTestSpec({
     Given("Material Design Tabs") {
-        Thread.sleep(5000) // 비동기 작업 대기
+        // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
+        page.waitForTimeout(5000.0)
         val logs = page.getConsoleLogs()
         println(logs)
 
@@ -15,17 +17,20 @@ internal class TabsElementTest: GwtTestSpec({
             Then("primary tabs가 생성되어야 한다") {
                 val log = logs.find { it.toString().contains("탭 개수: 3개여야 함") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("secondary tabs가 생성되어야 한다") {
                 val log = logs.find { it.toString().contains("Secondary 탭 개수: 3개여야 함") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("아이콘이 포함된 primary tabs가 생성되어야 한다") {
                 val log = logs.find { it.toString().contains("아이콘 탭 개수: 3개여야 함") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -33,12 +38,14 @@ internal class TabsElementTest: GwtTestSpec({
             Then("autoActivate가 활성화되어야 한다") {
                 val log = logs.find { it.toString().contains("Auto-activate가 활성화되어야 함") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("autoActivate가 비활성화되어야 한다") {
                 val log = logs.find { it.toString().contains("Auto-activate가 비활성화되어야 함") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -46,7 +53,8 @@ internal class TabsElementTest: GwtTestSpec({
             Then("활성 탭 인덱스가 올바르게 설정되어야 한다") {
                 val log = logs.find { it.toString().contains("활성 탭 인덱스: 1이어야 함") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
     }

@@ -193,5 +193,35 @@ public class UseCasesTest {
                 "annual_report.pdf", downloadButton.download);
         assertNotNull("다운로드: 아이콘 존재",
                 downloadButton.querySelector("md-icon"));
+
+        // 사용 예시: 타입별 버튼 생성
+        assertEquals("사용 예시: filled", "MD-FILLED-BUTTON", button().filled().text("저장").element().tagName);
+        assertEquals("사용 예시: outlined", "MD-OUTLINED-BUTTON", button().outlined().text("취소").element().tagName);
+        assertEquals("사용 예시: text", "MD-TEXT-BUTTON", button().text().text("더보기").element().tagName);
+
+        // 버튼 우선순위: 강조도 높은 순서 filled > filled-tonal > elevated > outlined > text
+        String[] priority = {
+                button().filled().element().tagName, button().filledTonal().element().tagName,
+                button().elevated().element().tagName, button().outlined().element().tagName,
+                button().text().element().tagName};
+        assertEquals("버튼 우선순위: 5단계 변형이 모두 다름", 5L, java.util.Arrays.stream(priority).distinct().count());
+        assertEquals("버튼 우선순위: 최상위는 filled", "MD-FILLED-BUTTON", priority[0]);
+        assertEquals("버튼 우선순위: 최하위는 text", "MD-TEXT-BUTTON", priority[4]);
+
+        // 동적 변경: 생성 후 빌더로 상태 변경
+        var dynamic = button().filled().text("동적");
+        dynamic.disabled(true);
+        assertTrue("동적 변경: disabled(true) 적용", dynamic.element().disabled);
+        dynamic.disabled(false);
+        assertFalse("동적 변경: disabled(false) 해제", dynamic.element().disabled);
+        // text()는 기존 내용을 바꾸지 않고 텍스트 노드를 덧붙인다(아이콘과 함께 쓰기 위함)
+        dynamic.text("변경됨");
+        assertEquals("동적 변경: text()는 텍스트를 덧붙임", "동적변경됨", dynamic.element().textContent);
+
+        // 비교: disabled vs soft-disabled
+        var hard = button().filled().text("disabled").disabled(true).element();
+        var soft = button().filled().text("soft").softDisabled(true).element();
+        assertTrue("비교: disabled 버튼은 disabled", hard.disabled && !hard.softDisabled);
+        assertTrue("비교: soft-disabled 버튼은 disabled 아님", soft.softDisabled && !soft.disabled);
     }
 }

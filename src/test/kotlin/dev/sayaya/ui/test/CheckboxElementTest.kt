@@ -2,34 +2,40 @@ package dev.sayaya.ui.test
 
 import dev.sayaya.gwt.test.GwtHtml
 import dev.sayaya.gwt.test.GwtTestSpec
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldNotContain
 
-@GwtHtml("src/test/webapp/checkbox.html")
+@GwtHtml("checkbox.html") // 테스트 서버 루트는 war(src/test/webapp)
 internal class CheckboxElementTest: GwtTestSpec({
     Given("Material Design Checkbox") {
-        Thread.sleep(5000) // 비동기 작업 대기
+        // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
+        page.waitForTimeout(5000.0)
         val logs = page.getConsoleLogs()
         println(logs)
         When("체크박스 상태를 설정할 때") {
             Then("unchecked 상태가 올바르게 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("체크 안됨 상태") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("checked 상태가 올바르게 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("체크됨 상태") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("indeterminate 상태가 올바르게 설정되어야 한다") {
-                val log = logs.find { it.toString().startsWith("indeterminate 상태") } as String?
+                val log = logs.find { it.toString().startsWith("불확정 상태") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("상태 전환이 올바르게 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("상태 전환") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -37,22 +43,26 @@ internal class CheckboxElementTest: GwtTestSpec({
             Then("disabled 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("disabled 속성") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("required 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("required 속성") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("value 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("value 속성") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("기본 value가 올바르게 설정되어야 한다") {
-                val log = logs.find { it.toString().startsWith("기본 value") } as String?
+                val log = logs.find { it.toString().startsWith("기본값") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -60,17 +70,20 @@ internal class CheckboxElementTest: GwtTestSpec({
             Then("name 속성이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("name 속성") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("폼 통합이 올바르게 동작해야 한다") {
-                val log = logs.find { it.toString().startsWith("폼 체크박스") } as String?
+                val log = logs.find { it.toString().startsWith("폼 통합") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("빌더 getter 메서드가 올바르게 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("빌더") && it.toString().contains("getter") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -78,17 +91,20 @@ internal class CheckboxElementTest: GwtTestSpec({
             Then("onChange 이벤트가 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("onChange 이벤트") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("onInput 이벤트가 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("onInput 이벤트") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("여러 이벤트 핸들러가 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("다중 이벤트") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -96,12 +112,14 @@ internal class CheckboxElementTest: GwtTestSpec({
             Then("aria-label이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("aria-label") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("disabled 상태에서도 aria-label이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("disabled aria 체크박스") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -109,15 +127,17 @@ internal class CheckboxElementTest: GwtTestSpec({
             Then("기본 체크박스 사용 예시가 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("사용 예시") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
         When("라벨과 함께 사용할 때") {
             Then("라벨 예시가 올바르게 동작해야 한다") {
-                val log = logs.find { it.toString().startsWith("라벨 예시") } as String?
+                val log = logs.find { it.toString().startsWith("라벨 예제") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -125,12 +145,14 @@ internal class CheckboxElementTest: GwtTestSpec({
             Then("폼 통합이 올바르게 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("폼 통합") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("Select All 패턴이 동작해야 한다") {
-                val log = logs.find { it.toString().startsWith("Select All 패턴") } as String?
+                val log = logs.find { it.toString().startsWith("전체 선택 패턴") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -138,25 +160,29 @@ internal class CheckboxElementTest: GwtTestSpec({
             Then("체크박스 클릭이 올바르게 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("클릭 동작") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
         When("indeterminate 클릭 동작을 테스트할 때") {
             Then("indeterminate 상태에서 클릭이 올바르게 동작해야 한다") {
-                val log = logs.find { it.toString().startsWith("indeterminate 클릭") } as String?
+                val log = logs.find { it.toString().startsWith("불확정 클릭") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("indeterminate 순환 동작이 올바르게 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("indeterminate 순환") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("indeterminate 이벤트가 올바르게 발생해야 한다") {
                 val log = logs.find { it.toString().startsWith("indeterminate 이벤트") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
     }

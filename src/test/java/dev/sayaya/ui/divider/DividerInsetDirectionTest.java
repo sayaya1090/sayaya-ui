@@ -51,6 +51,9 @@ public class DividerInsetDirectionTest {
                 .element();
         startBooleanExample.addInteractiveDemo(insetStartDivider2, false);
         assertTrue("구분선 insetStart(true): true", insetStartDivider2.insetStart);
+        var insetStartOff = divider().insetStart(false).element();
+        assertFalse("구분선 insetStart(false): insetStart는 false", insetStartOff.insetStart);
+        assertFalse("구분선 insetStart(false): insetEnd는 false", insetStartOff.insetEnd);
 
         // Inset End
         var endExample = addExampleCode(directionSection,
@@ -83,5 +86,8 @@ public class DividerInsetDirectionTest {
                 .element();
         endBooleanExample.addInteractiveDemo(insetEndDivider2, false);
         assertTrue("구분선 insetEnd(true): true", insetEndDivider2.insetEnd);
+        var insetEndOff = divider().insetEnd(false).element();
+        assertFalse("구분선 insetEnd(false): insetEnd는 false", insetEndOff.insetEnd);
+        assertFalse("구분선 insetEnd(false): insetStart는 false", insetEndOff.insetStart);
     }
 }

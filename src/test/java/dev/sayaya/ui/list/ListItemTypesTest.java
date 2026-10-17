@@ -61,6 +61,7 @@ public class ListItemTypesTest {
         buttonExample.addInteractiveDemo(buttonList, false);
         buttonList.getUpdateComplete().then(result -> {
             assertEquals("첫 번째 항목 type", "button", buttonList.items[0].type);
+            assertEquals("type button: 첫 번째 항목", "button", buttonList.items[0].type);
             return null;
         });
 
@@ -111,6 +112,9 @@ public class ListItemTypesTest {
             assertEquals("첫 번째 항목 type", "link", linkList.items[0].type);
             assertEquals("첫 번째 항목 href", "https://material.io", linkList.items[0].href);
             assertEquals("첫 번째 항목 target", "_blank", linkList.items[0].target);
+            assertEquals("type link: 첫 번째 항목", "link", linkList.items[0].type);
+            assertEquals("href material.io: 첫 번째 항목", "https://material.io", linkList.items[0].href);
+            assertEquals("target _blank: 첫 번째 항목", "_blank", linkList.items[0].target);
             return null;
         });
     }

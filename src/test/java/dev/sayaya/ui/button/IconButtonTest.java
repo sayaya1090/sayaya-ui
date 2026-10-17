@@ -276,5 +276,27 @@ public class IconButtonTest {
         assertEquals("스타일 토글: md-filled-tonal-icon-button",
                 "MD-FILLED-TONAL-ICON-BUTTON", toggleBtn4.tagName);
         assertTrue("스타일 토글: toggle true", toggleBtn4.toggle);
+
+        // 토글 접근성: 상태별 aria-label이 서로 달라야 함
+        assertTrue("토글 접근성: 상태별 aria-label이 구분됨", toggleBtn3.toggle
+                && !toggleBtn3.getAttribute("aria-label").equals(toggleBtn3.getAttribute("aria-label-selected")));
+
+        // flip-icon-in-rtl (변형 전환 후에도 유지)
+        var flipBtn = button().icon("arrow_forward").flipIconInRtl(true).element();
+        assertTrue("아이콘 버튼 flip-icon-in-rtl: true", flipBtn.flipIconInRtl);
+        var flipFilled = button().icon("arrow_forward").flipIconInRtl(true).filled().element();
+        assertTrue("아이콘 버튼 flip-icon-in-rtl: filled 전환 후 유지", flipFilled.flipIconInRtl);
+
+        // disabled 아이콘 버튼의 aria-label
+        var disabledAria = button().icon("close").disabled(true).ariaLabel("닫기").element();
+        assertTrue("disabled 아이콘 버튼 aria-label: disabled true", disabledAria.disabled);
+        assertEquals("disabled 아이콘 버튼 aria-label: 닫기", "닫기", disabledAria.getAttribute("aria-label"));
+
+        // 아이콘 버튼 onClick
+        int[] iconClicks = {0};
+        var clickIconBtn = button().icon("add").ariaLabel("추가").onClick(e -> iconClicks[0]++).element();
+        toggleSection.appendChild(clickIconBtn);
+        clickIconBtn.click();
+        assertEquals("아이콘 버튼 onClick: 클릭 1회", 1, iconClicks[0]);
     }
 }

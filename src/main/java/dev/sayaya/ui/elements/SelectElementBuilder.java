@@ -114,6 +114,9 @@ public interface SelectElementBuilder<E extends MdSelectElement, SELF extends Se
         }
         @Override public SelectOptionElementBuilder<P> select(boolean selected) {
             element().selected = selected;
+            // md-select의 reset()/폼 리셋은 [selected] attribute를 기본 선택값으로 사용한다
+            if (selected) element().setAttribute("selected", "");
+            else element().removeAttribute("selected");
             return that();
         }
         @Override public boolean isSelected() {

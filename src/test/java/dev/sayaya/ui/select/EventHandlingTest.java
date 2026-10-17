@@ -59,10 +59,15 @@ public class EventHandlingTest {
         });
 
         assertEquals("초기 변경 횟수", 0, changeCount.get());
-        changeSelect.select("a");
-        assertEquals("첫 번째 변경", 1, changeCount.get());
-        changeSelect.select("b");
-        assertEquals("두 번째 변경", 2, changeCount.get());
+        changeSelect.getUpdateComplete().then(r -> {
+            // md-select는 코드로 값을 바꾸면 change를 발생시키지 않는다(사용자 조작 시에만 발생)
+            changeSelect.select("a");
+            assertEquals("코드로 select(): 값 변경", "a", changeSelect.value);
+            assertEquals("코드로 select(): change 미발생", 0, changeCount.get());
+            changeSelect.dispatchEvent(new elemental2.dom.Event("change"));
+            assertEquals("onChange 이벤트 (변경 이벤트): 핸들러 호출", 1, changeCount.get());
+            return null;
+        });
 
         // Input Event
         var inputExample = addExampleCode(eventSection,
@@ -96,8 +101,13 @@ public class EventHandlingTest {
             inputState.textContent = "입력 횟수: " + inputCount.get() + " | 현재 값: " + inputSelect.value;
         });
 
-        inputSelect.select("1");
-        assertTrue("input 이벤트 발생", inputCount.get() > 0);
+        inputSelect.getUpdateComplete().then(r -> {
+            inputSelect.select("1");
+            assertEquals("코드로 select(): input 미발생", 0, inputCount.get());
+            inputSelect.dispatchEvent(new elemental2.dom.Event("input"));
+            assertEquals("onInput 이벤트 (입력 이벤트): 핸들러 호출", 1, inputCount.get());
+            return null;
+        });
 
         // Menu Open/Close Events
         var menuExample = addExampleCode(eventSection,

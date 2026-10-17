@@ -2,12 +2,14 @@ package dev.sayaya.ui.test
 
 import dev.sayaya.gwt.test.GwtHtml
 import dev.sayaya.gwt.test.GwtTestSpec
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldNotContain
 
-@GwtHtml("src/test/webapp/focus_ring.html")
+@GwtHtml("focus_ring.html") // 테스트 서버 루트는 war(src/test/webapp)
 internal class FocusRingElementTest: GwtTestSpec({
     Given("Material Design Focus Ring") {
-        Thread.sleep(5000) // 비동기 작업 대기
+        // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
+        page.waitForTimeout(5000.0)
         val logs = page.getConsoleLogs()
         println(logs)
 
@@ -15,17 +17,20 @@ internal class FocusRingElementTest: GwtTestSpec({
             Then("태그명이 올바르게 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("포커스 링: 태그명") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("기본 visible이 false여야 한다") {
                 val log = logs.find { it.toString().startsWith("포커스 링: 기본 visible") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("기본 inward가 false여야 한다") {
                 val log = logs.find { it.toString().startsWith("포커스 링: 기본 inward") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -33,12 +38,14 @@ internal class FocusRingElementTest: GwtTestSpec({
             Then("inward가 true로 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("포커스 링 inward: true") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("outward가 false로 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("포커스 링 outward") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -46,7 +53,8 @@ internal class FocusRingElementTest: GwtTestSpec({
             Then("부모 요소에 올바르게 부착되어야 한다") {
                 val log = logs.find { it.toString().startsWith("포커스 링 부착") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -54,12 +62,14 @@ internal class FocusRingElementTest: GwtTestSpec({
             Then("컨테이너에 포커스 링이 존재해야 한다") {
                 val log = logs.find { it.toString().startsWith("버튼 포커스 링: 컨테이너") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("inward 스타일이 올바르게 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("버튼 포커스 링 inward") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -67,7 +77,8 @@ internal class FocusRingElementTest: GwtTestSpec({
             Then("htmlFor 속성이 올바르게 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("입력 포커스 링") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -75,17 +86,20 @@ internal class FocusRingElementTest: GwtTestSpec({
             Then("attach 메서드로 control이 설정되어야 한다") {
                 val log = logs.find { it.toString().startsWith("명령형 부착: control이 설정") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("control이 올바른 요소여야 한다") {
                 val log = logs.find { it.toString().startsWith("명령형 부착: control이 버튼") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("control 속성으로 직접 설정할 수 있어야 한다") {
                 val log = logs.find { it.toString().startsWith("control 속성") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
     }

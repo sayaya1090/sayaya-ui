@@ -124,5 +124,19 @@ public class CheckboxStatesTest {
         stateBuilder.select(false);
         assertFalse("상태 전환: 체크 안됨으로 변경", stateBuilder.isSelected());
         assertFalse("상태 전환: indeterminate 해제됨", stateBuilder.isIndeterminate());
+
+        // indeterminate 순환: 체크 -> 불확정 -> 체크 -> 불확정
+        var cycle = checkbox().select(true);
+        cycle.indeterminate();
+        assertTrue("indeterminate 순환: 체크 후 불확정으로 전환", cycle.isIndeterminate() && !cycle.isSelected());
+        cycle.select(true);
+        assertTrue("indeterminate 순환: 다시 체크하면 불확정 해제", cycle.isSelected() && !cycle.isIndeterminate());
+        cycle.indeterminate();
+        assertTrue("indeterminate 순환: 다시 불확정으로 전환", cycle.isIndeterminate() && !cycle.isSelected());
+
+        // 사용 예시: 기본 체크박스 생성
+        var usage = checkbox().ariaLabel("약관에 동의").element();
+        assertEquals("사용 예시: 태그명은 MD-CHECKBOX", "MD-CHECKBOX", usage.tagName);
+        assertFalse("사용 예시: 기본은 체크 안됨", usage.checked);
     }
 }

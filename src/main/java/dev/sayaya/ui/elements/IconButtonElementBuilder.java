@@ -52,6 +52,11 @@ public interface IconButtonElementBuilder<E extends MdIconButtonElement, SELF ex
         element().selected = selected;
         return that();
     }
+    /** RTL 환경에서 아이콘을 좌우 반전한다(flip-icon-in-rtl). */
+    default SELF flipIconInRtl(boolean flip) {
+        element().flipIconInRtl = flip;
+        return that();
+    }
     default SELF ariaLabelSelected(String label) {
         element().setAttribute("aria-label-selected", label);
         return that();
@@ -65,6 +70,7 @@ public interface IconButtonElementBuilder<E extends MdIconButtonElement, SELF ex
             var source = this.element();
             var target = builder.element();
             target.disabled = source.disabled;
+            target.flipIconInRtl = source.flipIconInRtl;
             if (source.href != null) target.href = source.href;
             if (source.target != null) target.target = source.target;
             return builder;

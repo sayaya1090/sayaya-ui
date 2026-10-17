@@ -57,10 +57,12 @@ public class ValidationTest {
         });
         requiredSelect.reportValidity();
 
-        assertFalse("빈 필수 필드는 invalid", requiredSelect.checkValidity());
-
-        requiredSelect.select("opt1");
-        assertTrue("값이 있으면 valid", requiredSelect.checkValidity());
+        requiredSelect.getUpdateComplete().then(r -> {
+            assertFalse("빈 필수 필드는 invalid", requiredSelect.checkValidity());
+            requiredSelect.select("opt1");
+            assertTrue("값이 있으면 valid", requiredSelect.checkValidity());
+            return null;
+        });
 
         // Custom Validity
         var customExample = addExampleCode(validationSection,
@@ -144,9 +146,11 @@ public class ValidationTest {
             reportState.textContent = "valid: " + reportSelect.checkValidity() + " | value: " + reportSelect.value;
         });
 
-        assertFalse("reportValidity는 false 반환", reportSelect.reportValidity());
-
-        reportSelect.select("seoul");
-        assertTrue("값 선택 후 valid", reportSelect.reportValidity());
+        reportSelect.getUpdateComplete().then(r -> {
+            assertFalse("reportValidity는 false 반환", reportSelect.reportValidity());
+            reportSelect.select("seoul");
+            assertTrue("값 선택 후 valid", reportSelect.reportValidity());
+            return null;
+        });
     }
 }

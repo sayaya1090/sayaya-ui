@@ -116,6 +116,7 @@ public class BasicMenuTest {
         anchor2.addEventListener("click", e -> supportingMenu.open = !supportingMenu.open);
         var supportingContainer = div().add(anchor2).add(supportingMenu).element();
         supportingTextExample.addInteractiveDemo(supportingContainer, false);
+        assertEquals("Supporting Text (보조 텍스트): 항목마다 supporting-text 슬롯", 2, supportingMenu.querySelectorAll("[slot='supporting-text']").length);
 
         // Menu with Icons
         var iconsExample = addExampleCode(basicSection,
@@ -167,5 +168,6 @@ public class BasicMenuTest {
         anchor3.addEventListener("click", e -> iconsMenu.open = !iconsMenu.open);
         var iconsContainer = div().add(anchor3).add(iconsMenu).element();
         iconsExample.addInteractiveDemo(iconsContainer, false);
+        assertEquals("Icons (아이콘): 항목마다 start 슬롯 아이콘", 3, iconsMenu.querySelectorAll("[slot='start']").length);
     }
 }

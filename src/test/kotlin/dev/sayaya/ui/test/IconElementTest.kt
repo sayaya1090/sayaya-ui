@@ -2,12 +2,14 @@ package dev.sayaya.ui.test
 
 import dev.sayaya.gwt.test.GwtHtml
 import dev.sayaya.gwt.test.GwtTestSpec
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldNotContain
 
-@GwtHtml("src/test/webapp/icon.html")
+@GwtHtml("icon.html") // 테스트 서버 루트는 war(src/test/webapp)
 internal class IconElementTest: GwtTestSpec({
     Given("Material Design Icon") {
-        Thread.sleep(5000)
+        // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
+        page.waitForTimeout(5000.0)
         val logs = page.getConsoleLogs()
         println(logs)
 
@@ -15,20 +17,23 @@ internal class IconElementTest: GwtTestSpec({
             Then("빈 아이콘이 생성되어야 한다") {
                 val log = logs.find { it.toString().startsWith("아이콘 생성") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
         When("문자열로 아이콘을 추가할 때") {
             Then("이름으로 아이콘이 생성되어야 한다") {
-                val log = logs.find { it.toString().startsWith("이름으로 아이콘") } as String?
+                val log = logs.find { it.toString().startsWith("이름이 있는 아이콘") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
             Then("유니코드로 아이콘이 생성되어야 한다") {
-                val log = logs.find { it.toString().startsWith("유니코드로 아이콘") } as String?
+                val log = logs.find { it.toString().startsWith("유니코드 아이콘") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -36,7 +41,8 @@ internal class IconElementTest: GwtTestSpec({
             Then("aria-label이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("접근성") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -44,15 +50,17 @@ internal class IconElementTest: GwtTestSpec({
             Then("커스텀 스타일이 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("스타일링") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
         When("사용 예시를 테스트할 때") {
             Then("아이콘 사용 예시가 동작해야 한다") {
-                val log = logs.find { it.toString().startsWith("사용 예시") } as String?
+                val log = logs.find { it.toString().startsWith("사용 예제") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -60,7 +68,8 @@ internal class IconElementTest: GwtTestSpec({
             Then("아이콘 스타일이 올바르게 적용되어야 한다") {
                 val log = logs.find { it.toString().startsWith("아이콘 스타일") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
 
@@ -68,7 +77,8 @@ internal class IconElementTest: GwtTestSpec({
             Then("컨텍스트 내 아이콘이 올바르게 동작해야 한다") {
                 val log = logs.find { it.toString().startsWith("컨텍스트 내 아이콘") } as String?
                 println(log)
-                log?.let { it shouldNotContain "Assertion failed!" }
+                log.shouldNotBeNull()
+                log shouldNotContain "Assertion failed!"
             }
         }
     }

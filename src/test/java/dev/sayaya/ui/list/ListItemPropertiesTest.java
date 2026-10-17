@@ -96,6 +96,8 @@ public class ListItemPropertiesTest {
         tabindexList.getUpdateComplete().then(result -> {
             assertEquals("첫 번째 항목 tabindex", 0, tabindexList.items[0].tabindex);
             assertEquals("두 번째 항목 tabindex", -1, tabindexList.items[1].tabindex);
+            assertEquals("tabindex 0: 첫 번째 항목", 0, tabindexList.items[0].tabindex);
+            assertEquals("tabindex -1: 두 번째 항목", -1, tabindexList.items[1].tabindex);
             return null;
         });
     }

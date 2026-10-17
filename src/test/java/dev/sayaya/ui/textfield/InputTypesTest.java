@@ -116,6 +116,8 @@ public class InputTypesTest {
         assertEquals("min 속성: '0'이어야 함", "0", numberField.min);
         assertEquals("max 속성: '150'이어야 함", "150", numberField.max);
         assertEquals("step 속성: '1'이어야 함", "1", numberField.step);
+        var multipleField = textField().filled().label("이메일").multiple(true).element();
+        assertTrue("multiple 속성: true여야 함", multipleField.multiple);
 
         // Number range validation test
         numberField.value = "-10";

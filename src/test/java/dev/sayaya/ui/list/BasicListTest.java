@@ -88,6 +88,7 @@ public class BasicListTest {
                 .done()
                 .element();
         supportingTextExample.addInteractiveDemo(supportingList, false);
+        assertEquals("Supporting Text (보조 텍스트): 항목마다 supporting-text 슬롯", 2, supportingList.querySelectorAll("[slot='supporting-text']").length);
 
         // List with Trailing Supporting Text
         var trailingExample = addExampleCode(basicSection,
@@ -120,5 +121,6 @@ public class BasicListTest {
                 .done()
                 .element();
         trailingExample.addInteractiveDemo(trailingList, false);
+        assertEquals("Trailing Supporting Text (후행 텍스트): 항목마다 trailing-supporting-text 슬롯", 2, trailingList.querySelectorAll("[slot='trailing-supporting-text']").length);
     }
 }

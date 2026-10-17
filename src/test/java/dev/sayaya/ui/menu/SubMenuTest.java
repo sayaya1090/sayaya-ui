@@ -92,6 +92,7 @@ public class SubMenuTest {
         anchor9.addEventListener("click", e -> basicSubMenu.open = !basicSubMenu.open);
         var basicSubMenuContainer = div().add(anchor9).add(basicSubMenu).element();
         basicSubMenuExample.addInteractiveDemo(basicSubMenuContainer, false);
+        assertTrue("Basic SubMenu (기본 서브메뉴): md-sub-menu와 menu 슬롯 존재", basicSubMenu.querySelectorAll("md-sub-menu").length == 1 && basicSubMenu.querySelectorAll("md-sub-menu > [slot='menu']").length == 1);
 
         // Nested SubMenu with Icons
         var nestedSubMenuExample = addExampleCode(subMenuSection,
@@ -187,6 +188,7 @@ public class SubMenuTest {
         anchor10.addEventListener("click", e -> nestedSubMenu.open = !nestedSubMenu.open);
         var nestedSubMenuContainer = div().add(anchor10).add(nestedSubMenu).element();
         nestedSubMenuExample.addInteractiveDemo(nestedSubMenuContainer, false);
+        assertTrue("Nested SubMenu (중첩 서브메뉴): md-sub-menu 존재, 아이콘 포함", nestedSubMenu.querySelectorAll("md-sub-menu").length >= 1 && nestedSubMenu.querySelectorAll("md-sub-menu [slot='start']").length >= 1);
 
         // SubMenu with Hover Delay
         var hoverDelayExample = addExampleCode(subMenuSection,
@@ -248,5 +250,12 @@ public class SubMenuTest {
         anchor11.addEventListener("click", e -> hoverDelayMenu.open = !hoverDelayMenu.open);
         var hoverDelayContainer = div().add(anchor11).add(hoverDelayMenu).element();
         hoverDelayExample.addInteractiveDemo(hoverDelayContainer, false);
+        {
+            var sub = hoverDelayMenu.querySelector("md-sub-menu");
+            var props = sub == null ? null : jsinterop.base.Js.asPropertyMap(sub);
+            assertTrue("Hover Delay (호버 지연): open 400, close 200", props != null
+                    && Double.valueOf(400).equals(jsinterop.base.Js.asAny(props.get("hoverOpenDelay")).asDouble())
+                    && Double.valueOf(200).equals(jsinterop.base.Js.asAny(props.get("hoverCloseDelay")).asDouble()));
+        }
     }
 }

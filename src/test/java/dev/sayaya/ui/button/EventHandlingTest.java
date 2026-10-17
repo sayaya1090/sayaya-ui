@@ -89,9 +89,12 @@ public class EventHandlingTest {
             multiHandlerState.textContent = "Handler 1: " + handler1Triggered.get() + " | Handler 2: " + handler2Triggered.get();
         });
 
-        multiHandlerBtn.click();
-        assertTrue("다중 핸들러: 첫 번째 핸들러 실행됨", handler1Triggered.get());
-        assertTrue("다중 핸들러: 두 번째 핸들러 실행됨", handler2Triggered.get());
+        // md-button은 직전 활성화 클릭과 같은 microtask 안의 클릭을 무시하므로(squelch) 별도 task에서 클릭한다
+        setTimeout((p0) -> {
+            multiHandlerBtn.click();
+            assertTrue("다중 핸들러: 첫 번째 핸들러 실행됨", handler1Triggered.get());
+            assertTrue("다중 핸들러: 두 번째 핸들러 실행됨", handler2Triggered.get());
+        }, 50);
 
         // Disabled Button Click
         var disabledExample = addExampleCode(eventSection,
@@ -124,7 +127,7 @@ public class EventHandlingTest {
         // Soft Disabled Button Click
         var softDisabledExample = addExampleCode(eventSection,
             "📘 Soft Disabled State (소프트 비활성화)",
-            "softDisabled 버튼은 클릭 이벤트가 발생합니다. 접근성을 위해 사용합니다.",
+            "softDisabled 버튼은 포커스는 유지하지만 클릭 이벤트는 리스너에 전달되지 않습니다. 접근성을 위해 사용합니다.",
             """
             var softDisabledClickCount = new AtomicInteger(0);
             var button = button().filled()
@@ -132,7 +135,7 @@ public class EventHandlingTest {
                 .softDisabled(true)
                 .onClick(evt -> softDisabledClickCount.incrementAndGet())
                 .element();
-            button.click();  // 클릭하면 카운트 증가
+            button.click();  // 클릭해도 카운트 증가 안함 (md-button이 이벤트 전파를 막음)
             """);
         var softDisabledClickCount = new AtomicInteger(0);
         var softDisabledBtn = button().filled()
@@ -148,7 +151,8 @@ public class EventHandlingTest {
 
         setTimeout((p0) -> {
             softDisabledBtn.click();
-            assertEquals("soft-disabled 버튼: 클릭 시 이벤트 발생함", 1, softDisabledClickCount.get());
+            // md-button은 soft-disabled일 때 stopImmediatePropagation()으로 클릭을 차단한다
+            assertEquals("soft-disabled 버튼: 클릭 이벤트가 리스너에 전달되지 않음", 0, softDisabledClickCount.get());
         }, 100);
 
         // Form Submit Prevention
@@ -186,7 +190,9 @@ public class EventHandlingTest {
             submitState.textContent = "Submit clicked: " + submitClicked.get();
         });
 
-        submitBtn.click();
-        assertTrue("폼 제출 방지: 클릭 이벤트 발생", submitClicked.get());
+        setTimeout((p0) -> {
+            submitBtn.click();
+            assertTrue("폼 제출 방지: 클릭 이벤트 발생", submitClicked.get());
+        }, 150);
     }
 }
