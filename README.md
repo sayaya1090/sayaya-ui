@@ -67,7 +67,7 @@ dependencies {
 | **Card** | `card()` | Elevated, Filled, Outlined 카드 컨테이너 | [🔗](https://sayaya1090.github.io/sayaya-ui/card.html) |
 | **Badge** | `badge()` | 알림이나 상태를 나타내는 배지 | [🔗](https://sayaya1090.github.io/sayaya-ui/badge.html) |
 | **Expressive (labs/gb)** | `gb()` | Material Web 2.5.0 Expressive 컴포넌트 16종 (`md-gb-*`): button, split button, icon button, fab, icon, card, badge, checkbox, radio, switch, divider, list/list-item, menu/menu-group/menu-item | |
-| **Navigation** | `topAppBar()`, `navigationBar()`, `navigationRail()`, `navigationDrawer()` | Top app bar(small/center-aligned/medium/large), Navigation bar, Navigation rail(접힘/펼침), Navigation drawer(고정/모달) | |
+| **Navigation** | `topAppBar()`, `navigationBar()`, `navigationRail()`, `navigationDrawer()` | Top app bar(small·medium flexible·large flexible, 가운데 정렬·부제), Navigation bar, Navigation rail(접힘 96dp·narrow 80dp / 펼침 220~360dp, modal, 메뉴 버튼), Navigation drawer(고정/모달) | |
 | **Tooltip / Snackbar / Button group** | `tooltip()`, `snackbar()`, `buttonGroup()` | Plain·Rich tooltip, Snackbar(액션/닫기/자동 닫힘), Standard·Connected button group(xsmall~xlarge, 토글 선택) | |
 | **Side sheet** | `sideSheet()` | Standard·Modal side sheet(end/start, detached, 뒤로·닫기 버튼, 하단 액션, 스크림·Esc 닫기) | |
 
@@ -814,7 +814,7 @@ var appBar = topAppBar().variant(TopAppBarVariant.Small)
     .autoScroll(true)
     .element();
 
-// Navigation rail: 접힘(80dp) / 펼침(220dp, 라벨이 아이콘 옆)
+// Navigation rail: 접힘(96dp, narrow(true)면 80dp) / 펼침(220~360dp). menu(true): 펼침/접힘 메뉴 버튼, modal(true): 펼치면 본문 위에 표시
 var rail = navigationRail()
     .header(button().icon("menu").ariaLabel("메뉴"))
     .item(railItem().icon("home").activeIcon("home").label("홈"))
