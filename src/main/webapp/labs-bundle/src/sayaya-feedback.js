@@ -3,7 +3,7 @@
 //   md-snackbar     : snackbar
 //   md-button-group : standard / connected button group
 // 수치 출처: @material/web/tokens/versions/latest/sass/_md-comp-{plain-tooltip,rich-tooltip,snackbar,button-group-*}.scss
-// [토큰 외] 표시가 붙은 값은 토큰에 없어 M3 가이드 수치(magi console.css 인용)를 쓴 것이다.
+// [토큰 외] 값은 토큰에 없어 m3.material.io 스펙 페이지(tooltips/specs)와 Compose Material3(Tooltip.kt, Snackbar.kt) 상수로 대조한 값이다.
 import {LitElement, html, css} from 'lit';
 
 const ELEVATION = {
@@ -23,11 +23,11 @@ export class MdTooltip extends LitElement {
     persistent: {type: Boolean, reflect: true},  // rich: 앵커를 떠나도 유지(액션이 있을 때)
   };
   static styles = css`
-    :host { position: fixed; z-index: 1000; display: none; pointer-events: none; box-sizing: border-box; }
+    :host { position: fixed; z-index: 1000; display: none; pointer-events: none; box-sizing: border-box; min-width: 40px; /* [토큰 외] Compose TooltipMinWidth */ }
     :host([open]) { display: block; }
     :host([variant='plain']) {
-      min-height: 24px; padding: 4px 8px;            /* [토큰 외] 24dp, 8dp */
-      max-width: 200px;                               /* [토큰 외] */
+      min-height: 24px; padding: 4px 8px;            /* [토큰 외] m3 스펙 24dp·8dp, Compose TooltipMinHeight/PlainTooltipContentPadding */
+      max-width: 200px;                               /* [토큰 외] Compose plainTooltipMaxWidth */
       border-radius: var(--md-sys-shape-corner-extra-small, 4px);
       background: var(--md-sys-color-inverse-surface, #322f35);
       color: var(--md-sys-color-inverse-on-surface, #f5eff7);
@@ -38,7 +38,7 @@ export class MdTooltip extends LitElement {
       letter-spacing: var(--md-sys-typescale-body-small-tracking, 0.4px);
     }
     :host([variant='rich']) {
-      max-width: 312px; padding: 12px 16px 8px;       /* [토큰 외] */
+      max-width: 320px; padding: 12px 16px 8px;       /* [토큰 외] Compose richTooltipMaxWidth, m3 스펙 패딩 12/16/8 */
       border-radius: var(--md-sys-shape-corner-medium, 12px);
       background: var(--md-sys-color-surface-container, #f3edf7);
       color: var(--md-sys-color-on-surface-variant, #49454f);
@@ -106,7 +106,7 @@ export class MdTooltip extends LitElement {
   }
   _place() {
     if (!this._anchor) return;
-    const gap = this.variant === 'rich' ? 8 : 4; // [토큰 외]
+    const gap = 4; // [토큰 외] Compose SpacingBetweenTooltipAndAnchor
     const r = this._anchor.getBoundingClientRect(), t = this.getBoundingClientRect();
     const rtl = getComputedStyle(this).direction === 'rtl';
     let x, y, p = this.position;
@@ -138,7 +138,7 @@ export class MdSnackbar extends LitElement {
   };
   static styles = css`
     :host { position: fixed; z-index: 1001; left: 50%; bottom: 16px; transform: translateX(-50%); /* [토큰 외] */
-      display: none; box-sizing: border-box; min-width: min(344px, calc(100vw - 32px)); max-width: min(672px, calc(100vw - 32px)); /* [토큰 외] */ }
+      display: none; box-sizing: border-box; width: max-content; max-width: min(600px, calc(100vw - 32px)); /* [토큰 외] Compose ContainerMaxWidth 600dp. 화면 하단 16px 위치는 공식 상수 미확인 */ }
     :host([open]) { display: block; }
     .container { display: flex; align-items: center; flex-wrap: wrap; box-sizing: border-box;
       min-height: 48px; padding: 0 8px 0 16px; gap: 0 4px;

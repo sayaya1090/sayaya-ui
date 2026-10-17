@@ -103,6 +103,8 @@ public class FeedbackComponentsTest {
                     assertEquals("fb: rich tooltip 모서리 12px", "12px", r.getPropertyValue("border-top-left-radius"));
                     assertTrue("fb: rich tooltip 그림자(elevation 2)", !"none".equals(r.getPropertyValue("box-shadow")));
                     assertEquals("fb: rich tooltip 본문 14px", "14px", r.getPropertyValue("font-size"));
+                    assertEquals("fb: rich tooltip 최대 너비 320px", "320px", r.getPropertyValue("max-width"));
+                    assertEquals("fb: tooltip 최소 너비 40px", "40px", r.getPropertyValue("min-width"));
                     assertTrue("fb: tooltip 창에 하나만", rich.open && !plain.open);
                     rich.hide();
                     // 포커스로 표시 (delay 100ms 후)
