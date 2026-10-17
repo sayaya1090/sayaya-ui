@@ -5,7 +5,7 @@ import dev.sayaya.gwt.test.GwtTestSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldNotContain
 
-@GwtHtml("switch.html") // 테스트 서버 루트는 war(src/test/webapp)
+@GwtHtml("sw.html") // 테스트 서버 루트는 war(src/test/webapp)
 internal class SwitchElementTest: GwtTestSpec({
     Given("Material Design Switch") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
