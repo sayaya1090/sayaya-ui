@@ -84,6 +84,7 @@ tasks {
                 "dev.sayaya.CheckboxElementTest",
                 "dev.sayaya.ChipElementTest",
                 "dev.sayaya.DividerElementTest",
+                "dev.sayaya.FeedbackElementTest",
                 "dev.sayaya.FocusRingElementTest",
                 "dev.sayaya.GbElementTest",
                 "dev.sayaya.IconElementTest",

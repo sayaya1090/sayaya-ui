@@ -73,10 +73,10 @@ public final class NavigationElementBuilder {
         }
     }
 
-    // ---------------- Top app bar (sy-top-app-bar) ----------------
-    public static final class TopAppBarBuilder extends NavBuilder<SyTopAppBarElement, TopAppBarBuilder> {
+    // ---------------- Top app bar (md-top-app-bar) ----------------
+    public static final class TopAppBarBuilder extends NavBuilder<MdTopAppBarElement, TopAppBarBuilder> {
         private HTMLElement expanded;
-        TopAppBarBuilder() { super("sy-top-app-bar", SyTopAppBarElement.class); }
+        TopAppBarBuilder() { super("md-top-app-bar", MdTopAppBarElement.class); }
         @Override public TopAppBarBuilder that() { return this; }
         public TopAppBarBuilder variant(TopAppBarVariant variant) { element().variant = variant.value; return this; }
         /** 제목. medium/large 에서는 확장 영역의 큰 제목으로도 표시된다. */
@@ -121,9 +121,9 @@ public final class NavigationElementBuilder {
         @Override public NavigationTabBuilder disabled(boolean disabled) { element().disabled = disabled; return this; }
     }
 
-    // ---------------- Navigation rail (sy-navigation-rail) ----------------
-    public static final class NavigationRailBuilder extends NavBuilder<SyNavigationRailElement, NavigationRailBuilder> {
-        NavigationRailBuilder() { super("sy-navigation-rail", SyNavigationRailElement.class); }
+    // ---------------- Navigation rail (md-navigation-rail) ----------------
+    public static final class NavigationRailBuilder extends NavBuilder<MdNavigationRailElement, NavigationRailBuilder> {
+        NavigationRailBuilder() { super("md-navigation-rail", MdNavigationRailElement.class); }
         @Override public NavigationRailBuilder that() { return this; }
         public NavigationRailBuilder activeIndex(int index) { element().activeIndex = index; return this; }
         public NavigationRailBuilder alignment(RailAlignment alignment) { element().alignment = alignment.value; return this; }
@@ -137,9 +137,9 @@ public final class NavigationElementBuilder {
         public NavigationRailBuilder onActivated(IntConsumer callback) { return onIndexEvent("navigation-rail-activated", callback); }
     }
 
-    public static final class NavigationRailItemBuilder extends NavBuilder<SyNavigationRailItemElement, NavigationRailItemBuilder> implements
-            Disableable<SyNavigationRailItemElement, NavigationRailItemBuilder> {
-        NavigationRailItemBuilder() { super("sy-navigation-rail-item", SyNavigationRailItemElement.class); }
+    public static final class NavigationRailItemBuilder extends NavBuilder<MdNavigationRailItemElement, NavigationRailItemBuilder> implements
+            Disableable<MdNavigationRailItemElement, NavigationRailItemBuilder> {
+        NavigationRailItemBuilder() { super("md-navigation-rail-item", MdNavigationRailItemElement.class); }
         @Override public NavigationRailItemBuilder that() { return this; }
         public NavigationRailItemBuilder label(String label) { element().label = label; return this; }
         public NavigationRailItemBuilder icon(String icon) { return slot("inactive-icon", IconElementBuilder.icon(icon)); }

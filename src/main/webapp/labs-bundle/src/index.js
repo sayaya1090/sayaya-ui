@@ -37,3 +37,6 @@ import '@material/web/labs/navigationdrawer/navigation-drawer-modal.js';
 
 // sayaya-ui 자체 구현: top app bar, navigation rail
 import './sayaya-navigation.js';
+
+// sayaya-ui 자체 구현: tooltip, snackbar, button group
+import './sayaya-feedback.js';

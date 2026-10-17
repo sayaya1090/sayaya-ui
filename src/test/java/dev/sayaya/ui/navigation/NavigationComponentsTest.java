@@ -21,7 +21,7 @@ public class NavigationComponentsTest {
 
         var appBar = topAppBar().variant(TopAppBarVariant.Medium).headline("문서")
                 .leading(icon("menu")).trailing(icon("more_vert")).scrolled(true).element();
-        check(appBar, "sy-top-app-bar", "medium".equals(appBar.variant) && appBar.scrolled
+        check(appBar, "md-top-app-bar", "medium".equals(appBar.variant) && appBar.scrolled
                 && appBar.querySelector("[slot='leading']") != null && appBar.querySelector("[slot='trailing']") != null
                 && "문서".equals(appBar.querySelector("[slot='expanded-headline']").textContent));
         section.appendChild(appBar);
@@ -47,8 +47,8 @@ public class NavigationComponentsTest {
                 .item(item2)
                 .onActivated(i -> railEvent[0] = i).element();
         var item2El = item2.element();
-        check(rail, "sy-navigation-rail", "center".equals(rail.alignment) && rail.expanded && rail.querySelector("[slot='header']") != null);
-        check(item2El, "sy-navigation-rail-item", "받은편지함".equals(item2El.label) && item2El.showBadge && "".equals(item2El.badgeValue));
+        check(rail, "md-navigation-rail", "center".equals(rail.alignment) && rail.expanded && rail.querySelector("[slot='header']") != null);
+        check(item2El, "md-navigation-rail-item", "받은편지함".equals(item2El.label) && item2El.showBadge && "".equals(item2El.badgeValue));
         section.appendChild(div().style("height", "400px").add(rail).element());
 
         var drawer = navigationDrawer().opened(true).pivot(DrawerPivot.Start).add(div().text("메뉴")).element();
@@ -61,16 +61,16 @@ public class NavigationComponentsTest {
         DomGlobal.setTimeout(t1 -> {
             for (HTMLElement el : new HTMLElement[]{appBar, bar, tab2El, rail, item2El, drawer, modal})
                 assertTrue("nav: " + el.tagName.toLowerCase() + " 업그레이드", shadow(el) != null);
-            assertTrue("nav: sy-top-app-bar scrolled 속성 반영", appBar.hasAttribute("scrolled"));
-            assertTrue("nav: sy-navigation-rail expanded 항목 전파", item2El.expanded && item2El.hasAttribute("expanded"));
+            assertTrue("nav: md-top-app-bar scrolled 속성 반영", appBar.hasAttribute("scrolled"));
+            assertTrue("nav: md-navigation-rail expanded 항목 전파", item2El.expanded && item2El.hasAttribute("expanded"));
             assertTrue("nav: md-navigation-drawer opened 반영", drawer.opened);
             // 실제 클릭: shadow DOM 안의 버튼
             click(item2El);
             click(tab2El);
             DomGlobal.setTimeout(t2 -> {
-                assertEquals("nav: sy-navigation-rail 클릭 시 activeIndex", 1, (int) rail.activeIndex);
-                assertEquals("nav: sy-navigation-rail onActivated 이벤트", 1, railEvent[0]);
-                assertTrue("nav: sy-navigation-rail-item 클릭 후 active", item2El.active);
+                assertEquals("nav: md-navigation-rail 클릭 시 activeIndex", 1, (int) rail.activeIndex);
+                assertEquals("nav: md-navigation-rail onActivated 이벤트", 1, railEvent[0]);
+                assertTrue("nav: md-navigation-rail-item 클릭 후 active", item2El.active);
                 assertEquals("nav: md-navigation-bar 클릭 시 activeIndex", 1, (int) bar.activeIndex);
                 assertEquals("nav: md-navigation-bar onActivated 이벤트", 1, barEvent[0]);
                 assertTrue("nav: md-navigation-tab 클릭 후 active", tab2El.active);

@@ -1,11 +1,11 @@
 // sayaya-ui 자체 구현 M3 컴포넌트 (Material Web 2.5.0 에 없음)
-// - sy-top-app-bar         : M3 Top app bar (small / center-aligned / medium / large)
-// - sy-navigation-rail     : M3 Navigation rail (80dp)
-// - sy-navigation-rail-item: rail 목적지 항목
+// - md-top-app-bar         : M3 Top app bar (small / center-aligned / medium / large)
+// - md-navigation-rail     : M3 Navigation rail (80dp)
+// - md-navigation-rail-item: rail 목적지 항목
 // 색/타이포는 --md-sys-* 토큰을 사용하므로 Material 테마를 그대로 따른다.
 import {LitElement, html, css} from 'lit';
 
-export class SyTopAppBar extends LitElement {
+export class MdTopAppBar extends LitElement {
   static properties = {
     variant: {type: String, reflect: true},
     scrolled: {type: Boolean, reflect: true},
@@ -60,9 +60,9 @@ export class SyTopAppBar extends LitElement {
       <div class="expanded" part="expanded-headline"><slot name="expanded-headline"></slot></div>`;
   }
 }
-customElements.define('sy-top-app-bar', SyTopAppBar);
+customElements.define('md-top-app-bar', MdTopAppBar);
 
-export class SyNavigationRail extends LitElement {
+export class MdNavigationRail extends LitElement {
   static properties = {
     activeIndex: {type: Number, attribute: 'active-index', reflect: true},
     alignment: {type: String, reflect: true},
@@ -94,7 +94,7 @@ export class SyNavigationRail extends LitElement {
       this.dispatchEvent(new CustomEvent('navigation-rail-activated', {detail: {activeIndex: index, item: e.target}, bubbles: true, composed: true}));
     });
   }
-  get items() { return Array.from(this.querySelectorAll(':scope > sy-navigation-rail-item')); }
+  get items() { return Array.from(this.querySelectorAll(':scope > md-navigation-rail-item')); }
   updated() { this._sync(); }
   _sync() { this.items.forEach((item, i) => { item.active = i === this.activeIndex; item.expanded = this.expanded; }); }
   render() {
@@ -103,9 +103,9 @@ export class SyNavigationRail extends LitElement {
       <div class="items" role="tablist" aria-orientation="vertical"><slot @slotchange=${() => this._sync()}></slot></div>`;
   }
 }
-customElements.define('sy-navigation-rail', SyNavigationRail);
+customElements.define('md-navigation-rail', MdNavigationRail);
 
-export class SyNavigationRailItem extends LitElement {
+export class MdNavigationRailItem extends LitElement {
   static properties = {
     active: {type: Boolean, reflect: true},
     disabled: {type: Boolean, reflect: true},
@@ -164,4 +164,4 @@ export class SyNavigationRailItem extends LitElement {
     this.dispatchEvent(new CustomEvent('navigation-rail-item-interaction', {bubbles: true, composed: true}));
   }
 }
-customElements.define('sy-navigation-rail-item', SyNavigationRailItem);
+customElements.define('md-navigation-rail-item', MdNavigationRailItem);

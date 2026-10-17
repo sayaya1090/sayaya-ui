@@ -8,7 +8,8 @@ Material Web Labs 컴포넌트들을 번들링하여 `@material/web/all.js`와 �
 - Badge (숫자/텍스트 배지, 점 배지)
 - Expressive 컴포넌트 `md-gb-*` 16종 (Material Web 2.5.0 `labs/gb`)
 - Navigation bar/tab, Navigation drawer(+modal) (Material Web labs)
-- sayaya-ui 자체 구현: `sy-top-app-bar`, `sy-navigation-rail`, `sy-navigation-rail-item` (`src/sayaya-navigation.js`)
+- sayaya-ui 자체 구현: `md-top-app-bar`, `md-navigation-rail`, `md-navigation-rail-item` (`src/sayaya-navigation.js`)
+- sayaya-ui 자체 구현: `md-tooltip`, `md-snackbar`, `md-button-group` (`src/sayaya-feedback.js`)
 - 향후 추가 예정: 기타 Labs 컴포넌트
 
 ## 빌드 방법

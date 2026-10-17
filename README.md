@@ -68,6 +68,7 @@ dependencies {
 | **Badge** | `badge()` | 알림이나 상태를 나타내는 배지 | [🔗](https://sayaya1090.github.io/sayaya-ui/badge.html) |
 | **Expressive (labs/gb)** | `gb()` | Material Web 2.5.0 Expressive 컴포넌트 16종 (`md-gb-*`): button, split button, icon button, fab, icon, card, badge, checkbox, radio, switch, divider, list/list-item, menu/menu-group/menu-item | |
 | **Navigation** | `topAppBar()`, `navigationBar()`, `navigationRail()`, `navigationDrawer()` | Top app bar(small/center-aligned/medium/large), Navigation bar, Navigation rail(접힘/펼침), Navigation drawer(고정/모달) | |
+| **Tooltip / Snackbar / Button group** | `tooltip()`, `snackbar()`, `buttonGroup()` | Plain·Rich tooltip, Snackbar(액션/닫기/자동 닫힘), Standard·Connected button group(xsmall~xlarge, 토글 선택) | |
 
 ## 사용 예제
 
@@ -842,7 +843,41 @@ drawer.opened = true;
 | HIDE | `rail.hidden = true` |
 | OVERLAY (모바일) | `navigationDrawerModal()` 의 `opened = true` |
 
-> `md-navigation-*` 는 Material Web labs, `sy-top-app-bar`·`sy-navigation-rail` 은 Material Web 에 없어 sayaya-ui 가 직접 구현한 엘리먼트입니다(`labs-bundle/src/sayaya-navigation.js`, `--md-sys-*` 토큰 사용). 모두 `labs.bundle.js` 를 로드해야 합니다.
+> `md-navigation-*` 는 Material Web labs, `md-top-app-bar`·`md-navigation-rail` 은 Material Web 에 없어 sayaya-ui 가 직접 구현한 엘리먼트입니다(`labs-bundle/src/sayaya-navigation.js`, `--md-sys-*` 토큰 사용). 모두 `labs.bundle.js` 를 로드해야 합니다.
+
+### Tooltip / Snackbar / Button group
+
+```java
+import static dev.sayaya.ui.elements.FeedbackElementBuilder.*;
+
+// Plain tooltip: 앵커에 hover/focus 하면 표시, 창에 동시에 하나만
+var tip = tooltip().plain().anchor(saveButton).text("문서를 저장합니다").element();
+
+// Rich tooltip: 제목 + 본문 + 액션 (액션이 있으면 툴팁 위로 포인터를 옮겨도 유지)
+var info = tooltip().rich().anchor(infoIcon).position(TooltipPosition.Bottom)
+    .subhead("권한").text("편집자만 수정할 수 있습니다")
+    .action(button().text().text("자세히"))
+    .element();
+
+// Snackbar: 한 번에 하나, 닫힘 사유(action/dismiss/timeout/replaced) 제공
+var sb = snackbar().text("삭제했습니다").action("실행 취소").closeable(true)
+    .onAction(s -> undo()).onClosed(reason -> log(reason))
+    .element();
+body().add(sb);
+sb.show();
+
+// Button group
+var actions = buttonGroup().standard().size(ButtonGroupSize.Small)
+    .add(button().outlined().text("편집")).add(button().outlined().text("공유")).element();
+var range = buttonGroup().connected().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
+    .add(button().outlined().text("일")).add(button().outlined().text("주")).add(button().outlined().text("월"))
+    .onSelectionChanged(selected -> apply(selected))
+    .element();
+```
+
+`md-tooltip`, `md-snackbar`, `md-button-group` 은 Material Web 에 없어 sayaya-ui 가 직접 구현한 엘리먼트입니다(`labs-bundle/src/sayaya-feedback.js`).
+색·모양·타이포·높이·간격은 `@material/web` 2.5.0 의 `md-comp-{plain-tooltip,rich-tooltip,snackbar,button-group-*}` 토큰 값을 따릅니다.
+토큰에 없는 일부 레이아웃 값(plain tooltip 높이 24dp·좌우 패딩 8dp, 최대 너비, 앵커와의 간격, snackbar 화면 위치)은 M3 가이드 수치를 적용했습니다.
 
 ## 빌더 인터페이스
 

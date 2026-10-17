@@ -7,11 +7,11 @@ import io.kotest.matchers.string.shouldNotContain
 
 @GwtHtml("navigation.html") // 테스트 서버 루트는 war(src/test/webapp)
 internal class NavigationElementTest: GwtTestSpec({
-    val tags = listOf("sy-top-app-bar", "md-navigation-bar", "md-navigation-tab", "sy-navigation-rail",
-        "sy-navigation-rail-item", "md-navigation-drawer", "md-navigation-drawer-modal")
+    val tags = listOf("md-top-app-bar", "md-navigation-bar", "md-navigation-tab", "md-navigation-rail",
+        "md-navigation-rail-item", "md-navigation-drawer", "md-navigation-drawer-modal")
     val behaviors = listOf(
-        "sy-top-app-bar scrolled 속성 반영", "sy-navigation-rail expanded 항목 전파", "md-navigation-drawer opened 반영",
-        "sy-navigation-rail 클릭 시 activeIndex", "sy-navigation-rail onActivated 이벤트", "sy-navigation-rail-item 클릭 후 active",
+        "md-top-app-bar scrolled 속성 반영", "md-navigation-rail expanded 항목 전파", "md-navigation-drawer opened 반영",
+        "md-navigation-rail 클릭 시 activeIndex", "md-navigation-rail onActivated 이벤트", "md-navigation-rail-item 클릭 후 active",
         "md-navigation-bar 클릭 시 activeIndex", "md-navigation-bar onActivated 이벤트", "md-navigation-tab 클릭 후 active",
     )
     Given("M3 네비게이션 컴포넌트") {
