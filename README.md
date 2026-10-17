@@ -868,9 +868,9 @@ sayaya-ui/
 
 ## 의존성
 
-- **[Elemento](https://github.com/hal/elemento)** (2.3.2) - GWT용 타입 안전 HTML 빌더
+- **[Elemento](https://github.com/hal/elemento)** (2.5.9) - GWT용 타입 안전 HTML 빌더
 - **[Material Web](https://github.com/material-components/material-web)** - Google의 Material Design 웹 컴포넌트
-- **GWT** (2.12.2) - Google Web Toolkit
+- **GWT** (2.13.1) - Google Web Toolkit
 
 ## 브라우저 지원
 
