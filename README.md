@@ -66,6 +66,7 @@ dependencies {
 | **Menu** | `menu()` | 드롭다운 메뉴, 서브메뉴 지원 | [🔗](https://sayaya1090.github.io/sayaya-ui/menu.html) |
 | **Card** | `card()` | Elevated, Filled, Outlined 카드 컨테이너 | [🔗](https://sayaya1090.github.io/sayaya-ui/card.html) |
 | **Badge** | `badge()` | 알림이나 상태를 나타내는 배지 | [🔗](https://sayaya1090.github.io/sayaya-ui/badge.html) |
+| **Expressive (labs/gb)** | `gb()` | Material Web 2.5.0 Expressive 컴포넌트 16종 (`md-gb-*`): button, split button, icon button, fab, icon, card, badge, checkbox, radio, switch, divider, list/list-item, menu/menu-group/menu-item | |
 
 ## 사용 예제
 
@@ -754,6 +755,49 @@ var numberBadge = badge()
     .element();
 ```
 
+### Expressive 컴포넌트 (labs/gb, Material Web 2.5.0)
+
+```java
+import static dev.sayaya.ui.elements.GbElementBuilder.*;
+
+// Expressive 버튼
+var save = gb().button()
+    .color(ButtonColor.Tonal)
+    .size(Size.LG)
+    .text("저장")
+    .onClick(e -> save())
+    .element();
+
+// Split Button: leading/trailing 슬롯에는 <button>, 기본 슬롯은 trailing 버튼의 팝오버 메뉴
+var send = gb().splitButton()
+    .color(SplitButtonColor.Filled)
+    .leading(button().text("보내기"))
+    .trailing(button().aria("label", "더보기"))
+    .menu(gb().menu().item(gb().menuItem().headline("예약 전송")))
+    .element();
+
+// 아이콘 버튼 / FAB / 아이콘
+var settings = gb().iconButton().color(IconButtonColor.Outlined).width(IconButtonWidth.Wide).icon("settings").ariaLabel("설정").element();
+var add = gb().fab().color(FabColor.PrimaryContainer).size(FabSize.LG).icon("add").ariaLabel("추가").element();
+var fav = gb().icon("favorite").element();
+
+// 리스트 / 메뉴
+var list = gb().list().segmented(true)
+    .item(gb().listItem().headline("받은편지함").supportingText("새 메일 3통"))
+    .element();
+var menu = gb().menu().color(MenuColor.Vibrant)
+    .group(gb().menuGroup().checkable(MenuCheckable.Single)
+        .item(gb().menuItem().headline("목록 보기").select(true))
+        .item(gb().menuItem().headline("격자 보기")))
+    .element();
+
+// 폼 컨트롤
+var agree = gb().checkbox().name("agree").required(true).element();
+var wifi = gb().sw().select(true).onIcon("check").element();
+```
+
+> labs 컴포넌트이므로 Material Web 업데이트에 따라 API가 바뀔 수 있습니다. `labs.bundle.js`를 함께 로드해야 합니다.
+
 ## 빌더 인터페이스
 
 sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제공합니다:
@@ -822,7 +866,7 @@ Card, Badge와 같은 Labs 컴포넌트는 별도 번들로 제공됩니다:
 - 소스: `src/main/webapp/labs-bundle/`
 - 출력: `src/main/webapp/labs.bundle.js`
 - 자동 빌드: Gradle 빌드 시 자동으로 npm을 통해 번들 생성
-- 포함 컴포넌트: Card (elevated/filled/outlined), Badge
+- 포함 컴포넌트: Card (elevated/filled/outlined), Badge, Expressive `md-gb-*` 16종 (Material Web 2.5.0 labs/gb)
 
 ## 아키텍처
 

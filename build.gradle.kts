@@ -85,6 +85,7 @@ tasks {
                 "dev.sayaya.ChipElementTest",
                 "dev.sayaya.DividerElementTest",
                 "dev.sayaya.FocusRingElementTest",
+                "dev.sayaya.GbElementTest",
                 "dev.sayaya.IconElementTest",
                 "dev.sayaya.ListElementTest",
                 "dev.sayaya.MenuElementTest",
