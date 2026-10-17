@@ -28,3 +28,12 @@ import '@material/web/labs/gb/components/radio/md-gb-radio.js';
 import '@material/web/labs/gb/components/splitbutton/md-gb-split-button.js';
 import '@material/web/labs/gb/components/switch/md-gb-switch.js';
 import '@material/web/labs/gb/styles/icon/md-gb-icon.js';
+
+// Material Web labs navigation (bar/tab/drawer)
+import '@material/web/labs/navigationbar/navigation-bar.js';
+import '@material/web/labs/navigationtab/navigation-tab.js';
+import '@material/web/labs/navigationdrawer/navigation-drawer.js';
+import '@material/web/labs/navigationdrawer/navigation-drawer-modal.js';
+
+// sayaya-ui 자체 구현: top app bar, navigation rail
+import './sayaya-navigation.js';

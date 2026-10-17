@@ -89,6 +89,7 @@ tasks {
                 "dev.sayaya.IconElementTest",
                 "dev.sayaya.ListElementTest",
                 "dev.sayaya.MenuElementTest",
+                "dev.sayaya.NavigationElementTest",
                 "dev.sayaya.ProgressElementTest",
                 "dev.sayaya.RadioElementTest",
                 "dev.sayaya.RippleElementTest",

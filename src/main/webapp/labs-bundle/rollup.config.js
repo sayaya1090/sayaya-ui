@@ -12,7 +12,12 @@ export default {
   output: {
     file: '../labs.bundle.js',
     format: 'es',
-    sourcemap: true
+    sourcemap: true,
+    // all.js 가 이미 등록한 공용 엘리먼트(md-focus-ring, md-ripple 등)를 labs 컴포넌트가 다시 정의하면
+    // NotSupportedError 로 번들 실행이 중단된다. 번들 실행 중에만 중복 정의를 건너뛰고 끝나면 원복한다.
+    intro: 'const __syDefine = customElements.define.bind(customElements);\n' +
+           'customElements.define = (name, ctor, options) => { if (!customElements.get(name)) __syDefine(name, ctor, options); };',
+    outro: 'customElements.define = __syDefine;'
   },
   plugins: [
     {

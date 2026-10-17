@@ -67,6 +67,7 @@ dependencies {
 | **Card** | `card()` | Elevated, Filled, Outlined 카드 컨테이너 | [🔗](https://sayaya1090.github.io/sayaya-ui/card.html) |
 | **Badge** | `badge()` | 알림이나 상태를 나타내는 배지 | [🔗](https://sayaya1090.github.io/sayaya-ui/badge.html) |
 | **Expressive (labs/gb)** | `gb()` | Material Web 2.5.0 Expressive 컴포넌트 16종 (`md-gb-*`): button, split button, icon button, fab, icon, card, badge, checkbox, radio, switch, divider, list/list-item, menu/menu-group/menu-item | |
+| **Navigation** | `topAppBar()`, `navigationBar()`, `navigationRail()`, `navigationDrawer()` | Top app bar(small/center-aligned/medium/large), Navigation bar, Navigation rail(접힘/펼침), Navigation drawer(고정/모달) | |
 
 ## 사용 예제
 
@@ -797,6 +798,51 @@ var wifi = gb().sw().select(true).onIcon("check").element();
 ```
 
 > labs 컴포넌트이므로 Material Web 업데이트에 따라 API가 바뀔 수 있습니다. `labs.bundle.js`를 함께 로드해야 합니다.
+
+### Navigation (Top app bar / Navigation bar / Navigation rail / Navigation drawer)
+
+```java
+import static dev.sayaya.ui.elements.NavigationElementBuilder.*;
+
+// Top app bar: 스크롤 시 surface-container 로 전환
+var appBar = topAppBar().variant(TopAppBarVariant.Small)
+    .leading(button().icon("menu").ariaLabel("메뉴"))
+    .headline("문서")
+    .trailing(button().icon("dark_mode").ariaLabel("테마"))
+    .autoScroll(true)
+    .element();
+
+// Navigation rail: 접힘(80dp) / 펼침(220dp, 라벨이 아이콘 옆)
+var rail = navigationRail()
+    .header(button().icon("menu").ariaLabel("메뉴"))
+    .item(railItem().icon("home").activeIcon("home").label("홈"))
+    .item(railItem().icon("inbox").label("받은편지함").badge("3"))
+    .onActivated(index -> route(index))
+    .element();
+rail.expanded = true;   // 펼침
+
+// Navigation bar (compact 화면)
+var bar = navigationBar()
+    .tab(navigationTab().icon("home").label("홈"))
+    .tab(navigationTab().icon("search").label("검색").badge())
+    .onActivated(index -> route(index))
+    .element();
+
+// Navigation drawer: 고정형 / 모달형
+var drawer = navigationDrawerModal().pivot(DrawerPivot.Start).add(menuList).element();
+drawer.opened = true;
+```
+
+레이아웃 상태 대응(handbook `DrawerState`, magi `RailModes`):
+
+| 상태 | sayaya-ui |
+|---|---|
+| COLLAPSE / 접힘 | `rail.expanded = false` |
+| EXPAND / 열림 | `rail.expanded = true` |
+| HIDE | `rail.hidden = true` |
+| OVERLAY (모바일) | `navigationDrawerModal()` 의 `opened = true` |
+
+> `md-navigation-*` 는 Material Web labs, `sy-top-app-bar`·`sy-navigation-rail` 은 Material Web 에 없어 sayaya-ui 가 직접 구현한 엘리먼트입니다(`labs-bundle/src/sayaya-navigation.js`, `--md-sys-*` 토큰 사용). 모두 `labs.bundle.js` 를 로드해야 합니다.
 
 ## 빌더 인터페이스
 
