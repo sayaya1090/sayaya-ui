@@ -43,3 +43,12 @@ import './sayaya-feedback.js';
 
 // sayaya-ui 자체 구현: side sheet
 import './sayaya-sheet.js';
+
+// md-gb-icon 은 --md-icon-font 기본값이 "Material Symbols" 라서, 일반적으로 로드하는
+// "Material Symbols Outlined" 폰트와 이름이 달라 아이콘 대신 글자가 보인다. md-icon 과 같은 폰트를 쓰도록 맞춘다.
+// (@property --md-icon-font 는 <string># 목록·상속을 허용하므로 :root 에 한 번 지정하면 된다. 앱에서 재지정 가능)
+{
+  const iconFont = new CSSStyleSheet();
+  iconFont.replaceSync(':root { --md-icon-font: "Material Symbols Outlined", "Material Symbols"; }');
+  document.adoptedStyleSheets = [iconFont, ...document.adoptedStyleSheets];
+}

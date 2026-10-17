@@ -16,6 +16,12 @@ internal class GbElementTest: GwtTestSpec({
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로, 지연 로그(업그레이드 검증)까지 받도록 waitForTimeout 사용
         page.waitForTimeout(5000.0)
         val logs = page.getConsoleLogs().map { it.toString() }
+        Then("md-gb-icon 아이콘 폰트가 적용되어야 한다") {
+            val log = logs.find { it.startsWith("gb: md-gb-icon 아이콘 폰트") }
+            println(log)
+            log.shouldNotBeNull()
+            log shouldNotContain "Assertion failed!"
+        }
         println(logs)
         for (tag in tags) {
             When("$tag 를 빌더로 생성할 때") {

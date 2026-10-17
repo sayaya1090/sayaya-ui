@@ -44,6 +44,12 @@ public class GbComponentsTest {
 
         var icon = gb().icon("favorite").element();
         check(section, icon, "md-gb-icon", () -> "favorite".equals(icon.textContent));
+        DomGlobal.setTimeout(ignore -> {
+            elemental2.core.Function gcs = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
+            elemental2.dom.CSSStyleDeclaration st = Js.uncheckedCast(gcs.call(DomGlobal.window, icon));
+            String family = st.getPropertyValue("font-family");
+            assertTrue("gb: md-gb-icon 아이콘 폰트(Material Symbols Outlined) 적용 [" + family + "]", family.contains("Material Symbols Outlined"));
+        }, 2000);
 
         var ib = gb().iconButton().color(IconButtonColor.Outlined).width(IconButtonWidth.Wide).icon("settings").ariaLabel("설정").element();
         check(section, ib, "md-gb-icon-button", () -> "outlined".equals(ib.color) && "wide".equals(ib.width));
