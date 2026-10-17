@@ -32,6 +32,7 @@ public final class MdFeedbackElement {
         public double timeout;
         public boolean multiline;
         public boolean longAction;
+        public String align;
         public native void show();
         public native void close();
         public native void close(String reason);

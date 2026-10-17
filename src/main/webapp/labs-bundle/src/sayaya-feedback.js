@@ -144,13 +144,15 @@ export class MdSnackbar extends LitElement {
     open: {type: Boolean, reflect: true},
     action: {type: String},                       // 액션 라벨
     closeable: {type: Boolean, reflect: true},    // 닫기(X) 아이콘
-    timeout: {type: Number},                      // ms, <=0 이면 자동으로 닫지 않음
+    timeout: {type: Number},                      // ms, 0 이면 자동으로 닫지 않음. -1(기본) = 자동: 액션이 있으면 닫지 않고, 없으면 4초
+    align: {type: String, reflect: true},         // center(기본) | start — 가이드: 같은 위치에 일관되게 왼쪽 또는 가운데
     multiline: {type: Boolean, reflect: true},    // 두 줄(68dp)
     longAction: {type: Boolean, attribute: 'long-action', reflect: true}, // 액션을 다음 줄로
   };
   static styles = css`
     :host { position: fixed; z-index: 1001; left: 50%; bottom: 8px; transform: translateX(-50%); /* [토큰 외] MDC-Android m3_snackbar_margin 8dp */
       display: none; box-sizing: border-box; width: max-content; max-width: min(600px, calc(100vw - 16px)); /* [토큰 외] Compose ContainerMaxWidth 600dp, 좌우 여백 m3_snackbar_margin 8dp */ }
+    :host([align='start']) { left: 8px; transform: none; }
     :host([open]) { display: block; }
     .container { display: flex; align-items: center; flex-wrap: wrap; box-sizing: border-box;
       min-height: 48px; padding: 0 8px 0 16px; gap: 0 4px;
@@ -184,14 +186,16 @@ export class MdSnackbar extends LitElement {
     .close { width: 40px; height: 40px; border-radius: 20px; color: var(--md-sys-color-inverse-on-surface, #f5eff7); }
     .close svg { width: 24px; height: 24px; fill: currentColor; }
   `;
-  constructor() { super(); this.open = false; this.action = ''; this.closeable = false; this.timeout = 4000; this.multiline = false; this.longAction = false; this._t = 0; }
+  constructor() { super(); this.open = false; this.action = ''; this.closeable = false; this.timeout = -1; this.align = 'center'; this.multiline = false; this.longAction = false; this._t = 0; }
   show() {
     if (currentSnackbar && currentSnackbar !== this) currentSnackbar.close('replaced');
     currentSnackbar = this;
     this.setAttribute('role', 'status'); this.setAttribute('aria-live', 'polite');
     this.open = true;
     clearTimeout(this._t);
-    if (this.timeout > 0) this._t = setTimeout(() => this.close('timeout'), this.timeout);
+    // 가이드(웹 접근성): 액션이 있는 스낵바는 액션을 누를 때까지 자동으로 닫지 않는다
+    const ms = this.timeout < 0 ? (this.action ? 0 : 4000) : this.timeout;
+    if (ms > 0) this._t = setTimeout(() => this.close('timeout'), ms);
     this.dispatchEvent(new Event('opened', {bubbles: true, composed: true}));
   }
   close(reason = 'dismiss') {

@@ -34,6 +34,8 @@ public final class FeedbackElementBuilder {
 
     public enum TooltipPosition { Top("top"), Bottom("bottom"), Start("start"), End("end");
         public final String value; TooltipPosition(String v) { value = v; } }
+    public enum SnackbarAlign { Start("start"), Center("center");
+        public final String value; SnackbarAlign(String v) { value = v; } }
     public enum ButtonGroupSize { XSmall("xsmall"), Small("small"), Medium("medium"), Large("large"), XLarge("xlarge");
         public final String value; ButtonGroupSize(String v) { value = v; } }
     public enum ButtonGroupSelection { None("none"), Single("single"), Multiple("multiple");
@@ -82,7 +84,9 @@ public final class FeedbackElementBuilder {
         @Override public SnackbarBuilder that() { return this; }
         public SnackbarBuilder action(String label) { element().action = label; return this; }
         public SnackbarBuilder closeable(boolean closeable) { element().closeable = closeable; return this; }
-        /** 자동 닫힘(ms). 0 이하면 사용자가 닫을 때까지 유지(액션·닫기 버튼과 함께 쓸 것). */
+        /** 화면 아래 정렬. 가이드: 앱 안에서 왼쪽 또는 가운데 중 하나로 일관되게 쓴다 */
+        public SnackbarBuilder align(SnackbarAlign align) { element().align = align.value; return this; }
+        /** 자동 닫힘(ms). 0 이면 사용자가 닫을 때까지 유지. 지정하지 않으면 액션이 있을 때 닫지 않고(가이드: 웹 접근성), 없을 때 4초 */
         public SnackbarBuilder timeout(int ms) { element().timeout = ms; return this; }
         public SnackbarBuilder multiline(boolean multiline) { element().multiline = multiline; return this; }
         /** 긴 액션 라벨: 액션을 메시지 아래 줄에 배치 */

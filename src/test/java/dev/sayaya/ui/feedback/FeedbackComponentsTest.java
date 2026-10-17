@@ -290,5 +290,22 @@ public class FeedbackComponentsTest {
                 });
             });
         });
+        // snackbar: 액션이 있으면 자동으로 닫히지 않음(가이드: 웹 접근성), 왼쪽 정렬 옵션
+        var sbAct = snackbar().text("보관함으로 옮겼습니다").action("실행 취소").element();
+        var sbStart = snackbar().text("왼쪽 정렬").timeout(0).element();
+        sbStart.setAttribute("align", "start");
+        body().add(sbAct); body().add(sbStart);
+        later(6200, () -> {
+            if (!isAutomated()) return;
+            sbStart.show();
+            later(100, () -> {
+                assertEquals("fb: snackbar 왼쪽 정렬 8px", 8, (int) Math.round(sbStart.getBoundingClientRect().left));
+                sbAct.show();
+                later(4500, () -> {
+                    assertTrue("fb: 액션 있는 snackbar 는 자동으로 닫히지 않음", sbAct.open);
+                    sbAct.close();
+                });
+            });
+        });
     }
 }
