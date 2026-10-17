@@ -844,7 +844,9 @@ drawer.opened = true;
 | HIDE | `rail.hidden = true` |
 | OVERLAY (모바일) | `navigationDrawerModal()` 의 `opened = true` |
 
-> `md-navigation-*` 는 Material Web labs, `md-top-app-bar`·`md-navigation-rail` 은 Material Web 에 없어 sayaya-ui 가 직접 구현한 엘리먼트입니다(`labs-bundle/src/sayaya-navigation.js`, `--md-sys-*` 토큰 사용). 모두 `labs.bundle.js` 를 로드해야 합니다.
+> `md-navigation-drawer(-modal)` 은 Material Web labs, `md-top-app-bar`·`md-navigation-rail` 은 sayaya-ui 자체 구현(`labs-bundle/src/sayaya-navigation.js`)입니다.
+> `md-navigation-bar`/`md-navigation-tab` 은 M3 가이드가 권장하는 **flexible navigation bar** 를 sayaya-ui 가 직접 구현한 것입니다(`labs-bundle/src/sayaya-navbar.js`). labs 의 baseline 바(80dp)는 가이드에서 비권장이라 대체했고, API(`activeIndex`, `label`, `badge`, `navigation-bar-activated`)는 그대로입니다.
+> 높이 64dp, 세로형 항목(indicator 56×32dp, 위아래 6dp)·가로형 항목(indicator 높이 40dp, 앞뒤 16dp)은 `md-comp-nav-bar*` 토큰과 Compose `ShortNavigationBar` 기준이며, `layout(NavigationBarLayout.Auto)`(기본)는 바 너비 600dp 미만이면 세로형, 이상이면 가로형·가운데 정렬로 배치합니다. 모두 `labs.bundle.js` 를 로드해야 합니다.
 
 ### Tooltip / Snackbar / Button group
 

@@ -12,7 +12,23 @@ internal class NavigationElementTest: GwtTestSpec({
     val behaviors = listOf(
         "md-top-app-bar scrolled 속성 반영", "md-navigation-rail expanded 항목 전파", "md-navigation-drawer opened 반영",
         "md-navigation-rail 클릭 시 activeIndex", "md-navigation-rail onActivated 이벤트", "md-navigation-rail-item 클릭 후 active",
-        "md-navigation-bar 클릭 시 activeIndex", "md-navigation-bar onActivated 이벤트", "md-navigation-tab 클릭 후 active",
+        "md-navigation-bar 클릭 시 activeIndex",
+        "md-navigation-bar 는 flexible 구현(labs baseline 아님)",
+        "navigation bar 높이 64px",
+        "세로형 indicator 56x32",
+        "세로형 위 패딩 6px",
+        "세로형 indicator-라벨 간격 4px",
+        "세로형 항목 균등 너비",
+        "라벨 label-medium 12px",
+        "large 배지 높이 16px",
+        "small 배지 6px",
+        "가로형 indicator 높이 40px",
+        "가로형 indicator 앞 16px",
+        "가로형 아이콘-라벨 4px",
+        "가로형 라벨이 indicator 안에",
+        "가로형 3개 가운데 정렬 양옆 20%",
+        "auto 600 미만 세로형",
+        "auto 600 이상 가로형", "md-navigation-bar onActivated 이벤트", "md-navigation-tab 클릭 후 active",
     )
     Given("M3 네비게이션 컴포넌트") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용

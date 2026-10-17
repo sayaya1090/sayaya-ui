@@ -8,7 +8,8 @@ import static jsinterop.annotations.JsPackage.GLOBAL;
 /**
  * M3 네비게이션 컴포넌트 JsInterop 바인딩.
  * <ul>
- *   <li>md-navigation-bar / md-navigation-tab / md-navigation-drawer(-modal): Material Web 2.5.0 labs</li>
+ *   <li>md-navigation-drawer(-modal): Material Web 2.5.0 labs</li>
+ *   <li>md-navigation-bar / md-navigation-tab: sayaya-ui 자체 구현 M3 flexible navigation bar(labs-bundle/src/sayaya-navbar.js)</li>
  *   <li>md-top-app-bar / md-navigation-rail / md-navigation-rail-item: sayaya-ui 자체 구현(labs-bundle/src/sayaya-navigation.js)</li>
  * </ul>
  */
@@ -26,6 +27,8 @@ public final class MdNavigationElement {
     public static class MdNavigationBarElement extends HTMLElement {
         public double activeIndex;
         public boolean hideInactiveLabels;
+        public String layout;
+        public String resolvedLayout;
     }
 
     @JsType(isNative = true, namespace = GLOBAL, name = "HTMLElement")
@@ -36,6 +39,7 @@ public final class MdNavigationElement {
         public String label;
         public String badgeValue;
         public boolean showBadge;
+        public String layout;
     }
 
     @JsType(isNative = true, namespace = GLOBAL, name = "HTMLElement")

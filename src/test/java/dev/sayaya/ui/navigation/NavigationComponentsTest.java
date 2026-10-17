@@ -38,6 +38,18 @@ public class NavigationComponentsTest {
         check(tab2El, "md-navigation-tab", "검색".equals(tab2El.label) && tab2El.showBadge && "3".equals(tab2El.badgeValue)
                 && tab2El.querySelector("[slot='active-icon']") != null);
         section.appendChild(bar);
+        // flexible navigation bar 토큰 대조용: 강제 세로형/가로형, auto(좁은/넓은 컨테이너)
+        var vBar = navigationBar().layout(NavigationBarLayout.Vertical)
+                .tab(navigationTab().label("홈").icon("home").badge("12")).tab(navigationTab().label("알림").icon("notifications").badge())
+                .tab(navigationTab().label("설정").icon("settings")).element();
+        var hBar = navigationBar().layout(NavigationBarLayout.Horizontal)
+                .tab(navigationTab().label("홈").icon("home")).tab(navigationTab().label("검색").icon("search")).tab(navigationTab().label("설정").icon("settings")).element();
+        var narrow = navigationBar().tab(navigationTab().label("A").icon("home")).tab(navigationTab().label("B").icon("search")).element();
+        var wide = navigationBar().tab(navigationTab().label("A").icon("home")).tab(navigationTab().label("B").icon("search")).element();
+        section.appendChild(div().style("width", "400px").add(vBar).element());
+        section.appendChild(div().style("width", "700px").add(hBar).element());
+        section.appendChild(div().style("width", "400px").add(narrow).element());
+        section.appendChild(div().style("width", "700px").add(wide).element());
 
         int[] railEvent = {-1};
         var item2 = railItem().icon("inbox").label("받은편지함").badge();
@@ -64,6 +76,28 @@ public class NavigationComponentsTest {
             assertTrue("nav: md-top-app-bar scrolled 속성 반영", appBar.hasAttribute("scrolled"));
             assertTrue("nav: md-navigation-rail expanded 항목 전파", item2El.expanded && item2El.hasAttribute("expanded"));
             assertTrue("nav: md-navigation-drawer opened 반영", drawer.opened);
+            // ---- M3 flexible navigation bar 토큰 (md-comp-nav-bar*, Compose ShortNavigationBar) ----
+            assertTrue("nav: md-navigation-bar 는 flexible 구현(labs baseline 아님)", Js.asPropertyMap(bar).has("resolvedLayout"));
+            assertEquals("nav: navigation bar 높이 64px", 64, (int) Math.round(vBar.getBoundingClientRect().height));
+            var vTab = (HTMLElement) vBar.querySelector("md-navigation-tab");
+            var vInd = inner(vTab, ".indicator");
+            assertEquals("nav: 세로형 indicator 56x32", "56x32", Math.round(vInd.getBoundingClientRect().width) + "x" + Math.round(vInd.getBoundingClientRect().height));
+            assertEquals("nav: 세로형 위 패딩 6px", "6px", cs(inner(vTab, "button")).getPropertyValue("padding-top"));
+            assertEquals("nav: 세로형 indicator-라벨 간격 4px", "4px", cs(inner(vTab, "button")).getPropertyValue("row-gap"));
+            assertEquals("nav: 세로형 항목 균등 너비", Math.round(vBar.getBoundingClientRect().width / 3), Math.round(vTab.getBoundingClientRect().width));
+            assertEquals("nav: 라벨 label-medium 12px", "12px", cs(inner(vTab, ".label")).getPropertyValue("font-size"));
+            assertEquals("nav: large 배지 높이 16px", 16, (int) Math.round(inner(vTab, ".badge").getBoundingClientRect().height));
+            var smallBadge = inner((HTMLElement) vBar.querySelectorAll("md-navigation-tab").item(1), ".badge");
+            assertEquals("nav: small 배지 6px", "6x6", Math.round(smallBadge.getBoundingClientRect().width) + "x" + Math.round(smallBadge.getBoundingClientRect().height));
+            var hTab = (HTMLElement) hBar.querySelector("md-navigation-tab");
+            var hInd = inner(hTab, ".indicator");
+            assertEquals("nav: 가로형 indicator 높이 40px", 40, (int) Math.round(hInd.getBoundingClientRect().height));
+            assertEquals("nav: 가로형 indicator 앞 16px", "16px", cs(hInd).getPropertyValue("padding-left"));
+            assertEquals("nav: 가로형 아이콘-라벨 4px", "4px", cs(hInd).getPropertyValue("column-gap"));
+            assertTrue("nav: 가로형 라벨이 indicator 안에", hInd.querySelector(".label") != null);
+            assertEquals("nav: 가로형 3개 가운데 정렬 양옆 20%", Math.round(hBar.getBoundingClientRect().width * 0.2), Math.round(Double.parseDouble(cs(hBar).getPropertyValue("padding-left").replace("px", ""))));
+            assertEquals("nav: auto 600 미만 세로형", "vertical", narrow.resolvedLayout);
+            assertEquals("nav: auto 600 이상 가로형", "horizontal", wide.resolvedLayout);
             // 실제 클릭: shadow DOM 안의 버튼
             click(item2El);
             click(tab2El);
@@ -82,6 +116,11 @@ public class NavigationComponentsTest {
         assertEquals("nav: " + tag + " 태그명", tag.toUpperCase(), el.tagName);
         assertTrue("nav: " + tag + " 속성 설정", props);
     }
+    private static elemental2.dom.CSSStyleDeclaration cs(elemental2.dom.Element e) {
+        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
+        return Js.uncheckedCast(f.call(DomGlobal.window, e));
+    }
+    private static HTMLElement inner(HTMLElement host, String sel) { var r = shadow(host); return r == null ? null : Js.uncheckedCast(r.querySelector(sel)); }
     private static ShadowRoot shadow(HTMLElement el) {
         return Js.uncheckedCast(Js.asPropertyMap(el).get("shadowRoot"));
     }

@@ -43,6 +43,9 @@ public final class NavigationElementBuilder {
 
     public enum TopAppBarVariant { Small("small"), CenterAligned("center-aligned"), Medium("medium"), Large("large");
         public final String value; TopAppBarVariant(String v) { value = v; } }
+    /** flexible navigation bar 항목 배치. Auto: 바 너비 600dp 미만 세로형, 이상 가로형(M3 가이드) */
+    public enum NavigationBarLayout { Auto("auto"), Vertical("vertical"), Horizontal("horizontal");
+        public final String value; NavigationBarLayout(String v) { value = v; } }
     public enum RailAlignment { Top("top"), Center("center"), Bottom("bottom");
         public final String value; RailAlignment(String v) { value = v; } }
     public enum DrawerPivot { Start("start"), End("end");
@@ -96,12 +99,14 @@ public final class NavigationElementBuilder {
         public TopAppBarBuilder scrolled(boolean scrolled) { element().scrolled = scrolled; return this; }
     }
 
-    // ---------------- Navigation bar (md-navigation-bar, labs) ----------------
+    // ---------------- Navigation bar (md-navigation-bar, sayaya-ui M3 flexible navigation bar) ----------------
     public static final class NavigationBarBuilder extends NavBuilder<MdNavigationBarElement, NavigationBarBuilder> {
         NavigationBarBuilder() { super("md-navigation-bar", MdNavigationBarElement.class); }
         @Override public NavigationBarBuilder that() { return this; }
         public NavigationBarBuilder activeIndex(int index) { element().activeIndex = index; return this; }
+        /** labs 호환용. M3 가이드는 라벨 제거를 권하지 않는다. */
         public NavigationBarBuilder hideInactiveLabels(boolean hide) { element().hideInactiveLabels = hide; return this; }
+        public NavigationBarBuilder layout(NavigationBarLayout layout) { element().layout = layout.value; return this; }
         public NavigationBarBuilder tab(NavigationTabBuilder tab) { return add(tab); }
         /** 탭 활성화 시 호출(navigation-bar-activated) */
         public NavigationBarBuilder onActivated(IntConsumer callback) { return onIndexEvent("navigation-bar-activated", callback); }
