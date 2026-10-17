@@ -66,6 +66,24 @@ public class TestHelper {
         console.log("-".repeat(60) + "\n");
     }
 
+    /**
+     * 자동화 브라우저(Playwright 등, navigator.webdriver === true)에서 실행 중인지.
+     * 사람이 페이지를 볼 때는 열기·클릭 같은 상호작용을 자동으로 재생하지 않고, 데모 버튼으로만 반응하게 하는 데 쓴다.
+     */
+    public static boolean isAutomated() {
+        return Boolean.TRUE.equals(jsinterop.base.Js.asPropertyMap(elemental2.dom.DomGlobal.navigator).get("webdriver"));
+    }
+    /** 기존 테스트와 같은 테두리 섹션(제목 포함)을 만들어 body 에 붙인다. */
+    public static HTMLElement section(String title) {
+        var s = div().style("margin", "20px").style("padding", "20px").style("border", "1px solid #ddd").style("border-radius", "8px").element();
+        body().add(s);
+        s.appendChild(h(3).text(title).element());
+        return s;
+    }
+    /** 예제 코드 + 실제 데모를 함께 보여 준다. */
+    public static void demo(HTMLElement container, String title, String description, String code, HTMLElement element) {
+        addExampleCode(container, title, description, code).addInteractiveDemo(element, false);
+    }
     public static ExampleSection addExampleCode(HTMLElement container, String title, String description, String code) {
         var exampleDiv = div()
                 .style("margin-top", "20px")

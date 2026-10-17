@@ -29,7 +29,9 @@ public class SideSheetComponentsTest {
 
     public static void test() {
         printSectionHeader("M3 Side sheet");
+        printDescription("화면 옆에 보조 콘텐츠를 보여 주는 시트입니다. standard 는 본문 옆에 나란히, modal 은 스크림 위에 표시됩니다. 닫기 버튼은 항상 있고, modal 은 스크림 클릭과 Esc 로도 닫힙니다.");
         printSeparator();
+        var section = section("Side sheet");
         List<String> reasons = new ArrayList<>();
         int[] backs = {0};
 
@@ -37,20 +39,42 @@ public class SideSheetComponentsTest {
                 .add(div().text("본문")).action(button().filled().text("저장")).action(button().outlined().text("취소")).element();
         var wide = sideSheet().standard().headline("넓은 시트").open(true).style("--md-side-sheet-width", "600px").element();
         var layout = div().style("display", "flex").style("height", "500px").add(div().style("flex", "1").text("메인")).add(std).add(wide).element();
-        body().add(layout);
+        layout.style.setProperty("width", "100%");
+        demo(section, "📘 Standard side sheet", "본문 옆에 놓이는 너비 256dp 시트입니다. divider(true)는 본문 쪽 구분선과 액션 위 구분선을 그립니다. 하단 액션 영역은 높이 72dp 입니다. 오른쪽 시트는 --md-side-sheet-width 를 600px 로 줘도 최대 400dp 로 제한됩니다.",
+            """
+            var details = sideSheet().standard().headline("세부 정보").divider(true).open(true)
+                .add(div().text("본문"))
+                .action(button().filled().text("저장")).action(button().outlined().text("취소"))
+                .element();
+            """, layout);
 
         var opener = button().filled().text("필터 열기").element();
-        body().add(opener);
         var modal = sideSheet().modal().headline("필터").add(div().text("필터 폼")).onClosed(reasons::add).element();
         var modalStart = sideSheet().modal().pivot(Pivot.Start).detached(true).back(true).headline("하위 단계")
                 .onBack(s -> backs[0]++).element();
         body().add(modal); body().add(modalStart);
+        opener.addEventListener("click", e -> modal.show());
+        demo(section, "📘 Modal side sheet", "스크림 위에 열리는 시트입니다. 열면 닫기 버튼으로 포커스가 가고, 닫으면 원래 자리로 돌아옵니다. onClosed 로 닫힌 이유(close/scrim/escape)를 받습니다.",
+            """
+            var filters = sideSheet().modal().headline("필터").add(filterForm)
+                .onClosed(reason -> log(reason))
+                .element();
+            body().add(filters);
+            filters.show();
+            """, opener);
+        demo(section, "📘 Modal side sheet - 왼쪽, detached, 뒤로 버튼", "pivot(Start)으로 왼쪽에 붙이고, detached(true)로 화면 가장자리에서 16dp 띄웁니다. back(true)는 다단계 시트용 뒤로 버튼입니다.",
+            """
+            sideSheet().modal().pivot(Pivot.Start).detached(true).back(true).headline("하위 단계")
+                .onBack(s -> previousStep())
+                .element();
+            """, button().outlined().text("하위 단계 시트 열기").onClick(e -> modalStart.show()).element());
 
         assertEquals("ss: side-sheet 태그명", "MD-SIDE-SHEET", std.tagName);
         assertTrue("ss: side-sheet 속성 설정", !std.modal && std.open && std.divider && modal.modal && "start".equals(modalStart.pivot)
                 && modalStart.detached && modalStart.back && std.querySelectorAll("[slot='actions']").length == 2);
 
         later(1500, () -> {
+            if (!isAutomated()) return; // 시트를 자동으로 열지 않는다. 데모 버튼으로 확인
             assertTrue("ss: side-sheet 업그레이드", root(std) != null);
             var c = inner(std, ".container");
             assertEquals("ss: standard 너비 256px", 256, (int) w(c));
