@@ -95,6 +95,7 @@ tasks {
                 "dev.sayaya.RadioElementTest",
                 "dev.sayaya.RippleElementTest",
                 "dev.sayaya.SelectElementTest",
+                "dev.sayaya.SideSheetElementTest",
                 "dev.sayaya.SliderElementTest",
                 "dev.sayaya.SwitchElementTest",
                 "dev.sayaya.TabsElementTest",

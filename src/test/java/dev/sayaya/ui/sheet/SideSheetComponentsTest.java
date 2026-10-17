@@ -1,0 +1,116 @@
+package dev.sayaya.ui.sheet;
+
+import dev.sayaya.ui.dom.MdSideSheetElement;
+import elemental2.dom.*;
+import jsinterop.base.Js;
+import jsinterop.base.JsPropertyMap;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static dev.sayaya.ui.TestHelper.*;
+import static dev.sayaya.ui.elements.ButtonElementBuilder.button;
+import static dev.sayaya.ui.elements.SideSheetElementBuilder.*;
+import static org.jboss.elemento.Elements.body;
+import static org.jboss.elemento.Elements.div;
+
+/** M3 side sheet: 토큰·스펙 수치(computed style) + 열기/닫기/포커스/이벤트. 메시지 접두어 "ss: ". */
+public class SideSheetComponentsTest {
+    private static CSSStyleDeclaration cs(Element e) {
+        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
+        return Js.uncheckedCast(f.call(DomGlobal.window, e));
+    }
+    private static ShadowRoot root(HTMLElement host) { return Js.uncheckedCast(Js.asPropertyMap(host).get("shadowRoot")); }
+    private static HTMLElement inner(HTMLElement host, String sel) { ShadowRoot r = root(host); return r == null ? null : Js.uncheckedCast(r.querySelector(sel)); }
+    private static String css(HTMLElement host, String sel, String prop) { var e = inner(host, sel); return e == null ? "" : cs(e).getPropertyValue(prop); }
+    private static long w(HTMLElement e) { return e == null ? -1 : Math.round(e.getBoundingClientRect().width); }
+    private static long h(HTMLElement e) { return e == null ? -1 : Math.round(e.getBoundingClientRect().height); }
+    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
+
+    public static void test() {
+        printSectionHeader("M3 Side sheet");
+        printSeparator();
+        List<String> reasons = new ArrayList<>();
+        int[] backs = {0};
+
+        var std = sideSheet().standard().headline("세부 정보").divider(true).open(true)
+                .add(div().text("본문")).action(button().filled().text("저장")).action(button().outlined().text("취소")).element();
+        var wide = sideSheet().standard().headline("넓은 시트").open(true).style("--md-side-sheet-width", "600px").element();
+        var layout = div().style("display", "flex").style("height", "500px").add(div().style("flex", "1").text("메인")).add(std).add(wide).element();
+        body().add(layout);
+
+        var opener = button().filled().text("필터 열기").element();
+        body().add(opener);
+        var modal = sideSheet().modal().headline("필터").add(div().text("필터 폼")).onClosed(reasons::add).element();
+        var modalStart = sideSheet().modal().pivot(Pivot.Start).detached(true).back(true).headline("하위 단계")
+                .onBack(s -> backs[0]++).element();
+        body().add(modal); body().add(modalStart);
+
+        assertEquals("ss: side-sheet 태그명", "MD-SIDE-SHEET", std.tagName);
+        assertTrue("ss: side-sheet 속성 설정", !std.modal && std.open && std.divider && modal.modal && "start".equals(modalStart.pivot)
+                && modalStart.detached && modalStart.back && std.querySelectorAll("[slot='actions']").length == 2);
+
+        later(1500, () -> {
+            assertTrue("ss: side-sheet 업그레이드", root(std) != null);
+            var c = inner(std, ".container");
+            assertEquals("ss: standard 너비 256px", 256, (int) w(c));
+            assertEquals("ss: standard 높이 100%", 500, (int) h(c));
+            assertEquals("ss: standard 모서리 0px", "0px", cs(c).getPropertyValue("border-top-left-radius"));
+            assertEquals("ss: standard 그림자 없음(elevation 0)", "none", cs(c).getPropertyValue("box-shadow"));
+            assertEquals("ss: standard 구분선 1px", "1px", cs(c).getPropertyValue("border-left-width"));
+            assertEquals("ss: 헤더 좌우 패딩 24px", "24px", css(std, ".header", "padding-left"));
+            assertEquals("ss: 헤더 요소 간격 12px", "12px", css(std, ".header", "column-gap"));
+            assertEquals("ss: 헤드라인 title-large 22px", "22px", css(std, ".headline", "font-size"));
+            assertTrue("ss: 닫기 아이콘 버튼 항상 있음", inner(std, ".close") != null);
+            var a = inner(std, ".actions");
+            var firstAction = (HTMLElement) std.querySelector("[slot='actions']");
+            assertEquals("ss: 액션 영역 높이 = 위16 + 버튼 + 아래24 (+구분선 1)", (int) (16 + h(firstAction) + 24 + 1), (int) h(a));
+            assertTrue("ss: 액션 영역 최소 높이 72px", h(a) >= 72);
+            assertEquals("ss: 액션 위 패딩 16px", "16px", cs(a).getPropertyValue("padding-top"));
+            assertEquals("ss: 액션 아래 패딩 24px", "24px", cs(a).getPropertyValue("padding-bottom"));
+            assertEquals("ss: 액션 왼쪽 정렬", "flex-start", cs(a).getPropertyValue("justify-content"));
+            assertEquals("ss: 최대 너비 400px", 400, (int) w(inner(wide, ".container")));
+
+            modal.show();
+            later(300, () -> {
+                var m = inner(modal, ".container");
+                assertEquals("ss: modal role dialog", "dialog", m.getAttribute("role"));
+                assertEquals("ss: modal aria-modal", "true", m.getAttribute("aria-modal"));
+                assertEquals("ss: modal 시작 모서리 16px", "16px", cs(m).getPropertyValue("border-top-left-radius"));
+                assertEquals("ss: modal 끝 모서리 0px", "0px", cs(m).getPropertyValue("border-top-right-radius"));
+                assertTrue("ss: modal 그림자(elevation 1)", !"none".equals(cs(m).getPropertyValue("box-shadow")));
+                assertEquals("ss: modal 오른쪽 가장자리에 붙음", (int) DomGlobal.document.documentElement.clientWidth, (int) Math.round(m.getBoundingClientRect().right));
+                assertEquals("ss: 스크림 불투명도 0.32", "0.32", css(modal, ".scrim", "opacity"));
+                Object active = Js.asPropertyMap(root(modal)).get("activeElement");
+                assertTrue("ss: 열면 닫기 버튼으로 포커스", active != null && ((Element) Js.uncheckedCast(active)).classList.contains("close"));
+                KeyboardEventInit init = Js.uncheckedCast(JsPropertyMap.of("key", "Escape", "bubbles", true, "composed", true));
+                m.dispatchEvent(new KeyboardEvent("keydown", init));
+                assertTrue("ss: Esc 로 닫힘", !modal.open && reasons.contains("escape"));
+                modal.show();
+                later(200, () -> {
+                    inner(modal, ".scrim").click();
+                    assertTrue("ss: 스크림 클릭으로 닫힘", !modal.open && reasons.contains("scrim"));
+                    modal.show();
+                    later(200, () -> {
+                        inner(modal, ".close").click();
+                        assertTrue("ss: 닫기 버튼으로 닫힘", !modal.open && reasons.contains("close"));
+                        modalStart.show();
+                        later(300, () -> {
+                            var s = inner(modalStart, ".container");
+                            assertEquals("ss: detached 여백 16px", 16, (int) Math.round(s.getBoundingClientRect().left));
+                            assertEquals("ss: detached 위 여백 16px", "16px", cs(s).getPropertyValue("top"));
+                            assertEquals("ss: detached 모든 모서리 16px", "16px", cs(s).getPropertyValue("border-top-right-radius"));
+                            assertEquals("ss: start 시트 왼쪽 모서리 16px", "16px", cs(s).getPropertyValue("border-top-left-radius"));
+                            assertEquals("ss: 뒤로 아이콘 있을 때 시작 패딩 16px", "16px", css(modalStart, ".header", "padding-left"));
+                            inner(modalStart, ".back").click();
+                            assertEquals("ss: 뒤로 버튼 이벤트", 1, backs[0]);
+                            modalStart.close();
+                            std.open = false;
+                            later(200, () -> assertEquals("ss: 닫힌 standard 는 숨김", "none", cs(std).getPropertyValue("display")));
+                        });
+                    });
+                });
+            });
+        });
+    }
+}

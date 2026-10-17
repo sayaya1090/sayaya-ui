@@ -69,6 +69,7 @@ dependencies {
 | **Expressive (labs/gb)** | `gb()` | Material Web 2.5.0 Expressive 컴포넌트 16종 (`md-gb-*`): button, split button, icon button, fab, icon, card, badge, checkbox, radio, switch, divider, list/list-item, menu/menu-group/menu-item | |
 | **Navigation** | `topAppBar()`, `navigationBar()`, `navigationRail()`, `navigationDrawer()` | Top app bar(small/center-aligned/medium/large), Navigation bar, Navigation rail(접힘/펼침), Navigation drawer(고정/모달) | |
 | **Tooltip / Snackbar / Button group** | `tooltip()`, `snackbar()`, `buttonGroup()` | Plain·Rich tooltip, Snackbar(액션/닫기/자동 닫힘), Standard·Connected button group(xsmall~xlarge, 토글 선택) | |
+| **Side sheet** | `sideSheet()` | Standard·Modal side sheet(end/start, detached, 뒤로·닫기 버튼, 하단 액션, 스크림·Esc 닫기) | |
 
 ## 사용 예제
 
@@ -878,6 +879,30 @@ var range = buttonGroup().connected().size(ButtonGroupSize.Small).selection(Butt
 `md-tooltip`, `md-snackbar`, `md-button-group` 은 Material Web 에 없어 sayaya-ui 가 직접 구현한 엘리먼트입니다(`labs-bundle/src/sayaya-feedback.js`).
 색·모양·타이포·높이·간격은 `@material/web` 2.5.0 의 `md-comp-{plain-tooltip,rich-tooltip,snackbar,button-group-*}` 토큰 값을 따릅니다.
 토큰에 없는 레이아웃 값은 m3.material.io 스펙 페이지와 Compose Material3(`Tooltip.kt`, `Snackbar.kt`) 상수로 대조했습니다: plain tooltip 높이 24dp·패딩 8dp·최대 너비 200dp, rich tooltip 패딩 12/16/8dp·최대 너비 320dp, tooltip 최소 너비 40dp·앵커 간격 4dp, snackbar 최대 너비 600dp, 화면 가장자리 여백 8dp(material-components-android `m3_snackbar_margin`).
+
+### Side sheet
+
+```java
+import static dev.sayaya.ui.elements.SideSheetElementBuilder.*;
+
+// Standard: 본문 옆에 나란히 (medium/expanded 화면)
+var details = sideSheet().standard().headline("세부 정보").divider(true).open(true)
+    .add(detailPanel)
+    .action(button().filled().text("저장")).action(button().outlined().text("취소"))
+    .element();
+
+// Modal: 스크림 위에 표시 (compact 화면). 닫기 버튼·스크림 클릭·Esc 로 닫힘
+var filters = sideSheet().modal().headline("필터").add(filterForm)
+    .onClosed(reason -> log(reason))   // close | scrim | escape
+    .element();
+body().add(filters);
+filters.show();
+```
+
+`md-side-sheet` 는 Material Web 에 없어 sayaya-ui 가 직접 구현한 엘리먼트입니다(`labs-bundle/src/sayaya-sheet.js`).
+색·모양·너비(256dp)·elevation·헤드라인은 `md-comp-sheet-side` 토큰, 패딩(24/16dp)·요소 간격 12dp·최대 너비 400dp·detached 여백 16dp·하단 액션 패딩(16/24dp)은
+m3.material.io side sheet 스펙 페이지(MDC-Android `m3_side_sheet_margin_detached` 16dp 와 일치)를 따릅니다.
+스펙의 하단 액션 높이 72dp 는 40dp 버튼과 위/아래 패딩 16/24dp 를 함께 쓰면 80dp 가 되어 동시에 만족할 수 없으므로 패딩을 우선했습니다.
 
 ## 빌더 인터페이스
 

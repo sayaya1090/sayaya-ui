@@ -40,3 +40,6 @@ import './sayaya-navigation.js';
 
 // sayaya-ui 자체 구현: tooltip, snackbar, button group
 import './sayaya-feedback.js';
+
+// sayaya-ui 자체 구현: side sheet
+import './sayaya-sheet.js';
