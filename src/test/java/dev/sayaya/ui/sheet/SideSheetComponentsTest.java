@@ -94,6 +94,8 @@ public class SideSheetComponentsTest {
             assertEquals("ss: 액션 위 패딩 16px", "16px", cs(a).getPropertyValue("padding-top"));
             assertEquals("ss: 액션 아래 패딩 24px", "24px", cs(a).getPropertyValue("padding-bottom"));
             assertEquals("ss: 액션 왼쪽 정렬", "flex-start", cs(a).getPropertyValue("justify-content"));
+            assertEquals("ss: 본문 가로 스크롤 없음", "hidden", css(std, ".content", "overflow-x"));
+            assertEquals("ss: 본문 세로 스크롤", "auto", css(std, ".content", "overflow-y"));
             assertEquals("ss: 최대 너비 400px", 400, (int) w(inner(wide, ".container")));
 
             modal.show();

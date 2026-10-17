@@ -31,6 +31,8 @@ internal class SideSheetElementTest: GwtTestSpec({
         "닫기 아이콘 버튼 항상 있음",
         "닫힌 standard 는 숨김",
         "뒤로 버튼 이벤트",
+        "본문 가로 스크롤 없음",
+        "본문 세로 스크롤",
         "뒤로 아이콘 있을 때 시작 패딩 16px",
         "스크림 불투명도 0.32",
         "스크림 클릭으로 닫힘",
