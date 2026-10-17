@@ -83,8 +83,12 @@ export class MdNavigationTab extends LitElement {
     .icon { position: relative; display: flex; width: 24px; height: 24px; font-size: 24px; color: var(--md-sys-color-on-surface-variant, #49454f);
       --md-icon-size: 24px; }                                                                /* 토큰 item-icon-size */
     :host([active]) .icon { color: var(--md-sys-color-on-secondary-container, #1d192b); }
+    /* 가이드: 활성 목적지는 채운(filled) 아이콘, 비활성은 외곽선 아이콘. md-icon 은 font-variation-settings 를 상속한다 */
+    .icon { font-variation-settings: 'FILL' 0; }
+    :host([active]) .icon { font-variation-settings: 'FILL' 1; }
     :host(:not([active])) slot[name='active-icon'], :host([active]) slot[name='inactive-icon'].has-active { display: none; }
-    .label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    /* 가이드: 라벨은 말줄임으로 자르지도, 줄바꿈하지도 않는다(짧은 1~2단어 권장) */
+    .label { white-space: nowrap; overflow: visible;
       font-family: var(--md-sys-typescale-label-medium-font, Roboto, sans-serif);
       font-size: var(--md-sys-typescale-label-medium-size, 12px);
       line-height: var(--md-sys-typescale-label-medium-line-height, 16px);

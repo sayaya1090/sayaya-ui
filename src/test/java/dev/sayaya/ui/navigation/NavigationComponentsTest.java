@@ -211,6 +211,13 @@ public class NavigationComponentsTest {
                 .item(railItem().icon("home").label("홈")).item(railItem().icon("inbox").label("받은편지함")).element();
         var narrowRail = navigationRail().narrow(true).item(railItem().icon("home").label("홈")).element();
         box.appendChild(div().style("display", "flex").style("gap", "24px").style("height", "300px").add(menuRail).add(narrowRail).element());
+        var longBar = navigationBar().layout(NavigationBarLayout.Vertical)
+                .tab(navigationTab().label("홈").icon("home"))
+                .tab(navigationTab().label("즐겨찾기 목록").icon("star"))
+                .tab(navigationTab().label("알림 설정").icon("notifications"))
+                .tab(navigationTab().label("보관함").icon("inventory"))
+                .tab(navigationTab().label("프로필").icon("person")).element();
+        box.appendChild(div().style("width", "320px").add(longBar).element());
         var probe = div().element(); box.appendChild(probe);
         DomGlobal.setTimeout(t -> {
             java.util.function.Function<String, String> color = v -> { probe.style.setProperty("color", v); return cs(probe).getPropertyValue("color"); };
@@ -245,6 +252,18 @@ public class NavigationComponentsTest {
             assertEquals("nav: 앱 바 trailing 아이콘 on-surface-variant", onSurfaceVariant, cs(small.querySelector("[slot='trailing']")).getPropertyValue("color"));
             assertTrue("nav: 스크롤된 앱 바 elevation level2", !"none".equals(cs(scrolledBar).getPropertyValue("box-shadow")));
             assertEquals("nav: 앱 바 좌우 여백 4px", "4px", cs(inner(small, ".row")).getPropertyValue("padding-left"));
+            {
+                HTMLElement lt = Js.uncheckedCast(longBar.querySelectorAll("md-navigation-tab").item(1));
+                var lbl = inner(lt, ".label");
+                assertTrue("nav: navigation bar 라벨 말줄임 없음", !"ellipsis".equals(cs(lbl).getPropertyValue("text-overflow")) && !"hidden".equals(cs(lbl).getPropertyValue("overflow-x")) && "nowrap".equals(cs(lbl).getPropertyValue("white-space")));
+                HTMLElement at = Js.uncheckedCast(longBar.querySelectorAll("md-navigation-tab").item(0));
+                HTMLElement ai = Js.uncheckedCast(at.querySelector("md-icon"));
+                String fvs = cs(ai).getPropertyValue("font-variation-settings");
+                assertTrue("nav: navigation bar 활성 아이콘 채움(FILL 1)", fvs.replaceAll("\\s", "").contains("\"FILL\"1"));
+                HTMLElement it = Js.uncheckedCast(longBar.querySelectorAll("md-navigation-tab").item(3));
+                String fvs2 = cs((HTMLElement) Js.uncheckedCast(it.querySelector("md-icon"))).getPropertyValue("font-variation-settings");
+                assertTrue("nav: navigation bar 비활성 아이콘 외곽선(FILL 0)", !fvs2.replaceAll("\\s", "").contains("\"FILL\"1"));
+            }
             assertEquals("nav: medium flexible 부제 있으면 136px", 136, (int) Math.round(mSub.getBoundingClientRect().height));
             assertEquals("nav: large flexible 부제 있으면 152px", 152, (int) Math.round(lSub.getBoundingClientRect().height));
             assertEquals("nav: medium flexible 부제 label-large 14px", "14px", cs(inner(mSub, ".xsub")).getPropertyValue("font-size"));
