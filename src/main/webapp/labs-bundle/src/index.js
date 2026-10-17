@@ -52,3 +52,21 @@ import './sayaya-sheet.js';
   iconFont.replaceSync(':root { --md-icon-font: "Material Symbols Outlined", "Material Symbols"; }');
   document.adoptedStyleSheets = [iconFont, ...document.adoptedStyleSheets];
 }
+
+// labs md-navigation-drawer-modal 보정: host 가 position:static 이라 패널(absolute, top/bottom 0)이 문서 맨 위에 붙어
+// 스크롤한 위치에서 열면 화면 밖에 나타나고, 스크림 색 기본값이 비어 투명했다.
+// host 를 화면 기준(fixed)으로 두고, 닫혀 있을 때는 클릭을 막지 않도록 [opened] 속성을 반영한다. 스크림은 M3 scrim 32%.
+{
+  const modalFix = new CSSStyleSheet();
+  modalFix.replaceSync(`md-navigation-drawer-modal { position: fixed; inset: 0; z-index: 1002; pointer-events: none;
+    --md-navigation-drawer-modal-scrim-color: var(--md-sys-color-scrim, #000);
+    --md-navigation-drawer-modal-scrim-opacity: 0.32;
+    --md-navigation-drawer-modal-container-color: var(--md-sys-color-surface-container-low, #f7f2fa); }
+  md-navigation-drawer-modal[opened] { pointer-events: auto; }`);
+  document.adoptedStyleSheets = [modalFix, ...document.adoptedStyleSheets];
+  customElements.whenDefined('md-navigation-drawer-modal').then(() => {
+    const C = customElements.get('md-navigation-drawer-modal');
+    const updated = C.prototype.updated;
+    C.prototype.updated = function (changed) { this.toggleAttribute('opened', !!this.opened); updated.call(this, changed); };
+  });
+}

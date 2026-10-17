@@ -140,6 +140,10 @@ export class MdNavigationRailItem extends LitElement {
     :host([expanded][active]) button { background: var(--md-sys-color-secondary-container, #e8def8); color: var(--md-sys-color-on-secondary-container, #1d192b); }
     :host([expanded]) .indicator { width: 24px; height: 24px; background: none !important; }
     .badge.dot { min-width: 6px; width: 6px; height: 6px; padding: 0; top: 4px; left: 36px; }
+    /* 펼친 행: 점 배지는 24px 아이콘의 오른쪽 위, 숫자 배지는 라벨 뒤 행 끝(라벨과 겹치지 않게) */
+    :host([expanded]) .badge.dot { top: 0; left: 18px; }
+    .badge.trailing { position: static; flex: none; margin-inline-start: auto; }
+    :host([expanded]) .label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   `;
   constructor() {
     super();
@@ -147,15 +151,17 @@ export class MdNavigationRailItem extends LitElement {
   }
   render() {
     const hasActive = !!this.querySelector(':scope > [slot="active-icon"]');
+    const trailing = this.expanded && this.showBadge && !!this.badgeValue;
     return html`
       <button role="tab" aria-selected=${this.active ? 'true' : 'false'} aria-disabled=${this.disabled ? 'true' : 'false'}
               aria-label=${this.label || ''} @click=${this._click}>
         <span class="indicator">
           <slot name="active-icon"></slot>
           <slot name="inactive-icon" class=${hasActive ? 'has-active' : ''}></slot>
-          ${this.showBadge ? html`<span class="badge ${this.badgeValue ? '' : 'dot'}">${this.badgeValue}</span>` : ''}
+          ${this.showBadge && !trailing ? html`<span class="badge ${this.badgeValue ? '' : 'dot'}" part="badge">${this.badgeValue}</span>` : ''}
         </span>
         <span class="label">${this.label}</span>
+        ${trailing ? html`<span class="badge trailing" part="badge">${this.badgeValue}</span>` : ''}
       </button>`;
   }
   focus() { this.shadowRoot?.querySelector('button')?.focus(); }

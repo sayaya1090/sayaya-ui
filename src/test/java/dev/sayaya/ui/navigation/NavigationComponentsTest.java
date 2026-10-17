@@ -6,6 +6,7 @@ import elemental2.dom.ShadowRoot;
 import jsinterop.base.Js;
 
 import static dev.sayaya.ui.TestHelper.*;
+import static dev.sayaya.ui.elements.ButtonElementBuilder.button;
 import static dev.sayaya.ui.elements.IconElementBuilder.icon;
 import static dev.sayaya.ui.elements.NavigationElementBuilder.*;
 import static org.jboss.elemento.Elements.body;
@@ -82,12 +83,15 @@ public class NavigationComponentsTest {
 
         int[] railEvent = {-1};
         var item2 = railItem().icon("inbox").label("받은편지함").badge();
+        var item3 = railItem().icon("notifications").label("알림").badge("3");
         var rail = navigationRail().alignment(RailAlignment.Center).expanded(true)
                 .header(icon("menu"))
                 .item(railItem().icon("home").label("홈"))
                 .item(item2)
+                .item(item3)
                 .onActivated(i -> railEvent[0] = i).element();
         var item2El = item2.element();
+        var item3El = item3.element();
         check(rail, "md-navigation-rail", "center".equals(rail.alignment) && rail.expanded && rail.querySelector("[slot='header']") != null);
         check(item2El, "md-navigation-rail-item", "받은편지함".equals(item2El.label) && item2El.showBadge && "".equals(item2El.badgeValue));
         demo(section, "📘 Navigation rail", "medium 이상 화면의 세로 네비게이션입니다. expanded(false)는 80dp 아이콘 기둥, expanded(true)는 라벨이 옆에 붙는 펼친 상태입니다. header 에는 메뉴 버튼이나 FAB 을 둡니다.",
@@ -96,24 +100,26 @@ public class NavigationComponentsTest {
                 .header(icon("menu"))
                 .item(railItem().icon("home").label("홈"))
                 .item(railItem().icon("inbox").label("받은편지함").badge())
+    .item(railItem().icon("notifications").label("알림").badge("3"))
                 .onActivated(index -> route(index))
                 .element();
             """, div().style("height", "400px").add(rail).element());
 
         var drawer = navigationDrawer().opened(true).pivot(DrawerPivot.Start).add(div().text("메뉴")).element();
         check(drawer, "md-navigation-drawer", drawer.opened && "start".equals(drawer.pivot));
-        demo(section, "📘 Navigation drawer", "화면 옆에 고정되는 목적지 목록입니다(Material Web labs). opened 로 열고 닫으며, pivot 으로 붙는 쪽을 정합니다.",
+        demo(section, "📘 Navigation drawer", "화면 옆에 고정되는 목적지 목록입니다(Material Web labs). opened 로 열고 닫으며, pivot 으로 붙는 쪽을 정합니다. 데모의 버튼으로 열고 닫아 보세요.",
             """
             var drawer = navigationDrawer().opened(true).pivot(DrawerPivot.Start)
                 .add(div().text("메뉴"))
                 .element();
-            """, drawer);
+            """, div().style("display", "flex").style("flex-direction", "column").style("gap", "12px")
+                .add(button().outlined().text("drawer 열기/닫기").onClick(e -> drawer.opened = !drawer.opened))
+                .add(div().style("height", "160px").style("display", "flex").add(drawer)).element());
         var modal = navigationDrawerModal().opened(false).pivot(DrawerPivot.End).element();
         check(modal, "md-navigation-drawer-modal", !modal.opened && "end".equals(modal.pivot));
-        var openModal = div().text("모달 drawer 열기/닫기").style("cursor", "pointer").style("color", "#007bff").element();
-        openModal.addEventListener("click", e -> modal.opened = !modal.opened);
+        var openModal = button().filled().text("모달 drawer 열기").onClick(e -> modal.opened = true).element();
         body().add(modal);
-        demo(section, "📘 Navigation drawer - 모달", "compact 화면에서 스크림 위에 열리는 drawer 입니다. 데모의 링크를 눌러 열고 닫을 수 있습니다.",
+        demo(section, "📘 Navigation drawer - 모달", "compact 화면에서 스크림 위에 열리는 drawer 입니다. 데모의 버튼으로 열고, 스크림(바깥)을 누르면 닫힙니다.",
             """
             var modal = navigationDrawerModal().opened(false).pivot(DrawerPivot.End).element();
             modal.opened = true;  // 열기
@@ -125,6 +131,12 @@ public class NavigationComponentsTest {
             assertTrue("nav: md-top-app-bar scrolled 속성 반영", appBar.hasAttribute("scrolled"));
             assertTrue("nav: md-navigation-rail expanded 항목 전파", item2El.expanded && item2El.hasAttribute("expanded"));
             assertTrue("nav: md-navigation-drawer opened 반영", drawer.opened);
+            for (HTMLElement it : new HTMLElement[]{item2El, item3El}) {
+                var b = inner(it, ".badge").getBoundingClientRect(); var l = inner(it, ".label").getBoundingClientRect();
+                assertTrue("nav: 펼친 레일 배지가 라벨과 겹치지 않음(" + (it == item2El ? "점" : "숫자") + ")", b.right <= l.left || b.left >= l.right);
+            }
+            assertEquals("nav: 모달 drawer 는 화면 기준(fixed)", "fixed", cs(modal).getPropertyValue("position"));
+            assertEquals("nav: 닫힌 모달 drawer 는 클릭을 막지 않음", "none", cs(modal).getPropertyValue("pointer-events"));
             // ---- M3 flexible navigation bar 토큰 (md-comp-nav-bar*, Compose ShortNavigationBar) ----
             assertTrue("nav: md-navigation-bar 는 flexible 구현(labs baseline 아님)", Js.asPropertyMap(bar).has("resolvedLayout"));
             assertEquals("nav: navigation bar 높이 64px", 64, (int) Math.round(vBar.getBoundingClientRect().height));
@@ -149,6 +161,16 @@ public class NavigationComponentsTest {
             assertEquals("nav: auto 600 이상 가로형", "horizontal", wide.resolvedLayout);
             // 실제 클릭: shadow DOM 안의 버튼
             if (!isAutomated()) return; // 사람이 볼 때는 자동 클릭하지 않는다(직접 눌러 확인)
+            modal.opened = true;
+            DomGlobal.setTimeout(t3 -> {
+                var msr = shadow(modal);
+                HTMLElement panel = Js.uncheckedCast(msr.querySelector(".md3-navigation-drawer-modal"));
+                HTMLElement scrim = Js.uncheckedCast(msr.querySelector(".md3-navigation-drawer-modal__scrim"));
+                assertEquals("nav: 모달 drawer 열면 너비 360px", 360, (int) Math.round(panel.getBoundingClientRect().width));
+                assertEquals("nav: 모달 drawer 스크림 0.32", "0.32", cs(scrim).getPropertyValue("opacity"));
+                scrim.click();
+                assertTrue("nav: 모달 drawer 스크림 클릭으로 닫힘", !modal.opened);
+            }, 600);
             click(item2El);
             click(tab2El);
             DomGlobal.setTimeout(t2 -> {
