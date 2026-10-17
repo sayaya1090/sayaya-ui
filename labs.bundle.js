@@ -1261,7 +1261,8 @@ let Tr=class extends Ir{};Tr.styles=[zr,Or],Tr=t([i("md-navigation-drawer-modal"
       line-height: var(--md-sys-typescale-title-large-line-height, 28px);
       font-weight: var(--md-sys-typescale-title-large-weight, 400);
       letter-spacing: var(--md-sys-typescale-title-large-tracking, 0); }
-    .content { flex: 1; min-height: 0; overflow: auto; padding: 0 24px; }
+    /* 가이드: 사이드 시트는 세로로만 스크롤하고 가로 스크롤은 쓰지 않는다 */
+    .content { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; overflow-wrap: anywhere; padding: 0 24px; }
     .actions { display: none; box-sizing: border-box; align-items: center; justify-content: flex-start; gap: 8px;
       height: 72px; padding: 16px 24px 24px;  /* [스펙] 높이 72, 위 16, 아래 24, 왼쪽 정렬 */
       /* 16 + 32 + 24 = 72: 하단 액션 버튼은 XSmall(토큰 _md-comp-button-xsmall container-height 32px) */
