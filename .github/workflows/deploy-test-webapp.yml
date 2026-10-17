@@ -45,8 +45,14 @@ jobs:
           echo "<style>body{font-family:sans-serif;max-width:800px;margin:40px auto;padding:0 20px}a{color:#0066cc;text-decoration:none}a:hover{text-decoration:underline}li{margin:10px 0}</style>" >> pages/index.html
           echo "</head><body>" >> pages/index.html
           echo "<h1>UI Component Tests</h1><ul>" >> pages/index.html
-          find pages -maxdepth 1 -name "*.html" ! -name "index.html" | while read html; do
-            echo "<li><a href='$(basename $html)'>$(basename $html .html)</a></li>" >> pages/index.html
+          # 링크 이름은 각 페이지 <title> 의 " - " 뒤 부분(없으면 파일명), 이름순 정렬
+          for html in pages/*.html; do
+            [ "$(basename "$html")" = index.html ] && continue
+            name=$(sed -n 's:.*<title>[^<]* - \([^<]*\)</title>.*:\1:p' "$html" | head -1)
+            [ -n "$name" ] || name=$(basename "$html" .html)
+            printf '%s\t%s\n' "$name" "$(basename "$html")"
+          done | sort -f | while IFS=$'\t' read -r name file; do
+            echo "<li><a href='$file'>$name</a></li>" >> pages/index.html
           done
           echo "</ul></body></html>" >> pages/index.html
 
