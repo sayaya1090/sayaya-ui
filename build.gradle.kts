@@ -78,6 +78,7 @@ tasks {
         devMode {
             modules = listOf(
                 "dev.sayaya.BadgeElementTest",
+                "dev.sayaya.BottomSheetElementTest",
                 "dev.sayaya.ButtonElementTest",
                 "dev.sayaya.DialogElementTest",
                 "dev.sayaya.CardElementTest",

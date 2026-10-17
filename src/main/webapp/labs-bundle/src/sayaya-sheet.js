@@ -104,3 +104,101 @@ export class MdSideSheet extends LitElement {
   }
 }
 customElements.define('md-side-sheet', MdSideSheet);
+
+// ---------------------------------------------------------------- bottom sheet
+// 출처: 토큰 _md-comp-sheet-bottom.scss (drag handle 32x4·opacity 0.4·on-surface-variant, surface-container-low,
+//       corner-extra-large-top 28, elevation level1), m3.material.io/components/bottom-sheets specs/guidelines
+//       (최대 너비 640, 창 640 초과 시 위·옆 여백 56 / 이하 위 여백 72, 핸들 위아래 패딩 22, modal 초기 높이 ≤ 화면 50%,
+//        스크림·아래로 끌기·핸들로 닫기/크기 전환). [미확인] 본문 좌우 패딩 16.
+export class MdBottomSheet extends LitElement {
+  static properties = {
+    modal: {type: Boolean, reflect: true},
+    open: {type: Boolean, reflect: true},
+    expanded: {type: Boolean, reflect: true},
+    dragHandle: {type: Boolean, attribute: 'drag-handle'},
+    handleLabel: {type: String, attribute: 'handle-label'},
+  };
+  static styles = css`
+    :host { display: none; position: fixed; inset: 0; z-index: 1000; pointer-events: none; }
+    :host([open]) { display: block; }
+    :host([modal]) { z-index: 1002; pointer-events: auto; }
+    .scrim { position: absolute; inset: 0; background: var(--md-sys-color-scrim, #000); opacity: 0.32; }
+    .container {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); box-sizing: border-box;
+      display: flex; flex-direction: column; pointer-events: auto;
+      width: 100%; max-height: calc(100% - 72px);                              /* [스펙] 위 여백 72 */
+      background: var(--md-sys-color-surface-container-low, #f7f2fa);
+      border-radius: var(--md-sys-shape-corner-extra-large, 28px) var(--md-sys-shape-corner-extra-large, 28px) 0 0;
+      box-shadow: ${css([LEVEL1])};
+      transition: translate 200ms ease;
+    }
+    :host([expanded]) .container { height: calc(100% - 72px); }
+    @media (min-width: 641px) {
+      .container { width: min(640px, calc(100% - 112px)); max-height: calc(100% - 56px); }   /* [스펙] 640 초과: 최대 640, 위·옆 56 */
+      :host([expanded]) .container { height: calc(100% - 56px); }
+    }
+    :host([modal]:not([expanded])) .container { max-height: 50%; }            /* 가이드: modal 초기 높이는 화면의 50% 까지 */
+    .container.dragging { transition: none; }
+    .handle-area { all: unset; box-sizing: border-box; display: flex; justify-content: center; flex: none;
+      width: 100%; padding: 22px 0; cursor: grab; touch-action: none; }      /* [스펙] 핸들 위아래 22 */
+    .handle-area:focus-visible .handle { outline: 3px solid var(--md-sys-color-secondary, #625b71); outline-offset: 4px; }
+    .handle { width: 32px; height: 4px; border-radius: 2px;
+      background: var(--md-sys-color-on-surface-variant, #49454f); opacity: 0.4; }
+    .content { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; padding: 0 16px;
+      color: var(--md-sys-color-on-surface, #1d1b20); }
+  `;
+  constructor() {
+    super();
+    this.modal = false; this.open = false; this.expanded = false; this.dragHandle = true; this.handleLabel = '시트 크기 조절';
+    this._restore = null; this._dragY = null; this._dy = 0; this._moved = false;
+    this.addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.open && this.modal) { e.stopPropagation(); this.close('escape'); } });
+  }
+  show() {
+    if (this.open) return;
+    this._restore = document.activeElement;
+    this.open = true;
+    this.updateComplete.then(() => {
+      if (this.modal) this.shadowRoot.querySelector('.handle-area')?.focus();
+      this.dispatchEvent(new Event('opened', {bubbles: true, composed: true}));
+    });
+  }
+  close(reason = 'close') {
+    if (!this.open) return;
+    this.open = false; this.expanded = false;
+    if (this.modal && this._restore && this._restore.focus) this._restore.focus();
+    this._restore = null;
+    this.dispatchEvent(new CustomEvent('closed', {detail: {reason}, bubbles: true, composed: true}));
+  }
+  _container() { return this.shadowRoot.querySelector('.container'); }
+  _down(e) { this._dragY = e.clientY; this._dy = 0; this._moved = false; this._container().classList.add('dragging');
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {} }
+  _move(e) {
+    if (this._dragY === null) return;
+    this._dy = e.clientY - this._dragY;
+    if (Math.abs(this._dy) > 4) this._moved = true;
+    this._container().style.translate = `0 ${Math.max(0, this._dy)}px`;
+  }
+  _up() {
+    if (this._dragY === null) return;
+    const dy = this._dy; this._dragY = null;
+    const c = this._container(); c.classList.remove('dragging'); c.style.translate = '';
+    if (dy > 80) { if (this.expanded) this.expanded = false; else this.close('swipe'); }   // 아래로 끌기: 접힘 → 닫힘
+    else if (dy < -80) this.expanded = true;                                              // 위로 끌기: 펼침
+  }
+  _click() {
+    if (this._moved) { this._moved = false; return; }   // 끌기 직후의 click 은 무시
+    this.expanded = !this.expanded;                     // 가이드: 핸들을 누르면 크기 전환
+  }
+  render() {
+    return html`
+      ${this.modal ? html`<div class="scrim" part="scrim" @click=${() => this.close('scrim')}></div>` : nothing}
+      <section class="container" part="container" role=${this.modal ? 'dialog' : 'complementary'} aria-modal=${this.modal ? 'true' : nothing}>
+        ${this.dragHandle ? html`<button class="handle-area" part="handle" aria-label=${this.handleLabel}
+            aria-expanded=${this.expanded ? 'true' : 'false'} @click=${this._click}
+            @pointerdown=${this._down} @pointermove=${this._move} @pointerup=${this._up} @pointercancel=${this._up}>
+            <span class="handle"></span></button>` : nothing}
+        <div class="content" part="content"><slot></slot></div>
+      </section>`;
+  }
+}
+customElements.define('md-bottom-sheet', MdBottomSheet);

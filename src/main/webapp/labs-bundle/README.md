@@ -11,7 +11,7 @@ Material Web Labs 컴포넌트들을 번들링하여 `@material/web/all.js`와 �
 - sayaya-ui 자체 구현: `md-navigation-bar`, `md-navigation-tab` — M3 flexible navigation bar (`src/sayaya-navbar.js`, labs baseline 대체)
 - sayaya-ui 자체 구현: `md-top-app-bar`, `md-navigation-rail`, `md-navigation-rail-item` (`src/sayaya-navigation.js`)
 - sayaya-ui 자체 구현: `md-tooltip`, `md-snackbar`, `md-button-group` (`src/sayaya-feedback.js`)
-- sayaya-ui 자체 구현: `md-side-sheet` (`src/sayaya-sheet.js`)
+- sayaya-ui 자체 구현: `md-side-sheet`, `md-bottom-sheet` (`src/sayaya-sheet.js`)
 - 향후 추가 예정: 기타 Labs 컴포넌트
 
 ## 빌드 방법

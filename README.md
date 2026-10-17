@@ -70,6 +70,7 @@ dependencies {
 | **Navigation** | `topAppBar()`, `navigationBar()`, `navigationRail()`, `navigationDrawer()` | Top app bar(small·medium flexible·large flexible, 가운데 정렬·부제), Navigation bar, Navigation rail(접힘 96dp·narrow 80dp / 펼침 220~360dp, modal, 메뉴 버튼), Navigation drawer(고정/모달) | |
 | **Tooltip / Snackbar / Button group** | `tooltip()`, `snackbar()`, `buttonGroup()` | Plain·Rich tooltip, Snackbar(액션/닫기/자동 닫힘), Standard·Connected button group(xsmall~xlarge, 토글 선택) | |
 | **Side sheet** | `sideSheet()` | Standard·Modal side sheet(end/start, detached, 뒤로·닫기 버튼, 하단 액션, 스크림·Esc 닫기) | |
+| **Bottom sheet** | `bottomSheet()` | Standard·Modal bottom sheet(드래그 핸들로 펼침/접힘, 아래로 끌어 닫기, 스크림·Esc 닫기, 최대 너비 640dp) | [🔗](https://sayaya1090.github.io/sayaya-ui/bottom_sheet.html) |
 
 ## 사용 예제
 
@@ -905,6 +906,26 @@ filters.show();
 색·모양·너비(256dp)·elevation·헤드라인은 `md-comp-sheet-side` 토큰, 패딩(24/16dp)·요소 간격 12dp·최대 너비 400dp·detached 여백 16dp·하단 액션 패딩(16/24dp)은
 m3.material.io side sheet 스펙 페이지(MDC-Android `m3_side_sheet_margin_detached` 16dp 와 일치)를 따릅니다.
 하단 액션 영역은 높이 72dp(위 16 + XSmall 버튼 32 + 아래 24)로, 그 안의 Material 버튼은 XSmall 토큰(`md-comp-button-xsmall` 32dp) 높이로 맞춥니다.
+
+### Bottom sheet
+
+```java
+import static dev.sayaya.ui.elements.BottomSheetElementBuilder.*;
+
+// Modal: 스크림 위에 표시. 처음에는 화면 높이의 50% 까지 열리고, 핸들을 누르거나 위로 끌면 펼쳐진다
+var share = bottomSheet().modal().add(shareTargets)
+    .onClosed(reason -> log(reason))   // scrim | escape | swipe | close
+    .element();
+body().add(share);
+share.show();
+
+// Standard: 스크림 없이 화면 아래에 붙어 뒤 화면을 계속 쓸 수 있다(예: 음악 플레이어)
+var player = bottomSheet().standard().add(nowPlaying).element();
+```
+
+`md-bottom-sheet` 는 Material Web 에 없어 sayaya-ui 가 직접 구현한 엘리먼트입니다(`labs-bundle/src/sayaya-sheet.js`).
+색·모양(위쪽 모서리 28dp)·elevation·드래그 핸들(32×4dp, 불투명도 0.4)은 `md-comp-sheet-bottom` 토큰,
+최대 너비 640dp·위 여백 72dp(창 640dp 초과 시 위·옆 56dp)·핸들 위아래 패딩 22dp 는 m3.material.io bottom sheet 스펙 페이지를 따릅니다.
 
 ## 빌더 인터페이스
 

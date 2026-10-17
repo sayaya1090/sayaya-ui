@@ -67,7 +67,7 @@ jobs:
             - ✅ Menu, Progress, Radio, Ripple, Select
             - ✅ Slider, Switch, Tabs, TextField
             - ✅ Top app bar, Navigation bar, Navigation rail, Navigation drawer
-            - ✅ Tooltip (plain/rich), Snackbar, Button group (standard/connected), Side sheet (standard/modal)
+            - ✅ Tooltip (plain/rich), Snackbar, Button group (standard/connected), Side sheet (standard/modal), Bottom sheet (standard/modal)
             - ✅ Expressive (labs/gb) 16종: md-gb-button, md-gb-split-button, md-gb-icon-button, md-gb-fab 등
 
             ### Maven 좌표 (GitHub Packages)

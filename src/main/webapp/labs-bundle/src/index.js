@@ -41,7 +41,7 @@ import './sayaya-navbar.js';
 // sayaya-ui 자체 구현: tooltip, snackbar, button group
 import './sayaya-feedback.js';
 
-// sayaya-ui 자체 구현: side sheet
+// sayaya-ui 자체 구현: side sheet, bottom sheet
 import './sayaya-sheet.js';
 
 // md-gb-icon 은 --md-icon-font 기본값이 "Material Symbols" 라서, 일반적으로 로드하는
