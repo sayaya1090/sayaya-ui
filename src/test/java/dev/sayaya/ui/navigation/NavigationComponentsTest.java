@@ -94,7 +94,7 @@ public class NavigationComponentsTest {
         var item3El = item3.element();
         check(rail, "md-navigation-rail", "center".equals(rail.alignment) && rail.expanded && rail.querySelector("[slot='header']") != null);
         check(item2El, "md-navigation-rail-item", "받은편지함".equals(item2El.label) && item2El.showBadge && "".equals(item2El.badgeValue));
-        demo(section, "📘 Navigation rail", "medium 이상 화면의 세로 네비게이션입니다. expanded(false)는 80dp 아이콘 기둥, expanded(true)는 라벨이 옆에 붙는 펼친 상태입니다. header 에는 메뉴 버튼이나 FAB 을 둡니다.",
+        demo(section, "📘 Navigation rail", "medium 이상 화면의 세로 네비게이션입니다. expanded(false)는 96dp 접힌 레일(narrow(true)면 80dp), expanded(true)는 220~360dp 펼친 레일입니다. menu(true)는 펼침/접힘 메뉴 버튼, modal(true)는 펼쳤을 때 본문 위에 뜨는 형태입니다. header 에는 메뉴 버튼이나 FAB 을 둡니다.",
             """
             var rail = navigationRail().alignment(RailAlignment.Center).expanded(true)
                 .header(icon("menu"))
@@ -182,8 +182,91 @@ public class NavigationComponentsTest {
                 assertTrue("nav: md-navigation-tab 클릭 후 active", tab2El.active);
             }, 500);
         }, 1500);
+        audit();
     }
 
+    /** M3 토큰·가이드 대조(rail: nav-rail-*, Compose WideNavigationRail / app bar: app-bar-*, top-app-bar-*). */
+    private static void audit() {
+        var box = section("M3 대조용 측정");
+        var cRail = navigationRail()
+                .item(railItem().icon("home").label("홈"))
+                .item(railItem().icon("inbox").label("받은편지함"))
+                .item(railItem().icon("star").label("즐겨찾기")).element();
+        var eRail = navigationRail().expanded(true)
+                .item(railItem().icon("home").label("홈"))
+                .item(railItem().icon("inbox").label("받은편지함").badge("3")).element();
+        box.appendChild(div().style("display", "flex").style("gap", "24px").style("height", "360px").add(cRail).add(eRail).element());
+        var small = topAppBar().headline("작게").trailing(icon("more_vert")).element();
+        var medium = topAppBar().variant(TopAppBarVariant.Medium).headline("중간").element();
+        var large = topAppBar().variant(TopAppBarVariant.Large).headline("크게").element();
+        var scrolledBar = topAppBar().headline("스크롤").scrolled(true).element();
+        box.appendChild(div().style("width", "600px").add(small).add(medium).add(large).add(scrolledBar).element());
+        var mSub = topAppBar().variant(TopAppBarVariant.Medium).headline("받은편지함").subtitle("새 메일 3통").element();
+        var lSub = topAppBar().variant(TopAppBarVariant.Large).headline("사진").subtitle("2026년 10월").element();
+        var cen = topAppBar().headline("가운데").centered(true).element();
+        var legacyCen = topAppBar().variant(TopAppBarVariant.CenterAligned).headline("예전 가운데").element();
+        box.appendChild(div().style("width", "600px").add(mSub).add(lSub).add(cen).add(legacyCen).element());
+        boolean[] railChanged = {false};
+        var menuRail = navigationRail().menu(true).modal(true).onExpandedChanged(x -> railChanged[0] = true)
+                .item(railItem().icon("home").label("홈")).item(railItem().icon("inbox").label("받은편지함")).element();
+        var narrowRail = navigationRail().narrow(true).item(railItem().icon("home").label("홈")).element();
+        box.appendChild(div().style("display", "flex").style("gap", "24px").style("height", "300px").add(menuRail).add(narrowRail).element());
+        var probe = div().element(); box.appendChild(probe);
+        DomGlobal.setTimeout(t -> {
+            java.util.function.Function<String, String> color = v -> { probe.style.setProperty("color", v); return cs(probe).getPropertyValue("color"); };
+            String secondary = color.apply("var(--md-sys-color-secondary, #625b71)");
+            String onSecContainer = color.apply("var(--md-sys-color-on-secondary-container, #1d192b)");
+            String onSurfaceVariant = color.apply("var(--md-sys-color-on-surface-variant, #49454f)");
+            HTMLElement c0 = Js.uncheckedCast(cRail.querySelectorAll("md-navigation-rail-item").item(0));
+            HTMLElement c1 = Js.uncheckedCast(cRail.querySelectorAll("md-navigation-rail-item").item(1));
+            assertEquals("nav: 접힌 레일 너비 96px", 96, (int) Math.round(cRail.getBoundingClientRect().width));
+            assertEquals("nav: 레일 위쪽 여백 44px", "44px", cs(cRail).getPropertyValue("padding-top"));
+            assertEquals("nav: 접힌 레일 항목 높이 64px", 64, (int) Math.round(c0.getBoundingClientRect().height));
+            assertEquals("nav: 접힌 레일 항목 간격 4px", 4, (int) Math.round(c1.getBoundingClientRect().top - c0.getBoundingClientRect().bottom));
+            assertEquals("nav: 접힌 레일 활성 라벨 secondary", secondary, cs(inner(c0, ".label")).getPropertyValue("color"));
+            HTMLElement e0 = Js.uncheckedCast(eRail.querySelectorAll("md-navigation-rail-item").item(0));
+            HTMLElement e1 = Js.uncheckedCast(eRail.querySelectorAll("md-navigation-rail-item").item(1));
+            double ew = eRail.getBoundingClientRect().width;
+            assertTrue("nav: 펼친 레일 너비 220~360px", ew >= 220 && ew <= 360);
+            var ind = inner(e0, ".indicator");
+            assertEquals("nav: 펼친 레일 indicator 높이 56px", 56, (int) Math.round(ind.getBoundingClientRect().height));
+            assertEquals("nav: 펼친 레일 indicator 앞 여백 16px", "16px", cs(ind).getPropertyValue("padding-left"));
+            assertEquals("nav: 펼친 레일 아이콘-라벨 간격 8px", "8px", cs(ind).getPropertyValue("column-gap"));
+            assertTrue("nav: 펼친 레일 indicator 는 내용에 맞춤", ind.getBoundingClientRect().width < e0.getBoundingClientRect().width - 1);
+            assertEquals("nav: 펼친 레일 활성 라벨 on-secondary-container", onSecContainer, cs(inner(e0, ".label")).getPropertyValue("color"));
+            double gap = inner(e1, ".badge").getBoundingClientRect().left - inner(e1, ".label").getBoundingClientRect().right;
+            assertTrue("nav: 펼친 레일 배지는 라벨 바로 옆", gap >= 0 && gap <= 12);
+            assertEquals("nav: small 앱 바 높이 64px", 64, (int) Math.round(small.getBoundingClientRect().height));
+            assertEquals("nav: medium flexible 앱 바 높이 112px", 112, (int) Math.round(medium.getBoundingClientRect().height));
+            assertEquals("nav: large flexible 앱 바 높이 120px", 120, (int) Math.round(large.getBoundingClientRect().height));
+            assertEquals("nav: small 제목 title-large 22px", "22px", cs(inner(small, ".headline")).getPropertyValue("font-size"));
+            assertEquals("nav: medium flexible 제목 headline-medium 28px", "28px", cs(inner(medium, ".expanded")).getPropertyValue("font-size"));
+            assertEquals("nav: large flexible 제목 display-small 36px", "36px", cs(inner(large, ".expanded")).getPropertyValue("font-size"));
+            assertEquals("nav: 앱 바 trailing 아이콘 on-surface-variant", onSurfaceVariant, cs(small.querySelector("[slot='trailing']")).getPropertyValue("color"));
+            assertTrue("nav: 스크롤된 앱 바 elevation level2", !"none".equals(cs(scrolledBar).getPropertyValue("box-shadow")));
+            assertEquals("nav: 앱 바 좌우 여백 4px", "4px", cs(inner(small, ".row")).getPropertyValue("padding-left"));
+            assertEquals("nav: medium flexible 부제 있으면 136px", 136, (int) Math.round(mSub.getBoundingClientRect().height));
+            assertEquals("nav: large flexible 부제 있으면 152px", 152, (int) Math.round(lSub.getBoundingClientRect().height));
+            assertEquals("nav: medium flexible 부제 label-large 14px", "14px", cs(inner(mSub, ".xsub")).getPropertyValue("font-size"));
+            assertEquals("nav: 앱 바 제목 가운데 정렬", "center", cs(inner(cen, ".titles")).getPropertyValue("text-align"));
+            assertTrue("nav: center-aligned 는 small+centered", "small".equals(Js.asPropertyMap(legacyCen).get("variant")) && legacyCen.hasAttribute("centered") && Math.round(legacyCen.getBoundingClientRect().height) == 64);
+            assertEquals("nav: narrow 레일 너비 80px", 80, (int) Math.round(narrowRail.getBoundingClientRect().width));
+            var menuBtn = inner(menuRail, ".menu");
+            assertTrue("nav: 레일 메뉴 버튼은 위쪽 header", menuBtn != null && menuBtn.getBoundingClientRect().top < inner(menuRail, ".items").getBoundingClientRect().top);
+            assertEquals("nav: 레일 메뉴 아이콘(접힘) menu", "menu", menuBtn.textContent.trim());
+            if (!isAutomated()) return; // 사람이 볼 때는 modal 레일을 자동으로 열지 않는다
+            menuBtn.click();
+            DomGlobal.setTimeout(t2 -> {
+                var btn2 = inner(menuRail, ".menu");
+                assertTrue("nav: 메뉴 버튼으로 레일 펼침", Boolean.TRUE.equals(Js.asPropertyMap(menuRail).get("expanded")) && railChanged[0]);
+                assertEquals("nav: 레일 메뉴 아이콘(펼침) menu_open", "menu_open", btn2.textContent.trim());
+                assertEquals("nav: modal 펼친 레일은 화면 기준(fixed)", "fixed", cs(menuRail).getPropertyValue("position"));
+                assertEquals("nav: modal 펼친 레일 모서리 16px", "16px", cs(menuRail).getPropertyValue("border-top-right-radius"));
+                inner(menuRail, ".scrim").click();
+                DomGlobal.setTimeout(t3 -> assertTrue("nav: modal 레일 스크림 클릭으로 접힘", !Boolean.TRUE.equals(Js.asPropertyMap(menuRail).get("expanded"))), 200);
+            }, 300);
+        }, 1500);
+    }
     private static void check(HTMLElement el, String tag, boolean props) {
         assertEquals("nav: " + tag + " 태그명", tag.toUpperCase(), el.tagName);
         assertTrue("nav: " + tag + " 속성 설정", props);

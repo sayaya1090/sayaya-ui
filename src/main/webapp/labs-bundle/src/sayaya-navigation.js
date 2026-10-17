@@ -1,47 +1,75 @@
 // sayaya-ui 자체 구현 M3 컴포넌트 (Material Web 2.5.0 에 없음)
-// - md-top-app-bar         : M3 Top app bar (small / center-aligned / medium / large)
-// - md-navigation-rail     : M3 Navigation rail (80dp)
+// - md-top-app-bar         : M3 Expressive app bar (small / medium flexible / large flexible, centered, subtitle)
+// - md-navigation-rail     : M3 Expressive navigation rail (collapsed 96dp / expanded 220~360dp, standard·modal)
 // - md-navigation-rail-item: rail 목적지 항목
-// 색/타이포는 --md-sys-* 토큰을 사용하므로 Material 테마를 그대로 따른다.
-import {LitElement, html, css} from 'lit';
+// 출처: 토큰 _md-comp-app-bar*.scss, _md-comp-top-app-bar-*.scss, _md-comp-nav-rail*.scss (@material/web 2.5.0)
+//       Compose Material3 WideNavigationRail.kt, m3.material.io/components/{app-bars,navigation-rail} (specs/guidelines)
+// [파생] 표시 값은 공식 높이(112/136/120/152)를 맞추도록 줄높이에서 역산한 패딩이다(스펙 측정 이미지는 텍스트로 읽을 수 없음).
+import {LitElement, html, css, nothing} from 'lit';
 
+const ELEV1 = '0 1px 2px 0 rgba(0,0,0,.3), 0 1px 3px 1px rgba(0,0,0,.15)';
+const ELEV2 = '0 1px 2px 0 rgba(0,0,0,.3), 0 2px 6px 2px rgba(0,0,0,.15)';
+const type = (role, size, lh, weight) => `font-family: var(--md-sys-typescale-${role}-font, Roboto, sans-serif);
+  font-size: var(--md-sys-typescale-${role}-size, ${size}px); line-height: var(--md-sys-typescale-${role}-line-height, ${lh}px);
+  font-weight: var(--md-sys-typescale-${role}-weight, ${weight}); letter-spacing: var(--md-sys-typescale-${role}-tracking, normal);`;
+
+// ---------------------------------------------------------------- app bar
 export class MdTopAppBar extends LitElement {
   static properties = {
-    variant: {type: String, reflect: true},
+    variant: {type: String, reflect: true},          // small | medium | large  (medium/large = M3 Expressive flexible). center-aligned 는 small+centered 로 처리
+    centered: {type: Boolean, reflect: true},        // 제목·부제 가운데 정렬 (center-aligned 가 small 에 합쳐진 설정)
     scrolled: {type: Boolean, reflect: true},
     autoScroll: {type: Boolean, attribute: 'auto-scroll', reflect: true},
+    collapseOnScroll: {type: Boolean, attribute: 'collapse-on-scroll', reflect: true}, // flexible 앱 바가 스크롤 시 small 로 줄어듦(compress)
+    _sub: {state: true},
   };
-  static styles = css`
-    :host {
-      display: flex; flex-direction: column; box-sizing: border-box;
-      background: var(--md-sys-color-surface, #fef7ff);
-      color: var(--md-sys-color-on-surface, #1d1b20);
-      transition: background-color 200ms linear;
-    }
+  static styles = css([`
+    :host { display: block; box-sizing: border-box; width: 100%;
+      background: var(--md-sys-color-surface, #fef7ff); color: var(--md-sys-color-on-surface, #1d1b20);
+      transition: background-color 200ms linear, box-shadow 200ms linear; }
     :host([hidden]) { display: none; }
-    :host([scrolled]) { background: var(--md-sys-color-surface-container, #f3edf7); }
-    .row { display: flex; align-items: center; height: 64px; padding: 0 4px; gap: 4px; }
+    /* on-scroll: surface-container + elevation level2 (토큰 on-scroll-container-color/elevation) */
+    :host([scrolled]) { background: var(--md-sys-color-surface-container, #f3edf7); box-shadow: ${ELEV2}; }
+    :host([variant='medium']) { min-height: 112px; }   /* medium flexible container-height */
+    :host([variant='medium'][has-subtitle]) { min-height: 136px; }
+    :host([variant='large']) { min-height: 120px; }    /* large flexible container-height */
+    :host([variant='large'][has-subtitle]) { min-height: 152px; }
+    .row { display: flex; align-items: center; height: 64px; padding: 0 4px; box-sizing: border-box; } /* leading/trailing-space 4 */
     .leading, .trailing { display: flex; align-items: center; flex: none; }
-    .trailing { margin-inline-start: auto; }
-    .headline {
-      flex: 1; min-width: 0; padding-inline: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      font: var(--md-sys-typescale-title-large-weight, 400) var(--md-sys-typescale-title-large-size, 22px)/var(--md-sys-typescale-title-large-line-height, 28px) var(--md-sys-typescale-title-large-font, Roboto, sans-serif);
-    }
-    :host([variant='center-aligned']) .headline { text-align: center; }
-    .expanded { display: none; padding: 0 16px; overflow: hidden; }
-    :host([variant='medium']) .expanded, :host([variant='large']) .expanded { display: flex; align-items: flex-end; }
-    :host([variant='medium']) .row .headline, :host([variant='large']) .row .headline { visibility: hidden; }
-    :host([variant='medium']) .expanded { height: 48px; padding-bottom: 20px;
-      font: var(--md-sys-typescale-headline-small-weight, 400) var(--md-sys-typescale-headline-small-size, 24px)/var(--md-sys-typescale-headline-small-line-height, 32px) var(--md-sys-typescale-headline-small-font, Roboto, sans-serif); }
-    :host([variant='large']) .expanded { height: 88px; padding-bottom: 28px;
-      font: var(--md-sys-typescale-headline-medium-weight, 400) var(--md-sys-typescale-headline-medium-size, 28px)/var(--md-sys-typescale-headline-medium-line-height, 36px) var(--md-sys-typescale-headline-medium-font, Roboto, sans-serif); }
-  `;
+    .leading { color: var(--md-sys-color-on-surface, #1d1b20); --md-icon-button-icon-color: var(--md-sys-color-on-surface, #1d1b20); }
+    .trailing { margin-inline-start: auto; color: var(--md-sys-color-on-surface-variant, #49454f); --md-icon-button-icon-color: var(--md-sys-color-on-surface-variant, #49454f); }
+    ::slotted([slot='leading']) { color: var(--md-sys-color-on-surface, #1d1b20); }
+    ::slotted([slot='trailing']) { color: var(--md-sys-color-on-surface-variant, #49454f); }
+    .titles { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; padding-inline: 12px; }
+    .headline { ${type('title-large', 22, 28, 400)} color: var(--md-sys-color-on-surface, #1d1b20); white-space: nowrap; overflow: hidden; }
+    .subtitle { ${type('label-medium', 12, 16, 500)} color: var(--md-sys-color-on-surface-variant, #49454f); }
+    .subtitle:not(.has) { display: none; }
+    :host([centered]) .titles, :host([centered]) .expanded { text-align: center; }
+    .expanded { display: none; padding: 0 16px 12px; }
+    :host([variant='medium']) .expanded, :host([variant='large']) .expanded { display: block; }
+    :host([variant='medium']) .row .titles, :host([variant='large']) .row .titles { visibility: hidden; }
+    /* medium flexible: headline-medium, subtitle label-large. 64 + 36 + 12 = 112, 64 + 36 + 20 + 16 = 136 [파생] */
+    :host([variant='medium']) .expanded { ${type('headline-medium', 28, 36, 400)} }
+    :host([variant='medium']) .expanded .xsub { ${type('label-large', 14, 20, 500)} }
+    :host([variant='medium'][has-subtitle]) .expanded { padding-bottom: 16px; }
+    /* large flexible: display-small, subtitle title-medium. 64 + 44 + 12 = 120, 64 + 44 + 24 + 20 = 152 [파생] */
+    :host([variant='large']) .expanded { ${type('display-small', 36, 44, 400)} }
+    :host([variant='large']) .expanded .xsub { ${type('title-medium', 16, 24, 500)} }
+    :host([variant='large'][has-subtitle]) .expanded { padding-bottom: 20px; }
+    .xsub { display: block; color: var(--md-sys-color-on-surface-variant, #49454f); }
+    .xsub:not(.has) { display: none; }
+    /* compress: 스크롤되면 flexible 앱 바가 small 로 줄어든다 */
+    :host([collapse-on-scroll][scrolled]) { min-height: 0; }
+    :host([collapse-on-scroll][scrolled]) .expanded { display: none; }
+    :host([collapse-on-scroll][scrolled]) .row .titles { visibility: visible; }
+  `]);
   constructor() {
     super();
-    this.variant = 'small';
-    this.scrolled = false;
-    this.autoScroll = false;
+    this.variant = 'small'; this.centered = false; this.scrolled = false; this.autoScroll = false; this.collapseOnScroll = false; this._sub = false;
     this._onScroll = () => { this.scrolled = window.scrollY > 0; };
+  }
+  willUpdate(changed) {
+    if (changed.has('variant') && this.variant === 'center-aligned') { this.variant = 'small'; this.centered = true; } // M3 Expressive: center-aligned 는 small 의 설정
   }
   updated(changed) {
     if (changed.has('autoScroll')) {
@@ -49,57 +77,88 @@ export class MdTopAppBar extends LitElement {
       if (this.autoScroll) { window.addEventListener('scroll', this._onScroll, {passive: true}); this._onScroll(); }
     }
   }
+  connectedCallback() { super.connectedCallback(); this._checkSub(); }
   disconnectedCallback() { super.disconnectedCallback(); window.removeEventListener('scroll', this._onScroll); }
+  _checkSub() { const has = !!this.querySelector(':scope > [slot="subtitle"], :scope > [slot="expanded-subtitle"]'); this._sub = has; this.toggleAttribute('has-subtitle', has); }
   render() {
+    const sub = this._sub ? 'has' : '';
     return html`
       <div class="row" part="row">
         <div class="leading"><slot name="leading"></slot></div>
-        <div class="headline" part="headline"><slot name="headline"></slot></div>
+        <div class="titles">
+          <div class="headline" part="headline"><slot name="headline"></slot></div>
+          <div class="subtitle ${sub}" part="subtitle"><slot name="subtitle" @slotchange=${() => this._checkSub()}></slot></div>
+        </div>
         <div class="trailing"><slot name="trailing"></slot></div>
       </div>
-      <div class="expanded" part="expanded-headline"><slot name="expanded-headline"></slot></div>`;
+      <div class="expanded" part="expanded-headline"><slot name="expanded-headline"></slot>
+        <span class="xsub ${sub}"><slot name="expanded-subtitle" @slotchange=${() => this._checkSub()}></slot></span></div>`;
   }
 }
 customElements.define('md-top-app-bar', MdTopAppBar);
 
+// ---------------------------------------------------------------- navigation rail
 export class MdNavigationRail extends LitElement {
   static properties = {
     activeIndex: {type: Number, attribute: 'active-index', reflect: true},
-    alignment: {type: String, reflect: true},
+    alignment: {type: String, reflect: true},      // top(기본) | center. 메뉴·FAB(header)는 항상 위
     expanded: {type: Boolean, reflect: true},
+    narrow: {type: Boolean, reflect: true},        // 접힌 너비 80dp (narrow-container-width)
+    modal: {type: Boolean, reflect: true},         // 펼쳤을 때 본문 위에 뜨는 modal expanded rail
+    menu: {type: Boolean, reflect: true},          // 내장 메뉴 버튼: 펼침/접힘 전환, 펼치면 아이콘이 바뀐다
+    hideWhenCollapsed: {type: Boolean, attribute: 'hide-when-collapsed', reflect: true}, // Expanded behavior: hide when collapsed
+    _header: {state: true},
   };
-  static styles = css`
-    :host {
-      display: flex; flex-direction: column; align-items: center; box-sizing: border-box;
-      width: 80px; height: 100%; padding: 44px 0 56px; gap: 12px;
-      background: var(--md-sys-color-surface, #fef7ff);
-    }
-    .header { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-    .items { display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; }
+  static styles = css([`
+    :host { display: flex; flex-direction: column; box-sizing: border-box; flex: none;
+      width: 96px; height: 100%; padding: 44px 0 20px;               /* collapsed container-width 96, top-space 44 */
+      background: var(--md-sys-color-surface, #fef7ff); }
+    :host([narrow]) { width: 80px; }
+    :host([hidden]), :host([hide-when-collapsed]:not([expanded])) { display: none; }
+    .header { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .header.has { margin-bottom: 40px; }                             /* header-space-minimum 40 */
+    .items { display: flex; flex-direction: column; align-items: stretch; gap: 4px; flex: 1; } /* item-vertical-space 4 */
     :host([alignment='center']) .items { justify-content: center; }
     :host([alignment='bottom']) .items { justify-content: flex-end; }
-    :host([hidden]) { display: none; }
-    :host([expanded]) { width: 220px; align-items: stretch; padding-inline: 12px; }
-    :host([expanded]) .header, :host([expanded]) .items { align-items: stretch; }
-  `;
+    :host([expanded]) { width: auto; min-width: 220px; max-width: 360px; padding-inline: 20px; } /* expanded 220~360, Compose WNRItemHorizontalPadding 20 */
+    :host([expanded]) .header { align-items: flex-start; }
+    :host([expanded]) .items { gap: 0; }                             /* expanded between-item-space 0 */
+    :host([expanded][modal]) { position: fixed; inset-block: 0; inset-inline-start: 0; z-index: 1001; height: auto;
+      background: var(--md-sys-color-surface-container, #f3edf7); box-shadow: ${ELEV2};
+      border-start-end-radius: 16px; border-end-end-radius: 16px; }  /* modal-container-color/elevation/shape(corner-large) */
+    .scrim { position: fixed; inset: 0; z-index: -1; background: var(--md-sys-color-scrim, #000); opacity: .32; }
+  `]);
   constructor() {
     super();
-    this.activeIndex = 0;
-    this.alignment = 'top';
-    this.expanded = false;
+    this.activeIndex = 0; this.alignment = 'top'; this.expanded = false; this.narrow = false; this.modal = false; this.menu = false; this.hideWhenCollapsed = false; this._header = false;
     this.addEventListener('navigation-rail-item-interaction', (e) => {
       const index = this.items.indexOf(e.target);
       if (index < 0 || e.target.disabled) return;
       this.activeIndex = index;
       this.dispatchEvent(new CustomEvent('navigation-rail-activated', {detail: {activeIndex: index, item: e.target}, bubbles: true, composed: true}));
+      if (this.modal && this.expanded) this.toggle(false);
     });
+    this.addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.modal && this.expanded) this.toggle(false); });
   }
   get items() { return Array.from(this.querySelectorAll(':scope > md-navigation-rail-item')); }
+  /** 펼침/접힘 전환. expanded-changed 이벤트를 보낸다. */
+  toggle(force) {
+    const next = force === undefined ? !this.expanded : !!force;
+    if (next === this.expanded) return;
+    this.expanded = next;
+    this.dispatchEvent(new CustomEvent('expanded-changed', {detail: {expanded: next}, bubbles: true, composed: true}));
+  }
   updated() { this._sync(); }
-  _sync() { this.items.forEach((item, i) => { item.active = i === this.activeIndex; item.expanded = this.expanded; }); }
+  _sync() {
+    this.items.forEach((item, i) => { item.active = i === this.activeIndex; item.expanded = this.expanded; });
+    this._header = this.menu || !!this.querySelector(':scope > [slot="header"]');
+  }
   render() {
+    const menuBtn = this.menu ? html`<md-icon-button class="menu" part="menu" aria-label=${this.expanded ? '메뉴 닫기' : '메뉴 열기'}
+        aria-expanded=${this.expanded ? 'true' : 'false'} @click=${() => this.toggle()}><md-icon>${this.expanded ? 'menu_open' : 'menu'}</md-icon></md-icon-button>` : nothing;
     return html`
-      <div class="header"><slot name="header"></slot></div>
+      ${this.modal && this.expanded ? html`<div class="scrim" part="scrim" @click=${() => this.toggle(false)}></div>` : nothing}
+      <div class="header ${this._header ? 'has' : ''}">${menuBtn}<slot name="header" @slotchange=${() => this._sync()}></slot></div>
       <div class="items" role="tablist" aria-orientation="vertical"><slot @slotchange=${() => this._sync()}></slot></div>`;
   }
 }
@@ -114,54 +173,53 @@ export class MdNavigationRailItem extends LitElement {
     showBadge: {type: Boolean, attribute: 'show-badge'},
     expanded: {type: Boolean, reflect: true},
   };
-  static styles = css`
-    :host { display: block; width: 80px; }
-    button {
-      all: unset; box-sizing: border-box; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 4px;
-      cursor: pointer; color: var(--md-sys-color-on-surface-variant, #49454f);
-      font: var(--md-sys-typescale-label-medium-weight, 500) var(--md-sys-typescale-label-medium-size, 12px)/var(--md-sys-typescale-label-medium-line-height, 16px) var(--md-sys-typescale-label-medium-font, Roboto, sans-serif);
-    }
-    button:focus-visible .indicator { outline: 3px solid var(--md-sys-color-secondary, #625b71); outline-offset: 2px; }
+  static styles = css([`
+    :host { display: block; }
+    button { all: unset; box-sizing: border-box; width: 100%; display: flex; cursor: pointer; position: relative;  /* target 은 레일 전체 너비 */
+      color: var(--md-sys-color-on-surface-variant, #49454f); }
     :host([disabled]) button { cursor: default; opacity: 0.38; }
-    .indicator {
-      position: relative; display: flex; align-items: center; justify-content: center;
-      width: 56px; height: 32px; border-radius: 16px;
-    }
-    :host([active]) .indicator { background: var(--md-sys-color-secondary-container, #e8def8); color: var(--md-sys-color-on-secondary-container, #1d192b); }
-    :host([active]) button { color: var(--md-sys-color-on-surface, #1d1b20); }
+    .indicator { position: relative; display: flex; align-items: center; justify-content: center; box-sizing: border-box; flex: none;
+      border-radius: var(--md-sys-shape-corner-full, 9999px); }
+    .indicator::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: currentColor; opacity: 0; pointer-events: none; }
+    button:hover .indicator::before { opacity: var(--md-sys-state-hover-state-layer-opacity, .08); }
+    button:active .indicator::before { opacity: var(--md-sys-state-pressed-state-layer-opacity, .1); }
+    button:focus-visible .indicator { outline: 3px solid var(--md-sys-color-secondary, #625b71); outline-offset: 2px; }
+    :host([active]) .indicator { background: var(--md-sys-color-secondary-container, #e8def8); }
+    .icon { position: relative; display: flex; width: 24px; height: 24px; --md-icon-size: 24px; color: var(--md-sys-color-on-surface-variant, #49454f); }
+    :host([active]) .icon { color: var(--md-sys-color-on-secondary-container, #1d192b); }
     :host(:not([active])) slot[name='active-icon'], :host([active]) slot[name='inactive-icon'].has-active { display: none; }
-    .badge {
-      position: absolute; top: 2px; left: 32px; min-width: 16px; height: 16px; padding: 0 4px; box-sizing: border-box;
-      border-radius: 8px; background: var(--md-sys-color-error, #b3261e); color: var(--md-sys-color-on-error, #fff);
-      font-size: 11px; line-height: 16px; text-align: center;
-    }
-    :host([expanded]) { width: auto; }
-    :host([expanded]) button { flex-direction: row; height: 56px; padding-inline: 16px; gap: 12px; border-radius: 28px; }
-    :host([expanded][active]) button { background: var(--md-sys-color-secondary-container, #e8def8); color: var(--md-sys-color-on-secondary-container, #1d192b); }
-    :host([expanded]) .indicator { width: 24px; height: 24px; background: none !important; }
-    .badge.dot { min-width: 6px; width: 6px; height: 6px; padding: 0; top: 4px; left: 36px; }
-    /* 펼친 행: 점 배지는 24px 아이콘의 오른쪽 위, 숫자 배지는 라벨 뒤 행 끝(라벨과 겹치지 않게) */
-    :host([expanded]) .badge.dot { top: 0; left: 18px; }
-    .badge.trailing { position: static; flex: none; margin-inline-start: auto; }
-    :host([expanded]) .label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  `;
-  constructor() {
-    super();
-    this.active = false; this.disabled = false; this.label = ''; this.badgeValue = ''; this.showBadge = false; this.expanded = false;
-  }
+    .label { ${type('label-medium', 12, 16, 500)} text-align: center; overflow-wrap: anywhere; }  /* 라벨은 줄이지 않는다(필요하면 줄바꿈) */
+    /* 세로형(접힌 레일): 높이 64, 위아래 6, indicator 56x32, indicator-라벨 4. 활성 라벨 secondary */
+    :host(:not([expanded])) button { flex-direction: column; align-items: center; min-height: 64px; padding: 6px 0; gap: 4px; }
+    :host(:not([expanded])) .indicator { width: 56px; height: 32px; }
+    :host(:not([expanded])[active]) .label { color: var(--md-sys-color-secondary, #625b71); }
+    /* 가로형(펼친 레일): indicator 높이 56, 앞뒤 16, 아이콘-라벨 8, indicator 는 내용에 맞춤. 활성 라벨 on-secondary-container */
+    :host([expanded]) button { align-items: center; }
+    :host([expanded]) .indicator { height: 56px; padding: 0 16px; gap: 8px; justify-content: flex-start; }
+    :host([expanded]) .label { text-align: start; }
+    :host([expanded][active]) .label { color: var(--md-sys-color-on-secondary-container, #1d192b); }
+    /* 배지: 접힌 레일은 아이콘 오른쪽 위, 펼친 레일은 라벨 옆 */
+    .badge { box-sizing: border-box; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px;
+      background: var(--md-sys-color-error, #b3261e); color: var(--md-sys-color-on-error, #fff);
+      ${type('label-small', 11, 16, 500)} text-align: center; }
+    .badge.dot { min-width: 6px; width: 6px; height: 6px; padding: 0; border-radius: 3px; }
+    .icon .badge { position: absolute; top: -4px; left: 14px; }
+    .icon .badge.dot { top: 0; left: 18px; }
+    .badge.after { flex: none; }
+  `]);
+  constructor() { super(); this.active = false; this.disabled = false; this.label = ''; this.badgeValue = ''; this.showBadge = false; this.expanded = false; }
   render() {
     const hasActive = !!this.querySelector(':scope > [slot="active-icon"]');
-    const trailing = this.expanded && this.showBadge && !!this.badgeValue;
+    const badge = (cls) => html`<span class="badge ${this.badgeValue ? '' : 'dot'} ${cls}" part="badge">${this.badgeValue}</span>`;
+    const icon = html`<span class="icon"><slot name="active-icon"></slot><slot name="inactive-icon" class=${hasActive ? 'has-active' : ''}></slot>
+      ${this.showBadge && !this.expanded ? badge('') : nothing}</span>`;
+    const label = html`<span class="label">${this.label}</span>`;
     return html`
       <button role="tab" aria-selected=${this.active ? 'true' : 'false'} aria-disabled=${this.disabled ? 'true' : 'false'}
-              aria-label=${this.label || ''} @click=${this._click}>
-        <span class="indicator">
-          <slot name="active-icon"></slot>
-          <slot name="inactive-icon" class=${hasActive ? 'has-active' : ''}></slot>
-          ${this.showBadge && !trailing ? html`<span class="badge ${this.badgeValue ? '' : 'dot'}" part="badge">${this.badgeValue}</span>` : ''}
-        </span>
-        <span class="label">${this.label}</span>
-        ${trailing ? html`<span class="badge trailing" part="badge">${this.badgeValue}</span>` : ''}
+              aria-label=${this.label || nothing} @click=${this._click}>
+        ${this.expanded
+          ? html`<span class="indicator" part="indicator">${icon}${label}${this.showBadge ? badge('after') : nothing}</span>`
+          : html`<span class="indicator" part="indicator">${icon}</span>${label}`}
       </button>`;
   }
   focus() { this.shadowRoot?.querySelector('button')?.focus(); }

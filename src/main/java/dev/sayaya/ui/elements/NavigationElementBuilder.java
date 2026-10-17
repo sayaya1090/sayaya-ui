@@ -41,6 +41,7 @@ public final class NavigationElementBuilder {
     public static NavigationDrawerBuilder navigationDrawer() { return new NavigationDrawerBuilder(); }
     public static NavigationDrawerModalBuilder navigationDrawerModal() { return new NavigationDrawerModalBuilder(); }
 
+    /** M3 Expressive: Medium/Large 는 medium flexible(112dp)/large flexible(120dp). CenterAligned 는 Small + centered(true) 와 같다. */
     public enum TopAppBarVariant { Small("small"), CenterAligned("center-aligned"), Medium("medium"), Large("large");
         public final String value; TopAppBarVariant(String v) { value = v; } }
     /** flexible navigation bar 항목 배치. Auto: 바 너비 600dp 미만 세로형, 이상 가로형(M3 가이드) */
@@ -79,6 +80,7 @@ public final class NavigationElementBuilder {
     // ---------------- Top app bar (md-top-app-bar) ----------------
     public static final class TopAppBarBuilder extends NavBuilder<MdTopAppBarElement, TopAppBarBuilder> {
         private HTMLElement expanded;
+        private HTMLElement subtitle, expandedSubtitle;
         TopAppBarBuilder() { super("md-top-app-bar", MdTopAppBarElement.class); }
         @Override public TopAppBarBuilder that() { return this; }
         public TopAppBarBuilder variant(TopAppBarVariant variant) { element().variant = variant.value; return this; }
@@ -89,6 +91,16 @@ public final class NavigationElementBuilder {
             expanded.textContent = text;
             return this;
         }
+        /** 부제. flexible(medium/large) 앱 바는 부제가 있으면 높이가 136/152dp 로 커진다. */
+        public TopAppBarBuilder subtitle(String text) {
+            if (subtitle == null) { subtitle = Elements.span().element(); slot("subtitle", subtitle); expandedSubtitle = Elements.span().element(); slot("expanded-subtitle", expandedSubtitle); }
+            subtitle.textContent = text; expandedSubtitle.textContent = text;
+            return this;
+        }
+        /** 제목·부제 가운데 정렬 */
+        public TopAppBarBuilder centered(boolean centered) { element().centered = centered; return this; }
+        /** flexible 앱 바가 스크롤되면 small 로 줄어든다(autoScroll/scrolled 와 함께 사용) */
+        public TopAppBarBuilder collapseOnScroll(boolean collapse) { element().collapseOnScroll = collapse; return this; }
         public TopAppBarBuilder leading(Element e) { return slot("leading", e); }
         public TopAppBarBuilder leading(IsElement<? extends Element> e) { return slot("leading", e); }
         public TopAppBarBuilder trailing(Element e) { return slot("trailing", e); }
@@ -134,6 +146,19 @@ public final class NavigationElementBuilder {
         public NavigationRailBuilder alignment(RailAlignment alignment) { element().alignment = alignment.value; return this; }
         /** 펼침(라벨이 아이콘 옆, 220dp) / 접힘(80dp) */
         public NavigationRailBuilder expanded(boolean expanded) { element().expanded = expanded; return this; }
+        /** 접힌 너비 80dp(기본 96dp) */
+        public NavigationRailBuilder narrow(boolean narrow) { element().narrow = narrow; return this; }
+        /** 펼쳤을 때 본문 위에 뜨는 modal 레일(스크림·Esc·목적지 선택 시 접힘) */
+        public NavigationRailBuilder modal(boolean modal) { element().modal = modal; return this; }
+        /** 내장 메뉴 버튼: 펼침/접힘 전환, 펼치면 아이콘이 menu_open 으로 바뀐다 */
+        public NavigationRailBuilder menu(boolean menu) { element().menu = menu; return this; }
+        /** 접혀 있을 때 레일을 숨긴다(펼칠 때만 보임) */
+        public NavigationRailBuilder hideWhenCollapsed(boolean hide) { element().hideWhenCollapsed = hide; return this; }
+        /** 펼침/접힘이 바뀔 때 호출(expanded-changed) */
+        public NavigationRailBuilder onExpandedChanged(java.util.function.Consumer<Boolean> callback) {
+            element().addEventListener("expanded-changed", evt -> callback.accept(element().expanded));
+            return this;
+        }
         /** 상단 헤더: 메뉴 버튼, FAB 등 */
         public NavigationRailBuilder header(Element e) { return slot("header", e); }
         public NavigationRailBuilder header(IsElement<? extends Element> e) { return slot("header", e); }

@@ -21,6 +21,8 @@ public final class MdNavigationElement {
         public String variant;
         public boolean scrolled;
         public boolean autoScroll;
+        public boolean centered;
+        public boolean collapseOnScroll;
     }
 
     @JsType(isNative = true, namespace = GLOBAL, name = "HTMLElement")
@@ -59,6 +61,12 @@ public final class MdNavigationElement {
         public double activeIndex;
         public String alignment;
         public boolean expanded;
+        public boolean narrow;
+        public boolean modal;
+        public boolean menu;
+        public boolean hideWhenCollapsed;
+        public native void toggle();
+        public native void toggle(boolean expanded);
     }
 
     @JsType(isNative = true, namespace = GLOBAL, name = "HTMLElement")
