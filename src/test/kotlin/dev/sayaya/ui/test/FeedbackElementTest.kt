@@ -8,6 +8,17 @@ import io.kotest.matchers.string.shouldNotContain
 @GwtHtml("feedback.html") // 테스트 서버 루트는 war(src/test/webapp)
 internal class FeedbackElementTest: GwtTestSpec({
     val checks = listOf(
+        "connected XS 안쪽 모서리 4px",
+        "connected XS 최소 너비 48px",
+        "connected 기본으로 단일 선택",
+        "선택된 outlined 버튼 배경 변화",
+        "선택된 outlined 버튼 글자색 변화",
+        "standard 누름 시 그룹 너비 유지",
+        "standard 누름 시 이웃 버튼이 좁아짐",
+        "standard 누름 시 모서리 8px",
+        "standard 선택 시 모서리 12px",
+        "선택된 filled 버튼 primary 색",
+        "standard 뗀 뒤 너비 복원",
         "snackbar 하단 여백 8px",
         "rich tooltip 최대 너비 320px",
         "tooltip 최소 너비 40px",
@@ -66,7 +77,7 @@ internal class FeedbackElementTest: GwtTestSpec({
         println(logs)
         for (c in checks) {
             Then(c) {
-                val log = logs.find { it.startsWith("fb: $c -") }
+                val log = logs.find { it.startsWith("fb: $c -") || it.startsWith("fb: $c [") }
                 log.shouldNotBeNull()
                 log shouldNotContain "Assertion failed!"
             }

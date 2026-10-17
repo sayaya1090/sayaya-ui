@@ -216,5 +216,56 @@ public class FeedbackComponentsTest {
                 later(300, () -> assertTrue("fb: standard 뗌 시 원래 너비", Math.abs(s0.getBoundingClientRect().width - w) < 1));
             });
         });
+
+        // ---------- button group: M3 가이드 동작 (선택 색·모양, 누름 시 이웃 반응, connected 기본 선택, XS 모서리, 최소 너비) ----------
+        var bgSel = buttonGroup().connected().size(ButtonGroupSize.Small)
+                .add(button().outlined().text("목록")).add(button().outlined().text("격자")).element();
+        var bgXs = buttonGroup().connected().size(ButtonGroupSize.XSmall)
+                .add(button().outlined().text("가")).add(button().outlined().text("나")).add(button().outlined().text("다")).element();
+        var bgStd = buttonGroup().standard().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
+                .add(button().filled().text("하나")).add(button().filled().text("둘둘")).add(button().filled().text("셋")).element();
+        demo(section, "📘 Button group - 선택과 누름", "connected 그룹은 기본으로 하나를 선택하는 토글입니다. 선택된 버튼은 색과 모양이 함께 바뀝니다. standard 그룹에서 버튼을 누르면 그 버튼이 넓어지고 양옆 버튼이 좁아져, 그룹 전체 너비는 그대로입니다.",
+            """
+            buttonGroup().connected().size(ButtonGroupSize.Small)   // selection 기본값: Single
+                .add(button().outlined().text("목록")).add(button().outlined().text("격자"))
+                .element();
+            buttonGroup().standard().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
+                .add(button().filled().text("하나")).add(button().filled().text("둘둘")).add(button().filled().text("셋"))
+                .element();
+            """, div().style("display", "flex").style("flex-direction", "column").style("gap", "16px").style("width", "360px")
+                .add(bgSel).add(bgXs).add(div().add(bgStd)).element());
+        later(1800, () -> {
+            assertEquals("fb: connected XS 안쪽 모서리 4px", "4px", prop(child(bgXs, 1), "--md-outlined-button-container-shape-start-start"));
+            assertEquals("fb: connected XS 최소 너비 48px", "48px", cs(child(bgXs, 0)).getPropertyValue("min-width"));
+            if (!isAutomated()) return; // 사람이 볼 때는 자동 클릭하지 않는다
+        });
+        later(3500, () -> { // 툴팁 포커스 검사(≈2.4초까지)가 끝난 뒤 클릭해 포커스를 빼앗지 않는다
+            if (!isAutomated()) return;
+            var sel1 = child(bgSel, 1);
+            String bgBefore = cs(sel1).getPropertyValue("background-color"), fgBefore = cs(sel1).getPropertyValue("color");
+            sel1.click();
+            later(100, () -> {
+                assertTrue("fb: connected 기본으로 단일 선택", sel1.hasAttribute("selected"));
+                String bgAfter = cs(sel1).getPropertyValue("background-color");
+                assertTrue("fb: 선택된 outlined 버튼 배경 변화 [" + bgBefore + " -> " + bgAfter + "]", !"rgba(0, 0, 0, 0)".equals(bgAfter) && !bgAfter.equals(bgBefore));
+                assertTrue("fb: 선택된 outlined 버튼 글자색 변화", !fgBefore.equals(prop(sel1, "--md-outlined-button-label-text-color")) && !prop(sel1, "--md-outlined-button-label-text-color").isEmpty());
+                // standard 누름
+                var s0 = child(bgStd, 0); var s1 = child(bgStd, 1); var s2 = child(bgStd, 2);
+                double gw = bgStd.getBoundingClientRect().width, w0 = s0.getBoundingClientRect().width, w2 = s2.getBoundingClientRect().width;
+                s1.dispatchEvent(new elemental2.dom.Event("pointerdown", Js.uncheckedCast(jsinterop.base.JsPropertyMap.of("bubbles", true))));
+                later(300, () -> {
+                    assertTrue("fb: standard 누름 시 그룹 너비 유지", Math.abs(bgStd.getBoundingClientRect().width - gw) < 1.5);
+                    assertTrue("fb: standard 누름 시 이웃 버튼이 좁아짐", s0.getBoundingClientRect().width < w0 - 0.5 && s2.getBoundingClientRect().width < w2 - 0.5);
+                    assertEquals("fb: standard 누름 시 모서리 8px", "8px", prop(s1, "--md-filled-button-container-shape-start-start"));
+                    s1.dispatchEvent(new elemental2.dom.Event("pointerup", Js.uncheckedCast(jsinterop.base.JsPropertyMap.of("bubbles", true))));
+                    s0.click();
+                    later(300, () -> {
+                        assertEquals("fb: standard 선택 시 모서리 12px", "12px", prop(s0, "--md-filled-button-container-shape-start-start"));
+                        assertTrue("fb: 선택된 filled 버튼 primary 색", prop(s0, "--md-filled-button-container-color").contains("primary"));
+                        assertTrue("fb: standard 뗀 뒤 너비 복원", Math.abs(s0.getBoundingClientRect().width - w0) < 1.5);
+                    });
+                });
+            });
+        });
     }
 }
