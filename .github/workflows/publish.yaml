@@ -51,11 +51,21 @@ jobs:
         run: gradle build
       - name: Publish to GitHub Packages
         run: gradle publish --no-daemon
+      - name: Build standalone JS bundle
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }}
+          gradle buildStandaloneBundle --no-daemon
+          mkdir -p build/dist
+          cp src/main/webapp/labs-bundle/dist/sayaya-ui.js build/dist/sayaya-ui-$VERSION.js
+          (cd build/dist && sha256sum sayaya-ui-$VERSION.js > sayaya-ui-$VERSION.js.sha256)
+          head -c 300 build/dist/sayaya-ui-$VERSION.js; echo
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
             build/libs/*.jar
+            build/dist/sayaya-ui-*.js
+            build/dist/sayaya-ui-*.js.sha256
           body: |
             ## Material Design 3 UI Components for GWT ${{ steps.version.outputs.VERSION }}
 
@@ -90,6 +100,10 @@ jobs:
                 implementation("dev.sayaya:ui:${{ steps.version.outputs.VERSION }}")
             }
             ```
+
+            ### 단일 JS 번들 (CDN 불필요)
+            `sayaya-ui-${{ steps.version.outputs.VERSION }}.js` 는 `@material/web/all.js` 와 sayaya-ui labs 번들(IIFE)을 이 순서로 이어 붙인 classic script 입니다.
+            GWT 앱보다 먼저 `<script src="sayaya-ui-${{ steps.version.outputs.VERSION }}.js"></script>` 로 한 번 로드하세요. 체크섬은 `.sha256` 첨부물을 확인하세요.
 
             ### 변경사항
             자세한 변경사항은 커밋 히스토리를 확인해주세요.

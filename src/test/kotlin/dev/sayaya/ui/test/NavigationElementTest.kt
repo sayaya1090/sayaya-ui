@@ -73,6 +73,12 @@ internal class NavigationElementTest: GwtTestSpec({
         "가로형 3개 가운데 정렬 양옆 20%",
         "auto 600 미만 세로형",
         "auto 600 이상 가로형", "md-navigation-bar onActivated 이벤트", "md-navigation-tab 클릭 후 active",
+        // 2.5.0.3 확장
+        "앱 바 높이 변수 56px", "medium 앱 바는 높이 변수 + 48px", "앱 바 제목 요소 슬롯", "앱 바 제목 요소는 잘리지 않음",
+        "앱 바 제목 재지정은 교체", "앱 바 텍스트 제목 한 줄 말줄임",
+        "레일 접힘 너비 변수 56px", "레일 항목 높이 변수 48px", "레일 indicator 너비 변수 40px", "레일 항목 part button/label",
+        "접힌 레일 라벨 숨김", "펼친 레일은 라벨 숨김 무시", "펼친 레일 최소 너비 변수 256px",
+        "레일 항목 supporting-text 슬롯", "레일 항목 trailing 슬롯은 끝에", "레일 footer 는 항목 아래·목적지 아님",
     )
     Given("M3 네비게이션 컴포넌트") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용

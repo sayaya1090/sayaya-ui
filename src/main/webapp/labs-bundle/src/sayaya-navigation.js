@@ -30,18 +30,21 @@ export class MdTopAppBar extends LitElement {
     :host([hidden]) { display: none; }
     /* on-scroll: surface-container + elevation level2 (토큰 on-scroll-container-color/elevation) */
     :host([scrolled]) { background: var(--md-sys-color-surface-container, #f3edf7); box-shadow: ${ELEV2}; }
-    :host([variant='medium']) { min-height: 112px; }   /* medium flexible container-height */
-    :host([variant='medium'][has-subtitle]) { min-height: 136px; }
-    :host([variant='large']) { min-height: 120px; }    /* large flexible container-height */
-    :host([variant='large'][has-subtitle]) { min-height: 152px; }
-    .row { display: flex; align-items: center; height: 64px; padding: 0 4px; box-sizing: border-box; } /* leading/trailing-space 4 */
+    /* --md-top-app-bar-container-height: 행(small) 높이, 기본 64px(M3). medium/large 는 '행 높이 + 확장 영역'이라 함께 따라간다 */
+    :host([variant='medium']) { min-height: calc(var(--md-top-app-bar-container-height, 64px) + 48px); }   /* medium flexible 112 */
+    :host([variant='medium'][has-subtitle]) { min-height: calc(var(--md-top-app-bar-container-height, 64px) + 72px); } /* 136 */
+    :host([variant='large']) { min-height: calc(var(--md-top-app-bar-container-height, 64px) + 56px); }    /* large flexible 120 */
+    :host([variant='large'][has-subtitle]) { min-height: calc(var(--md-top-app-bar-container-height, 64px) + 88px); } /* 152 */
+    .row { display: flex; align-items: center; height: var(--md-top-app-bar-container-height, 64px); padding: 0 4px; box-sizing: border-box; } /* leading/trailing-space 4 */
     .leading, .trailing { display: flex; align-items: center; flex: none; }
     .leading { color: var(--md-sys-color-on-surface, #1d1b20); --md-icon-button-icon-color: var(--md-sys-color-on-surface, #1d1b20); }
     .trailing { margin-inline-start: auto; color: var(--md-sys-color-on-surface-variant, #49454f); --md-icon-button-icon-color: var(--md-sys-color-on-surface-variant, #49454f); }
     ::slotted([slot='leading']) { color: var(--md-sys-color-on-surface, #1d1b20); }
     ::slotted([slot='trailing']) { color: var(--md-sys-color-on-surface-variant, #49454f); }
     .titles { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; padding-inline: 12px; }
-    .headline { ${type('title-large', 22, 28, 400)} color: var(--md-sys-color-on-surface, #1d1b20); white-space: nowrap; overflow: hidden; }
+    .headline { ${type('title-large', 22, 28, 400)} color: var(--md-sys-color-on-surface, #1d1b20); min-width: 0; }
+    /* 한 줄 말줄임은 텍스트(span)에만 적용한다. 요소(셀렉터·버튼 등)를 넣으면 잘리거나 포커스 링이 가려지지 않는다 */
+    ::slotted(span[slot='headline']) { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .subtitle { ${type('label-medium', 12, 16, 500)} color: var(--md-sys-color-on-surface-variant, #49454f); }
     .subtitle:not(.has) { display: none; }
     :host([centered]) .titles, :host([centered]) .expanded { text-align: center; }
@@ -107,22 +110,28 @@ export class MdNavigationRail extends LitElement {
     modal: {type: Boolean, reflect: true},         // 펼쳤을 때 본문 위에 뜨는 modal expanded rail
     menu: {type: Boolean, reflect: true},          // 내장 메뉴 버튼: 펼침/접힘 전환, 펼치면 아이콘이 바뀐다
     hideWhenCollapsed: {type: Boolean, attribute: 'hide-when-collapsed', reflect: true}, // Expanded behavior: hide when collapsed
+    hideCollapsedLabels: {type: Boolean, attribute: 'hide-collapsed-labels', reflect: true}, // [M3 외] 접힌 레일에서 라벨을 숨김(아이콘만, 라벨은 툴팁·aria-label)
     _header: {state: true},
+    _footer: {state: true},
   };
   static styles = css([`
     :host { display: flex; flex-direction: column; box-sizing: border-box; flex: none;
-      width: 96px; height: 100%; padding: 44px 0 20px;               /* collapsed container-width 96, top-space 44 */
+      width: var(--md-navigation-rail-collapsed-width, 96px); height: 100%;                     /* collapsed container-width 96 */
+      padding: var(--md-navigation-rail-top-space, 44px) 0 var(--md-navigation-rail-bottom-space, 20px); /* top-space 44 */
       background: var(--md-sys-color-surface, #fef7ff); }
-    :host([narrow]) { width: 80px; }
+    :host([narrow]) { width: var(--md-navigation-rail-narrow-width, 80px); }
     :host([hidden]), :host([hide-when-collapsed]:not([expanded])) { display: none; }
     .header { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .header.has { margin-bottom: 40px; }                             /* header-space-minimum 40 */
-    .items { display: flex; flex-direction: column; align-items: stretch; gap: 4px; flex: 1; } /* item-vertical-space 4 */
+    .items { display: flex; flex-direction: column; align-items: stretch; gap: var(--md-navigation-rail-item-space, 4px); flex: 1; } /* item-vertical-space 4 */
+    .footer { display: flex; flex-direction: column; align-items: stretch; gap: var(--md-navigation-rail-item-space, 4px); flex: none; }
+    .footer:not(.has) { display: none; }
     :host([alignment='center']) .items { justify-content: center; }
     :host([alignment='bottom']) .items { justify-content: flex-end; }
-    :host([expanded]) { width: auto; min-width: 220px; max-width: 360px; padding-inline: 20px; } /* expanded 220~360, Compose WNRItemHorizontalPadding 20 */
+    :host([expanded]) { width: auto; min-width: var(--md-navigation-rail-expanded-min-width, 220px); max-width: var(--md-navigation-rail-expanded-max-width, 360px);
+      padding-inline: var(--md-navigation-rail-expanded-padding-inline, 20px); } /* expanded 220~360, Compose WNRItemHorizontalPadding 20 */
     :host([expanded]) .header { align-items: flex-start; }
-    :host([expanded]) .items { gap: 0; }                             /* expanded between-item-space 0 */
+    :host([expanded]) .items, :host([expanded]) .footer { gap: var(--md-navigation-rail-expanded-item-space, 0px); } /* expanded between-item-space 0 */
     :host([expanded][modal]) { position: fixed; inset-block: 0; inset-inline-start: 0; z-index: 1001; height: auto;
       background: var(--md-sys-color-surface-container, #f3edf7); box-shadow: ${ELEV2};
       border-start-end-radius: 16px; border-end-end-radius: 16px; }  /* modal-container-color/elevation/shape(corner-large) */
@@ -130,17 +139,18 @@ export class MdNavigationRail extends LitElement {
   `]);
   constructor() {
     super();
-    this.activeIndex = 0; this.alignment = 'top'; this.expanded = false; this.narrow = false; this.modal = false; this.menu = false; this.hideWhenCollapsed = false; this._header = false;
+    this.activeIndex = 0; this.alignment = 'top'; this.expanded = false; this.narrow = false; this.modal = false; this.menu = false; this.hideWhenCollapsed = false; this.hideCollapsedLabels = false; this._header = false; this._footer = false;
     this.addEventListener('navigation-rail-item-interaction', (e) => {
       const index = this.items.indexOf(e.target);
-      if (index < 0 || e.target.disabled) return;
+      if (index < 0 || e.target.disabled) return;   // footer 항목은 목적지가 아니므로 activeIndex 를 바꾸지 않는다(각자 click 처리)
       this.activeIndex = index;
       this.dispatchEvent(new CustomEvent('navigation-rail-activated', {detail: {activeIndex: index, item: e.target}, bubbles: true, composed: true}));
       if (this.modal && this.expanded) this.toggle(false);
     });
     this.addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.modal && this.expanded) this.toggle(false); });
   }
-  get items() { return Array.from(this.querySelectorAll(':scope > md-navigation-rail-item')); }
+  /** 목적지 항목(기본 슬롯). footer 슬롯의 항목은 activeIndex 대상이 아니다. */
+  get items() { return Array.from(this.querySelectorAll(':scope > md-navigation-rail-item:not([slot])')); }
   /** 펼침/접힘 전환. expanded-changed 이벤트를 보낸다. */
   toggle(force) {
     const next = force === undefined ? !this.expanded : !!force;
@@ -150,8 +160,10 @@ export class MdNavigationRail extends LitElement {
   }
   updated() { this._sync(); }
   _sync() {
-    this.items.forEach((item, i) => { item.active = i === this.activeIndex; item.expanded = this.expanded; });
+    this.items.forEach((item, i) => { item.active = i === this.activeIndex; });
+    this.querySelectorAll(':scope > md-navigation-rail-item').forEach((item) => { item.expanded = this.expanded; item.hideCollapsedLabels = this.hideCollapsedLabels; });
     this._header = this.menu || !!this.querySelector(':scope > [slot="header"]');
+    this._footer = !!this.querySelector(':scope > [slot="footer"]');
   }
   render() {
     const menuBtn = this.menu ? html`<md-icon-button class="menu" part="menu" aria-label=${this.expanded ? '메뉴 닫기' : '메뉴 열기'}
@@ -159,7 +171,8 @@ export class MdNavigationRail extends LitElement {
     return html`
       ${this.modal && this.expanded ? html`<div class="scrim" part="scrim" @click=${() => this.toggle(false)}></div>` : nothing}
       <div class="header ${this._header ? 'has' : ''}">${menuBtn}<slot name="header" @slotchange=${() => this._sync()}></slot></div>
-      <div class="items" role="tablist" aria-orientation="vertical"><slot @slotchange=${() => this._sync()}></slot></div>`;
+      <div class="items" role="tablist" aria-orientation="vertical"><slot @slotchange=${() => this._sync()}></slot></div>
+      <div class="footer ${this._footer ? 'has' : ''}" part="footer"><slot name="footer" @slotchange=${() => this._sync()}></slot></div>`;
   }
 }
 customElements.define('md-navigation-rail', MdNavigationRail);
@@ -172,6 +185,7 @@ export class MdNavigationRailItem extends LitElement {
     badgeValue: {type: String, attribute: 'badge-value'},
     showBadge: {type: Boolean, attribute: 'show-badge'},
     expanded: {type: Boolean, reflect: true},
+    hideCollapsedLabels: {type: Boolean, attribute: 'hide-collapsed-labels', reflect: true}, // 레일이 전파
   };
   static styles = css([`
     :host { display: block; }
@@ -189,14 +203,22 @@ export class MdNavigationRailItem extends LitElement {
     :host([active]) .icon { color: var(--md-sys-color-on-secondary-container, #1d192b); }
     :host(:not([active])) slot[name='active-icon'], :host([active]) slot[name='inactive-icon'].has-active { display: none; }
     .label { ${type('label-medium', 12, 16, 500)} text-align: center; overflow-wrap: anywhere; }  /* 라벨은 줄이지 않는다(필요하면 줄바꿈) */
-    /* 세로형(접힌 레일): 높이 64, 위아래 6, indicator 56x32, indicator-라벨 4. 활성 라벨 secondary */
-    :host(:not([expanded])) button { flex-direction: column; align-items: center; min-height: 64px; padding: 6px 0; gap: 4px; }
-    :host(:not([expanded])) .indicator { width: 56px; height: 32px; }
+    /* 세로형(접힌 레일): 높이 64, 위아래 6, indicator 56x32, indicator-라벨 4. 활성 라벨 secondary
+       치수 변수는 md-navigation-rail 에 지정하면 항목까지 상속된다(기본값 = M3 수치) */
+    :host(:not([expanded])) button { flex-direction: column; align-items: center; min-height: var(--md-navigation-rail-item-min-height, 64px);
+      padding: var(--md-navigation-rail-item-padding-block, 6px) 0; gap: var(--md-navigation-rail-item-label-space, 4px); }
+    :host(:not([expanded])) .indicator { width: var(--md-navigation-rail-item-indicator-width, 56px); height: var(--md-navigation-rail-item-indicator-height, 32px); }
+    :host([hide-collapsed-labels]:not([expanded])) .label { display: none; }
     :host(:not([expanded])[active]) .label { color: var(--md-sys-color-secondary, #625b71); }
     /* 가로형(펼친 레일): indicator 높이 56, 앞뒤 16, 아이콘-라벨 8, indicator 는 내용에 맞춤. 활성 라벨 on-secondary-container */
     :host([expanded]) button { align-items: center; }
-    :host([expanded]) .indicator { height: 56px; padding: 0 16px; gap: 8px; justify-content: flex-start; }
+    :host([expanded]) .indicator { min-height: var(--md-navigation-rail-item-expanded-indicator-height, 56px); padding: 0 16px; gap: 8px; justify-content: flex-start; }
     :host([expanded]) .label { text-align: start; }
+    .text { display: flex; flex-direction: column; min-width: 0; }
+    .supporting { ${type('body-small', 12, 16, 400)} color: var(--md-sys-color-on-surface-variant, #49454f); }
+    .supporting:not(.has), .trailing:not(.has) { display: none; }
+    .trailing { display: flex; align-items: center; flex: none; margin-inline-start: auto; }
+    :host([expanded]) .indicator.wide { width: 100%; }               /* trailing 이 있으면 indicator 를 항목 끝까지 늘린다 */
     :host([expanded][active]) .label { color: var(--md-sys-color-on-secondary-container, #1d192b); }
     /* 배지: 접힌 레일은 아이콘 오른쪽 위, 펼친 레일은 라벨 옆 */
     .badge { box-sizing: border-box; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px;
@@ -207,18 +229,25 @@ export class MdNavigationRailItem extends LitElement {
     .icon .badge.dot { top: 0; left: 18px; }
     .badge.after { flex: none; }
   `]);
-  constructor() { super(); this.active = false; this.disabled = false; this.label = ''; this.badgeValue = ''; this.showBadge = false; this.expanded = false; }
+  constructor() { super(); this.active = false; this.disabled = false; this.label = ''; this.badgeValue = ''; this.showBadge = false; this.expanded = false; this.hideCollapsedLabels = false; }
   render() {
     const hasActive = !!this.querySelector(':scope > [slot="active-icon"]');
+    const hasSupport = !!this.querySelector(':scope > [slot="supporting-text"]');
+    const hasTrailing = !!this.querySelector(':scope > [slot="trailing"]');
+    const labelHidden = this.hideCollapsedLabels && !this.expanded;
     const badge = (cls) => html`<span class="badge ${this.badgeValue ? '' : 'dot'} ${cls}" part="badge">${this.badgeValue}</span>`;
     const icon = html`<span class="icon"><slot name="active-icon"></slot><slot name="inactive-icon" class=${hasActive ? 'has-active' : ''}></slot>
       ${this.showBadge && !this.expanded ? badge('') : nothing}</span>`;
-    const label = html`<span class="label">${this.label}</span>`;
+    const label = html`<span class="label" part="label">${this.label}</span>`;
+    const changed = () => this.requestUpdate();
+    // supporting-text / trailing 은 펼친 레일에서만 보인다(접힌 레일은 공간이 없다)
+    const text = html`<span class="text">${label}<span class="supporting ${hasSupport ? 'has' : ''}" part="supporting-text"><slot name="supporting-text" @slotchange=${changed}></slot></span></span>`;
+    const trailing = html`<span class="trailing ${hasTrailing ? 'has' : ''}" part="trailing"><slot name="trailing" @slotchange=${changed}></slot></span>`;
     return html`
-      <button role="tab" aria-selected=${this.active ? 'true' : 'false'} aria-disabled=${this.disabled ? 'true' : 'false'}
-              aria-label=${this.label || nothing} @click=${this._click}>
+      <button part="button" role="tab" aria-selected=${this.active ? 'true' : 'false'} aria-disabled=${this.disabled ? 'true' : 'false'}
+              aria-label=${this.label || nothing} title=${labelHidden && this.label ? this.label : nothing} @click=${this._click}>
         ${this.expanded
-          ? html`<span class="indicator" part="indicator">${icon}${label}${this.showBadge ? badge('after') : nothing}</span>`
+          ? html`<span class="indicator ${hasTrailing ? 'wide' : ''}" part="indicator">${icon}${text}${this.showBadge ? badge('after') : nothing}${trailing}</span>`
           : html`<span class="indicator" part="indicator">${icon}</span>${label}`}
       </button>`;
   }

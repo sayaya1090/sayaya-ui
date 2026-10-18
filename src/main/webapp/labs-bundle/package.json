@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "build:standalone": "rollup -c rollup.standalone.config.js && node standalone.mjs"
   },
   "dependencies": {
     "@material/web": "^2.5.0"

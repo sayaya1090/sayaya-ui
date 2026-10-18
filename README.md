@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.sayaya:ui:2.5.0.2")
+    implementation("dev.sayaya:ui:2.5.0.3")
 }
 ```
 
@@ -850,6 +850,46 @@ drawer.opened = true;
 > `md-navigation-bar`/`md-navigation-tab` 은 M3 가이드가 권장하는 **flexible navigation bar** 를 sayaya-ui 가 직접 구현한 것입니다(`labs-bundle/src/sayaya-navbar.js`). labs 의 baseline 바(80dp)는 가이드에서 비권장이라 대체했고, API(`activeIndex`, `label`, `badge`, `navigation-bar-activated`)는 그대로입니다.
 > 높이 64dp, 세로형 항목(indicator 56×32dp, 위아래 6dp)·가로형 항목(indicator 높이 40dp, 앞뒤 16dp)은 `md-comp-nav-bar*` 토큰과 Compose `ShortNavigationBar` 기준이며, `layout(NavigationBarLayout.Auto)`(기본)는 바 너비 600dp 미만이면 세로형, 이상이면 가로형·가운데 정렬로 배치합니다. 모두 `labs.bundle.js` 를 로드해야 합니다.
 
+#### 치수 변수·슬롯 (2.5.0.3~)
+
+앱 바·레일의 치수는 CSS 사용자 정의 속성으로 바꿉니다. 기본값은 M3 수치와 같아서, 지정하지 않으면 화면이 바뀌지 않습니다. 레일 변수는 `md-navigation-rail` 에 한 번 지정하면 항목(`md-navigation-rail-item`)까지 상속됩니다. `::part` 로 내부 치수를 덮어쓰는 대신 이 변수를 쓰세요.
+
+| 변수 | 기본값 | 대상 |
+|---|---|---|
+| `--md-top-app-bar-container-height` | `64px` | 앱 바 행 높이. medium/large 는 이 값 + 48/56px(부제 있으면 + 72/88px) |
+| `--md-navigation-rail-collapsed-width` | `96px` | 접힌 레일 너비 |
+| `--md-navigation-rail-narrow-width` | `80px` | `narrow(true)` 레일 너비 |
+| `--md-navigation-rail-expanded-min-width` / `-max-width` | `220px` / `360px` | 펼친 레일 너비 범위 |
+| `--md-navigation-rail-expanded-padding-inline` | `20px` | 펼친 레일 좌우 여백 |
+| `--md-navigation-rail-top-space` / `-bottom-space` | `44px` / `20px` | 레일 위·아래 여백 |
+| `--md-navigation-rail-item-space` | `4px` | 접힌 레일 항목 간격(펼침은 `--md-navigation-rail-expanded-item-space`, 기본 `0px`) |
+| `--md-navigation-rail-item-min-height` | `64px` | 접힌 레일 항목 높이 |
+| `--md-navigation-rail-item-padding-block` | `6px` | 접힌 레일 항목 위아래 여백 |
+| `--md-navigation-rail-item-indicator-width` / `-height` | `56px` / `32px` | 접힌 레일 indicator 크기 |
+| `--md-navigation-rail-item-label-space` | `4px` | 접힌 레일 indicator-라벨 간격 |
+| `--md-navigation-rail-item-expanded-indicator-height` | `56px` | 펼친 레일 indicator 최소 높이 |
+
+```java
+// 앱 바: 56px 행, 제목 자리에 요소(워크스페이스 셀렉터 등). 텍스트 제목만 한 줄 말줄임이 적용된다
+var appBar = topAppBar().headline(workspacePicker).style("--md-top-app-bar-container-height", "56px").element();
+
+// 레일: 접힘 56px·라벨 숨김 [M3 외], 펼침 256px, 항목 보조 텍스트·끝 요소 [M3 외], 아래쪽 footer
+var rail = navigationRail()
+    .style("--md-navigation-rail-collapsed-width", "56px")
+    .style("--md-navigation-rail-item-min-height", "48px")
+    .style("--md-navigation-rail-expanded-min-width", "256px")
+    .hideCollapsedLabels(true)
+    .item(railItem().icon("folder").label("문서").supportingText("12개 항목").trailing(moreButton))
+    .footer(railItem().icon("settings").label("설정").on(click, e -> openSettings()))
+    .element();
+```
+
+- `headline(Element)` / `headline(IsElement<?>)`: 제목 슬롯에 요소를 둡니다. 다시 호출하면 이전 제목을 바꿉니다. DOM 요소는 한 곳에만 붙으므로 medium/large 의 확장 영역 제목에는 복제되지 않습니다(small 에서 쓰는 것을 권장).
+- `hideCollapsedLabels(true)` (`hide-collapsed-labels` 속성): 접힌 레일에서 라벨을 숨깁니다. 라벨은 버튼의 `aria-label` 과 `title`(툴팁)로 남고, 펼친 레일에서는 그대로 보입니다.
+- `supportingText(String)`, `trailing(Element)` (`supporting-text`/`trailing` 슬롯): 펼친 레일에서만 보입니다.
+- `footer(...)` (`footer` 슬롯): 레일 맨 아래 영역입니다. footer 의 항목은 펼침 상태와 라벨 숨김을 따르지만, 목적지(`activeIndex`·`onActivated`) 대상이 아니므로 클릭은 직접 처리합니다.
+- 항목 내부 part: `button`, `indicator`, `label`, `supporting-text`, `trailing`, `badge`. 레일 part: `footer`, `menu`, `scrim`.
+
 ### Tooltip / Snackbar / Button group
 
 ```java
@@ -982,7 +1022,7 @@ var player = bottomSheet().standard().add(nowPlaying).element();
 
 sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제공합니다:
 
-- **`Disableable`** - 비활성화 가능한 컴포넌트
+- **`Disableable`** - 비활성화 가능한 컴포넌트. 비활성 여부는 `disabled(boolean)` / `disabled()` / `enabled()` 로 설정하고 `isDisabled()` 로 읽습니다. 반영되는 `disabled` 속성(attribute)의 값 문자열(`""`, `"true"` 등)은 컴포넌트마다 다를 수 있으므로 `getAttribute("disabled")` 값에 의존하지 마세요(직접 볼 때는 `hasAttribute("disabled")`). `setAttribute("disabled", "false")` 는 불리언 속성 규칙상 비활성으로 해석됩니다.
 - **`Selectable`** - 선택 상태가 있는 컴포넌트
 - **`Requireable`** - 필수 입력이 가능한 컴포넌트
 - **`Toggleable`** - 토글 기능이 있는 컴포넌트
@@ -1048,6 +1088,16 @@ Card, Badge와 같은 Labs 컴포넌트는 별도 번들로 제공됩니다:
 - 자동 빌드: Gradle 빌드 시 자동으로 npm을 통해 번들 생성
 - 포함 컴포넌트: Card (elevated/filled/outlined), Badge, Expressive `md-gb-*` 16종 (Material Web 2.5.0 labs/gb), Navigation drawer(+modal)
 - sayaya-ui 자체 구현: top app bar, navigation bar/rail, tooltip, snackbar, button group, side sheet, bottom sheet, toast [M3 외 확장] (`labs-bundle/src/sayaya-*.js`)
+
+### 단일 JS 번들 (Release 첨부물, 2.5.0.3~)
+
+jar 에는 JS 가 들어 있지 않습니다. CDN 없이 쓰려면 릴리스마다 GitHub Release 에 첨부되는 단일 classic-script 번들을 쓰세요.
+
+- 파일: `sayaya-ui-<version>.js` (+ 체크섬 `sayaya-ui-<version>.js.sha256`)
+- URL: `https://github.com/sayaya1090/sayaya-ui/releases/download/v<version>/sayaya-ui-<version>.js`
+- 내용: `@material/web/all.js`(IIFE) 와 labs 번들 `src/index.js`(IIFE, 기존 rollup 플러그인 그대로)를 이 순서로 이어 붙인 파일. 헤더 주석에 sayaya-ui 버전·빌드 커밋·@material/web 버전이 적힙니다.
+- 사용: GWT 앱보다 먼저 `<script src="sayaya-ui-<version>.js"></script>` 로 한 번 로드합니다(`type="module"` 아님).
+- 로컬 빌드: `./gradlew buildStandaloneBundle` → `src/main/webapp/labs-bundle/dist/sayaya-ui.js`
 
 ## 아키텍처
 
@@ -1117,4 +1167,4 @@ sayaya-ui는 Material Web Components와 동일한 브라우저를 지원합니�
 
 ## 버전
 
-현재 버전: **2.5.0.2**
+현재 버전: **2.5.0.3**

@@ -65,6 +65,7 @@ public final class MdNavigationElement {
         public boolean modal;
         public boolean menu;
         public boolean hideWhenCollapsed;
+        public boolean hideCollapsedLabels;
         public native void toggle();
         public native void toggle(boolean expanded);
     }
@@ -77,5 +78,6 @@ public final class MdNavigationElement {
         public String label;
         public String badgeValue;
         public boolean showBadge;
+        public boolean hideCollapsedLabels;
     }
 }

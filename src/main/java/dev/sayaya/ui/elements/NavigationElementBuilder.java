@@ -84,12 +84,27 @@ public final class NavigationElementBuilder {
         TopAppBarBuilder() { super("md-top-app-bar", MdTopAppBarElement.class); }
         @Override public TopAppBarBuilder that() { return this; }
         public TopAppBarBuilder variant(TopAppBarVariant variant) { element().variant = variant.value; return this; }
-        /** 제목. medium/large 에서는 확장 영역의 큰 제목으로도 표시된다. */
+        /** 제목. medium/large 에서는 확장 영역의 큰 제목으로도 표시된다. 다시 호출하면 이전 제목을 바꾼다. 긴 제목은 한 줄 말줄임. */
         public TopAppBarBuilder headline(String text) {
+            clearSlot("headline");
             slot("headline", Elements.span().text(text));
             if (expanded == null) { expanded = Elements.span().element(); slot("expanded-headline", expanded); }
             expanded.textContent = text;
             return this;
+        }
+        /**
+         * 제목 자리에 요소(워크스페이스 셀렉터, 검색 상자 등)를 둔다. 다시 호출하면 이전 제목을 바꾼다.
+         * 요소에는 텍스트용 한 줄 말줄임(nowrap/overflow:hidden)이 적용되지 않는다.
+         * DOM 요소는 한 곳에만 붙을 수 있으므로 medium/large 의 확장 영역 제목에는 복제되지 않는다(small 에서 쓰는 것을 권장).
+         */
+        public TopAppBarBuilder headline(Element element) {
+            clearSlot("headline");
+            return slot("headline", element);
+        }
+        public TopAppBarBuilder headline(IsElement<? extends Element> element) { return headline(element.element()); }
+        private void clearSlot(String name) {
+            var old = element().querySelectorAll(":scope > [slot='" + name + "']");
+            for (int i = old.length - 1; i >= 0; i--) element().removeChild(old.item(i));
         }
         /** 부제. flexible(medium/large) 앱 바는 부제가 있으면 높이가 136/152dp 로 커진다. */
         public TopAppBarBuilder subtitle(String text) {
@@ -154,6 +169,11 @@ public final class NavigationElementBuilder {
         public NavigationRailBuilder menu(boolean menu) { element().menu = menu; return this; }
         /** 접혀 있을 때 레일을 숨긴다(펼칠 때만 보임) */
         public NavigationRailBuilder hideWhenCollapsed(boolean hide) { element().hideWhenCollapsed = hide; return this; }
+        /**
+         * [M3 외] 접힌 레일에서 항목 라벨을 숨기고 아이콘만 보인다. 라벨은 버튼의 aria-label·title(툴팁)로 남는다.
+         * 펼친 레일에서는 라벨이 그대로 보인다. 항목 높이를 줄이려면 {@code --md-navigation-rail-item-min-height} 를 함께 지정한다.
+         */
+        public NavigationRailBuilder hideCollapsedLabels(boolean hide) { element().hideCollapsedLabels = hide; return this; }
         /** 펼침/접힘이 바뀔 때 호출(expanded-changed) */
         public NavigationRailBuilder onExpandedChanged(java.util.function.Consumer<Boolean> callback) {
             element().addEventListener("expanded-changed", evt -> callback.accept(element().expanded));
@@ -163,6 +183,12 @@ public final class NavigationElementBuilder {
         public NavigationRailBuilder header(Element e) { return slot("header", e); }
         public NavigationRailBuilder header(IsElement<? extends Element> e) { return slot("header", e); }
         public NavigationRailBuilder item(NavigationRailItemBuilder item) { return add(item); }
+        /**
+         * 레일 맨 아래 영역(설정·계정 버튼 등). footer 의 {@link NavigationRailItemBuilder} 는 펼침 상태를 따르지만
+         * 목적지(activeIndex·onActivated) 대상은 아니므로 클릭은 직접 처리한다.
+         */
+        public NavigationRailBuilder footer(Element e) { return slot("footer", e); }
+        public NavigationRailBuilder footer(IsElement<? extends Element> e) { return slot("footer", e); }
         /** 항목 활성화 시 호출(navigation-rail-activated) */
         public NavigationRailBuilder onActivated(IntConsumer callback) { return onIndexEvent("navigation-rail-activated", callback); }
     }
@@ -177,6 +203,15 @@ public final class NavigationElementBuilder {
         public NavigationRailItemBuilder activeIcon(String icon) { return slot("active-icon", IconElementBuilder.icon(icon).filled(true)); }
         public NavigationRailItemBuilder badge(String value) { element().badgeValue = value; element().showBadge = true; return this; }
         public NavigationRailItemBuilder badge() { return badge(""); }
+        /** [M3 외] 라벨 아래 보조 텍스트. 펼친 레일에서만 보인다. 다시 호출하면 바꾼다. */
+        public NavigationRailItemBuilder supportingText(String text) {
+            var old = element().querySelector(":scope > [slot='supporting-text']");
+            if (old != null) element().removeChild(old);
+            return slot("supporting-text", Elements.span().text(text));
+        }
+        /** [M3 외] 항목 끝(오른쪽) 요소: 개수, 아이콘 버튼 등. 펼친 레일에서만 보인다. */
+        public NavigationRailItemBuilder trailing(Element e) { return slot("trailing", e); }
+        public NavigationRailItemBuilder trailing(IsElement<? extends Element> e) { return slot("trailing", e); }
         @Override public NavigationRailItemBuilder disabled(boolean disabled) { element().disabled = disabled; return this; }
     }
 

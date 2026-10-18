@@ -183,6 +183,7 @@ public class NavigationComponentsTest {
             }, 500);
         }, 1500);
         audit();
+        extensions();
     }
 
     /** M3 토큰·가이드 대조(rail: nav-rail-*, Compose WideNavigationRail / app bar: app-bar-*, top-app-bar-*). */
@@ -284,6 +285,54 @@ public class NavigationComponentsTest {
                 inner(menuRail, ".scrim").click();
                 DomGlobal.setTimeout(t3 -> assertTrue("nav: modal 레일 스크림 클릭으로 접힘", !Boolean.TRUE.equals(Js.asPropertyMap(menuRail).get("expanded"))), 200);
             }, 300);
+        }, 1500);
+    }
+    /** 2.5.0.3 확장: 앱 바 높이 변수·제목 요소, 레일 치수 변수·part·라벨 숨김·보조 슬롯·footer. */
+    private static void extensions() {
+        var box = section("2.5.0.3 확장(변수·슬롯)");
+        var bar56 = topAppBar().headline("56").style("--md-top-app-bar-container-height", "56px").element();
+        var med56 = topAppBar().variant(TopAppBarVariant.Medium).headline("56").style("--md-top-app-bar-container-height", "56px").element();
+        var picker = div().style("display", "inline-flex").text("워크스페이스 ▾").element();
+        var elBar = topAppBar().headline(picker).element();
+        var reBar = topAppBar().headline("처음").headline("나중 제목은 아주 길어서 앱 바 너비를 넘어가면 말줄임으로 잘려야 합니다 나중 제목은 아주 길어서").element();
+        box.appendChild(div().style("width", "400px").add(bar56).add(med56).add(elBar).add(reBar).element());
+        var vRail = navigationRail().style("--md-navigation-rail-collapsed-width", "56px").style("--md-navigation-rail-item-min-height", "48px")
+                .style("--md-navigation-rail-item-indicator-width", "40px").hideCollapsedLabels(true)
+                .item(railItem().icon("home").label("홈")).item(railItem().icon("inbox").label("받은편지함"))
+                .footer(railItem().icon("settings").label("설정")).element();
+        var wRail = navigationRail().expanded(true).hideCollapsedLabels(true).style("--md-navigation-rail-expanded-min-width", "256px")
+                .item(railItem().icon("folder").label("문서").supportingText("12개 항목").trailing(icon("more_vert")))
+                .item(railItem().icon("inbox").label("받은편지함")).element();
+        box.appendChild(div().style("display", "flex").style("gap", "24px").style("height", "360px").add(vRail).add(wRail).element());
+        DomGlobal.setTimeout(t -> {
+            assertEquals("nav: 앱 바 높이 변수 56px", 56, (int) Math.round(bar56.getBoundingClientRect().height));
+            assertEquals("nav: medium 앱 바는 높이 변수 + 48px", 104, (int) Math.round(med56.getBoundingClientRect().height));
+            assertTrue("nav: 앱 바 제목 요소 슬롯", picker.parentElement == elBar && "headline".equals(picker.getAttribute("slot")));
+            assertTrue("nav: 앱 바 제목 요소는 잘리지 않음", "visible".equals(cs(inner(elBar, ".headline")).getPropertyValue("overflow-x"))
+                    && !"ellipsis".equals(cs(picker).getPropertyValue("text-overflow")) && !"hidden".equals(cs(picker).getPropertyValue("overflow-x")));
+            var spans = reBar.querySelectorAll(":scope > [slot='headline']");
+            HTMLElement span = Js.uncheckedCast(spans.item(0));
+            assertTrue("nav: 앱 바 제목 재지정은 교체", spans.length == 1 && span.textContent.startsWith("나중"));
+            assertTrue("nav: 앱 바 텍스트 제목 한 줄 말줄임", "ellipsis".equals(cs(span).getPropertyValue("text-overflow")) && "nowrap".equals(cs(span).getPropertyValue("white-space"))
+                    && span.scrollWidth > span.clientWidth && Math.round(reBar.getBoundingClientRect().height) == 64);
+            HTMLElement v0 = Js.uncheckedCast(vRail.querySelectorAll("md-navigation-rail-item").item(0));
+            assertEquals("nav: 레일 접힘 너비 변수 56px", 56, (int) Math.round(vRail.getBoundingClientRect().width));
+            assertEquals("nav: 레일 항목 높이 변수 48px", 48, (int) Math.round(v0.getBoundingClientRect().height));
+            assertEquals("nav: 레일 indicator 너비 변수 40px", 40, (int) Math.round(inner(v0, ".indicator").getBoundingClientRect().width));
+            assertTrue("nav: 레일 항목 part button/label", inner(v0, "[part~='button']") != null && inner(v0, "[part~='label']") != null);
+            assertTrue("nav: 접힌 레일 라벨 숨김", v0.hasAttribute("hide-collapsed-labels") && "none".equals(cs(inner(v0, ".label")).getPropertyValue("display"))
+                    && "홈".equals(inner(v0, "button").getAttribute("title")) && "홈".equals(inner(v0, "button").getAttribute("aria-label")));
+            HTMLElement w0 = Js.uncheckedCast(wRail.querySelectorAll("md-navigation-rail-item").item(0));
+            assertTrue("nav: 펼친 레일은 라벨 숨김 무시", !"none".equals(cs(inner(w0, ".label")).getPropertyValue("display")) && inner(w0, "button").getAttribute("title") == null);
+            double ww = wRail.getBoundingClientRect().width;
+            assertTrue("nav: 펼친 레일 최소 너비 변수 256px", ww >= 256 && ww <= 360);
+            var sup = inner(w0, ".supporting"); var trl = inner(w0, ".trailing");
+            assertTrue("nav: 레일 항목 supporting-text 슬롯", !"none".equals(cs(sup).getPropertyValue("display")) && sup.getBoundingClientRect().top >= inner(w0, ".label").getBoundingClientRect().bottom - 1);
+            assertTrue("nav: 레일 항목 trailing 슬롯은 끝에", !"none".equals(cs(trl).getPropertyValue("display"))
+                    && trl.getBoundingClientRect().right > inner(w0, ".text").getBoundingClientRect().right + 8);
+            HTMLElement foot = Js.uncheckedCast(vRail.querySelector("[slot='footer']"));
+            assertTrue("nav: 레일 footer 는 항목 아래·목적지 아님", foot.getBoundingClientRect().top >= inner(vRail, ".items").getBoundingClientRect().bottom - 1
+                    && ((elemental2.core.JsArray<?>) Js.uncheckedCast(Js.asPropertyMap(vRail).get("items"))).length == 2 && foot.hasAttribute("hide-collapsed-labels"));
         }, 1500);
     }
     private static void check(HTMLElement el, String tag, boolean props) {

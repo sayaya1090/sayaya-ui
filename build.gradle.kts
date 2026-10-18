@@ -18,7 +18,7 @@ repositories {
     }
 }
 group = "dev.sayaya"
-version = "2.5.0.2"
+version = "2.5.0.3"
 
 dependencies {
     implementation("org.jboss.elemento:elemento-core:2.5.9")
@@ -56,6 +56,21 @@ tasks {
             commandLine("cmd", "/c", "npm", "run", "build")
         } else {
             commandLine("sh", "-c", "npm run build")
+        }
+    }
+
+    // 단일 classic-script 번들(@material/web all.js + labs, IIFE). Release 첨부물 sayaya-ui-<version>.js 의 원본
+    val buildStandaloneBundle by registering(Exec::class) {
+        group = "build"
+        description = "Build standalone IIFE bundle (all.js + labs) into src/main/webapp/labs-bundle/dist/sayaya-ui.js"
+        dependsOn(installLabsBundleDeps)
+        workingDir = file("src/main/webapp/labs-bundle")
+        environment("SAYAYA_UI_VERSION", project.version.toString())
+
+        if (System.getProperty("os.name").lowercase().contains("windows")) {
+            commandLine("cmd", "/c", "npm", "run", "build:standalone")
+        } else {
+            commandLine("sh", "-c", "npm run build:standalone")
         }
     }
 

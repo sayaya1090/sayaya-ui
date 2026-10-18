@@ -39,3 +39,5 @@ bin/
 .DS_Store
 
 /gradle.properties
+### labs-bundle 빌드 산출물 ###
+/src/main/webapp/labs-bundle/dist/
