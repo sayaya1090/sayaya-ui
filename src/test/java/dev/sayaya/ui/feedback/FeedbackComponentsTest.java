@@ -28,6 +28,17 @@ public class FeedbackComponentsTest {
     }
     private static String prop(HTMLElement e, String name) { return e.style.getPropertyValue(name).trim(); }
     private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
+    /** e 에서 지금 진행 중인 CSS transition 의 속성 이름들(getAnimations). 브라우저가 논리 속성을 물리 속성으로 바꿔 보고할 수 있다 */
+    private static String transitions(Element e) {
+        if (e == null) return "";
+        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(e).get("getAnimations"));
+        if (f == null) return "";
+        elemental2.core.JsArray<Object> list = Js.uncheckedCast(f.call(e));
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.length; i++) sb.append(Js.asPropertyMap(list.getAt(i)).get("transitionProperty")).append(' ');
+        return sb.toString().trim();
+    }
+    private static boolean radiusMoving(Element e) { return transitions(e).contains("radius"); }
 
     public static void test() {
         printSectionHeader("M3 Tooltip / Snackbar / Button group");
@@ -288,6 +299,45 @@ public class FeedbackComponentsTest {
                         later(100, () -> assertTrue("fb: persistent rich tooltip 바깥 상호작용으로 닫힘", !rich.open));
                     });
                 });
+            });
+        });
+        // ---------- button group: 토글 모양 전환(shape morph). Compose ToggleButton/ButtonGroup 과 같이 md.sys.motion.spring.fast.spatial ----------
+        var bgMorph = buttonGroup().standard().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
+                .add(button().filled().text("일")).add(button().outlined().text("주")).element();
+        var bgIcon = buttonGroup().standard().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
+                .add(button().icon("star").filled().ariaLabel("별"))
+                .add(button().icon("favorite").outlined().ariaLabel("좋아요")).element();
+        demo(section, "📘 Button group - 토글 모양 전환", "버튼을 선택하거나 누르면 모서리 모양이 spring 곡선(md.sys.motion.spring.fast.spatial)을 따라 부드럽게 바뀝니다. 누를 때 넓어지는 너비도 같은 곡선을 씁니다. 선택 색은 Compose ToggleButton 처럼 바로 바뀌고, outlined 버튼의 테두리 색만 서서히 사라집니다.",
+            """
+            buttonGroup().standard().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
+                .add(button().filled().text("일")).add(button().outlined().text("주"))
+                .element();
+            buttonGroup().standard().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
+                .add(button().icon("star").filled().ariaLabel("별"))
+                .add(button().icon("favorite").outlined().ariaLabel("좋아요"))
+                .element();
+            """, div().style("display", "flex").style("gap", "24px").add(bgMorph).add(bgIcon).element());
+        later(5000, () -> {
+            var m0 = child(bgMorph, 0); var m1 = child(bgMorph, 1); var i0 = child(bgIcon, 0);
+            String tp = cs(m0).getPropertyValue("transition-property");
+            assertTrue("fb: 버튼 그룹 모양 전환 transition [" + tp + "]", tp.contains("border-start-start-radius") && tp.contains("border-end-end-radius"));
+            assertTrue("fb: 버튼 그룹 누름 너비 전환 유지", tp.contains("width"));
+            assertTrue("fb: 버튼 그룹 전환 spring(fast spatial) 곡선", cs(m0).getPropertyValue("transition-timing-function").contains("linear("));
+            Element out = inner(m1, ".outline");
+            assertTrue("fb: outlined 버튼 테두리 모양 전환", out != null && cs(out).getPropertyValue("transition-property").contains("border-start-start-radius"));
+            assertTrue("fb: outlined 버튼 테두리 색 전환", out != null && cs(out).getPropertyValue("transition-property").contains("border-color"));
+            Element ib = inner(i0, ".icon-button");
+            assertTrue("fb: icon 버튼 모양 전환", ib != null && cs(ib).getPropertyValue("transition-property").contains("border-start-start-radius"));
+            if (!isAutomated()) return; // 사람이 볼 때는 자동 클릭하지 않는다
+            m0.click(); // 선택: 20px(full) -> 12px
+            String moving = transitions(m0);
+            assertTrue("fb: 토글 시 모서리가 애니메이션됨 [" + moving + "]", moving.contains("radius"));
+            i0.click();
+            String iconMoving = transitions(ib);
+            assertTrue("fb: icon 토글 시 모서리가 애니메이션됨 [" + iconMoving + "]", iconMoving.contains("radius"));
+            later(600, () -> {
+                assertEquals("fb: 토글 전환 뒤 모서리 12px", "12px", cs(m0).getPropertyValue("border-start-start-radius"));
+                assertTrue("fb: 토글 전환 끝남", !radiusMoving(m0));
             });
         });
         // snackbar: 액션이 있으면 자동으로 닫히지 않음(가이드: 웹 접근성), 왼쪽 정렬 옵션

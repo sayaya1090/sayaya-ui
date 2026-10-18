@@ -883,6 +883,8 @@ var range = buttonGroup().connected().size(ButtonGroupSize.Small).selection(Butt
 색·모양·타이포·높이·간격은 `@material/web` 2.5.0 의 `md-comp-{plain-tooltip,rich-tooltip,snackbar,button-group-*}` 토큰 값을 따릅니다.
 토큰에 없는 레이아웃 값은 m3.material.io 스펙 페이지와 Compose Material3(`Tooltip.kt`, `Snackbar.kt`) 상수로 대조했습니다: plain tooltip 높이 24dp·패딩 8dp·최대 너비 200dp, rich tooltip 패딩 12/16/8dp·최대 너비 320dp, tooltip 최소 너비 40dp·앵커 간격 4dp, snackbar 최대 너비 600dp, 화면 가장자리 여백 8dp(material-components-android `m3_snackbar_margin`).
 
+버튼 그룹의 토글·누름 전환: 선택하거나 누를 때 모서리 모양과 너비가 `md.sys.motion.spring.fast.spatial`(damping 0.9, stiffness 1400)을 따라 부드럽게 바뀌고, outlined 버튼의 테두리 색은 `md.sys.motion.spring.default.effects`(damping 1, stiffness 1600)로 사라집니다. Compose Material3 `ToggleButton`/`ButtonGroup` 과 같이 container·content 색은 바로 바뀝니다. CSS 에는 spring 이 없어 두 spring 을 `linear()` 곡선(약 224ms, 231ms)으로 근사했습니다. `prefers-reduced-motion: reduce` 이면 전환하지 않습니다.
+
 ### Side sheet
 
 ```java

@@ -8,6 +8,16 @@ import io.kotest.matchers.string.shouldNotContain
 @GwtHtml("feedback.html") // 테스트 서버 루트는 war(src/test/webapp)
 internal class FeedbackElementTest: GwtTestSpec({
     val checks = listOf(
+        "버튼 그룹 모양 전환 transition",
+        "버튼 그룹 누름 너비 전환 유지",
+        "버튼 그룹 전환 spring(fast spatial) 곡선",
+        "outlined 버튼 테두리 모양 전환",
+        "outlined 버튼 테두리 색 전환",
+        "icon 버튼 모양 전환",
+        "토글 시 모서리가 애니메이션됨",
+        "icon 토글 시 모서리가 애니메이션됨",
+        "토글 전환 뒤 모서리 12px",
+        "토글 전환 끝남",
         "snackbar 왼쪽 정렬 8px",
         "액션 있는 snackbar 는 자동으로 닫히지 않음",
         "tooltip 떠난 뒤 1.5초 동안 유지",

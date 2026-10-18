@@ -4,7 +4,7 @@
 //   md-button-group : standard / connected button group
 // 수치 출처: @material/web/tokens/versions/latest/sass/_md-comp-{plain-tooltip,rich-tooltip,snackbar,button-group-*}.scss
 // [토큰 외] 값은 토큰에 없어 m3.material.io 스펙 페이지(tooltips/specs)와 Compose Material3(Tooltip.kt, Snackbar.kt) 상수로 대조한 값이다.
-import {LitElement, html, css} from 'lit';
+import {LitElement, html, css, unsafeCSS} from 'lit';
 
 const ELEVATION = {
   2: '0 1px 2px 0 rgba(0,0,0,.3), 0 2px 6px 2px rgba(0,0,0,.15)',
@@ -246,6 +246,21 @@ const SYS = {
   'inverse-surface': '#322f35', 'inverse-on-surface': '#f5eff7',
 };
 const sys = (role) => `var(--md-sys-color-${role}, ${SYS[role]})`;
+// 토글·누름 전환(shape morph). 토큰 _md-sys-motion.scss: spring.fast.spatial(damping 0.9, stiffness 1400), spring.default.effects(damping 1, stiffness 1600).
+// Compose ToggleButton/ButtonGroup 은 모양·너비에 FastSpatial, 테두리 색에 DefaultEffects 를 쓰고 container·content 색은 바로 바꾼다.
+// CSS 에는 spring 이 없어 질량 1·초기 속도 0 인 스프링을 목표까지 0.1% 남을 때까지 풀어 linear() 로 근사했다 [파생: 지속 시간·곡선 점]
+const FAST_SPATIAL = '224ms linear(0, 0.1, 0.296, 0.494, 0.659, 0.783, 0.869, 0.925, 0.96, 0.98, 0.992, 0.998, 1, 1.001, 1.002, 1.001, 1)';
+const DEFAULT_EFFECTS = '231ms linear(0, 0.115, 0.321, 0.517, 0.671, 0.783, 0.86, 0.911, 0.945, 0.966, 0.979, 0.987, 0.992, 0.995, 0.997, 0.998, 1)';
+const RADII = ['border-start-start-radius', 'border-start-end-radius', 'border-end-start-radius', 'border-end-end-radius'];
+const motion = (props, m) => props.map(p => `${p} ${m}`).join(', ');
+// Material 버튼 안쪽에서 container-shape 변수를 직접 받는 요소(icon 버튼 본체, outlined 테두리, ripple)는 host 의 전환을 inherit 하지 못하므로
+// 그룹 안 버튼의 shadowRoot 에 같은 전환을 넣는다
+const INNER_MORPH = new CSSStyleSheet();
+INNER_MORPH.replaceSync(`
+  .icon-button, md-ripple { transition: ${motion(RADII, FAST_SPATIAL)}; }
+  .outline { transition: ${motion(RADII, FAST_SPATIAL)}, border-color ${DEFAULT_EFFECTS}; }
+  @media (prefers-reduced-motion: reduce) { .icon-button, md-ripple, .outline { transition: none; } }
+`);
 export class MdButtonGroup extends LitElement {
   static properties = {
     variant: {type: String, reflect: true},    // standard | connected
@@ -256,7 +271,8 @@ export class MdButtonGroup extends LitElement {
     :host { display: inline-flex; flex-wrap: nowrap; align-items: center; } /* 그룹은 줄바꿈하지 않는다 */
     :host([variant='connected']) { display: flex; }
     :host([variant='connected']) ::slotted(*) { flex: 1 1 0; }
-    ::slotted(*) { flex: none; transition: width 150ms cubic-bezier(0.2, 0, 0, 1), flex-basis 150ms cubic-bezier(0.2, 0, 0, 1); }
+    ::slotted(*) { flex: none; transition: ${unsafeCSS(motion([...RADII, 'width', 'flex-basis'], FAST_SPATIAL))}; }
+    @media (prefers-reduced-motion: reduce) { ::slotted(*) { transition: none; } }
   `;
   constructor() {
     super(); this.variant = 'standard'; this.size = 'small';
@@ -294,6 +310,14 @@ export class MdButtonGroup extends LitElement {
   _pressedAria(b, v) { if ('ariaPressed' in b) b.ariaPressed = v; else b.setAttribute('aria-pressed', v); }
   _select(b, on) { if (on) b.setAttribute('selected', ''); else b.removeAttribute('selected'); this._pressedAria(b, on ? 'true' : 'false'); }
   updated() { this._layout(); }
+  _morph(b) {
+    const root = b.shadowRoot;
+    if (!root) { // 아직 업그레이드 전이면 정의·첫 렌더 뒤에 넣는다
+      if (b.localName.includes('-')) customElements.whenDefined(b.localName).then(() => Promise.resolve(b.updateComplete).then(() => b.shadowRoot && this._morph(b)));
+      return;
+    }
+    if (!root.adoptedStyleSheets.includes(INNER_MORPH)) root.adoptedStyleSheets = [...root.adoptedStyleSheets, INNER_MORPH];
+  }
   _shape(b, ss, es, se, ee) {
     PREFIXES.forEach(p => {
       b.style.setProperty(`--md-${p}-container-shape-start-start`, ss);
@@ -331,6 +355,7 @@ export class MdButtonGroup extends LitElement {
     const pi = list.findIndex(b => b.hasAttribute('data-pressed'));
     list.forEach((b, i) => {
       PREFIXES.forEach(p => b.style.setProperty(`--md-${p}-container-height`, s.h + 'px'));
+      this._morph(b);
       if (toggle && !b.hasAttribute('selected') && b.ariaPressed !== 'false') this._pressedAria(b, 'false');
       this._color(b, toggle);
       const pressed = i === pi, sel = toggle && b.hasAttribute('selected');
