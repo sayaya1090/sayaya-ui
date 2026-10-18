@@ -391,7 +391,8 @@ const sys = (role) => `var(--md-sys-color-${role}, ${SYS[role]})`;
 // 토글·누름 전환(shape morph). 토큰 _md-sys-motion.scss: spring.fast.spatial(damping 0.9, stiffness 1400), spring.default.effects(damping 1, stiffness 1600).
 // Compose ToggleButton/ButtonGroup 은 모양·너비에 FastSpatial, 테두리 색에 DefaultEffects 를 쓰고 container·content 색은 바로 바꾼다.
 // CSS 에는 spring 이 없어 질량 1·초기 속도 0 인 스프링을 목표까지 0.1% 남을 때까지 풀어 linear() 로 근사했다 [파생: 지속 시간·곡선 점]
-const FAST_SPATIAL = '224ms linear(0, 0.1, 0.296, 0.494, 0.659, 0.783, 0.869, 0.925, 0.96, 0.98, 0.992, 0.998, 1, 1.001, 1.002, 1.001, 1)';
+const FAST_SPATIAL_MS = 224; // [파생] 아래 FAST_SPATIAL 의 지속 시간. 누름 확대가 끝까지 보이도록 최소 유지 시간으로도 쓴다
+const FAST_SPATIAL = FAST_SPATIAL_MS + 'ms linear(0, 0.1, 0.296, 0.494, 0.659, 0.783, 0.869, 0.925, 0.96, 0.98, 0.992, 0.998, 1, 1.001, 1.002, 1.001, 1)';
 const DEFAULT_EFFECTS = '231ms linear(0, 0.115, 0.321, 0.517, 0.671, 0.783, 0.86, 0.911, 0.945, 0.966, 0.979, 0.987, 0.992, 0.995, 0.997, 0.998, 1)';
 const RADII = ['border-start-start-radius', 'border-start-end-radius', 'border-end-start-radius', 'border-end-end-radius'];
 const motion = (props, m) => props.map(p => `${p} ${m}`).join(', ');
@@ -430,12 +431,29 @@ export class MdButtonGroup extends LitElement {
   _press(e, down) {
     const b = down ? this._item(e) : this._pressed;
     if (!b) return;
+    clearTimeout(this._releaseTimer); clearTimeout(this._settleTimer);
     if (down) {
-      // standard: 누르기 직전 너비를 기억해 두고, 눌린 버튼 +15% 만큼 양옆 버튼이 나눠서 줄어든다(그룹 너비 유지)
-      if (this.variant !== 'connected') this._widths = this.buttons.map(x => x.getBoundingClientRect().width);
-      this._pressed = b; b.setAttribute('data-pressed', '');
-    } else { b.removeAttribute('data-pressed'); this._pressed = null; this._widths = null; }
-    this._layout();
+      if (this.variant !== 'connected') {
+        // standard: 누르기 직전 너비를 기억해 두고, 눌린 버튼 +15% 만큼 양옆 버튼이 나눠서 줄어든다(그룹 너비 유지).
+        // 너비 auto -> px 는 CSS transition 이 걸리지 않아 순간적으로 바뀌므로, 지금 너비를 px 로 먼저 고정한 뒤 목표 너비로 바꾼다
+        if (!this._widths) this._widths = this.buttons.map(x => x.getBoundingClientRect().width);
+        this.buttons.forEach(x => { x.style.width = x.getBoundingClientRect().width + 'px'; });
+        void this.offsetWidth; // 고정한 너비를 전환 시작점으로 확정(reflow)
+      }
+      if (this._pressed && this._pressed !== b) this._pressed.removeAttribute('data-pressed');
+      this._pressed = b; this._pressedAt = performance.now(); b.setAttribute('data-pressed', '');
+      this._layout();
+    } else {
+      // 짧은 클릭이라도 확대 전환이 끝까지 보인 뒤 복귀한다(최소 유지 = 전환 시간) [M3 외: 웹 마우스 클릭 보정]
+      const wait = Math.max(0, FAST_SPATIAL_MS - (performance.now() - this._pressedAt));
+      this._releaseTimer = setTimeout(() => this._release(b), wait);
+    }
+  }
+  _release(b) {
+    b.removeAttribute('data-pressed'); this._pressed = null;
+    this._layout(); // standard: 기억한 원래 너비(px)로 전환하며 돌아간다
+    // 복귀 전환이 끝나면 너비를 auto 로 되돌려 내용·크기 변화에 다시 맞춘다
+    this._settleTimer = setTimeout(() => { if (!this._pressed) { this._widths = null; this._layout(); } }, FAST_SPATIAL_MS + 20);
   }
   _click(e) {
     const mode = this.mode;
@@ -514,9 +532,10 @@ export class MdButtonGroup extends LitElement {
         const c = r === null ? full : r + 'px';
         this._shape(b, c, c, c, c);
         b.style.minWidth = '0';
-        if (pi >= 0 && this._widths) {
-          const w = this._widths, delta = w[pi] * PRESSED_WIDTH;
-          const nb = [pi - 1, pi + 1].filter(k => k >= 0 && k < list.length);
+        if (this._widths && this._widths.length === list.length) {
+          // 누르는 동안은 목표 너비, 뗀 뒤 복귀 전환 중에는 원래 너비(px). 둘 다 px 라서 전환이 걸린다
+          const w = this._widths, delta = pi >= 0 ? w[pi] * PRESSED_WIDTH : 0;
+          const nb = [pi - 1, pi + 1].filter(k => pi >= 0 && k >= 0 && k < list.length);
           const width = i === pi ? w[i] + delta : nb.includes(i) ? w[i] - delta / nb.length : w[i];
           b.style.width = width + 'px';
         } else b.style.width = '';

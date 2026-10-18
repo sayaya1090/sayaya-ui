@@ -97,19 +97,22 @@ public class FeedbackComponentsTest {
 
         // ---------- button group ----------
         var stdSmall = buttonGroup().standard().size(ButtonGroupSize.Small)
-                .add(button().outlined().text("하나")).add(button().outlined().text("둘")).element();
+                .add(button().outlined().text("하나")).add(button().outlined().text("둘")).add(button().outlined().text("셋"))
+                .add(button().outlined().text("넷")).add(button().outlined().text("다섯")).element();
         var stdXs = buttonGroup().standard().size(ButtonGroupSize.XSmall)
-                .add(button().outlined().text("가")).add(button().outlined().text("나")).element();
+                .add(button().outlined().text("가")).add(button().outlined().text("나")).add(button().outlined().text("다"))
+                .add(button().outlined().text("라")).add(button().outlined().text("마")).element();
         int[][] selected = {null};
         var conn = buttonGroup().connected().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
                 .add(button().outlined().text("일")).add(button().outlined().text("주")).add(button().outlined().text("월"))
                 .onSelectionChanged(s -> selected[0] = s).element();
         var connLarge = buttonGroup().connected().size(ButtonGroupSize.Large)
                 .add(button().filled().text("A")).add(button().filled().text("B")).add(button().filled().text("C")).element();
-        demo(section, "📘 Button group - standard", "관련 버튼을 한데 묶습니다. size 에 따라 버튼 높이와 간격이 정해지고(small 40dp/12dp, xsmall 32dp/18dp), 누른 버튼은 15% 넓어집니다.",
+        demo(section, "📘 Button group - standard", "관련 버튼을 한데 묶습니다. size 에 따라 버튼 높이와 간격이 정해지고(small 40dp/12dp, xsmall 32dp/18dp), 누른 버튼은 15% 넓어지고 양옆 버튼이 그만큼 좁아집니다(그룹 너비 유지).",
             """
             buttonGroup().standard().size(ButtonGroupSize.Small)
-                .add(button().outlined().text("하나")).add(button().outlined().text("둘"))
+                .add(button().outlined().text("하나")).add(button().outlined().text("둘")).add(button().outlined().text("셋"))
+                .add(button().outlined().text("넷")).add(button().outlined().text("다섯"))
                 .element();
             """, div().style("display", "flex").style("flex-direction", "column").style("gap", "12px").add(stdSmall).add(stdXs).element());
         demo(section, "📘 Button group - connected (단일 선택)", "버튼이 2dp 간격으로 붙은 토글 그룹입니다. selection(Single)이면 하나만 선택되고, 선택된 버튼은 안쪽 모서리가 둥글어집니다.",
