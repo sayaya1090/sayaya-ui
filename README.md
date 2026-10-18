@@ -66,11 +66,11 @@ dependencies {
 | **Menu** | `menu()` | 드롭다운 메뉴, 서브메뉴 지원 | [🔗](https://sayaya1090.github.io/sayaya-ui/menu.html) |
 | **Card** | `card()` | Elevated, Filled, Outlined 카드 컨테이너 | [🔗](https://sayaya1090.github.io/sayaya-ui/card.html) |
 | **Badge** | `badge()` | 알림이나 상태를 나타내는 배지 | [🔗](https://sayaya1090.github.io/sayaya-ui/badge.html) |
-| **Expressive (labs/gb)** | `gb()` | Material Web 2.5.0 Expressive 컴포넌트 16종 (`md-gb-*`): button, split button, icon button, fab, icon, card, badge, checkbox, radio, switch, divider, list/list-item, menu/menu-group/menu-item | |
-| **Navigation** | `topAppBar()`, `navigationBar()`, `navigationRail()`, `navigationDrawer()` | Top app bar(small·medium flexible·large flexible, 가운데 정렬·부제), Navigation bar, Navigation rail(접힘 96dp·narrow 80dp / 펼침 220~360dp, modal, 메뉴 버튼), Navigation drawer(고정/모달) | |
-| **Tooltip / Snackbar / Button group** | `tooltip()`, `snackbar()`, `buttonGroup()` | Plain·Rich tooltip, Snackbar(액션/닫기/자동 닫힘), Standard·Connected button group(xsmall~xlarge, 토글 선택) | |
-| **Toast** [M3 외 확장] | `toast()` | 데스크톱 웹용 스택 알림(오른쪽 위에 쌓임, info·success·warning·error, 액션/닫기/자동 닫힘·hover 정지). M3 에 없는 컴포넌트로, 모바일에서는 Snackbar 사용 권장 | |
-| **Side sheet** | `sideSheet()` | Standard·Modal side sheet(end/start, detached, 뒤로·닫기 버튼, 하단 액션, 스크림·Esc 닫기) | |
+| **Expressive (labs/gb)** | `gb()` | Material Web 2.5.0 Expressive 컴포넌트 16종 (`md-gb-*`): button, split button, icon button, fab, icon, card, badge, checkbox, radio, switch, divider, list/list-item, menu/menu-group/menu-item | [🔗](https://sayaya1090.github.io/sayaya-ui/gb.html) |
+| **Navigation** | `topAppBar()`, `navigationBar()`, `navigationRail()`, `navigationDrawer()` | Top app bar(small·medium flexible·large flexible, 가운데 정렬·부제), Navigation bar, Navigation rail(접힘 96dp·narrow 80dp / 펼침 220~360dp, modal, 메뉴 버튼), Navigation drawer(고정/모달) | [🔗](https://sayaya1090.github.io/sayaya-ui/navigation.html) |
+| **Tooltip / Snackbar / Button group** | `tooltip()`, `snackbar()`, `buttonGroup()` | Plain·Rich tooltip, Snackbar(액션/닫기/자동 닫힘), Standard·Connected button group(xsmall~xlarge, 토글 선택) | [🔗](https://sayaya1090.github.io/sayaya-ui/feedback.html) |
+| **Toast** [M3 외 확장] | `toast()` | 데스크톱 웹용 스택 알림(오른쪽 위에 쌓임, info·success·warning·error, 액션/닫기/자동 닫힘·hover 정지). M3 에 없는 컴포넌트로, 모바일에서는 Snackbar 사용 권장 | [🔗](https://sayaya1090.github.io/sayaya-ui/feedback.html) |
+| **Side sheet** | `sideSheet()` | Standard·Modal side sheet(end/start, detached, 뒤로·닫기 버튼, 하단 액션, 스크림·Esc 닫기) | [🔗](https://sayaya1090.github.io/sayaya-ui/side_sheet.html) |
 | **Bottom sheet** | `bottomSheet()` | Standard·Modal bottom sheet(드래그 핸들로 펼침/접힘, 아래로 끌어 닫기, 스크림·Esc 닫기, 최대 너비 640dp) | [🔗](https://sayaya1090.github.io/sayaya-ui/bottom_sheet.html) |
 
 ## 사용 예제
@@ -1046,7 +1046,8 @@ Card, Badge와 같은 Labs 컴포넌트는 별도 번들로 제공됩니다:
 - 소스: `src/main/webapp/labs-bundle/`
 - 출력: `src/main/webapp/labs.bundle.js`
 - 자동 빌드: Gradle 빌드 시 자동으로 npm을 통해 번들 생성
-- 포함 컴포넌트: Card (elevated/filled/outlined), Badge, Expressive `md-gb-*` 16종 (Material Web 2.5.0 labs/gb)
+- 포함 컴포넌트: Card (elevated/filled/outlined), Badge, Expressive `md-gb-*` 16종 (Material Web 2.5.0 labs/gb), Navigation drawer(+modal)
+- sayaya-ui 자체 구현: top app bar, navigation bar/rail, tooltip, snackbar, button group, side sheet, bottom sheet, toast [M3 외 확장] (`labs-bundle/src/sayaya-*.js`)
 
 ## 아키텍처
 
