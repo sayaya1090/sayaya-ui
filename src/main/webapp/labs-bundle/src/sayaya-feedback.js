@@ -2,6 +2,7 @@
 //   md-tooltip      : plain / rich tooltip
 //   md-snackbar     : snackbar
 //   md-button-group : standard / connected button group
+//   md-toast        : [M3 외 확장] 데스크톱 웹용 스택 알림(handbook ToastContainer 이식). 모바일은 md-snackbar 를 쓴다
 // 수치 출처: @material/web/tokens/versions/latest/sass/_md-comp-{plain-tooltip,rich-tooltip,snackbar,button-group-*}.scss
 // [토큰 외] 값은 토큰에 없어 m3.material.io 스펙 페이지(tooltips/specs)와 Compose Material3(Tooltip.kt, Snackbar.kt) 상수로 대조한 값이다.
 import {LitElement, html, css, unsafeCSS} from 'lit';
@@ -216,6 +217,147 @@ export class MdSnackbar extends LitElement {
   }
 }
 customElements.define('md-snackbar', MdSnackbar);
+
+// ---------------------------------------------------------------- toast  [M3 외 확장]
+// M3 에는 toast 컴포넌트가 없다(모바일 기준 snackbar 만 있음). 데스크톱 웹 앱에서 여러 알림을 화면 오른쪽 위에 쌓아 보여 주는
+// 관례를 위해 sayaya-ui 가 추가한 컴포넌트다. 동작·수치는 handbook ui-components ToastContainer(ui-components.css)를 옮겼고,
+// 색·모양·글꼴은 M3 시스템 토큰(color/shape/typescale/elevation)으로 표현했다.
+//   level   : info(primary) | success(tertiary) | warning(error-container) | error(error)  — handbook ToastLevel 색 대응
+//   timeout : -1(기본) = 자동: info·success 3000ms 뒤 닫힘, warning·error 는 직접 닫을 때까지 유지. 0 = 닫지 않음
+//   쌓임    : 창마다 스택 하나(body 에 붙는 .md-toast-stack). 새 토스트가 아래에 붙고, max(기본 5)를 넘으면 가장 오래된 것부터 닫는다('overflow')
+//   접근성  : info·success role=status/aria-live=polite, warning·error role=alert/aria-live=assertive. 포인터·포커스가 머무는 동안 타이머 정지
+//   호환    : host 에 handbook 셀렉터 class ui-toast, ui-toast-<level> 를 붙인다(닫기 버튼은 shadow 안이므로 part="close" 로 접근)
+const TOAST_LEVELS = {
+  info:    ['primary', 'on-primary', '#6750a4', '#ffffff'],
+  success: ['tertiary', 'on-tertiary', '#7d5260', '#ffffff'],
+  warning: ['error-container', 'on-error-container', '#f9dedc', '#410e0b'],
+  error:   ['error', 'on-error', '#b3261e', '#ffffff'],
+};
+const TOAST_OUT_MS = 300; // 퇴장 애니메이션 길이 = 제거 지연(handbook: CSS 0.3s 와 JS 300ms 가 맞물림)
+let toastStack = null;
+function toastContainer() {
+  if (toastStack && toastStack.isConnected) return toastStack;
+  toastStack = document.createElement('div');
+  toastStack.className = 'md-toast-stack';
+  document.body.appendChild(toastStack);
+  return toastStack;
+}
+{
+  const stackStyle = new CSSStyleSheet();
+  // [M3 외] handbook: fixed top 60px(앱 바 아래) right 20px, gap 8px, max-width 400px, z-index 10002. 위치는 변수로 바꿀 수 있다.
+  // 좁은 화면(600px 미만)에서는 좌우 8px 여백으로 늘린다 — 모바일에서는 snackbar 사용을 권장한다
+  stackStyle.replaceSync(`.md-toast-stack { position: fixed; z-index: var(--md-toast-z-index, 10002);
+      top: var(--md-toast-top, 60px); right: var(--md-toast-right, 20px); left: auto;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+      max-width: min(400px, calc(100vw - 16px)); pointer-events: none; }
+    .md-toast-stack > md-toast { pointer-events: auto; }
+    @media (max-width: 599px) { .md-toast-stack { left: 8px; right: 8px; max-width: none; align-items: stretch; } }`);
+  document.adoptedStyleSheets = [...document.adoptedStyleSheets, stackStyle];
+}
+export class MdToast extends LitElement {
+  static properties = {
+    open: {type: Boolean, reflect: true},
+    level: {type: String, reflect: true},         // info | success | warning | error
+    action: {type: String},                       // 액션 라벨(선택)
+    closeable: {type: Boolean, reflect: true},    // 닫기(X) 버튼, 기본 true
+    timeout: {type: Number},                      // ms. -1(기본) 자동, 0 닫지 않음
+    max: {type: Number},                          // 스택에 동시에 보일 최대 개수(기본 5)
+    leaving: {type: Boolean, reflect: true},      // 퇴장 애니메이션 중
+  };
+  static styles = css`
+    :host { display: none; box-sizing: border-box; max-width: 100%; }
+    :host([open]) { display: block; animation: md-toast-in 300ms ease; }
+    :host([leaving]) { animation: md-toast-out ${unsafeCSS(TOAST_OUT_MS)}ms ease forwards; }
+    @keyframes md-toast-in { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes md-toast-out { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
+    @media (prefers-reduced-motion: reduce) { :host([open]), :host([leaving]) { animation: none; } }
+    .container { display: flex; align-items: center; box-sizing: border-box; min-height: 48px;
+      padding: 0 4px 0 16px; gap: 4px;
+      border-radius: var(--md-sys-shape-corner-small, 8px);   /* handbook 8px = M3 corner small */
+      box-shadow: ${css([ELEVATION[2]])};                    /* handbook elevation level2 */
+      background: var(--_bg); color: var(--_fg); }
+    ${unsafeCSS(Object.entries(TOAST_LEVELS).map(([lv, [bg, fg, bgd, fgd]]) =>
+      `:host([level='${lv}']) .container { --_bg: var(--md-sys-color-${bg}, ${bgd}); --_fg: var(--md-sys-color-${fg}, ${fgd}); }`).join('\n'))}
+    .text { flex: 1; min-width: 0; padding: 12px 0; overflow-wrap: anywhere;
+      font-family: var(--md-sys-typescale-body-medium-font, Roboto, sans-serif);
+      font-size: var(--md-sys-typescale-body-medium-size, 14px);
+      line-height: var(--md-sys-typescale-body-medium-line-height, 20px);
+      font-weight: var(--md-sys-typescale-body-medium-weight, 400);
+      letter-spacing: var(--md-sys-typescale-body-medium-tracking, 0.25px); }
+    :host(:not([closeable])) .container { padding-inline-end: 8px; }
+    button { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; position: relative; flex: none; color: inherit; }
+    button::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: currentColor; opacity: 0; }
+    button:hover::before { opacity: var(--md-sys-state-hover-state-layer-opacity, .08); }
+    button:focus-visible::before { opacity: var(--md-sys-state-focus-state-layer-opacity, .1); }
+    button:active::before { opacity: var(--md-sys-state-pressed-state-layer-opacity, .1); }
+    button:focus-visible { outline: 3px solid currentColor; outline-offset: -3px; }
+    .action { height: 40px; padding: 0 12px; border-radius: 20px;
+      font-family: var(--md-sys-typescale-label-large-font, Roboto, sans-serif);
+      font-size: var(--md-sys-typescale-label-large-size, 14px);
+      line-height: var(--md-sys-typescale-label-large-line-height, 20px);
+      font-weight: var(--md-sys-typescale-label-large-weight, 500);
+      letter-spacing: var(--md-sys-typescale-label-large-tracking, 0.1px); }
+    .close { width: 40px; height: 40px; border-radius: 20px; }
+    .close svg { width: 20px; height: 20px; fill: currentColor; }
+  `;
+  constructor() {
+    super();
+    this.open = false; this.level = 'info'; this.action = ''; this.closeable = true; this.timeout = -1; this.max = 5; this.leaving = false;
+    this._t = 0; this._rm = 0; this._left = 0; this._started = 0; this._paused = false;
+    // 포인터·포커스가 토스트 위에 있는 동안 자동 닫힘을 멈추고, 떠나면 남은 시간(최소 1초)만큼 다시 잰다
+    this._pause = () => { if (!this.open || this.leaving || !this._t) return; clearTimeout(this._t); this._t = 0; this._left -= Date.now() - this._started; this._paused = true; };
+    this._resume = () => { if (!this._paused || !this.open || this.leaving) return; this._paused = false; this._arm(Math.max(this._left, 1000)); };
+  }
+  connectedCallback() {
+    super.connectedCallback();
+    ['pointerenter', 'focusin'].forEach(t => this.addEventListener(t, this._pause));
+    ['pointerleave', 'focusout'].forEach(t => this.addEventListener(t, this._resume));
+  }
+  updated(changed) {
+    if (changed.has('level')) {
+      for (const lv of Object.keys(TOAST_LEVELS)) this.classList.toggle('ui-toast-' + lv, lv === this.level);
+      const urgent = this.level === 'warning' || this.level === 'error';
+      this.setAttribute('role', urgent ? 'alert' : 'status');
+      this.setAttribute('aria-live', urgent ? 'assertive' : 'polite');
+    }
+  }
+  /** 실제로 쓰일 자동 닫힘 시간(ms). 0 이면 닫지 않음 */
+  get effectiveTimeout() {
+    if (this.timeout >= 0) return this.timeout;
+    return this.level === 'warning' || this.level === 'error' ? 0 : 3000;
+  }
+  _arm(ms) { clearTimeout(this._t); this._t = 0; if (ms > 0) { this._left = ms; this._started = Date.now(); this._t = setTimeout(() => this.close('timeout'), ms); } }
+  /** 스택(.md-toast-stack)에 붙여 표시한다. 이미 붙어 있으면 다시 연다 */
+  show() {
+    clearTimeout(this._rm);
+    this.classList.add('ui-toast');
+    const stack = toastContainer();
+    if (this.parentNode !== stack) stack.appendChild(this);
+    this.leaving = false; this._paused = false;
+    this.open = true;
+    this._arm(this.effectiveTimeout);
+    const live = [...stack.children].filter(t => t.localName === 'md-toast' && t.open && !t.leaving);
+    for (let i = 0; i < live.length - Math.max(1, this.max); i++) live[i].close('overflow');
+    this.dispatchEvent(new Event('opened', {bubbles: true, composed: true}));
+  }
+  /** 퇴장 애니메이션 뒤 DOM 에서 떼어 낸다. reason: action | dismiss | timeout | overflow */
+  close(reason = 'dismiss') {
+    clearTimeout(this._t); this._t = 0;
+    if (!this.open || this.leaving) return;
+    this.leaving = true;
+    this.dispatchEvent(new CustomEvent('closed', {detail: {reason}, bubbles: true, composed: true}));
+    this._rm = setTimeout(() => { this.open = false; this.leaving = false; this.remove(); }, TOAST_OUT_MS);
+  }
+  _action() { this.dispatchEvent(new Event('action', {bubbles: true, composed: true})); this.close('action'); }
+  render() {
+    return html`<div class="container" part="container">
+      <div class="text" part="text"><slot></slot></div>
+      ${this.action ? html`<button class="action" part="action" @click=${this._action}>${this.action}</button>` : ''}
+      ${this.closeable ? html`<button class="close" part="close" aria-label="닫기" @click=${() => this.close('dismiss')}><svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>` : ''}
+    </div>`;
+  }
+}
+customElements.define('md-toast', MdToast);
 
 // ---------------------------------------------------------------- button group
 // 출처: 토큰 _md-comp-button-group-{standard,connected}-{size}.scss, _md-comp-button-{size}.scss,

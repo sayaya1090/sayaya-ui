@@ -15,7 +15,7 @@ import static dev.sayaya.ui.elements.FeedbackElementBuilder.*;
 import static org.jboss.elemento.Elements.body;
 import static org.jboss.elemento.Elements.div;
 
-/** M3 tooltip / snackbar / button group: 토큰 수치(computed style) + 동작 검증. 메시지 접두어 "fb: ". */
+/** M3 tooltip / snackbar / button group, [M3 외 확장] toast: 토큰 수치(computed style) + 동작 검증. 메시지 접두어 "fb: ". */
 public class FeedbackComponentsTest {
     private static CSSStyleDeclaration cs(Element e) {
         elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
@@ -39,6 +39,7 @@ public class FeedbackComponentsTest {
         return sb.toString().trim();
     }
     private static boolean radiusMoving(Element e) { return transitions(e).contains("radius"); }
+    private static boolean connected(Element e) { return Boolean.TRUE.equals(Js.asPropertyMap(e).get("isConnected")); }
 
     public static void test() {
         printSectionHeader("M3 Tooltip / Snackbar / Button group");
@@ -354,6 +355,78 @@ public class FeedbackComponentsTest {
                 later(4500, () -> {
                     assertTrue("fb: 액션 있는 snackbar 는 자동으로 닫히지 않음", sbAct.open);
                     sbAct.close();
+                });
+            });
+        });
+
+        // ---------- toast [M3 외 확장] ----------
+        List<String> toastReasons = new ArrayList<>();
+        int[] toastActions = {0};
+        demo(section, "📘 Toast [M3 외 확장]", "데스크톱 웹용 알림입니다. 화면 오른쪽 위에 쌓이고(새 것이 아래), info·success 는 3초 뒤 자동으로 닫히며 warning·error 는 닫을 때까지 남습니다. 포인터를 올리면 타이머가 멈춥니다. M3 에는 없는 컴포넌트이므로 모바일·짧은 단일 알림에는 snackbar 를 쓰세요.",
+            """
+            toast().success().text("저장했습니다").show();
+            toast().error().text("저장하지 못했습니다")
+                .action("다시 시도").onAction(t -> retry())
+                .show();
+            """,
+            div().style("display", "flex").style("gap", "12px")
+                .add(button().outlined().text("info").onClick(e -> toast().info().text("새 버전이 있습니다").show()))
+                .add(button().outlined().text("success").onClick(e -> toast().success().text("저장했습니다").show()))
+                .add(button().outlined().text("warning").onClick(e -> toast().warning().text("세션이 곧 만료됩니다").show()))
+                .add(button().outlined().text("error").onClick(e -> toast().error().text("저장하지 못했습니다").action("다시 시도").show()))
+                .element());
+        var tInfo = toast().info().text("정보 토스트").timeout(0).onClosed(toastReasons::add).element();
+        var tErr = toast().error().text("오류 토스트").action("다시 시도").onAction(t -> toastActions[0]++).onClosed(toastReasons::add).element();
+        assertEquals("fb: toast 태그명", "MD-TOAST", tInfo.tagName);
+        assertTrue("fb: toast 속성 설정", "info".equals(tInfo.level) && "error".equals(tErr.level) && tInfo.timeout == 0 && "다시 시도".equals(tErr.action));
+        later(150, () -> {
+            if (!isAutomated()) return; // 사람이 볼 때는 토스트를 자동으로 띄우지 않는다. 데모 버튼으로 확인
+            assertTrue("fb: toast 자동 닫힘 기본값", toast().info().element().effectiveTimeout == 3000 && toast().success().element().effectiveTimeout == 3000
+                    && toast().warning().element().effectiveTimeout == 0 && tErr.effectiveTimeout == 0 && tErr.closeable);
+            tInfo.show(); tErr.show();
+            later(400, () -> {
+                // Lit 은 DOM 에 붙을 때(connectedCallback) shadow root 를 만든다 — show() 로 스택에 붙은 뒤 확인한다
+                assertTrue("fb: md-toast 업그레이드", Js.asPropertyMap(tInfo).get("shadowRoot") != null && Js.asPropertyMap(tErr).get("shadowRoot") != null);
+                HTMLElement stack = Js.uncheckedCast(tInfo.parentElement);
+                assertTrue("fb: toast 스택에 붙음", stack != null && "md-toast-stack".equals(stack.className) && tErr.parentElement == stack);
+                assertEquals("fb: toast 스택 위 60px", "60px", cs(stack).getPropertyValue("top"));
+                assertEquals("fb: toast 스택 오른쪽 20px", "20px", cs(stack).getPropertyValue("right"));
+                assertTrue("fb: toast 새 것이 아래로 쌓임", tErr.getBoundingClientRect().top > tInfo.getBoundingClientRect().top);
+                assertTrue("fb: toast handbook 클래스", tErr.classList.contains("ui-toast") && tErr.classList.contains("ui-toast-error") && tInfo.classList.contains("ui-toast-info"));
+                assertTrue("fb: toast error role alert", "alert".equals(tErr.getAttribute("role")) && "assertive".equals(tErr.getAttribute("aria-live")));
+                assertTrue("fb: toast info role status", "status".equals(tInfo.getAttribute("role")) && "polite".equals(tInfo.getAttribute("aria-live")));
+                var ci = inner(tInfo, ".container");
+                var ce = inner(tErr, ".container");
+                assertEquals("fb: toast 모서리 8px", "8px", cs(ci).getPropertyValue("border-top-left-radius"));
+                assertTrue("fb: toast 그림자(elevation 2)", !"none".equals(cs(ci).getPropertyValue("box-shadow")));
+                assertEquals("fb: toast 본문 14px", "14px", cs(inner(tInfo, ".text")).getPropertyValue("font-size"));
+                String bgInfo = cs(ci).getPropertyValue("background-color"), bgErr = cs(ce).getPropertyValue("background-color");
+                assertTrue("fb: toast 레벨별 배경색 [" + bgInfo + " / " + bgErr + "]", !bgInfo.isEmpty() && !bgInfo.equals(bgErr) && !"rgba(0, 0, 0, 0)".equals(bgErr));
+                ((HTMLElement) Js.uncheckedCast(inner(tInfo, ".close"))).click();
+                ((HTMLElement) Js.uncheckedCast(inner(tErr, ".action"))).click();
+                later(500, () -> {
+                    assertTrue("fb: toast 닫기 버튼으로 닫힘", toastReasons.contains("dismiss") && !connected(tInfo));
+                    assertTrue("fb: toast 액션 이벤트와 닫힘", toastActions[0] == 1 && toastReasons.contains("action") && !connected(tErr));
+                });
+            });
+            var tAuto = toast().success().text("자동 닫힘").onClosed(toastReasons::add).show();
+            var tHover = toast().info().text("포인터를 올리면 멈춤").timeout(500).show();
+            tHover.dispatchEvent(new elemental2.dom.Event("pointerenter"));
+            later(1000, () -> {
+                assertTrue("fb: toast 포인터가 머무는 동안 닫히지 않음", tHover.open && !tHover.leaving);
+                tHover.dispatchEvent(new elemental2.dom.Event("pointerleave"));
+                later(1500, () -> assertTrue("fb: toast 포인터가 떠나면 다시 닫힘", !connected(tHover)));
+            });
+            later(3600, () -> {
+                assertTrue("fb: toast 기본 3초 뒤 자동 닫힘", !connected(tAuto) && toastReasons.contains("timeout"));
+                // 최대 개수: 이전 토스트가 모두 닫힌 뒤 스택이 빈 상태에서 확인한다
+                List<String> overflow = new ArrayList<>();
+                var o1 = toast().info().text("1").timeout(0).max(2).onClosed(overflow::add).show();
+                var o2 = toast().info().text("2").timeout(0).max(2).onClosed(overflow::add).show();
+                var o3 = toast().info().text("3").timeout(0).max(2).onClosed(overflow::add).show();
+                later(400, () -> {
+                    assertTrue("fb: toast 최대 개수를 넘으면 가장 오래된 것이 닫힘", !connected(o1) && connected(o2) && connected(o3) && overflow.contains("overflow"));
+                    o2.close(); o3.close();
                 });
             });
         });

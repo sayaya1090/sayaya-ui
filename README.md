@@ -69,6 +69,7 @@ dependencies {
 | **Expressive (labs/gb)** | `gb()` | Material Web 2.5.0 Expressive 컴포넌트 16종 (`md-gb-*`): button, split button, icon button, fab, icon, card, badge, checkbox, radio, switch, divider, list/list-item, menu/menu-group/menu-item | |
 | **Navigation** | `topAppBar()`, `navigationBar()`, `navigationRail()`, `navigationDrawer()` | Top app bar(small·medium flexible·large flexible, 가운데 정렬·부제), Navigation bar, Navigation rail(접힘 96dp·narrow 80dp / 펼침 220~360dp, modal, 메뉴 버튼), Navigation drawer(고정/모달) | |
 | **Tooltip / Snackbar / Button group** | `tooltip()`, `snackbar()`, `buttonGroup()` | Plain·Rich tooltip, Snackbar(액션/닫기/자동 닫힘), Standard·Connected button group(xsmall~xlarge, 토글 선택) | |
+| **Toast** [M3 외 확장] | `toast()` | 데스크톱 웹용 스택 알림(오른쪽 위에 쌓임, info·success·warning·error, 액션/닫기/자동 닫힘·hover 정지). M3 에 없는 컴포넌트로, 모바일에서는 Snackbar 사용 권장 | |
 | **Side sheet** | `sideSheet()` | Standard·Modal side sheet(end/start, detached, 뒤로·닫기 버튼, 하단 액션, 스크림·Esc 닫기) | |
 | **Bottom sheet** | `bottomSheet()` | Standard·Modal bottom sheet(드래그 핸들로 펼침/접힘, 아래로 끌어 닫기, 스크림·Esc 닫기, 최대 너비 640dp) | [🔗](https://sayaya1090.github.io/sayaya-ui/bottom_sheet.html) |
 
@@ -884,6 +885,54 @@ var range = buttonGroup().connected().size(ButtonGroupSize.Small).selection(Butt
 토큰에 없는 레이아웃 값은 m3.material.io 스펙 페이지와 Compose Material3(`Tooltip.kt`, `Snackbar.kt`) 상수로 대조했습니다: plain tooltip 높이 24dp·패딩 8dp·최대 너비 200dp, rich tooltip 패딩 12/16/8dp·최대 너비 320dp, tooltip 최소 너비 40dp·앵커 간격 4dp, snackbar 최대 너비 600dp, 화면 가장자리 여백 8dp(material-components-android `m3_snackbar_margin`).
 
 버튼 그룹의 토글·누름 전환: 선택하거나 누를 때 모서리 모양과 너비가 `md.sys.motion.spring.fast.spatial`(damping 0.9, stiffness 1400)을 따라 부드럽게 바뀌고, outlined 버튼의 테두리 색은 `md.sys.motion.spring.default.effects`(damping 1, stiffness 1600)로 사라집니다. Compose Material3 `ToggleButton`/`ButtonGroup` 과 같이 container·content 색은 바로 바뀝니다. CSS 에는 spring 이 없어 두 spring 을 `linear()` 곡선(약 224ms, 231ms)으로 근사했습니다. `prefers-reduced-motion: reduce` 이면 전환하지 않습니다.
+
+### Toast [M3 외 확장]
+
+> **M3 외 확장**: Material Design 3 에는 toast 컴포넌트가 없습니다. M3 의 일시 알림은 snackbar 하나뿐이며, 화면 아래에 한 번에 하나만 뜨는 모바일 중심 패턴입니다. `md-toast` 는 데스크톱 웹 앱에서 여러 알림을 화면 오른쪽 위에 쌓아 보여 주는 관례를 위해 sayaya-ui 가 추가한 엘리먼트입니다(`labs-bundle/src/sayaya-feedback.js`). 색·모양·글꼴은 M3 시스템 토큰을 쓰지만, 배치와 동작은 M3 스펙이 아닙니다.
+
+**언제 무엇을 쓰나**
+
+| 상황 | 권장 | 이유 |
+|---|---|---|
+| 모바일(폭 600px 미만), 또는 M3 를 그대로 따르는 화면 | `snackbar()` | M3 표준. 화면 아래, 한 번에 하나, 실행 취소 같은 액션 1개 |
+| 데스크톱 웹에서 짧은 결과 알림(저장됨·실패 등)이 연달아 생길 때 | `toast()` | 오른쪽 위에 쌓여 서로 덮어쓰지 않음, 레벨(info/success/warning/error)별 색 |
+| 오류·경고처럼 사용자가 꼭 읽어야 하는 알림 | `toast().error()` / `toast().warning()` | 직접 닫을 때까지 남고 `role=alert` 로 바로 읽힘 |
+| 사용자가 응답해야 하는 결정 | `dialog()` | 토스트·스낵바는 결정을 요구하지 않습니다 |
+
+```java
+import static dev.sayaya.ui.elements.FeedbackElementBuilder.*;
+
+// info·success: 3초 뒤 자동으로 닫힘
+toast().success().text("저장했습니다").show();
+
+// warning·error: 사용자가 닫을 때까지 유지, 액션 버튼(선택)
+toast().error().text("저장하지 못했습니다")
+    .action("다시 시도").onAction(t -> save())
+    .onClosed(reason -> log(reason))   // action | dismiss | timeout | overflow
+    .show();
+
+// 시간·최대 개수 지정. timeout(0) 이면 자동으로 닫지 않음
+toast().info().text("새 버전이 있습니다").timeout(5000).max(3).closeable(false).show();
+```
+
+- **위치·쌓임**: `show()` 하면 `body` 에 붙는 `.md-toast-stack`(fixed, 위 60px·오른쪽 20px, 간격 8px, 최대 너비 400px, z-index 10002)에 들어갑니다. 새 토스트가 아래에 붙고, `max`(기본 5)를 넘으면 가장 오래된 것부터 `overflow` 사유로 닫힙니다. 위치는 CSS 변수 `--md-toast-top`, `--md-toast-right`, `--md-toast-z-index` 로 바꿀 수 있습니다. 폭 600px 미만에서는 좌우 8px 여백으로 늘어나지만, 모바일에서는 snackbar 를 권장합니다.
+- **자동 닫힘**: `timeout` 을 지정하지 않으면 info·success 는 3000ms, warning·error 는 닫지 않음. 포인터나 포커스가 토스트에 있는 동안은 타이머가 멈추고, 떠나면 남은 시간(최소 1초) 뒤 닫힙니다.
+- **색**: info `primary`, success `tertiary`, warning `error-container`, error `error`(각각 `on-*` 글자색). 모서리 `corner-small`(8px), 그림자 elevation 2, 본문 `body-medium`(14px).
+- **애니메이션**: 나타날 때 오른쪽 20px 에서 미끄러져 들어오고(300ms), 닫힐 때 위로 10px 올라가며 흐려진 뒤(300ms) DOM 에서 제거됩니다. `prefers-reduced-motion: reduce` 이면 애니메이션하지 않습니다.
+- **접근성**: info·success 는 `role=status`·`aria-live=polite`, warning·error 는 `role=alert`·`aria-live=assertive`. 닫기 버튼은 `aria-label="닫기"` 를 가진 `<button>` 입니다.
+
+**handbook `ToastContainer` 에서 옮길 때**
+
+이 컴포넌트는 handbook `ui-components` 의 `ToastContainer` 를 옮긴 것으로, 수치(위치·간격·색 역할·애니메이션·3초)를 그대로 따릅니다.
+
+| handbook | sayaya-ui |
+|---|---|
+| `toastContainer.show(ToastLevel.SUCCESS, msg)` | `toast().success().text(msg).show()` |
+| `show(level, msg, autoCloseMs)` | `toast().level(ToastLevel.X).text(msg).timeout(ms).show()` |
+| 컨테이너를 DI 로 주입해 직접 DOM 에 붙임 | 창마다 스택 하나를 `show()` 가 자동으로 만듦 |
+| `.ui-toast`, `.ui-toast-<level>` 셀렉터 | host 에 같은 클래스가 붙어 그대로 쓸 수 있음 |
+| `.ui-toast-close` (div) | shadow DOM 안 `<button part="close">` — Playwright 에서는 `md-toast >> [part=close]` 처럼 접근 |
+| 없음 | 액션 버튼, hover 시 타이머 정지, 최대 개수, `role`/`aria-live` |
 
 ### Side sheet
 

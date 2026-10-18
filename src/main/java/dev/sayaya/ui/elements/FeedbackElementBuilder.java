@@ -13,13 +13,15 @@ import java.util.function.Consumer;
 import static org.jboss.elemento.Elements.htmlContainer;
 
 /**
- * M3 tooltip / snackbar / button group 빌더 (sayaya-ui 자체 구현, labs.bundle.js 필요).
+ * M3 tooltip / snackbar / button group, [M3 외 확장] toast 빌더 (sayaya-ui 자체 구현, labs.bundle.js 필요).
  * <pre>{@code
  * import static dev.sayaya.ui.elements.FeedbackElementBuilder.*;
  *
  * tooltip().plain().anchor(saveButton).text("저장").element();
  * tooltip().rich().anchor(infoIcon).subhead("권한").text("편집자만 수정할 수 있습니다").action(button().text().text("자세히")).element();
  * var sb = snackbar().text("삭제했습니다").action("실행 취소").onAction(e -> undo()).element(); sb.show();
+ * toast().success().text("저장했습니다").show();          // 웹: 오른쪽 위에 쌓이는 알림
+ * toast().error().text("저장하지 못했습니다").show();     // warning·error 는 닫을 때까지 유지
  * buttonGroup().connected().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
  *     .add(button().outlined().text("일")).add(button().outlined().text("주")).element();
  * }</pre>
@@ -30,12 +32,16 @@ public final class FeedbackElementBuilder {
 
     public static TooltipPrepare tooltip() { return new TooltipPrepare(); }
     public static SnackbarBuilder snackbar() { return new SnackbarBuilder(); }
+    /** [M3 외 확장] 데스크톱 웹용 스택 알림. 모바일·짧은 단일 알림은 {@link #snackbar()} 를 쓴다 */
+    public static ToastPrepare toast() { return new ToastPrepare(); }
     public static ButtonGroupPrepare buttonGroup() { return new ButtonGroupPrepare(); }
 
     public enum TooltipPosition { Top("top"), Bottom("bottom"), Start("start"), End("end");
         public final String value; TooltipPosition(String v) { value = v; } }
     public enum SnackbarAlign { Start("start"), Center("center");
         public final String value; SnackbarAlign(String v) { value = v; } }
+    public enum ToastLevel { Info("info"), Success("success"), Warning("warning"), Error("error");
+        public final String value; ToastLevel(String v) { value = v; } }
     public enum ButtonGroupSize { XSmall("xsmall"), Small("small"), Medium("medium"), Large("large"), XLarge("xlarge");
         public final String value; ButtonGroupSize(String v) { value = v; } }
     public enum ButtonGroupSelection { None("none"), Single("single"), Multiple("multiple");
@@ -100,6 +106,43 @@ public final class FeedbackElementBuilder {
             });
             return this;
         }
+    }
+
+    // ---------------- Toast [M3 외 확장] ----------------
+    public static final class ToastPrepare {
+        private ToastPrepare() {}
+        /** primary 색. 기본 3초 뒤 자동으로 닫힘 */
+        public ToastBuilder info() { return new ToastBuilder(ToastLevel.Info); }
+        /** tertiary 색. 기본 3초 뒤 자동으로 닫힘 */
+        public ToastBuilder success() { return new ToastBuilder(ToastLevel.Success); }
+        /** error-container 색. 기본으로 사용자가 닫을 때까지 유지 */
+        public ToastBuilder warning() { return new ToastBuilder(ToastLevel.Warning); }
+        /** error 색. 기본으로 사용자가 닫을 때까지 유지 */
+        public ToastBuilder error() { return new ToastBuilder(ToastLevel.Error); }
+        public ToastBuilder level(ToastLevel level) { return new ToastBuilder(level); }
+    }
+    public static final class ToastBuilder extends FbBuilder<MdToastElement, ToastBuilder> {
+        ToastBuilder(ToastLevel level) { super("md-toast", MdToastElement.class); element().level = level.value; }
+        @Override public ToastBuilder that() { return this; }
+        public ToastBuilder action(String label) { element().action = label; return this; }
+        /** 닫기(X) 버튼. 기본 true */
+        public ToastBuilder closeable(boolean closeable) { element().closeable = closeable; return this; }
+        /** 자동 닫힘(ms). 0 이면 사용자가 닫을 때까지 유지. 지정하지 않으면 info·success 3초, warning·error 유지 */
+        public ToastBuilder timeout(int ms) { element().timeout = ms; return this; }
+        /** 스택에 동시에 보일 최대 개수(기본 5). 넘으면 가장 오래된 토스트가 'overflow' 로 닫힌다 */
+        public ToastBuilder max(int max) { element().max = max; return this; }
+        public ToastBuilder onAction(Consumer<MdToastElement> cb) { element().addEventListener("action", e -> cb.accept(element())); return this; }
+        public ToastBuilder onOpened(Consumer<MdToastElement> cb) { element().addEventListener("opened", e -> cb.accept(element())); return this; }
+        /** 닫힘 사유: action | dismiss | timeout | overflow */
+        public ToastBuilder onClosed(Consumer<String> cb) {
+            element().addEventListener("closed", e -> {
+                Object d = ((CustomEvent<?>) Js.uncheckedCast(e)).detail;
+                cb.accept(d == null ? null : Js.asString(Js.asPropertyMap(d).get("reason")));
+            });
+            return this;
+        }
+        /** 바로 띄운다(스택에 붙임). 반환값은 닫기 등에 쓰는 엘리먼트 */
+        public MdToastElement show() { element().show(); return element(); }
     }
 
     // ---------------- Button group ----------------

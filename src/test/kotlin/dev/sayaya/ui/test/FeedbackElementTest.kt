@@ -86,9 +86,30 @@ internal class FeedbackElementTest: GwtTestSpec({
         "tooltip 태그명",
         "tooltip 포커스 시 지연 후 표시",
         "tooltip 포커스 해제 시 닫힘",
-        "xsmall 버튼 높이 32px"
+        "xsmall 버튼 높이 32px",
+        "toast 태그명",
+        "toast 속성 설정",
+        "md-toast 업그레이드",
+        "toast 자동 닫힘 기본값",
+        "toast 스택에 붙음",
+        "toast 스택 위 60px",
+        "toast 스택 오른쪽 20px",
+        "toast 새 것이 아래로 쌓임",
+        "toast handbook 클래스",
+        "toast error role alert",
+        "toast info role status",
+        "toast 모서리 8px",
+        "toast 그림자(elevation 2)",
+        "toast 본문 14px",
+        "toast 레벨별 배경색",
+        "toast 닫기 버튼으로 닫힘",
+        "toast 액션 이벤트와 닫힘",
+        "toast 포인터가 머무는 동안 닫히지 않음",
+        "toast 포인터가 떠나면 다시 닫힘",
+        "toast 기본 3초 뒤 자동 닫힘",
+        "toast 최대 개수를 넘으면 가장 오래된 것이 닫힘"
     )
-    Given("M3 tooltip / snackbar / button group") {
+    Given("M3 tooltip / snackbar / button group / toast") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
         page.waitForTimeout(11500.0)
         val logs = page.getConsoleLogs().map { it.toString() }
