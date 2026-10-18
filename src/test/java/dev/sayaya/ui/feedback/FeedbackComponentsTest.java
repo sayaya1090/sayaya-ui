@@ -307,20 +307,28 @@ public class FeedbackComponentsTest {
         });
         // ---------- button group: 토글 모양 전환(shape morph). Compose ToggleButton/ButtonGroup 과 같이 md.sys.motion.spring.fast.spatial ----------
         var bgMorph = buttonGroup().standard().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
-                .add(button().filled().text("일")).add(button().outlined().text("주")).element();
+                .add(button().filled().text("일")).add(button().outlined().text("주")).add(button().filled().text("월"))
+                .add(button().outlined().text("분기")).add(button().filled().text("년")).element();
         var bgIcon = buttonGroup().standard().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
                 .add(button().icon("star").filled().ariaLabel("별"))
-                .add(button().icon("favorite").outlined().ariaLabel("좋아요")).element();
+                .add(button().icon("favorite").outlined().ariaLabel("좋아요"))
+                .add(button().icon("bookmark").filled().ariaLabel("북마크"))
+                .add(button().icon("share").outlined().ariaLabel("공유"))
+                .add(button().icon("thumb_up").filled().ariaLabel("추천")).element();
         demo(section, "📘 Button group - 토글 모양 전환", "버튼을 선택하거나 누르면 모서리 모양이 spring 곡선(md.sys.motion.spring.fast.spatial)을 따라 부드럽게 바뀝니다. 누를 때 넓어지는 너비도 같은 곡선을 씁니다. 선택 색은 Compose ToggleButton 처럼 바로 바뀌고, outlined 버튼의 테두리 색만 서서히 사라집니다.",
             """
             buttonGroup().standard().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
-                .add(button().filled().text("일")).add(button().outlined().text("주"))
+                .add(button().filled().text("일")).add(button().outlined().text("주")).add(button().filled().text("월"))
+                .add(button().outlined().text("분기")).add(button().filled().text("년"))
                 .element();
             buttonGroup().standard().size(ButtonGroupSize.Small).selection(ButtonGroupSelection.Single)
                 .add(button().icon("star").filled().ariaLabel("별"))
                 .add(button().icon("favorite").outlined().ariaLabel("좋아요"))
+                .add(button().icon("bookmark").filled().ariaLabel("북마크"))
+                .add(button().icon("share").outlined().ariaLabel("공유"))
+                .add(button().icon("thumb_up").filled().ariaLabel("추천"))
                 .element();
-            """, div().style("display", "flex").style("gap", "24px").add(bgMorph).add(bgIcon).element());
+            """, div().style("display", "flex").style("flex-direction", "column").style("align-items", "flex-start").style("gap", "16px").add(bgMorph).add(bgIcon).element());
         later(5000, () -> {
             var m0 = child(bgMorph, 0); var m1 = child(bgMorph, 1); var i0 = child(bgIcon, 0);
             String tp = cs(m0).getPropertyValue("transition-property");
