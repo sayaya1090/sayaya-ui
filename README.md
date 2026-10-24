@@ -82,6 +82,31 @@ dependencies {
 | **Wavy progress** | `wavyProgress()` | M3 Expressive 물결 선형 진행 표시기(determinate/indeterminate) | [🔗](https://sayaya1090.github.io/sayaya-ui/wavy_progress.html) |
 | **Centered slider** | `centeredSlider()` | M3 Expressive 가운데 슬라이더(0 기준 양·음 범위, 네이티브 range 키보드) | [🔗](https://sayaya1090.github.io/sayaya-ui/centered_slider.html) |
 | **i18n** | `Locales`, 각 빌더의 `locale()`·`label()` | 영어 기본 문구 덮어쓰기, Intl 기반 날짜·시간 표기, 주 시작 요일, 12/24시간, RTL | [🔗](https://sayaya1090.github.io/sayaya-ui/i18n.html) |
+| **Shape** | CSS 변수 | 직접 구현 컴포넌트의 모서리를 컴포넌트 변수·시스템 shape 토큰으로 변경 | [🔗](https://sayaya1090.github.io/sayaya-ui/shape.html) |
+
+## 모양(모서리) 사용자 지정
+
+sayaya-ui 가 직접 구현한 컴포넌트의 모든 모서리는 `var(--md-<컴포넌트>-<부위>-shape, var(--md-sys-shape-corner-<토큰>, 기본값))` 순서로 정해집니다. 아무것도 지정하지 않으면 M3 기본 모양 그대로이고, 시스템 shape 토큰을 지정하면 그 토큰을 쓰는 부위가 한꺼번에 바뀝니다.
+
+```css
+:root { --md-sys-shape-corner-extra-large: 20px; }          /* date/time picker 컨테이너, carousel 항목 등 */
+.compact { --md-date-picker-date-shape: 8px; }  /* 한 부위만 */
+```
+
+| 컴포넌트 | 변수 (시스템 토큰) |
+|---|---|
+| Date picker | `--md-date-picker-container-shape` (extra-large), `-date-shape`, `-year-shape`, `-month-button-shape`, `-nav-button-shape`, `-action-shape` (full) |
+| Time picker | `--md-time-picker-container-shape` (extra-large), `-time-selector-shape`, `-period-selector-shape` (small), `-clock-dial-shape`, `-clock-dial-label-shape`, `-clock-dial-selector-handle-shape`, `-clock-dial-selector-center-shape`, `-action-shape` (full) |
+| Search | `--md-search-bar-container-shape` (full), `--md-search-view-docked-shape` (extra-large), `--md-search-view-full-screen-shape` (none), `--md-search-icon-button-shape` (full) |
+| FAB menu | `--md-fab-menu-fab-shape` (large), `-close-button-shape`, `-item-shape` (full) |
+| Toolbar | `--md-toolbar-docked-container-shape` (none), `--md-toolbar-floating-container-shape` (full) |
+| Carousel | `--md-carousel-item-shape` (extra-large, 가장자리 잘림에도 적용), `-show-all-shape` (full) |
+| Loading indicator | `--md-loading-indicator-container-shape` (full) |
+| Wavy progress | `--md-wavy-progress-track-shape`, `-stop-shape` (full) |
+| Centered slider | `--md-centered-slider-track-shape`, `-handle-shape`, `-stop-shape` (full) |
+| Snackbar / Toast | `--md-snackbar-action-shape`, `-close-shape`, `--md-toast-action-shape`, `-close-shape` (full) |
+| Navigation bar / rail 배지 | `--md-navigation-bar-badge-shape`, `-badge-small-shape`, `--md-navigation-rail-badge-shape`, `-badge-small-shape` (full) |
+| Side / Bottom sheet | `--md-side-sheet-standard-container-shape` (none), `--md-bottom-sheet-drag-handle-shape` (full). 그 밖의 시트 모서리는 기존처럼 `--md-sys-shape-corner-large/extra-large` 를 따릅니다 |
 
 ## 지역화(i18n)
 

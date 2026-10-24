@@ -223,10 +223,10 @@ export class MdNavigationRailItem extends LitElement {
     :host([expanded]) .indicator.wide { width: 100%; }               /* trailing 이 있으면 indicator 를 항목 끝까지 늘린다 */
     :host([expanded][active]) .label { color: var(--md-sys-color-on-secondary-container, #1d192b); }
     /* 배지: 접힌 레일은 아이콘 오른쪽 위, 펼친 레일은 라벨 옆 */
-    .badge { box-sizing: border-box; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px;
+    .badge { box-sizing: border-box; min-width: 16px; height: 16px; padding: 0 4px; border-radius: var(--md-navigation-rail-badge-shape, var(--md-sys-shape-corner-full, 8px));
       background: var(--md-sys-color-error, #b3261e); color: var(--md-sys-color-on-error, #fff);
       ${type('label-small', 11, 16, 500)} text-align: center; }
-    .badge.dot { min-width: 6px; width: 6px; height: 6px; padding: 0; border-radius: 3px; }
+    .badge.dot { min-width: 6px; width: 6px; height: 6px; padding: 0; border-radius: var(--md-navigation-rail-badge-small-shape, var(--md-sys-shape-corner-full, 3px)); }
     .icon .badge { position: absolute; top: -4px; left: 14px; }
     .icon .badge.dot { top: 0; left: 18px; }
     .badge.after { flex: none; }

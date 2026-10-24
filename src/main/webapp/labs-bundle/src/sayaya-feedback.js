@@ -178,14 +178,14 @@ export class MdSnackbar extends LitElement {
     button:focus-visible::before { opacity: var(--md-sys-state-focus-state-layer-opacity, .1); }
     button:active::before { opacity: var(--md-sys-state-pressed-state-layer-opacity, .1); }
     button:focus-visible { outline: 3px solid var(--md-sys-color-inverse-primary, #d0bcff); outline-offset: 2px; }
-    .action { height: 40px; padding: 0 12px; border-radius: 20px;
+    .action { height: 40px; padding: 0 12px; border-radius: var(--md-snackbar-action-shape, var(--md-sys-shape-corner-full, 20px));
       color: var(--md-sys-color-inverse-primary, #d0bcff);
       font-family: var(--md-sys-typescale-label-large-font, Roboto, sans-serif);
       font-size: var(--md-sys-typescale-label-large-size, 14px);
       line-height: var(--md-sys-typescale-label-large-line-height, 20px);
       font-weight: var(--md-sys-typescale-label-large-weight, 500);
       letter-spacing: var(--md-sys-typescale-label-large-tracking, 0.1px); }
-    .close { width: 40px; height: 40px; border-radius: 20px; color: var(--md-sys-color-inverse-on-surface, #f5eff7); }
+    .close { width: 40px; height: 40px; border-radius: var(--md-snackbar-close-shape, var(--md-sys-shape-corner-full, 20px)); color: var(--md-sys-color-inverse-on-surface, #f5eff7); }
     .close svg { width: 24px; height: 24px; fill: currentColor; }
   `;
   constructor() { super(); this.open = false; this.action = ''; this.closeable = false; this.timeout = -1; this.align = 'center'; this.multiline = false; this.longAction = false; this._t = 0; }
@@ -293,13 +293,13 @@ export class MdToast extends LitElement {
     button:focus-visible::before { opacity: var(--md-sys-state-focus-state-layer-opacity, .1); }
     button:active::before { opacity: var(--md-sys-state-pressed-state-layer-opacity, .1); }
     button:focus-visible { outline: 3px solid currentColor; outline-offset: -3px; }
-    .action { height: 40px; padding: 0 12px; border-radius: 20px;
+    .action { height: 40px; padding: 0 12px; border-radius: var(--md-toast-action-shape, var(--md-sys-shape-corner-full, 20px));
       font-family: var(--md-sys-typescale-label-large-font, Roboto, sans-serif);
       font-size: var(--md-sys-typescale-label-large-size, 14px);
       line-height: var(--md-sys-typescale-label-large-line-height, 20px);
       font-weight: var(--md-sys-typescale-label-large-weight, 500);
       letter-spacing: var(--md-sys-typescale-label-large-tracking, 0.1px); }
-    .close { width: 40px; height: 40px; border-radius: 20px; }
+    .close { width: 40px; height: 40px; border-radius: var(--md-toast-close-shape, var(--md-sys-shape-corner-full, 20px)); }
     .close svg { width: 20px; height: 20px; fill: currentColor; }
   `;
   constructor() {

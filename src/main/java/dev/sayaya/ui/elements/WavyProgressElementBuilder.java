@@ -80,10 +80,10 @@ public final class WavyProgressElementBuilder implements
           + "-webkit-mask-image:" + wave(40) + ";mask-image:" + wave(40) + ";-webkit-mask-size:40px 10px;mask-size:40px 10px;"
           + "-webkit-mask-repeat:repeat-x;mask-repeat:repeat-x;animation:sayaya-wave-flow 1s linear infinite}"
           // 트랙: 평평한 4dp, 활성 끝에서 4dp 띄움
-          + c + " .track{position:absolute;top:3px;height:4px;border-radius:2px;background:var(--_track);"
+          + c + " .track{position:absolute;top:3px;height:4px;border-radius:var(--md-wavy-progress-track-shape,var(--md-sys-shape-corner-full,2px));background:var(--_track);"
           + "left:calc(var(--_value) * 100% + 4px);right:0}"
           // 끝 점 4dp
-          + c + " .stop{position:absolute;right:0;top:3px;width:4px;height:4px;border-radius:50%;background:var(--_active)}"
+          + c + " .stop{position:absolute;right:0;top:3px;width:4px;height:4px;border-radius:var(--md-wavy-progress-stop-shape,var(--md-sys-shape-corner-full,50%));background:var(--_active)}"
           + "@keyframes sayaya-wave-flow{from{-webkit-mask-position:0 0;mask-position:0 0}to{-webkit-mask-position:40px 0;mask-position:40px 0}}"
           // Indeterminate: 파장 20dp, 활성 구간이 왼쪽에서 오른쪽으로 지나간다. 끝 점은 없다
           + c + ".indeterminate .active{width:40%;-webkit-mask-image:" + wave(20) + ";mask-image:" + wave(20) + ";"

@@ -100,7 +100,7 @@ public final class LoadingIndicatorElementBuilder implements
         return kf
                 + "@keyframes sayaya-li-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}"
                 + "." + CLASS + "{--_size:var(--md-loading-indicator-size," + DEFAULT_SIZE + "px);display:inline-flex;align-items:center;justify-content:center;"
-                + "flex:none;box-sizing:border-box;width:var(--_size);height:var(--_size);border-radius:50%;vertical-align:middle}"
+                + "flex:none;box-sizing:border-box;width:var(--_size);height:var(--_size);border-radius:var(--md-loading-indicator-container-shape,var(--md-sys-shape-corner-full,50%));vertical-align:middle}"
                 + "." + CLASS + ".contained{background:var(--md-loading-indicator-container-color,var(--md-sys-color-primary-container,#eaddff))}"
                 + "." + SPIN_CLASS + "{display:flex;align-items:center;justify-content:center;animation:sayaya-li-spin " + GLOBAL_ROTATION_MS + "ms linear infinite}"
                 // 스펙: 크기 48dp 일 때 도형 38dp — 비율 38/48 유지

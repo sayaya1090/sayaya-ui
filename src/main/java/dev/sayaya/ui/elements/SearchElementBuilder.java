@@ -181,8 +181,8 @@ public final class SearchElementBuilder implements
             c + "{position:relative;display:block;--_bg:var(--md-search-container-color,var(--md-sys-color-surface-container-high,#ece6f0))}"
           + c + " .icon{font-family:'Material Symbols Outlined';font-size:24px;line-height:1;font-weight:normal;font-style:normal;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}"
           // Search bar: 56dp, full, surface container high, 앞 아이콘 on surface, 뒤 아이콘 on surface variant
-          + c + " .bar{position:relative;z-index:2;box-sizing:border-box;height:56px;border-radius:9999px;background:var(--_bg);display:flex;align-items:center;gap:4px;padding:0 4px}"
-          + c + " .leading," + c + " .clear{flex:none;width:48px;height:48px;border:0;border-radius:50%;background:none;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}"
+          + c + " .bar{position:relative;z-index:2;box-sizing:border-box;height:56px;border-radius:var(--md-search-bar-container-shape,var(--md-sys-shape-corner-full,9999px));background:var(--_bg);display:flex;align-items:center;gap:4px;padding:0 4px}"
+          + c + " .leading," + c + " .clear{flex:none;width:48px;height:48px;border:0;border-radius:var(--md-search-icon-button-shape,var(--md-sys-shape-corner-full,50%));background:none;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}"
           + c + " .leading{color:var(--md-sys-color-on-surface,#1d1b20)}"
           + c + " .clear," + c + " .trailing{color:var(--md-sys-color-on-surface-variant,#49454f)}"
           + c + " .clear[hidden]{display:none}"
@@ -200,11 +200,11 @@ public final class SearchElementBuilder implements
           // Docked: 열리면 바 위 모서리 28dp(extra large) + 목록 아래 모서리 28dp, 본문은 스크림
           + c + " .scrim{display:none}"
           + c + ".docked.open .scrim{display:block;position:fixed;inset:0;z-index:1;background:var(--md-sys-color-scrim,#000);opacity:.32}"
-          + c + ".docked.open .bar{border-radius:28px 28px 0 0}"
-          + c + ".docked .view{position:absolute;z-index:2;left:0;right:0;top:56px;max-height:min(480px,70vh);border-radius:0 0 28px 28px;padding-bottom:8px}"
+          + c + ".docked.open .bar{border-radius:var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) 0 0}"
+          + c + ".docked .view{position:absolute;z-index:2;left:0;right:0;top:56px;max-height:min(480px,70vh);border-radius:0 0 var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px));padding-bottom:8px}"
           // Full-screen: 화면 전체, 모서리 없음, 헤더 72dp
           + c + ".fullscreen.open{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;background:var(--_bg)}"
-          + c + ".fullscreen.open .bar{height:72px;border-radius:0;flex:none}"
+          + c + ".fullscreen.open .bar{height:72px;border-radius:var(--md-search-view-full-screen-shape,var(--md-sys-shape-corner-none,0px));flex:none}"
           + c + ".fullscreen.open .view{flex:1}";
         DomGlobal.document.head.appendChild(style);
     }

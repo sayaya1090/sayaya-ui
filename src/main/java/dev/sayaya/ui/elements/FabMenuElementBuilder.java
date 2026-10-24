@@ -106,14 +106,14 @@ public final class FabMenuElementBuilder implements
             .append(c).append(" .icon{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;")
             .append("text-transform:none;white-space:nowrap;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga';-webkit-font-smoothing:antialiased}")
             .append(c).append(" .toggle{box-sizing:border-box;width:56px;height:56px;border:0;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;")
-            .append("border-radius:16px;background:var(--_container);color:var(--_on-container);").append(shadow)
+            .append("border-radius:var(--md-fab-menu-fab-shape,var(--md-sys-shape-corner-large,16px));background:var(--_container);color:var(--_on-container);").append(shadow)
             .append("transition:border-radius 300ms cubic-bezier(0.2,0,0,1),background-color 300ms linear,color 300ms linear}")
             .append(c).append(" .toggle .icon{font-size:24px}")
-            .append(c).append(".open .toggle{border-radius:9999px;background:var(--_strong);color:var(--_on-strong)}") // CloseButtonContainerShape full
+            .append(c).append(".open .toggle{border-radius:var(--md-fab-menu-close-button-shape,var(--md-sys-shape-corner-full,9999px));background:var(--_strong);color:var(--_on-strong)}") // CloseButtonContainerShape full
             .append(c).append(".open .toggle .icon{font-size:20px}") // CloseButtonIconSize 20
             .append(c).append(" .items{display:none;flex-direction:column;align-items:flex-end;gap:4px}") // ListItemBetweenSpace 4
             .append(c).append(".open .items{display:flex}")
-            .append(c).append(" .item{box-sizing:border-box;height:56px;border:0;border-radius:9999px;padding:0 24px;gap:8px;display:inline-flex;align-items:center;cursor:pointer;")
+            .append(c).append(" .item{box-sizing:border-box;height:56px;border:0;border-radius:var(--md-fab-menu-item-shape,var(--md-sys-shape-corner-full,9999px));padding:0 24px;gap:8px;display:inline-flex;align-items:center;cursor:pointer;")
             .append("background:var(--_container);color:var(--_on-container);font:500 16px/24px Roboto,system-ui,sans-serif;").append(shadow).append("}")
             .append(c).append(" .item .icon{font-size:24px}")
             .append(c).append(" .item:focus-visible,").append(c).append(" .toggle:focus-visible{outline:3px solid var(--md-sys-color-secondary,#625b71);outline-offset:2px}")

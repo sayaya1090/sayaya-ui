@@ -166,7 +166,7 @@ public final class CarouselElementBuilder implements
                 if (left > 0) left = Math.max(0, w - right - SMALL_MIN); else right = Math.max(0, w - left - SMALL_MIN);
                 visible = w - left - right;
             }
-            it.style.setProperty("clip-path", "inset(0 " + right + "px 0 " + left + "px round 28px)");
+            it.style.setProperty("clip-path", "inset(0 " + right + "px 0 " + left + "px round var(--md-carousel-item-shape,var(--md-sys-shape-corner-extra-large,28px)))");
             it.setAttribute("data-visible", String.valueOf(Math.round(visible)));
             HTMLElement content = Js.uncheckedCast(it.querySelector(".content"));
             if (content != null) content.style.setProperty("transform", "translateX(" + ((left - right) / 2) + "px)");
@@ -186,7 +186,7 @@ public final class CarouselElementBuilder implements
           + c + ".uncontained .track{padding-inline-end:0}"
           + c + " .track::after{content:'';flex:0 0 1px}"
           // 항목 모서리 28dp
-          + c + " .item{position:relative;flex:none;height:var(--md-carousel-height,220px);border-radius:28px;overflow:hidden;scroll-snap-align:start;cursor:pointer;"
+          + c + " .item{position:relative;flex:none;height:var(--md-carousel-height,220px);border-radius:var(--md-carousel-item-shape,var(--md-sys-shape-corner-extra-large,28px));overflow:hidden;scroll-snap-align:start;cursor:pointer;"
           + "background:var(--md-sys-color-surface-container-highest,#e6e0e9);outline:none}"
           + c + ".hero .item{height:var(--md-carousel-height,280px)}"
           + c + " .item:focus-visible{box-shadow:inset 0 0 0 3px var(--md-sys-color-secondary,#625b71)}"
@@ -194,7 +194,7 @@ public final class CarouselElementBuilder implements
           + c + " .media{width:100%;height:100%;object-fit:cover;display:block}"
           + c + " .label{position:absolute;left:16px;right:16px;bottom:16px;font:500 16px/24px Roboto,system-ui,sans-serif;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}"
           + c + " .show-all-row{display:flex;justify-content:center;padding:4px}"
-          + c + " .show-all{height:40px;padding:0 12px;border:0;border-radius:9999px;background:none;cursor:pointer;font:500 14px/20px Roboto,system-ui,sans-serif;color:var(--md-sys-color-primary,#6750a4)}"
+          + c + " .show-all{height:40px;padding:0 12px;border:0;border-radius:var(--md-carousel-show-all-shape,var(--md-sys-shape-corner-full,9999px));background:none;cursor:pointer;font:500 14px/20px Roboto,system-ui,sans-serif;color:var(--md-sys-color-primary,#6750a4)}"
           + "@media (prefers-reduced-motion: reduce){" + c + " .content{transform:none!important}}";
         DomGlobal.document.head.appendChild(style);
     }

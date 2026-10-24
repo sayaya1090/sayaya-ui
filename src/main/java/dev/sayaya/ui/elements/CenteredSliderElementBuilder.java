@@ -102,12 +102,12 @@ public final class CenteredSliderElementBuilder implements
             c + "{position:relative;display:block;height:44px;min-width:120px;box-sizing:border-box;"
           + "--_active:var(--md-centered-slider-active-track-color,var(--md-sys-color-primary,#6750a4));"
           + "--_inactive:var(--md-centered-slider-inactive-track-color,var(--md-sys-color-secondary-container,#e8def8))}"
-          + c + " .inactive," + c + " .active{position:absolute;top:14px;height:16px;border-radius:9999px}" // 트랙 16dp, 세로 가운데
+          + c + " .inactive," + c + " .active{position:absolute;top:14px;height:16px;border-radius:var(--md-centered-slider-track-shape,var(--md-sys-shape-corner-full,9999px))}" // 트랙 16dp, 세로 가운데
           + c + " .inactive{background:var(--_inactive)}"
           + c + " .active{background:var(--_active)}"
-          + c + " .handle{position:absolute;top:0;width:4px;height:44px;border-radius:9999px;background:var(--_active);pointer-events:none}"
+          + c + " .handle{position:absolute;top:0;width:4px;height:44px;border-radius:var(--md-centered-slider-handle-shape,var(--md-sys-shape-corner-full,9999px));background:var(--_active);pointer-events:none}"
           // 양 끝 정지 표시 4dp. [파생] 색은 비활성 트랙 위에서 보이도록 primary
-          + c + " .stop{position:absolute;top:20px;width:4px;height:4px;border-radius:50%;background:var(--_active);z-index:1}"
+          + c + " .stop{position:absolute;top:20px;width:4px;height:4px;border-radius:var(--md-centered-slider-stop-shape,var(--md-sys-shape-corner-full,50%));background:var(--_active);z-index:1}"
           + c + " .stop.start{left:6px}" + c + " .stop.end{right:6px}"
           + c + " .input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:2}"
           + c + " .input:focus-visible~.handle," + c + ":focus-within .handle{outline:2px solid var(--md-sys-color-secondary,#625b71);outline-offset:2px}"

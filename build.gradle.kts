@@ -118,6 +118,7 @@ tasks {
                 "dev.sayaya.RippleElementTest",
                 "dev.sayaya.SearchElementTest",
                 "dev.sayaya.SelectElementTest",
+                "dev.sayaya.ShapeElementTest",
                 "dev.sayaya.SideSheetElementTest",
                 "dev.sayaya.SliderElementTest",
                 "dev.sayaya.SwitchElementTest",

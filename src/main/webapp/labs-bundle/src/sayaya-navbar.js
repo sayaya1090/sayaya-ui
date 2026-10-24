@@ -104,11 +104,11 @@ export class MdNavigationTab extends LitElement {
     :host([layout='horizontal']) .indicator { height: 40px; padding: 0 16px; gap: 4px; }
     :host([layout='horizontal'][active]) .label { color: var(--md-sys-color-on-secondary-container, #1d192b); }
     /* 배지: 아이콘 오른쪽 위에 겹침. small 6px / large 16px, error 색 (md-comp-navigation-bar badge 토큰) */
-    .badge { position: absolute; top: -2px; left: 14px; box-sizing: border-box; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px;
+    .badge { position: absolute; top: -2px; left: 14px; box-sizing: border-box; min-width: 16px; height: 16px; padding: 0 4px; border-radius: var(--md-navigation-bar-badge-shape, var(--md-sys-shape-corner-full, 8px));
       background: var(--md-sys-color-error, #b3261e); color: var(--md-sys-color-on-error, #fff);
       font-family: var(--md-sys-typescale-label-small-font, Roboto, sans-serif); font-size: var(--md-sys-typescale-label-small-size, 11px);
       line-height: 16px; text-align: center; }
-    .badge.small { min-width: 6px; width: 6px; height: 6px; padding: 0; border-radius: 3px; top: 0; left: 18px; }
+    .badge.small { min-width: 6px; width: 6px; height: 6px; padding: 0; border-radius: var(--md-navigation-bar-badge-small-shape, var(--md-sys-shape-corner-full, 3px)); top: 0; left: 18px; }
   `;
   constructor() { super(); this.active = false; this.disabled = false; this.hideInactiveLabel = false; this.label = ''; this.badgeValue = ''; this.showBadge = false; this.layout = 'vertical'; }
   focus() { this.shadowRoot?.querySelector('button')?.focus(); }

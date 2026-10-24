@@ -102,9 +102,9 @@ public final class ToolbarElementBuilder implements
               + "color:var(--md-toolbar-content-color,var(--md-sys-color-on-surface,#1d1b20));"
               + "--md-icon-button-icon-color:var(--md-toolbar-content-color,var(--md-sys-color-on-surface-variant,#49454f))}"
               // Docked: 전체 너비, 모서리 없음, 좌우 16dp, 항목 간격 최소 4dp, 균등 배치
-              + c + ".docked{width:100%;border-radius:0;padding:0 16px;gap:4px;justify-content:space-between}"
+              + c + ".docked{width:100%;border-radius:var(--md-toolbar-docked-container-shape,var(--md-sys-shape-corner-none,0px));padding:0 16px;gap:4px;justify-content:space-between}"
               // Floating: 모서리 full, 좌우 8dp, 항목 간격 4dp. [파생] 그림자는 토큰에 없어 elevation level 3 으로 둔다
-              + c + ".floating{display:inline-flex;border-radius:9999px;padding:0 8px;gap:4px;justify-content:center;"
+              + c + ".floating{display:inline-flex;border-radius:var(--md-toolbar-floating-container-shape,var(--md-sys-shape-corner-full,9999px));padding:0 8px;gap:4px;justify-content:center;"
               + "box-shadow:0 1px 3px 0 rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15)}"
               + c + ".floating.vertical{flex-direction:column;height:auto;width:64px;padding:8px 0}"
               // Vibrant: primary container / on primary container

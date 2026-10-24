@@ -27,7 +27,7 @@ export class MdSideSheet extends LitElement {
       box-sizing: border-box; display: flex; flex-direction: column;
       width: var(--_width); max-width: min(400px, 100%); height: 100%;   /* 토큰 256px, [스펙] max-width 400dp */
       background: var(--md-sys-color-surface, #fef7ff); color: var(--md-sys-color-on-surface-variant, #49454f);
-      border-radius: 0; box-shadow: none;
+      border-radius: var(--md-side-sheet-standard-container-shape, var(--md-sys-shape-corner-none, 0px)); box-shadow: none;
     }
     :host(:not([modal])[divider]) .container { border-inline-start: 1px solid var(--md-sys-color-outline, #79747e); }
     :host(:not([modal])[divider][pivot='start']) .container { border-inline-start: none; border-inline-end: 1px solid var(--md-sys-color-outline, #79747e); }
@@ -142,7 +142,7 @@ export class MdBottomSheet extends LitElement {
     .handle-area { all: unset; box-sizing: border-box; display: flex; justify-content: center; flex: none;
       width: 100%; padding: 22px 0; cursor: grab; touch-action: none; }      /* [스펙] 핸들 위아래 22 */
     .handle-area:focus-visible .handle { outline: 3px solid var(--md-sys-color-secondary, #625b71); outline-offset: 4px; }
-    .handle { width: 32px; height: 4px; border-radius: 2px;
+    .handle { width: 32px; height: 4px; border-radius: var(--md-bottom-sheet-drag-handle-shape, var(--md-sys-shape-corner-full, 2px));
       background: var(--md-sys-color-on-surface-variant, #49454f); opacity: 0.4; }
     .content { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; padding: 0 16px;
       color: var(--md-sys-color-on-surface, #1d1b20); }
