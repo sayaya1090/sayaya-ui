@@ -72,6 +72,15 @@ dependencies {
 | **Toast** [M3 외 확장] | `toast()` | 데스크톱 웹용 스택 알림(오른쪽 위에 쌓임, info·success·warning·error, 액션/닫기/자동 닫힘·hover 정지). M3 에 없는 컴포넌트로, 모바일에서는 Snackbar 사용 권장 | [🔗](https://sayaya1090.github.io/sayaya-ui/feedback.html) |
 | **Side sheet** | `sideSheet()` | Standard·Modal side sheet(end/start, detached, 뒤로·닫기 버튼, 하단 액션, 스크림·Esc 닫기) | [🔗](https://sayaya1090.github.io/sayaya-ui/side_sheet.html) |
 | **Bottom sheet** | `bottomSheet()` | Standard·Modal bottom sheet(드래그 핸들로 펼침/접힘, 아래로 끌어 닫기, 스크림·Esc 닫기, 최대 너비 640dp) | [🔗](https://sayaya1090.github.io/sayaya-ui/bottom_sheet.html) |
+| **Loading indicator** | `loadingIndicator()` | 7개 M3 도형 shape morph 로딩 지시자(기본/contained, 24~240dp), progressbar 역할 | [🔗](https://sayaya1090.github.io/sayaya-ui/loading_indicator.html) |
+| **Toolbar** | `toolbar()` | Docked(bottom app bar 대체)·Floating toolbar(standard/vibrant, 가로/세로, 화면 고정 위치), 방향키 이동 | [🔗](https://sayaya1090.github.io/sayaya-ui/toolbar.html) |
+| **FAB menu** | `fabMenu()` | FAB 에서 열리는 메뉴(닫기 버튼 전환, primary/secondary/tertiary, Esc·항목 선택으로 닫힘) | [🔗](https://sayaya1090.github.io/sayaya-ui/fab_menu.html) |
+| **Search** | `search()` | Search bar + docked/full-screen view(제안 필터, combobox·listbox, ↑/↓·Enter·Esc, contained/divided) | [🔗](https://sayaya1090.github.io/sayaya-ui/search.html) |
+| **Date picker** | `datePicker()` | Docked·Modal 달력(오늘·선택 표시, ARIA grid 키보드, 확인/취소) | [🔗](https://sayaya1090.github.io/sayaya-ui/date_picker.html) |
+| **Time picker** | `timePicker()` | Dial·Input(12/24시간, 오전/오후, modal 확인/취소) | [🔗](https://sayaya1090.github.io/sayaya-ui/time_picker.html) |
+| **Carousel** | `carousel()` | Multi-browse·Hero·Uncontained(가장자리 항목 축소·parallax, slide 역할, 모두 보기 버튼) | [🔗](https://sayaya1090.github.io/sayaya-ui/carousel.html) |
+| **Wavy progress** | `wavyProgress()` | M3 Expressive 물결 선형 진행 표시기(determinate/indeterminate) | [🔗](https://sayaya1090.github.io/sayaya-ui/wavy_progress.html) |
+| **Centered slider** | `centeredSlider()` | M3 Expressive 가운데 슬라이더(0 기준 양·음 범위, 네이티브 range 키보드) | [🔗](https://sayaya1090.github.io/sayaya-ui/centered_slider.html) |
 
 ## 사용 예제
 
