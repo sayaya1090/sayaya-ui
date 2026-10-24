@@ -100,6 +100,7 @@ tasks {
                 "dev.sayaya.CheckboxElementTest",
                 "dev.sayaya.ChipElementTest",
                 "dev.sayaya.DividerElementTest",
+                "dev.sayaya.FabMenuElementTest",
                 "dev.sayaya.FeedbackElementTest",
                 "dev.sayaya.FocusRingElementTest",
                 "dev.sayaya.GbElementTest",
@@ -117,6 +118,7 @@ tasks {
                 "dev.sayaya.SwitchElementTest",
                 "dev.sayaya.TabsElementTest",
                 "dev.sayaya.TextFieldElementTest",
+                "dev.sayaya.ToolbarElementTest"
             )
             war = file("src/test/webapp")
         }
