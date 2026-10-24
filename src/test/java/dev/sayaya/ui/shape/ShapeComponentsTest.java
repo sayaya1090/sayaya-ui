@@ -104,10 +104,12 @@ public class ShapeComponentsTest {
             assertEquals("sh: FAB menu 닫기 버튼", "10px", r(q(fmOpen.element(), ".toggle")));
             fmOpen.open(false);
             assertEquals("sh: search bar", "6px", r(q(se.element(), ".bar")));
+            q(se.element(), ".bar").style.setProperty("transition", "none"); // 모서리 전환 도중이 아닌 목표 모양을 잰다
             se.open(true);
             assertEquals("sh: search docked 열림 바 위 모서리", "14px", r(q(se.element(), ".bar")));
             assertEquals("sh: search docked 뷰 아래 모서리", "14px", rb(q(se.element(), ".view")));
             se.open(false);
+            q(se.element(), ".bar").style.removeProperty("transition");
             assertEquals("sh: date picker 컨테이너", "4px", r(q(dp, ".card")));
             assertEquals("sh: date picker 날짜", "6px", r(q(dp, "[data-date='2026-10-15']")));
             assertEquals("sh: 시스템 토큰 extra-large → date picker", "10px", r(q(dpSys, ".card")));

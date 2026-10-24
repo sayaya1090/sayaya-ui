@@ -82,8 +82,10 @@ public class SearchComponentsTest {
                 assertEquals("se: 포커스하면 열림", "true", input.getAttribute("aria-expanded"));
                 assertEquals("se: 열림 목록 표시", "block", cs(view).getPropertyValue("display"));
                 assertEquals("se: 제안 전체 표시", 4, el.querySelectorAll("[role=option]").length);
+                bar.style.setProperty("transition", "none"); // 모서리 전환 도중이 아닌 목표 모양을 잰다
                 assertEquals("se: docked 열림 바 위 모서리 28px", "28px", cs(bar).getPropertyValue("border-top-left-radius"));
                 assertEquals("se: docked 열림 바 아래 모서리 0", "0px", cs(bar).getPropertyValue("border-bottom-left-radius"));
+                bar.style.removeProperty("transition");
                 assertEquals("se: docked 목록 아래 모서리 28px", "28px", cs(view).getPropertyValue("border-bottom-left-radius"));
                 assertEquals("se: docked 목록 배경 surface-container-high", "rgb(236, 230, 240)", cs(view).getPropertyValue("background-color"));
                 var dbr = q(docEl, ".bar").getBoundingClientRect();
@@ -117,6 +119,11 @@ public class SearchComponentsTest {
                 docked.open(true);
                 type(input, "없는 검색어");
                 assertEquals("se: 걸러진 제안이 없으면 빈 목록 숨김", "none", cs(q(el, ".view")).getPropertyValue("display"));
+                assertTrue("se: 바 모서리 전환", cs(bar).getPropertyValue("transition-property").contains("border-radius"));
+                bar.style.setProperty("transition", "none");
+                assertEquals("se: 빈 목록이면 바 하단 모서리도 둥글게 28px", "28px", cs(bar).getPropertyValue("border-bottom-left-radius"));
+                assertEquals("se: 빈 목록이면 바 상단 모서리 28px 유지", "28px", cs(bar).getPropertyValue("border-top-left-radius"));
+                bar.style.removeProperty("transition");
                 type(input, "");
                 docked.open(false);
                 assertEquals("se: 테스트 뒤 데모 입력 비움(제안 4개 복원)", 4, el.querySelectorAll("[role=option]").length);

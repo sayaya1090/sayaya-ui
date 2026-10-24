@@ -188,6 +188,7 @@ public final class SearchElementBuilder extends CustomElementBuilder<SearchEleme
           // Search bar: 56dp, full, surface container high, 앞 아이콘 on surface, 뒤 아이콘 on surface variant
           + c + " .bar{position:relative;z-index:2;box-sizing:border-box;height:56px;border-radius:var(--md-search-bar-container-shape,var(--md-sys-shape-corner-full,9999px));background:var(--_bg);display:flex;align-items:center;gap:4px;padding:0 4px;"
           + "margin-inline:var(--md-search-bar-margin,24px);transition:margin 200ms cubic-bezier(0.2,0,0,1)}"
+          + c + ".docked .bar{transition:margin 200ms cubic-bezier(0.2,0,0,1),border-radius 200ms cubic-bezier(0.2,0,0,1)}" // 목록이 생기고 사라질 때 모서리를 부드럽게
           // M3 Expressive: 포커스하면 바가 넓어진다 — 여백 24dp → 12dp
           + c + ".docked.open .bar{margin-inline:var(--md-search-bar-focused-margin,12px)}"
           + c + ".fullscreen.open .bar{margin-inline:0}"
@@ -215,6 +216,7 @@ public final class SearchElementBuilder extends CustomElementBuilder<SearchEleme
           + c + ".docked .scrim{position:fixed;inset:0;z-index:1;background:var(--md-sys-color-scrim,#000);opacity:0;transition:opacity 200ms linear,display 200ms allow-discrete}"
           + c + ".docked.open .scrim{display:block;opacity:.32}"
           + "@starting-style{" + c + ".docked.open .scrim{opacity:0}}"
+          + c + ".docked.open.empty .bar{border-radius:var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px))}" // 목록이 비면 하단 모서리도 상단처럼 둥글게
           + c + ".docked.open:not(.empty) .bar{border-radius:var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) 0 0}"
           + c + ".docked .view{position:absolute;z-index:2;inset-inline:var(--md-search-bar-margin,24px);opacity:0;clip-path:inset(0 0 100% 0);transition:inset-inline-start 200ms cubic-bezier(0.2,0,0,1),inset-inline-end 200ms cubic-bezier(0.2,0,0,1),opacity 150ms linear,clip-path 250ms cubic-bezier(0.2,0,0,1),display 250ms allow-discrete;top:56px;max-height:min(480px,70vh);border-radius:0 0 var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px));padding-bottom:8px}"
           // Full-screen: 화면 전체, 모서리 없음, 헤더 72dp
