@@ -18,6 +18,8 @@ internal class FeedbackElementTest: GwtTestSpec({
         "icon 토글 시 모서리가 애니메이션됨",
         "토글 전환 뒤 모서리 12px",
         "토글 전환 끝남",
+        "outlined icon 버튼 선택 시 host 모서리 둥금",
+        "outlined icon 버튼 선택 시 host 모서리 0 아님",
         "snackbar 왼쪽 정렬 8px",
         "액션 있는 snackbar 는 자동으로 닫히지 않음",
         "tooltip 떠난 뒤 1.5초 동안 유지",

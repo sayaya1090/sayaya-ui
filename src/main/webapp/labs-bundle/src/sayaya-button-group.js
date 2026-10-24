@@ -41,7 +41,11 @@ const motion = (props, m) => props.map(p => `${p} ${m}`).join(', ');
 // Material 버튼 안쪽에서 container-shape 변수를 직접 받는 요소(icon 버튼 본체, outlined 테두리, ripple)는 host 의 전환을 inherit 하지 못하므로
 // 그룹 안 버튼의 shadowRoot 에 같은 전환을 넣는다
 const INNER_MORPH = new CSSStyleSheet();
+// icon 버튼은 host 에 모서리가 없고 안쪽 .icon-button 만 둥글다. outlined 선택 색을 host 배경으로 칠하므로 host 도 같은 container-shape 로 깎는다
+// (일반 버튼 host 는 원래 같은 값이라 영향 없음. 모서리 전환은 그룹의 ::slotted(*) transition 이 맡는다)
 INNER_MORPH.replaceSync(`
+  :host { border-start-start-radius: var(--_container-shape-start-start); border-start-end-radius: var(--_container-shape-start-end);
+    border-end-start-radius: var(--_container-shape-end-start); border-end-end-radius: var(--_container-shape-end-end); }
   .icon-button, md-ripple { transition: ${motion(RADII, FAST_SPATIAL)}; }
   .outline { transition: ${motion(RADII, FAST_SPATIAL)}, border-color ${DEFAULT_EFFECTS}; }
   @media (prefers-reduced-motion: reduce) { .icon-button, md-ripple, .outline { transition: none; } }

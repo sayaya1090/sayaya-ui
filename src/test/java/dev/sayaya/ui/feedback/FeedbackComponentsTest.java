@@ -352,6 +352,13 @@ public class FeedbackComponentsTest {
             later(600, () -> {
                 assertEquals("fb: 토글 전환 뒤 모서리 12px", "12px", cs(m0).getPropertyValue("border-start-start-radius"));
                 assertTrue("fb: 토글 전환 끝남", !radiusMoving(m0));
+                var i1 = child(bgIcon, 1); // outlined icon 버튼: 선택 색을 host 배경으로 칠하므로 host 도 둥글어야 한다
+                i1.click();
+                later(600, () -> {
+                    Element ib1 = inner(i1, ".icon-button");
+                    assertEquals("fb: outlined icon 버튼 선택 시 host 모서리 둥금", cs(ib1).getPropertyValue("border-start-start-radius"), cs(i1).getPropertyValue("border-start-start-radius"));
+                    assertTrue("fb: outlined icon 버튼 선택 시 host 모서리 0 아님", !"0px".equals(cs(i1).getPropertyValue("border-end-end-radius")));
+                });
             });
         });
         // snackbar: 액션이 있으면 자동으로 닫히지 않음(가이드: 웹 접근성), 왼쪽 정렬 옵션
