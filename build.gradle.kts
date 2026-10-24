@@ -96,6 +96,7 @@ tasks {
                 "dev.sayaya.BottomSheetElementTest",
                 "dev.sayaya.ButtonElementTest",
                 "dev.sayaya.CenteredSliderElementTest",
+                "dev.sayaya.DatePickerElementTest",
                 "dev.sayaya.DialogElementTest",
                 "dev.sayaya.CardElementTest",
                 "dev.sayaya.CheckboxElementTest",
