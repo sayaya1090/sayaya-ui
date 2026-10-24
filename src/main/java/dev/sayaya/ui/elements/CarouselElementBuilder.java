@@ -52,6 +52,8 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
     private Consumer<Integer> onActivate;
     private final LayoutRetry layoutRetry = new LayoutRetry();
     private boolean centeredOnce = false;
+    private boolean dragging = false, dragMoved = false, suppressClick = false;
+    private double dragStart = 0, dragScroll = 0;
 
     private CarouselElementBuilder(String layout, int itemWidth) {
         injectStyle();
@@ -65,6 +67,13 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
         element().appendChild(track);
         track.addEventListener("scroll", e -> mask());
         track.addEventListener("keydown", this::onKey);
+        // 마우스로 끌어서 넘기기(터치는 브라우저 기본 스크롤)
+        track.addEventListener("pointerdown", this::onPointerDown);
+        track.addEventListener("pointermove", this::onPointerMove);
+        track.addEventListener("pointerup", this::onPointerUp);
+        track.addEventListener("pointercancel", this::onPointerUp);
+        track.addEventListener("click", e -> { if (suppressClick) { suppressClick = false; e.stopPropagation(); e.preventDefault(); } }, true);
+        track.addEventListener("dragstart", e -> e.preventDefault()); // 이미지 기본 끌기 막기
         DomGlobal.window.addEventListener("resize", e -> mask());
     }
     @Override public CarouselElementBuilder that() { return this; }
@@ -79,7 +88,7 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
     }
     /** 이미지 항목 */
     public CarouselElementBuilder item(String imageUrl, String label) {
-        var img = img(imageUrl).css("media").attr("alt", "").attr("loading", "lazy").element();
+        var img = img(imageUrl).css("media").attr("alt", "").attr("loading", "lazy").attr("draggable", "false").element();
         return item(img, label);
     }
     /** 임의 콘텐츠 항목 */
@@ -132,13 +141,77 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
         NodeList<Element> items = items();
         for (int i = 0; i < items.length; i++) items.item(i).setAttribute("tabindex", i == index ? "0" : "-1");
         HTMLElement it = Js.uncheckedCast(items.item(index));
-        it.focus();
-        // 보이도록 스크롤(LTR·RTL 모두 브라우저가 계산)
-        elemental2.core.Function siv = Js.uncheckedCast(Js.asPropertyMap(it).get("scrollIntoView"));
-        boolean centered = element().classList.contains("centered") || element().classList.contains("full-screen");
-        jsinterop.base.JsPropertyMap<Object> o = jsinterop.base.JsPropertyMap.of("block", centered ? "center" : "nearest", "inline", centered ? "center" : "nearest");
-        siv.call(it, o);
+        callFn(it, "focus", jsinterop.base.JsPropertyMap.of("preventScroll", true));
+        scrollToItem(index);
         mask();
+    }
+    private static void callFn(Object target, String name, Object arg) {
+        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(target).get(name));
+        if (f != null) f.call(target, arg);
+    }
+    private static boolean reducedMotion() {
+        elemental2.core.Function mm = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("matchMedia"));
+        if (mm == null) return false;
+        Object q = mm.call(DomGlobal.window, "(prefers-reduced-motion: reduce)");
+        return Js.isTruthy(Js.asPropertyMap(q).get("matches"));
+    }
+    private boolean vertical() { return element().classList.contains("full-screen"); }
+    private boolean centeredLayout() { return element().classList.contains("centered") || vertical(); }
+    /** 항목을 레이아웃 위치(시작/가운데)로 옮긴다. 전환 효과는 smooth, 움직임 줄이기 설정이면 즉시 */
+    private void scrollToItem(int index) {
+        HTMLElement it = Js.uncheckedCast(items().item(index));
+        String inline = centeredLayout() ? "center" : ("uncontained".equals(layout) ? "nearest" : "start");
+        jsinterop.base.JsPropertyMap<Object> o = jsinterop.base.JsPropertyMap.of("block", vertical() ? "center" : "nearest", "inline", inline);
+        o.set("behavior", reducedMotion() ? "auto" : "smooth");
+        callFn(it, "scrollIntoView", o);
+    }
+    /** 지금 레이아웃 기준점(시작 여백 또는 가운데)에 가장 가까운 항목 */
+    private int nearest() {
+        var tr = track.getBoundingClientRect();
+        boolean v = vertical(), centered = centeredLayout(), rtl = Locales.rtl(element());
+        double anchor = centered ? (v ? tr.top + tr.height / 2 : tr.left + tr.width / 2) : (rtl ? tr.right - PADDING : tr.left + PADDING);
+        NodeList<Element> items = items();
+        int best = 0; double bd = Double.MAX_VALUE;
+        for (int i = 0; i < items.length; i++) {
+            var r = items.item(i).getBoundingClientRect();
+            double pos = centered ? (v ? r.top + r.height / 2 : r.left + r.width / 2) : (rtl ? r.right : r.left);
+            if (Math.abs(pos - anchor) < bd) { bd = Math.abs(pos - anchor); best = i; }
+        }
+        return best;
+    }
+    private static double num(Event e, String k) { Object v = Js.asPropertyMap(e).get(k); return v == null ? 0 : Js.asDouble(v); }
+    private void onPointerDown(Event e) {
+        Object type = Js.asPropertyMap(e).get("pointerType");
+        if (type == null || !"mouse".equals(Js.asString(type)) || num(e, "button") != 0) return;
+        dragging = true; dragMoved = false;
+        dragStart = num(e, vertical() ? "clientY" : "clientX");
+        dragScroll = vertical() ? track.scrollTop : track.scrollLeft;
+    }
+    private void onPointerMove(Event e) {
+        if (!dragging) return;
+        double d = num(e, vertical() ? "clientY" : "clientX") - dragStart;
+        if (!dragMoved) {
+            if (Math.abs(d) < 5) return; // 작은 흔들림은 클릭으로 본다
+            dragMoved = true;
+            element().classList.add("dragging");
+            callFn(track, "setPointerCapture", Js.asPropertyMap(e).get("pointerId"));
+        }
+        if (vertical()) track.scrollTop = dragScroll - d; else track.scrollLeft = dragScroll - d;
+        e.preventDefault();
+    }
+    private void onPointerUp(Event e) {
+        if (!dragging) return;
+        dragging = false;
+        if (!dragMoved) return;
+        suppressClick = true; // 드래그를 놓을 때 생기는 click 으로 항목이 활성화되지 않게
+        DomGlobal.setTimeout(t -> suppressClick = false, 0);
+        callFn(track, "releasePointerCapture", Js.asPropertyMap(e).get("pointerId"));
+        element().classList.remove("dragging");
+        if ("uncontained".equals(layout)) return; // M3: uncontained 는 snap 없이 멈춘 자리에 둔다
+        int i = nearest();
+        NodeList<Element> items = items();
+        for (int k = 0; k < items.length; k++) items.item(k).setAttribute("tabindex", k == i ? "0" : "-1");
+        scrollToItem(i);
     }
     private void onKey(Event e) {
         KeyboardEvent k = Js.uncheckedCast(e);
@@ -201,6 +274,10 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
           + c + " .track{position:relative;display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:8px 16px;scroll-padding:0 16px;"
           + "scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}"
           + c + " .track::-webkit-scrollbar{display:none}"
+          + c + " .track{cursor:grab}"
+          + c + ".dragging .track{scroll-snap-type:none!important;user-select:none;cursor:grabbing}" // 끄는 동안은 스냅을 끄고, 놓으면 가까운 항목으로 맞춘다
+          + c + ".dragging .item{cursor:grabbing}"
+          + c + " .media{-webkit-user-drag:none;user-select:none}"
           + c + ".uncontained .track{padding-inline-end:0;scroll-snap-type:none}" // M3: uncontained 는 일반 스크롤 권장
           + c + ".centered .item{scroll-snap-align:center}"
           // full-screen: 여백 0, 항목 간격 16dp, 세로 snap. [미확인] 항목 모서리는 표에 없어 item shape 변수를 그대로 쓴다

@@ -64,6 +64,33 @@ public class CardWithContentTest {
         structuredExample.addInteractiveDemo(structuredCard, false);
         assertNotNull("card: 구조화된 카드 생성됨", structuredCard);
 
+        // Card with media (외부 이미지 URL)
+        var mediaExample = addExampleCode(contentSection,
+            "📘 Card with Media (이미지가 있는 카드)",
+            "카드 위쪽에 외부 이미지 URL 을 넣은 예시입니다.",
+            """
+            card().elevated().style("width", "280px").style("overflow", "hidden")
+                .add(img("https://picsum.photos/seed/sayaya-card/560/320").attr("alt", "")
+                    .style("width", "100%").style("height", "160px").style("object-fit", "cover").style("display", "block"))
+                .add(div().style("padding", "16px")
+                    .add(h(4).text("Olle trail"))
+                    .add(p().text("..."))
+                    .add(button().filled().text("예약")))
+                .element();
+            """);
+        var mediaCard = card().elevated().style("width", "280px").style("overflow", "hidden")
+                .add(img("https://picsum.photos/seed/sayaya-card/560/320").attr("alt", "")
+                        .style("width", "100%").style("height", "160px").style("object-fit", "cover").style("display", "block"))
+                .add(div().style("padding", "16px")
+                        .add(h(4).text("Olle trail").style("margin", "0 0 8px 0"))
+                        .add(p().text("바다를 따라 걷는 제주 올레길 코스를 소개합니다.").style("margin", "0 0 16px 0").style("color", "#666"))
+                        .add(div().style("display", "flex").style("gap", "8px")
+                                .add(button().filled().text("예약"))
+                                .add(button().text().text("공유"))))
+                .element();
+        mediaExample.addInteractiveDemo(mediaCard, false);
+        assertNotNull("card: 이미지 카드 생성됨", mediaCard);
+
         // Clickable Card
         var clickableExample = addExampleCode(contentSection,
             "📘 Clickable Card (클릭 가능한 카드)",

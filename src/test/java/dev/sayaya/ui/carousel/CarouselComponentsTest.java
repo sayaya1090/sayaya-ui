@@ -25,7 +25,7 @@ public class CarouselComponentsTest {
         DomGlobal.document.activeElement.dispatchEvent(new KeyboardEvent("keydown", Js.<KeyboardEventInit>uncheckedCast(m)));
     }
     private static CarouselElementBuilder fill(CarouselElementBuilder b) {
-        for (int i = 0; i < COLORS.length; i++) b.item(div().style("width", "100%").style("height", "100%").style("background", COLORS[i]).element(), NAMES[i]);
+        for (int i = 0; i < COLORS.length; i++) b.item("https://picsum.photos/seed/sayaya-carousel-" + i + "/640/480", NAMES[i]); // 외부 이미지 URL
         return b;
     }
 
@@ -37,9 +37,10 @@ public class CarouselComponentsTest {
         List<Integer> activated = new ArrayList<>();
         int[] showAll = {0};
 
-        var multi = fill(carousel().multiBrowse().itemWidth(200).ariaLabel("추천 여행지")).onActivate(activated::add)
+        var multi = fill(carousel().multiBrowse().itemWidth(200).ariaLabel("추천 여행지")).onActivate(i -> { activated.add(i); Js.asPropertyMap(DomGlobal.window).set("__caActivated", activated.size()); })
                 .showAll("모두 보기", e -> showAll[0]++);
         var mel = multi.element();
+        mel.id = "ca-drag"; // Playwright 드래그·전환 검사용
         mel.style.setProperty("width", "480px");
         demo(section, "📘 Multi-browse", "앞뒤 여백 16dp, 항목 간격 8dp, 항목 모서리 28dp 입니다. 컨테이너 가장자리에 걸린 항목은 작아지며(최소 40dp) 스크롤에 맞춰 크기가 바뀝니다. 세로 스크롤 페이지에서는 아래에 '모두 보기' 버튼을 둡니다.",
             """
@@ -129,9 +130,9 @@ public class CarouselComponentsTest {
                 .element();
             """, full);
         var multi = carousel().uncontained().ariaLabel("Gallery")
-                .item(div().style("background", "#6750a4").style("height", "100%").element(), "16:9", 391)
-                .item(div().style("background", "#625b71").style("height", "100%").element(), "9:16", 124)
-                .item(div().style("background", "#7d5260").style("height", "100%").element(), "1:1", 220).element();
+                .item("https://picsum.photos/seed/sayaya-wide/782/440", "16:9", 391)
+                .item("https://picsum.photos/seed/sayaya-tall/248/440", "9:16", 124)
+                .item("https://picsum.photos/seed/sayaya-square/440/440", "1:1", 220).element();
         multi.style.setProperty("width", "480px");
         demo(section, "📘 Uncontained multi-aspect ratio", "가이드라인: \"Uncontained multi-aspect ratio carousels only have leading padding, with 8dp of padding between items.\" 항목마다 너비(16:9, 9:16, 1:1)를 지정합니다. uncontained 는 snap 없이 일반 스크롤합니다.",
             """

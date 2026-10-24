@@ -2,6 +2,7 @@ package dev.sayaya.ui.test
 
 import dev.sayaya.gwt.test.GwtHtml
 import dev.sayaya.gwt.test.GwtTestSpec
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldNotContain
 
@@ -67,6 +68,40 @@ internal class CarouselElementTest: GwtTestSpec({
                 log.shouldNotBeNull()
                 log shouldNotContain "Assertion failed!"
             }
+        }
+        // 실제 마우스·키보드 입력(Playwright)
+        fun num(s: String): Double = (page.evaluate(s) as Number).toDouble()
+        val track = "document.querySelector('#ca-drag .track')"
+        Then("드래그: 마우스로 끌면 넘어가고 놓으면 가까운 항목에 맞춘다(클릭으로 활성화되지 않음)") {
+            page.evaluate("$track.scrollLeft = 0")
+            page.locator("#ca-drag").scrollIntoViewIfNeeded()
+            page.waitForTimeout(300.0)
+            val before = num("window.__caActivated || 0")
+            val box = page.locator("#ca-drag .track").boundingBox()!!
+            val y = box.y + box.height / 2
+            page.mouse().move(box.x + 300, y)
+            page.mouse().down()
+            page.mouse().move(box.x + 120, y, com.microsoft.playwright.Mouse.MoveOptions().setSteps(12))
+            page.mouse().up()
+            page.waitForTimeout(900.0)
+            val left = num("$track.scrollLeft")
+            val after = num("window.__caActivated || 0")
+            println("ca-drag scrollLeft=$left activated $before -> $after")
+            (Math.abs(left - 208) <= 2).shouldBeTrue()
+            (after == before).shouldBeTrue()
+        }
+        Then("전환: 키보드로 넘기면 부드럽게 스크롤된다") {
+            page.evaluate("$track.scrollLeft = 0")
+            page.waitForTimeout(300.0)
+            page.focus("#ca-drag .item[data-index='0']")
+            page.keyboard().press("ArrowRight")
+            page.waitForTimeout(40.0)
+            val mid = num("$track.scrollLeft")
+            page.waitForTimeout(900.0)
+            val end = num("$track.scrollLeft")
+            println("ca-smooth mid=$mid end=$end")
+            (mid > 0.5 && mid < end - 0.5).shouldBeTrue()
+            (Math.abs(end - 208) <= 2).shouldBeTrue()
         }
     }
 })
