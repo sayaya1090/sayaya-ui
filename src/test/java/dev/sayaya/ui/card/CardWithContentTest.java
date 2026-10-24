@@ -6,6 +6,12 @@ import static dev.sayaya.ui.elements.CardElementBuilder.card;
 import static org.jboss.elemento.Elements.*;
 
 public class CardWithContentTest {
+    /** 카드 위쪽 이미지(외부 URL, 페이지 load 뒤에 받음) */
+    private static elemental2.dom.HTMLImageElement cardMedia(String url) {
+        var i = deferredImg(url);
+        i.style.cssText = "width:100%;height:160px;object-fit:cover;display:block";
+        return i;
+    }
     public static void test() {
         printSectionHeader("3. 콘텐츠가 있는 Card (Card with Content)");
         printDescription("다양한 콘텐츠를 포함하는 카드를 생성합니다.");
@@ -79,8 +85,7 @@ public class CardWithContentTest {
                 .element();
             """);
         var mediaCard = card().elevated().style("width", "280px").style("overflow", "hidden")
-                .add(img("https://picsum.photos/seed/sayaya-card/560/320").attr("alt", "")
-                        .style("width", "100%").style("height", "160px").style("object-fit", "cover").style("display", "block"))
+                .add(cardMedia("https://picsum.photos/seed/sayaya-card/560/320"))
                 .add(div().style("padding", "16px")
                         .add(h(4).text("Olle trail").style("margin", "0 0 8px 0"))
                         .add(p().text("바다를 따라 걷는 제주 올레길 코스를 소개합니다.").style("margin", "0 0 16px 0").style("color", "#666"))

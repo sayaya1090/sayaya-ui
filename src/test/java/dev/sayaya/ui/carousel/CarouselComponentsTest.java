@@ -24,8 +24,10 @@ public class CarouselComponentsTest {
         m.set("key", key); m.set("bubbles", true); m.set("cancelable", true);
         DomGlobal.document.activeElement.dispatchEvent(new KeyboardEvent("keydown", Js.<KeyboardEventInit>uncheckedCast(m)));
     }
+    /** 외부 이미지(페이지 load 뒤에 받음). 캐러셀 기본 img 와 같은 media 클래스 */
+    private static elemental2.dom.HTMLImageElement media(String url) { var i = deferredImg(url); i.classList.add("media"); return i; }
     private static CarouselElementBuilder fill(CarouselElementBuilder b) {
-        for (int i = 0; i < COLORS.length; i++) b.item("https://picsum.photos/seed/sayaya-carousel-" + i + "/640/480", NAMES[i]); // 외부 이미지 URL
+        for (int i = 0; i < COLORS.length; i++) b.item(media("https://picsum.photos/seed/sayaya-carousel-" + i + "/640/480"), NAMES[i]); // 외부 이미지 URL
         return b;
     }
 
@@ -130,9 +132,9 @@ public class CarouselComponentsTest {
                 .element();
             """, full);
         var multi = carousel().uncontained().ariaLabel("Gallery")
-                .item("https://picsum.photos/seed/sayaya-wide/782/440", "16:9", 391)
-                .item("https://picsum.photos/seed/sayaya-tall/248/440", "9:16", 124)
-                .item("https://picsum.photos/seed/sayaya-square/440/440", "1:1", 220).element();
+                .item(media("https://picsum.photos/seed/sayaya-wide/782/440"), "16:9", 391)
+                .item(media("https://picsum.photos/seed/sayaya-tall/248/440"), "9:16", 124)
+                .item(media("https://picsum.photos/seed/sayaya-square/440/440"), "1:1", 220).element();
         multi.style.setProperty("width", "480px");
         demo(section, "📘 Uncontained multi-aspect ratio", "가이드라인: \"Uncontained multi-aspect ratio carousels only have leading padding, with 8dp of padding between items.\" 항목마다 너비(16:9, 9:16, 1:1)를 지정합니다. uncontained 는 snap 없이 일반 스크롤합니다.",
             """

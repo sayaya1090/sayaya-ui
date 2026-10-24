@@ -20,6 +20,20 @@ public class TestHelper {
         elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
         return Js.uncheckedCast(f.call(DomGlobal.window, e, pseudo));
     }
+    /**
+     * 외부 URL 이미지. 페이지 load 이벤트가 끝난 뒤에 src 를 넣는다.
+     * 테스트 러너는 load 와 NETWORKIDLE 을 기다리므로, 자동화 브라우저(navigator.webdriver)에서는 src 를 넣지 않는다(data-src 만 남김).
+     * 실제 브라우저(GitHub Pages 데모)에서는 load 뒤에 외부 이미지를 받는다.
+     */
+    public static elemental2.dom.HTMLImageElement deferredImg(String url) {
+        elemental2.dom.HTMLImageElement img = img().attr("alt", "").attr("draggable", "false").attr("data-src", url).element();
+        // 자동화 브라우저(Playwright: navigator.webdriver=true)에서는 외부 이미지를 받지 않는다 — NETWORKIDLE 대기가 외부 서비스 속도에 묶이지 않게.
+        if (Js.isTruthy(Js.asPropertyMap(DomGlobal.navigator).get("webdriver"))) return img;
+        Runnable set = () -> img.src = url;
+        if ("complete".equals(DomGlobal.document.readyState)) DomGlobal.setTimeout(t -> set.run(), 0);
+        else DomGlobal.window.addEventListener("load", e -> set.run());
+        return img;
+    }
     /** ms 뒤에 실행 */
     public static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
     public static void assertEquals(String message, Object expected, Object actual) {

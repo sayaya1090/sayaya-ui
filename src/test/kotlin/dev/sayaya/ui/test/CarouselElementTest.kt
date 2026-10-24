@@ -95,12 +95,14 @@ internal class CarouselElementTest: GwtTestSpec({
             page.waitForTimeout(300.0)
             page.focus("#ca-drag .item[data-index='0']")
             page.keyboard().press("ArrowRight")
-            page.waitForTimeout(40.0)
-            val mid = num("$track.scrollLeft")
-            page.waitForTimeout(900.0)
+            // 느린 러너에서도 흔들리지 않게 16ms 간격으로 600ms 동안 위치를 모은다
+            @Suppress("UNCHECKED_CAST")
+            val samples = (page.evaluate("""new Promise(r => { const t = $track, v = []; const s = performance.now();
+              (function f() { v.push(t.scrollLeft); if (performance.now() - s < 600) setTimeout(f, 16); else r(v); })(); })""") as List<Number>).map { it.toDouble() }
+            page.waitForTimeout(400.0)
             val end = num("$track.scrollLeft")
-            println("ca-smooth mid=$mid end=$end")
-            (mid > 0.5 && mid < end - 0.5).shouldBeTrue()
+            println("ca-smooth samples=${samples.size} mids=${samples.filter { it > 0.5 && it < end - 0.5 }.size} end=$end")
+            samples.any { it > 0.5 && it < end - 0.5 }.shouldBeTrue()
             (Math.abs(end - 208) <= 2).shouldBeTrue()
         }
     }
