@@ -44,11 +44,15 @@ internal class FabMenuElementTest: GwtTestSpec({
         "닫힌 아이콘 복원",
         "secondary 항목 secondary-container",
         "secondary 닫기 버튼 secondary",
-        "tertiary 항목 tertiary-container"
+        "tertiary 항목 tertiary-container",
+        "6개 항목",
+        "목록 최대 높이",
+        "넘치면 목록만 스크롤",
+        "닫기 버튼은 가려지지 않음"
     )
     Given("M3 FAB menu") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
-        page.waitForTimeout(4000.0)
+        page.waitForTimeout(4500.0)
         val logs = page.getConsoleLogs().map { it.toString() }
         println(logs)
         for (c in checks) {

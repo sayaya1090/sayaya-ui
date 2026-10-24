@@ -24,6 +24,7 @@ public class FabMenuComponentsTest {
         printDescription("FAB 에서 열리는 관련 동작 메뉴입니다. 열리면 FAB 이 닫기 버튼으로 바뀌고, 항목은 FAB 위로 쌓입니다. 모든 FAB 크기에 메뉴 크기는 하나이며 primary/secondary/tertiary 색 구성이 있습니다. Esc 나 항목 선택으로 닫히고 포커스는 FAB 으로 돌아갑니다.");
         printSeparator();
         var section = section("FAB menu");
+        documented(section);
         int[] picked = {0};
         java.util.List<Boolean> toggles = new java.util.ArrayList<>();
 
@@ -101,6 +102,30 @@ public class FabMenuComponentsTest {
                     secondary.open(false); tertiary.open(false);
                 });
             });
+        });
+    }
+
+    /** 가이드라인: "FAB menus can have 2-6 items", "Allow the menu items to scroll behind the close button" */
+    private static void documented(HTMLElement section) {
+        var b = fabMenu().icon("add").ariaLabel("Create").style("--md-fab-menu-max-height", "150px");
+        String[][] items = {{"edit", "Note"}, {"photo_camera", "Photo"}, {"mic", "Voice"}, {"draw", "Drawing"}, {"checklist", "List"}, {"link", "Link"}};
+        for (String[] it : items) b.item(it[0], it[1], null);
+        var el = b.element();
+        demo(section, "📘 FAB menu — 6 items, short screen", "가이드라인: \"FAB menus can have 2-6 items\", \"Allow the menu items to scroll behind the close button\", \"Don't obstruct the close button in short screens like horizontal orientation\". 화면이 낮으면 목록만 스크롤되고 닫기 버튼은 그대로 보입니다(--md-fab-menu-max-height).",
+            """
+            fabMenu().icon("add").ariaLabel("Create")
+                .item("edit", "Note", e -> {}).item("photo_camera", "Photo", e -> {})
+                // ... 최대 6개
+                .element();
+            """, el);
+        b.open(true);
+        later(700, () -> {
+            var list = q(el, ".items"); var close = q(el, ".toggle");
+            assertEquals("fm: 6개 항목", 6, el.querySelectorAll(".item").length);
+            assertEquals("fm: 목록 최대 높이", 150, (int) Math.round(list.getBoundingClientRect().height));
+            assertTrue("fm: 넘치면 목록만 스크롤", "auto".equals(cs(list).getPropertyValue("overflow-y")) && list.scrollHeight > list.clientHeight);
+            assertTrue("fm: 닫기 버튼은 가려지지 않음", list.getBoundingClientRect().bottom <= close.getBoundingClientRect().top && h(close) == 56);
+            b.open(false);
         });
     }
 }

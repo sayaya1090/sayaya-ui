@@ -108,7 +108,8 @@ public final class FabMenuElementBuilder extends CustomElementBuilder<FabMenuEle
             .append(c).append(" .toggle .icon{font-size:24px}")
             .append(c).append(".open .toggle{border-radius:var(--md-fab-menu-close-button-shape,var(--md-sys-shape-corner-full,9999px));background:var(--_strong);color:var(--_on-strong)}") // CloseButtonContainerShape full
             .append(c).append(".open .toggle .icon{font-size:20px}") // CloseButtonIconSize 20
-            .append(c).append(" .items{display:none;flex-direction:column;align-items:flex-end;gap:4px}") // ListItemBetweenSpace 4
+            .append(c).append(" .items{display:none;flex-direction:column;align-items:flex-end;gap:4px;"
+                + "box-sizing:border-box;max-height:var(--md-fab-menu-max-height,calc(100vh - 96px));overflow-y:auto;overscroll-behavior:contain;padding:4px 4px 0;margin:-4px -4px 0}") // M3: 항목은 닫기 버튼 뒤로 스크롤, 닫기 버튼은 가리지 않는다 // ListItemBetweenSpace 4
             .append(c).append(".open .items{display:flex}")
             .append(c).append(" .item{box-sizing:border-box;height:56px;border:0;border-radius:var(--md-fab-menu-item-shape,var(--md-sys-shape-corner-full,9999px));padding:0 24px;gap:8px;display:inline-flex;align-items:center;cursor:pointer;")
             .append("background:var(--_container);color:var(--_on-container);font:500 16px/24px Roboto,system-ui,sans-serif;").append(shadow).append("}")
