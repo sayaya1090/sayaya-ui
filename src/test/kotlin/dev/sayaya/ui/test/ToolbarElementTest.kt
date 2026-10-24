@@ -17,7 +17,7 @@ internal class ToolbarElementTest: GwtTestSpec({
         "docked 좌우 여백 16px",
         "docked 모서리 없음",
         "docked 배경 surface-container",
-        "docked 최소 간격 4px",
+        "docked 기본 간격 최대 32px",
         "floating 높이 64px",
         "floating 모서리 full",
         "floating 좌우 여백 8px",
@@ -36,11 +36,23 @@ internal class ToolbarElementTest: GwtTestSpec({
         "Home 은 첫 항목",
         "End 는 마지막 항목",
         "세로는 ↓ 로 다음 항목",
-        "세로는 → 무시"
+        "세로는 → 무시",
+        "좁으면 간격이 4~32 사이로 줄어듦",
+        "좁은 폭 간격 계산",
+        "아주 좁으면 최소 4px",
+        "기본 배치는 가운데 정렬(양쪽 여백 같음)",
+        "Center 정렬 간격 8px",
+        "Center 정렬 가운데",
+        "Start 정렬",
+        "Start 첫 항목은 앞 여백 16px",
+        "Edges 정렬",
+        "Edges 마지막 항목은 끝 여백 16px",
+        "embedded primary action 높이 64px 유지",
+        "floating 과 FAB 는 따로 배치"
     )
     Given("M3 Toolbar") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
-        page.waitForTimeout(4000.0)
+        page.waitForTimeout(4500.0)
         val logs = page.getConsoleLogs().map { it.toString() }
         println(logs)
         for (c in checks) {

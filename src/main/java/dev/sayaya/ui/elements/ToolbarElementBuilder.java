@@ -37,6 +37,13 @@ public final class ToolbarElementBuilder extends CustomElementBuilder<ToolbarEle
         public ToolbarElementBuilder floating() { return new ToolbarElementBuilder("floating"); }
     }
     /** floating 툴바를 화면에 고정할 위치. 화면 가장자리 여백 16dp(ContainerExternalPadding) */
+    /**
+     * docked 툴바의 항목 배치. M3: 기본은 가운데 정렬·균등 간격(4~32dp, DockedToolbarTokens Min/MaxSpacing)이며
+     * "Center-aligned, 8dp padding between items", "Left and right alignment", 가장자리 정렬(핵심 동작을 가운데에 두고 나머지를 양 끝으로)을 고를 수 있다.
+     */
+    public enum Alignment { Default(null), Center("center"), Start("start"), End("end"), Edges("edges");
+        final String value; Alignment(String v) { value = v; } }
+    static final int MIN_SPACING = 4, MAX_SPACING = 32, PADDING = 16;
     public enum Position { None(null), BottomCenter("bottom-center"), BottomEnd("bottom-end"), EndCenter("end-center");
         final String value; Position(String v) { value = v; } }
 
@@ -45,6 +52,10 @@ public final class ToolbarElementBuilder extends CustomElementBuilder<ToolbarEle
         element().classList.add(CLASS, variant);
         element().setAttribute("role", "toolbar");
         element().addEventListener("keydown", this::onKey);
+        if ("docked".equals(variant)) {
+            DomGlobal.window.addEventListener("resize", e -> spacing());
+            spacing();
+        }
     }
     @Override public ToolbarElementBuilder that() { return this; }
 
@@ -55,6 +66,27 @@ public final class ToolbarElementBuilder extends CustomElementBuilder<ToolbarEle
         setClass("vertical", vertical);
         if (vertical) element().setAttribute("aria-orientation", "vertical"); else element().removeAttribute("aria-orientation");
         return this;
+    }
+    public ToolbarElementBuilder alignment(Alignment alignment) {
+        if (alignment == null || alignment.value == null) element().removeAttribute("data-align");
+        else element().setAttribute("data-align", alignment.value);
+        spacing();
+        return this;
+    }
+    private int spacingFrames = 0;
+    /** 기본 배치: 남는 폭을 항목 사이에 고르게 나누되 4~32dp 로 제한한다(가운데 정렬) */
+    private void spacing() {
+        if (!element().classList.contains("docked") || element().hasAttribute("data-align")) { element().style.removeProperty("--_gap"); return; }
+        double width = element().clientWidth;
+        if (width <= 0) { if (spacingFrames++ < 600) DomGlobal.requestAnimationFrame(t -> spacing()); return; }
+        spacingFrames = 0;
+        NodeList<Element> items = element().querySelectorAll(":scope > *");
+        if (items.length < 2) return;
+        double used = 0;
+        for (int i = 0; i < items.length; i++) used += ((HTMLElement) Js.uncheckedCast(items.item(i))).offsetWidth;
+        double gap = (width - 2 * PADDING - used) / (items.length - 1);
+        gap = Math.max(MIN_SPACING, Math.min(MAX_SPACING, Math.floor(gap)));
+        element().style.setProperty("--_gap", gap + "px");
     }
     public ToolbarElementBuilder position(Position position) {
         if (position == null || position.value == null) element().removeAttribute("data-position");
@@ -92,7 +124,11 @@ public final class ToolbarElementBuilder extends CustomElementBuilder<ToolbarEle
               + "color:var(--md-toolbar-content-color,var(--md-sys-color-on-surface,#1d1b20));"
               + "--md-icon-button-icon-color:var(--md-toolbar-content-color,var(--md-sys-color-on-surface-variant,#49454f))}"
               // Docked: 전체 너비, 모서리 없음, 좌우 16dp, 항목 간격 최소 4dp, 균등 배치
-              + c + ".docked{width:100%;border-radius:var(--md-toolbar-docked-container-shape,var(--md-sys-shape-corner-none,0px));padding:0 16px;gap:4px;justify-content:space-between}"
+              + c + ".docked{width:100%;border-radius:var(--md-toolbar-docked-container-shape,var(--md-sys-shape-corner-none,0px));padding:0 16px;gap:var(--_gap,4px);justify-content:center}"
+              + c + ".docked[data-align=center]{gap:8px}"
+              + c + ".docked[data-align=start]{gap:8px;justify-content:flex-start}"
+              + c + ".docked[data-align=end]{gap:8px;justify-content:flex-end}"
+              + c + ".docked[data-align=edges]{gap:4px;justify-content:space-between}"
               // Floating: 모서리 full, 좌우 8dp, 항목 간격 4dp. [파생] 그림자는 토큰에 없어 elevation level 3 으로 둔다
               + c + ".floating{display:inline-flex;border-radius:var(--md-toolbar-floating-container-shape,var(--md-sys-shape-corner-full,9999px));padding:0 8px;gap:4px;justify-content:center;"
               + "box-shadow:0 1px 3px 0 rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15)}"

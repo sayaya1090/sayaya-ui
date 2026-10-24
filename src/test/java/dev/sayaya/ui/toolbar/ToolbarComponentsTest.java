@@ -1,6 +1,7 @@
 package dev.sayaya.ui.toolbar;
 
 import elemental2.dom.*;
+import dev.sayaya.ui.elements.ToolbarElementBuilder;
 import jsinterop.base.Js;
 import jsinterop.base.JsPropertyMap;
 
@@ -86,7 +87,7 @@ public class ToolbarComponentsTest {
             assertEquals("tb: docked 좌우 여백 16px", "16px", cs(docked).getPropertyValue("padding-left"));
             assertEquals("tb: docked 모서리 없음", "0px", cs(docked).getPropertyValue("border-top-left-radius"));
             assertEquals("tb: docked 배경 surface-container", "rgb(243, 237, 247)", cs(docked).getPropertyValue("background-color"));
-            assertEquals("tb: docked 최소 간격 4px", "4px", cs(docked).getPropertyValue("column-gap"));
+            assertEquals("tb: docked 기본 간격 최대 32px", "32px", cs(docked).getPropertyValue("column-gap"));
             assertEquals("tb: floating 높이 64px", 64, (int) h(floating));
             assertEquals("tb: floating 모서리 full", "9999px", cs(floating).getPropertyValue("border-top-left-radius"));
             assertEquals("tb: floating 좌우 여백 8px", "8px", cs(floating).getPropertyValue("padding-left"));
@@ -116,6 +117,67 @@ public class ToolbarComponentsTest {
             assertTrue("tb: 세로는 ↓ 로 다음 항목", active() == v2);
             key(v2, "ArrowRight");
             assertTrue("tb: 세로는 → 무시", active() == v2);
+        });
+        documented(section);
+    }
+
+    private static HTMLElement icons(int n, ToolbarElementBuilder b) {
+        String[] names = {"undo", "redo", "content_cut", "content_copy", "content_paste"};
+        for (int i = 0; i < n; i++) b.add(button().icon(names[i]).ariaLabel(names[i]));
+        return b.element();
+    }
+    private static int expectedGap(HTMLElement bar) {
+        var items = bar.querySelectorAll(":scope > *");
+        double used = 0;
+        for (int i = 0; i < items.length; i++) used += ((HTMLElement) items.item(i)).offsetWidth;
+        return (int) Math.max(4, Math.min(32, Math.floor((bar.clientWidth - 32 - used) / (items.length - 1))));
+    }
+
+    /** 가이드라인: 가운데 정렬·균등 간격(4~32dp), 정렬 구성, embedded primary action, floating + FAB(별도 배치) */
+    private static void documented(HTMLElement section) {
+        var narrow = icons(4, toolbar().docked().ariaLabel("narrow"));
+        var tiny = icons(4, toolbar().docked().ariaLabel("tiny"));
+        var center = icons(3, toolbar().docked().alignment(Alignment.Center).ariaLabel("center"));
+        var start = icons(3, toolbar().docked().alignment(Alignment.Start).ariaLabel("start"));
+        var edges = icons(3, toolbar().docked().alignment(Alignment.Edges).ariaLabel("edges"));
+        var embedded = toolbar().docked().ariaLabel("Message")
+                .add(button().icon("attach_file").ariaLabel("Attach")).add(button().icon("image").ariaLabel("Image"))
+                .add(button().filled().text("Send")).add(button().icon("mood").ariaLabel("Emoji")).element();
+        demo(section, "📘 Docked toolbar 배치", "가이드라인: \"By default all toolbars are 64dp high, center-aligned, have equal padding between items, and have a minimum outside padding of 16dp\", \"The 32dp padding between items is just the default\". 폭이 좁으면 간격이 4dp 까지 줄어듭니다. alignment(...)로 \"Center-aligned, 8dp padding between items\", \"Left and right alignment\", 가장자리 정렬을 고릅니다.",
+            """
+            toolbar().docked().add(...).element();                          // 가운데·균등 간격(4~32dp)
+            toolbar().docked().alignment(Alignment.Center).add(...).element(); // 간격 8dp
+            toolbar().docked().alignment(Alignment.Edges).add(...).element();  // 양 끝 정렬
+            """, div().style("display", "flex").style("flex-direction", "column").style("gap", "8px")
+                .add(div().style("width", "260px").add(narrow)).add(div().style("width", "190px").add(tiny))
+                .add(div().style("width", "480px").add(center)).add(div().style("width", "480px").add(start)).add(div().style("width", "480px").add(edges)).element());
+        var vibrantFloating = icons(3, toolbar().floating().vibrant(true).ariaLabel("Format"));
+        var fab = button().fab().icon("add").ariaLabel("Create").element();
+        var pair = div().style("display", "flex").style("align-items", "center").style("gap", "8px").add(vibrantFloating).add(fab).element();
+        demo(section, "📘 Embedded primary action / Floating + FAB", "가이드라인 예시: \"Docked with embedded primary action instead of FAB\", \"Floating, vibrant color scheme and paired with FAB\". 웹에서는 \"On other platforms, each component needs to be added separately\" 이므로 FAB 를 툴바 옆에 따로 둡니다. \"Don't emphasize multiple buttons with bold, primary colors, such as a button and FAB together\" — 한 번에 하나만 강조합니다.",
+            """
+            toolbar().docked().add(button().icon("attach_file")).add(button().filled().text("Send")).element();
+            div().add(toolbar().floating().vibrant(true).add(...)).add(button().fab().icon("add")).element();
+            """, div().style("display", "flex").style("flex-direction", "column").style("gap", "16px")
+                .add(div().style("width", "480px").add(embedded)).add(pair).element());
+
+        later(1500, () -> {
+            int g = expectedGap(narrow);
+            assertTrue("tb: 좁으면 간격이 4~32 사이로 줄어듦", g > 4 && g < 32);
+            assertEquals("tb: 좁은 폭 간격 계산", g + "px", cs(narrow).getPropertyValue("column-gap"));
+            assertEquals("tb: 아주 좁으면 최소 4px", "4px", cs(tiny).getPropertyValue("column-gap"));
+            var first = (HTMLElement) narrow.firstElementChild; var last = (HTMLElement) narrow.lastElementChild;
+            double leftGap = first.getBoundingClientRect().left - narrow.getBoundingClientRect().left;
+            double rightGap = narrow.getBoundingClientRect().right - last.getBoundingClientRect().right;
+            assertTrue("tb: 기본 배치는 가운데 정렬(양쪽 여백 같음)", Math.abs(leftGap - rightGap) <= 1 && leftGap >= 16);
+            assertEquals("tb: Center 정렬 간격 8px", "8px", cs(center).getPropertyValue("column-gap"));
+            assertEquals("tb: Center 정렬 가운데", "center", cs(center).getPropertyValue("justify-content"));
+            assertEquals("tb: Start 정렬", "flex-start", cs(start).getPropertyValue("justify-content"));
+            assertEquals("tb: Start 첫 항목은 앞 여백 16px", 16, (int) Math.round(((HTMLElement) start.firstElementChild).getBoundingClientRect().left - start.getBoundingClientRect().left));
+            assertEquals("tb: Edges 정렬", "space-between", cs(edges).getPropertyValue("justify-content"));
+            assertEquals("tb: Edges 마지막 항목은 끝 여백 16px", 16, (int) Math.round(edges.getBoundingClientRect().right - ((HTMLElement) edges.lastElementChild).getBoundingClientRect().right));
+            assertEquals("tb: embedded primary action 높이 64px 유지", 64, (int) h(embedded));
+            assertTrue("tb: floating 과 FAB 는 따로 배치", vibrantFloating.parentElement == pair && fab.parentElement == pair && !vibrantFloating.contains(fab));
         });
     }
 }
