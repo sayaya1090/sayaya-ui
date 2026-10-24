@@ -19,10 +19,24 @@ export class MdSideSheet extends LitElement {
     backLabel: {type: String, attribute: 'back-label'},
   };
   static styles = css`
-    :host { display: none; box-sizing: border-box; --_width: var(--md-side-sheet-width, 256px); }
-    :host([open]:not([modal])) { display: block; height: 100%; flex: none; }
-    :host([open][modal]) { display: block; position: fixed; inset: 0; z-index: 1002; }
-    .scrim { position: absolute; inset: 0; background: var(--md-sys-color-scrim, #000); opacity: 0.32; }
+    /* 열림/닫힘 전환: 열 때 400ms emphasized decelerate, 닫을 때 200ms emphasized accelerate
+       (M3 motion easing.emphasized.decelerate/accelerate, duration medium4/short4 — 시트에 적용한 조합은 [파생]) */
+    :host { display: none; box-sizing: border-box; --_width: var(--md-side-sheet-width, 256px);
+      --_enter: 400ms cubic-bezier(0.05, 0.7, 0.1, 1); --_exit: 200ms cubic-bezier(0.3, 0, 0.8, 0.15);
+      transition: display var(--_exit) allow-discrete; }
+    :host([open]) { display: block; transition: display var(--_enter) allow-discrete; }
+    /* standard: 너비가 0 에서 펼쳐지며 옆 본문을 민다(닫을 때는 반대) */
+    :host(:not([modal])) { height: 100%; flex: none; overflow: hidden; interpolate-size: allow-keywords; width: 0;
+      transition: display var(--_exit) allow-discrete, width var(--_exit); }
+    :host([open]:not([modal])) { width: auto; transition: display var(--_enter) allow-discrete, width var(--_enter); }
+    @starting-style { :host([open]:not([modal])) { width: 0; } }
+    :host([modal]) { position: fixed; inset: 0; z-index: 1002; --_hide: calc(100% + 16px) 0; }
+    :host([modal][pivot='start']), :host([modal]:dir(rtl)) { --_hide: calc(-100% - 16px) 0; }
+    :host([modal][pivot='start']:dir(rtl)) { --_hide: calc(100% + 16px) 0; }
+    :host([modal]:not([open])) { pointer-events: none; }
+    .scrim { position: absolute; inset: 0; background: var(--md-sys-color-scrim, #000); opacity: 0; transition: opacity var(--_exit); }
+    :host([open]) .scrim { opacity: 0.32; transition: opacity var(--_enter); }
+    @starting-style { :host([open]) .scrim { opacity: 0; } }
     .container {
       box-sizing: border-box; display: flex; flex-direction: column;
       width: var(--_width); max-width: min(400px, 100%); height: 100%;   /* 토큰 256px, [스펙] max-width 400dp */
@@ -44,6 +58,11 @@ export class MdSideSheet extends LitElement {
     :host([detached][modal]) .container { top: 16px; bottom: 16px; inset-inline-end: 16px; }
     :host([detached][modal][pivot='start']) .container { inset-inline-end: auto; inset-inline-start: 16px; }
     :host([detached][modal]) .container, :host([detached][modal][pivot='start']) .container { border-radius: var(--md-sys-shape-corner-large, 16px); } /* 토큰 detached-container-shape */
+    /* modal: 가장자리 밖에서 밀려 들어오고 닫으면 다시 밀려 나간다 */
+    :host([modal]) .container { translate: var(--_hide); transition: translate var(--_exit); }
+    :host([modal][open]) .container { translate: 0 0; transition: translate var(--_enter); }
+    @starting-style { :host([modal][open]) .container { translate: var(--_hide); } }
+    @media (prefers-reduced-motion: reduce) { :host, .container, .scrim { transition: none !important; } }
     .header { display: flex; align-items: center; gap: 12px; padding: 24px 24px 16px; }  /* [스펙] 좌우 24, 요소 간 12. 상하 24/16 [미확인] */
     :host([back]) .header { padding-inline-start: 16px; }                 /* [스펙] 아이콘이 있을 때 시작 16 */
     .headline { flex: 1; min-width: 0; color: var(--md-sys-color-on-surface-variant, #49454f);
@@ -119,10 +138,16 @@ export class MdBottomSheet extends LitElement {
     handleLabel: {type: String, attribute: 'handle-label'},
   };
   static styles = css`
-    :host { display: none; position: fixed; inset: 0; z-index: 1000; pointer-events: none; }
-    :host([open]) { display: block; }
+    /* 열림/닫힘 전환: 아래에서 올라오고 닫으면 내려간다. 열 때 400ms emphasized decelerate, 닫을 때 200ms emphasized accelerate ([파생], side sheet 와 같음) */
+    :host { display: none; position: fixed; inset: 0; z-index: 1000; pointer-events: none;
+      --_enter: 400ms cubic-bezier(0.05, 0.7, 0.1, 1); --_exit: 200ms cubic-bezier(0.3, 0, 0.8, 0.15);
+      transition: display var(--_exit) allow-discrete; }
+    :host([open]) { display: block; transition: display var(--_enter) allow-discrete; }
     :host([modal]) { z-index: 1002; pointer-events: auto; }
-    .scrim { position: absolute; inset: 0; background: var(--md-sys-color-scrim, #000); opacity: 0.32; }
+    :host([modal]:not([open])) { pointer-events: none; }
+    .scrim { position: absolute; inset: 0; background: var(--md-sys-color-scrim, #000); opacity: 0; transition: opacity var(--_exit); }
+    :host([open]) .scrim { opacity: 0.32; transition: opacity var(--_enter); }
+    @starting-style { :host([open]) .scrim { opacity: 0; } }
     .container {
       position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); box-sizing: border-box;
       display: flex; flex-direction: column; pointer-events: auto;
@@ -130,15 +155,18 @@ export class MdBottomSheet extends LitElement {
       background: var(--md-sys-color-surface-container-low, #f7f2fa);
       border-radius: var(--md-sys-shape-corner-extra-large, 28px) var(--md-sys-shape-corner-extra-large, 28px) 0 0;
       box-shadow: ${css([LEVEL1])};
-      transition: translate 200ms ease;
+      translate: 0 100%; transition: translate var(--_exit);
     }
+    :host([open]) .container { translate: 0 0; transition: translate var(--_enter); }
+    @starting-style { :host([open]) .container { translate: 0 100%; } }
     :host([expanded]) .container { height: calc(100% - 72px); }
     @media (min-width: 641px) {
       .container { width: min(640px, calc(100% - 112px)); max-height: calc(100% - 56px); }   /* [스펙] 640 초과: 최대 640, 위·옆 56 */
       :host([expanded]) .container { height: calc(100% - 56px); }
     }
     :host([modal]:not([expanded])) .container { max-height: 50%; }            /* 가이드: modal 초기 높이는 화면의 50% 까지 */
-    .container.dragging { transition: none; }
+    :host([open]) .container.dragging { transition: none; }               /* 끄는 동안은 손가락을 바로 따라간다 */
+    @media (prefers-reduced-motion: reduce) { :host, .container, .scrim { transition: none !important; } }
     .handle-area { all: unset; box-sizing: border-box; display: flex; justify-content: center; flex: none;
       width: 100%; padding: 22px 0; cursor: grab; touch-action: none; }      /* [스펙] 핸들 위아래 22 */
     .handle-area:focus-visible .handle { outline: 3px solid var(--md-sys-color-secondary, #625b71); outline-offset: 4px; }

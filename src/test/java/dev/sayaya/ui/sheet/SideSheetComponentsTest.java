@@ -94,7 +94,11 @@ public class SideSheetComponentsTest {
             assertEquals("ss: 최대 너비 400px", 400, (int) w(inner(wide, ".container")));
 
             modal.show();
-            later(300, () -> {
+            later(100, () -> {
+                assertTrue("ss: modal 열 때 가장자리에서 밀려 들어옴", inner(modal, ".container").getBoundingClientRect().right > DomGlobal.document.documentElement.clientWidth + 1);
+                assertTrue("ss: 스크림 페이드 인", Double.parseDouble(css(modal, ".scrim", "opacity")) < 0.32);
+            });
+            later(550, () -> {
                 var m = inner(modal, ".container");
                 assertEquals("ss: modal role dialog", "dialog", m.getAttribute("role"));
                 assertEquals("ss: modal aria-modal", "true", m.getAttribute("aria-modal"));
@@ -117,7 +121,7 @@ public class SideSheetComponentsTest {
                         inner(modal, ".close").click();
                         assertTrue("ss: 닫기 버튼으로 닫힘", !modal.open && reasons.contains("close"));
                         modalStart.show();
-                        later(300, () -> {
+                        later(550, () -> {
                             var s = inner(modalStart, ".container");
                             assertEquals("ss: detached 여백 16px", 16, (int) Math.round(s.getBoundingClientRect().left));
                             assertEquals("ss: detached 위 여백 16px", "16px", cs(s).getPropertyValue("top"));
@@ -128,7 +132,12 @@ public class SideSheetComponentsTest {
                             assertEquals("ss: 뒤로 버튼 이벤트", 1, backs[0]);
                             modalStart.close();
                             std.open = false;
-                            later(200, () -> assertEquals("ss: 닫힌 standard 는 숨김", "none", cs(std).getPropertyValue("display")));
+                            later(80, () -> {
+                                assertEquals("ss: 닫는 도중에는 남아 있음", "block", cs(modalStart).getPropertyValue("display"));
+                                assertTrue("ss: modal 닫을 때 가장자리로 밀려 나감", w(inner(modalStart, ".container")) > 0 && inner(modalStart, ".container").getBoundingClientRect().left < 15);
+                                assertTrue("ss: standard 닫을 때 너비가 줄어듦", cs(std).getPropertyValue("display").equals("block") && w(std) < 255);
+                            });
+                            later(400, () -> assertEquals("ss: 닫힌 standard 는 숨김", "none", cs(std).getPropertyValue("display")));
                         });
                     });
                 });

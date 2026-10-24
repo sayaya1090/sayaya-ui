@@ -65,7 +65,11 @@ public class BottomSheetComponentsTest {
             String containerLow = cs(probe).getPropertyValue("color");
             double vw = DomGlobal.document.documentElement.clientWidth, vh = DomGlobal.window.innerHeight;
             modal.show();
-            later(400, () -> {
+            later(100, () -> {
+                assertTrue("bs: 열 때 아래에서 올라옴", inner(modal, ".container").getBoundingClientRect().bottom > vh + 1);
+                assertTrue("bs: 스크림 페이드 인", Double.parseDouble(css(modal, ".scrim", "opacity")) < 0.32);
+            });
+            later(550, () -> {
                 var c = inner(modal, ".container");
                 assertEquals("bs: 너비 최대 640px", Math.min(640, (int) vw - 112), (int) w(c));
                 var r = c.getBoundingClientRect();
@@ -110,7 +114,11 @@ public class BottomSheetComponentsTest {
                                         assertTrue("bs: standard 는 스크림 없음", inner(std, ".scrim") == null);
                                         assertEquals("bs: standard 는 뒤 화면 클릭을 막지 않음", "none", cs(std).getPropertyValue("pointer-events"));
                                         std.close();
-                                        later(200, () -> assertEquals("bs: 닫힌 시트는 숨김", "none", cs(std).getPropertyValue("display")));
+                                        later(80, () -> {
+                                            assertEquals("bs: 닫는 도중에는 남아 있음", "block", cs(std).getPropertyValue("display"));
+                                            assertTrue("bs: 닫을 때 아래로 내려감", inner(std, ".container").getBoundingClientRect().bottom > vh + 1);
+                                        });
+                                        later(400, () -> assertEquals("bs: 닫힌 시트는 숨김", "none", cs(std).getPropertyValue("display")));
                                     });
                                 });
                             });
