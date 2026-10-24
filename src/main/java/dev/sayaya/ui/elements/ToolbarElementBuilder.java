@@ -73,13 +73,12 @@ public final class ToolbarElementBuilder extends CustomElementBuilder<ToolbarEle
         spacing();
         return this;
     }
-    private int spacingFrames = 0;
+    private final LayoutRetry layoutRetry = new LayoutRetry();
     /** 기본 배치: 남는 폭을 항목 사이에 고르게 나누되 4~32dp 로 제한한다(가운데 정렬) */
     private void spacing() {
         if (!element().classList.contains("docked") || element().hasAttribute("data-align")) { element().style.removeProperty("--_gap"); return; }
         double width = element().clientWidth;
-        if (width <= 0) { if (spacingFrames++ < 600) DomGlobal.requestAnimationFrame(t -> spacing()); return; }
-        spacingFrames = 0;
+        if (layoutRetry.defer(width, this::spacing)) return;
         NodeList<Element> items = element().querySelectorAll(":scope > *");
         if (items.length < 2) return;
         double used = 0;

@@ -30,8 +30,22 @@ public final class FabMenuElementBuilder extends CustomElementBuilder<FabMenuEle
         HasAriaLabel<HTMLDivElement, FabMenuElementBuilder>, Openable<FabMenuElementBuilder> {
     public static final String CLASS = "sayaya-fab-menu";
     static final String STYLE_ID = "sayaya-fab-menu-style";
-    public enum Color { Primary("primary"), Secondary("secondary"), Tertiary("tertiary");
-        final String value; Color(String v) { value = v; } }
+    /** 색 구성. 각 역할은 --md-sys-color-{토큰} 이 없을 때 기본값(M3 baseline)을 쓴다. CSS 는 이 enum 에서만 생성한다 */
+    public enum Color {
+        Primary("primary", "primary-container", "#eaddff", "on-primary-container", "#21005d", "primary", "#6750a4", "on-primary", "#ffffff"),
+        Secondary("secondary", "secondary-container", "#e8def8", "on-secondary-container", "#1d192b", "secondary", "#625b71", "on-secondary", "#ffffff"),
+        Tertiary("tertiary", "tertiary-container", "#ffd8e4", "on-tertiary-container", "#31111d", "tertiary", "#7d5260", "on-tertiary", "#ffffff");
+        final String value;
+        final String container, containerFallback, onContainer, onContainerFallback, strong, strongFallback, onStrong, onStrongFallback;
+        Color(String value, String container, String containerFallback, String onContainer, String onContainerFallback,
+              String strong, String strongFallback, String onStrong, String onStrongFallback) {
+            this.value = value;
+            this.container = container; this.containerFallback = containerFallback;
+            this.onContainer = onContainer; this.onContainerFallback = onContainerFallback;
+            this.strong = strong; this.strongFallback = strongFallback;
+            this.onStrong = onStrong; this.onStrongFallback = onStrongFallback;
+        }
+    }
 
     public static FabMenuElementBuilder fabMenu() { return new FabMenuElementBuilder(); }
 
@@ -116,15 +130,11 @@ public final class FabMenuElementBuilder extends CustomElementBuilder<FabMenuEle
             .append(c).append(" .item .icon{font-size:24px}")
             .append(c).append(" .item:focus-visible,").append(c).append(" .toggle:focus-visible{outline:3px solid var(--md-sys-color-secondary,#625b71);outline-offset:2px}")
             .append(c).append(" .item:hover{filter:brightness(0.96)}");
-        String[][] sets = {
-            {"primary", "primary-container", "#eaddff", "on-primary-container", "#21005d", "primary", "#6750a4", "on-primary", "#ffffff"},
-            {"secondary", "secondary-container", "#e8def8", "on-secondary-container", "#1d192b", "secondary", "#625b71", "on-secondary", "#ffffff"},
-            {"tertiary", "tertiary-container", "#ffd8e4", "on-tertiary-container", "#31111d", "tertiary", "#7d5260", "on-tertiary", "#ffffff"}};
-        for (String[] s : sets)
-            css.append(c).append('.').append(s[0]).append("{--_container:var(--md-sys-color-").append(s[1]).append(',').append(s[2])
-               .append(");--_on-container:var(--md-sys-color-").append(s[3]).append(',').append(s[4])
-               .append(");--_strong:var(--md-sys-color-").append(s[5]).append(',').append(s[6])
-               .append(");--_on-strong:var(--md-sys-color-").append(s[7]).append(',').append(s[8]).append(")}");
+        for (Color k : Color.values())
+            css.append(c).append('.').append(k.value).append("{--_container:var(--md-sys-color-").append(k.container).append(',').append(k.containerFallback)
+               .append(");--_on-container:var(--md-sys-color-").append(k.onContainer).append(',').append(k.onContainerFallback)
+               .append(");--_strong:var(--md-sys-color-").append(k.strong).append(',').append(k.strongFallback)
+               .append(");--_on-strong:var(--md-sys-color-").append(k.onStrong).append(',').append(k.onStrongFallback).append(")}");
         css.append("@media (prefers-reduced-motion: reduce){").append(c).append(" .toggle{transition:none}}");
         style.textContent = css.toString();
         DomGlobal.document.head.appendChild(style);

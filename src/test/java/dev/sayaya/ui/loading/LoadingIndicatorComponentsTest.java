@@ -10,16 +10,11 @@ import static org.jboss.elemento.Elements.div;
 
 /** M3 loading indicator: 스펙 수치(computed style) + 역할·라벨 + shape morph 애니메이션. 메시지 접두어 "li: ". */
 public class LoadingIndicatorComponentsTest {
-    private static CSSStyleDeclaration cs(Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
     private static HTMLElement active(HTMLElement host) { return (HTMLElement) host.querySelector("." + ACTIVE_CLASS); }
     private static long w(Element e) { return e == null ? -1 : Math.round(e.getBoundingClientRect().width); }
     private static long h(Element e) { return e == null ? -1 : Math.round(e.getBoundingClientRect().height); }
     /** 레이아웃 너비(transform 회전 영향 없음) */
     private static int ow(HTMLElement e) { return e == null ? -1 : e.offsetWidth; }
-    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
 
     public static void test() {
         printSectionHeader("M3 Loading indicator");

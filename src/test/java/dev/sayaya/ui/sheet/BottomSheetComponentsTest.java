@@ -15,16 +15,11 @@ import static org.jboss.elemento.Elements.div;
 
 /** M3 bottom sheet: 토큰(md-comp-sheet-bottom)·스펙 수치 + 열기/닫기/끌기/포커스. 메시지 접두어 "bs: ". */
 public class BottomSheetComponentsTest {
-    private static CSSStyleDeclaration cs(Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
     private static ShadowRoot root(HTMLElement host) { return Js.uncheckedCast(Js.asPropertyMap(host).get("shadowRoot")); }
     private static HTMLElement inner(HTMLElement host, String sel) { ShadowRoot r = root(host); return r == null ? null : Js.uncheckedCast(r.querySelector(sel)); }
     private static String css(HTMLElement host, String sel, String prop) { var e = inner(host, sel); return e == null ? "" : cs(e).getPropertyValue(prop); }
     private static long w(HTMLElement e) { return e == null ? -1 : Math.round(e.getBoundingClientRect().width); }
     private static long h(HTMLElement e) { return e == null ? -1 : Math.round(e.getBoundingClientRect().height); }
-    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
     private static void pointer(HTMLElement target, String type, double y) {
         JsPropertyMap<Object> m = JsPropertyMap.of();
         m.set("clientY", y); m.set("clientX", 10); m.set("bubbles", true); m.set("composed", true); m.set("pointerId", 1);

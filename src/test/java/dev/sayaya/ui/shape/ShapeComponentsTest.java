@@ -24,10 +24,6 @@ import static org.jboss.elemento.Elements.div;
 
 /** 모양(모서리) CSS 변수 주입: 컴포넌트 변수 → 시스템 shape 토큰 → 기본값. 메시지 접두어 "sh: ". */
 public class ShapeComponentsTest {
-    private static CSSStyleDeclaration cs(Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
     private static String r(Element e) { return e == null ? "(없음)" : cs(e).getPropertyValue("border-top-left-radius"); }
     private static String rb(Element e) { return e == null ? "(없음)" : cs(e).getPropertyValue("border-bottom-left-radius"); }
     private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
@@ -35,7 +31,6 @@ public class ShapeComponentsTest {
         ShadowRoot root = Js.uncheckedCast(Js.asPropertyMap(host).get("shadowRoot"));
         return root == null ? null : Js.uncheckedCast(root.querySelector(sel));
     }
-    private static void later(int ms, Runnable run) { DomGlobal.setTimeout(t -> run.run(), ms); }
 
     public static void test() {
         printSectionHeader("Shape (모서리) 사용자 지정");

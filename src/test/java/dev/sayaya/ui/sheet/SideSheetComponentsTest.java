@@ -16,16 +16,11 @@ import static org.jboss.elemento.Elements.div;
 
 /** M3 side sheet: 토큰·스펙 수치(computed style) + 열기/닫기/포커스/이벤트. 메시지 접두어 "ss: ". */
 public class SideSheetComponentsTest {
-    private static CSSStyleDeclaration cs(Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
     private static ShadowRoot root(HTMLElement host) { return Js.uncheckedCast(Js.asPropertyMap(host).get("shadowRoot")); }
     private static HTMLElement inner(HTMLElement host, String sel) { ShadowRoot r = root(host); return r == null ? null : Js.uncheckedCast(r.querySelector(sel)); }
     private static String css(HTMLElement host, String sel, String prop) { var e = inner(host, sel); return e == null ? "" : cs(e).getPropertyValue(prop); }
     private static long w(HTMLElement e) { return e == null ? -1 : Math.round(e.getBoundingClientRect().width); }
     private static long h(HTMLElement e) { return e == null ? -1 : Math.round(e.getBoundingClientRect().height); }
-    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
 
     public static void test() {
         printSectionHeader("M3 Side sheet");

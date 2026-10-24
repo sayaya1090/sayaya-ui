@@ -10,18 +10,12 @@ import static org.jboss.elemento.Elements.div;
 
 /** M3 Expressive slider 보완: 크기 XS~XL, 세로, inset icon (md-slider 공개 CSS 변수 + 문서 수준 스타일). 메시지 접두어 "sx: ". */
 public class SliderExpressiveComponentsTest {
-    private static CSSStyleDeclaration cs(Element e) { return cs(e, null); }
-    private static CSSStyleDeclaration cs(Element e, String pseudo) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e, pseudo));
-    }
     private static Element sr(Element host, String sel) {
         ShadowRoot root = Js.uncheckedCast(Js.asPropertyMap(host).get("shadowRoot"));
         return root == null ? null : root.querySelector(sel);
     }
     private static long h(Element e) { return Math.round(e.getBoundingClientRect().height); }
     private static long w(Element e) { return Math.round(e.getBoundingClientRect().width); }
-    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
 
     public static void test() {
         printSectionHeader("M3 Expressive Slider");

@@ -16,12 +16,7 @@ import static org.jboss.elemento.Elements.div;
 public class CarouselComponentsTest {
     private static final String[] COLORS = {"#6750a4", "#625b71", "#7d5260", "#386a20", "#00639b", "#8c4a00"};
     private static final String[] NAMES = {"제주", "부산", "강릉", "전주", "경주", "여수"};
-    private static CSSStyleDeclaration cs(Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
     private static long w(Element e) { return Math.round(e.getBoundingClientRect().width); }
-    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
     private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
     private static HTMLElement item(Element root, int i) { return q(root, ".item[data-index='" + i + "']"); }
     private static void key(String key) {

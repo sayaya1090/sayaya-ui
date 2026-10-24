@@ -11,14 +11,9 @@ import static dev.sayaya.ui.elements.CenteredSliderElementBuilder.*;
 
 /** M3 Expressive centered slider: 토큰 수치(computed style·배치) + 네이티브 range 동작. 메시지 접두어 "cs: ". */
 public class CenteredSliderComponentsTest {
-    private static CSSStyleDeclaration cs(Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
     private static long w(Element e) { return Math.round(e.getBoundingClientRect().width); }
     private static long h(Element e) { return Math.round(e.getBoundingClientRect().height); }
     private static long left(Element e, Element base) { return Math.round(e.getBoundingClientRect().left - base.getBoundingClientRect().left); }
-    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
     private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
 
     public static void test() {

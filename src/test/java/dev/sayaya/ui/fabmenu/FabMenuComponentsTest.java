@@ -10,13 +10,8 @@ import static org.jboss.elemento.Elements.div;
 
 /** M3 FAB menu: 토큰 수치(computed style) + 열기/닫기/포커스/키보드. 메시지 접두어 "fm: ". */
 public class FabMenuComponentsTest {
-    private static CSSStyleDeclaration cs(Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
     private static long w(Element e) { return Math.round(e.getBoundingClientRect().width); }
     private static long h(Element e) { return Math.round(e.getBoundingClientRect().height); }
-    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
     private static HTMLElement q(HTMLElement root, String sel) { return (HTMLElement) root.querySelector(sel); }
 
     public static void test() {

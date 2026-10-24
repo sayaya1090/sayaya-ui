@@ -17,17 +17,12 @@ import static org.jboss.elemento.Elements.div;
 
 /** M3 tooltip / snackbar / button group, [M3 외 확장] toast: 토큰 수치(computed style) + 동작 검증. 메시지 접두어 "fb: ". */
 public class FeedbackComponentsTest {
-    private static CSSStyleDeclaration cs(Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
     private static HTMLElement child(HTMLElement host, int i) { return Js.uncheckedCast(host.querySelectorAll(":scope > *").item(i)); }
     private static Element inner(HTMLElement host, String sel) {
         Object root = Js.asPropertyMap(host).get("shadowRoot");
         return root == null ? null : ((elemental2.dom.ShadowRoot) Js.uncheckedCast(root)).querySelector(sel);
     }
     private static String prop(HTMLElement e, String name) { return e.style.getPropertyValue(name).trim(); }
-    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
     /** e 에서 지금 진행 중인 CSS transition 의 속성 이름들(getAnimations). 브라우저가 논리 속성을 물리 속성으로 바꿔 보고할 수 있다 */
     private static String transitions(Element e) {
         if (e == null) return "";

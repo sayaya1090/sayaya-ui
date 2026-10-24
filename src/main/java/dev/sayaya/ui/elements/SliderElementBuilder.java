@@ -114,7 +114,7 @@ public abstract class SliderElementBuilder<SELF extends SliderElementBuilder<SEL
         updateInset();
         return that();
     }
-    private int insetFrames = 0;
+    private final LayoutRetry layoutRetry = new LayoutRetry();
     /** 값 비율(--_sx-v)과 아이콘 위치(data-icon-side)를 갱신한다 */
     void updateInset() {
         if (!element().hasAttribute("data-inset-icon")) return;
@@ -123,8 +123,7 @@ public abstract class SliderElementBuilder<SELF extends SliderElementBuilder<SEL
         double frac = max > min && v != null ? Math.max(0, Math.min(1, (v - min) / (max - min))) : 0;
         element().style.setProperty("--_sx-v", String.valueOf(frac));
         double width = element().offsetWidth;
-        if (width <= 0) { if (insetFrames++ < 600) DomGlobal.requestAnimationFrame(t -> updateInset()); return; }
-        insetFrames = 0;
+        if (layoutRetry.defer(width, this::updateInset)) return;
         String sz = element().getAttribute("data-size");
         int icon = 24;
         for (Size z : Size.values()) if (z.name().equalsIgnoreCase(sz) && z.icon > 0) icon = z.icon;
@@ -133,8 +132,8 @@ public abstract class SliderElementBuilder<SELF extends SliderElementBuilder<SEL
         element().setAttribute("data-icon-side", active >= icon + 24 ? "before" : "after");
     }
     private static void injectStyle() {
-        if (DomGlobal.document.getElementById(STYLE_ID) != null) return;
-        HTMLStyleElement style = htmlElement("style", HTMLStyleElement.class).id(STYLE_ID).element();
+        HTMLStyleElement style = CustomElementBuilder.newStyle(STYLE_ID); // 문서에 한 번만
+        if (style == null) return;
         String m = "md-slider";
         StringBuilder css = new StringBuilder();
         for (Size z : Size.values()) // 치수는 Size 하나에서만 가져온다

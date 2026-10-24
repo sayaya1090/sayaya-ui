@@ -50,7 +50,7 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
     private int itemWidth;
     private int count = 0;
     private Consumer<Integer> onActivate;
-    private int pendingFrames = 0;
+    private final LayoutRetry layoutRetry = new LayoutRetry();
     private boolean centeredOnce = false;
 
     private CarouselElementBuilder(String layout, int itemWidth) {
@@ -167,11 +167,7 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
         if ("uncontained".equals(layout) || "full-screen".equals(layout)) return;
         double v = track.clientWidth;
         double trackLeft = track.getBoundingClientRect().left + track.clientLeft;
-        if (v <= 0) { // 아직 문서에 붙지 않았다 — 붙을 때까지 다음 프레임에 다시(최대 약 10초)
-            if (pendingFrames++ < 600) DomGlobal.requestAnimationFrame(t -> mask());
-            return;
-        }
-        pendingFrames = 0;
+        if (layoutRetry.defer(v, this::mask)) return; // 아직 문서에 붙지 않았다 — 붙을 때까지 다음 프레임에 다시
         if (element().classList.contains("centered") && !centeredOnce && count > 1) { // 처음에는 둘째 항목을 가운데에
             centeredOnce = true;
             HTMLElement second = Js.uncheckedCast(items().item(1));

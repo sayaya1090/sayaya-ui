@@ -15,15 +15,10 @@ import static org.jboss.elemento.Elements.div;
 
 /** M3 time picker(dial/input): 토큰 수치(computed style) + 시·분·오전오후 선택 + 확정/취소. 메시지 접두어 "tp: ". */
 public class TimePickerComponentsTest {
-    private static CSSStyleDeclaration cs(Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
     private static long w(Element e) { return Math.round(e.getBoundingClientRect().width); }
     private static long h(Element e) { return Math.round(e.getBoundingClientRect().height); }
     private static double cx(Element e) { var r = e.getBoundingClientRect(); return r.left + r.width / 2; }
     private static double cy(Element e) { var r = e.getBoundingClientRect(); return r.top + r.height / 2; }
-    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
     private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
     private static HTMLElement label(Element root, String value) { return q(root, ".label[data-value='" + value + "']:not(.inner)"); }
     private static void key(Element target, String key) {

@@ -9,14 +9,9 @@ import static org.jboss.elemento.Elements.div;
 
 /** M3 Expressive wavy linear progress: 토큰 수치(computed style) + ARIA. 메시지 접두어 "wp: ". */
 public class WavyProgressComponentsTest {
-    private static CSSStyleDeclaration cs(Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
     private static long w(Element e) { return Math.round(e.getBoundingClientRect().width); }
     private static long h(Element e) { return Math.round(e.getBoundingClientRect().height); }
     private static long left(Element e, Element base) { return Math.round(e.getBoundingClientRect().left - base.getBoundingClientRect().left); }
-    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
     private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
     private static String mask(Element e, String prop) {
         String v = cs(e).getPropertyValue(prop);

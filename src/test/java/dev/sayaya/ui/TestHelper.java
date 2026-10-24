@@ -1,11 +1,27 @@
 package dev.sayaya.ui;
 
+import elemental2.dom.CSSStyleDeclaration;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
 import elemental2.dom.HTMLElement;
+import jsinterop.base.Js;
 
 import static elemental2.dom.DomGlobal.console;
 import static org.jboss.elemento.Elements.*;
 
 public class TestHelper {
+    /** 계산된 스타일(window.getComputedStyle) */
+    public static CSSStyleDeclaration cs(Element e) {
+        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
+        return Js.uncheckedCast(f.call(DomGlobal.window, e));
+    }
+    /** 의사 요소(::before 등)의 계산된 스타일 */
+    public static CSSStyleDeclaration cs(Element e, String pseudo) {
+        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
+        return Js.uncheckedCast(f.call(DomGlobal.window, e, pseudo));
+    }
+    /** ms 뒤에 실행 */
+    public static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
     public static void assertEquals(String message, Object expected, Object actual) {
         if (expected == null && actual == null) {
             log(message + " - PASS");

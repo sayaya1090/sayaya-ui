@@ -15,13 +15,8 @@ import static org.jboss.elemento.Elements.div;
 
 /** M3 date picker(docked/modal): 토큰 수치(computed style) + grid 키보드 + 확정/취소. 메시지 접두어 "dp: ". */
 public class DatePickerComponentsTest {
-    private static CSSStyleDeclaration cs(Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
     private static long w(Element e) { return Math.round(e.getBoundingClientRect().width); }
     private static long h(Element e) { return Math.round(e.getBoundingClientRect().height); }
-    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
     private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
     private static HTMLElement day(Element root, String iso) { return q(root, "[data-date='" + iso + "']"); }
     private static String focused() { var a = DomGlobal.document.activeElement; return a == null ? null : a.getAttribute("data-date"); }

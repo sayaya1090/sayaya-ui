@@ -27,11 +27,6 @@ import static org.jboss.elemento.Elements.div;
 
 /** 지역화: 영어 기본 문구 + 덮어쓰기, Intl 기반 locale 표기, RTL. 메시지 접두어 "i18: ". */
 public class I18nComponentsTest {
-    private static CSSStyleDeclaration cs(Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
-    private static void later(int ms, Runnable r) { DomGlobal.setTimeout(t -> r.run(), ms); }
     private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
     private static HTMLElement sr(Element host, String sel) {
         ShadowRoot r = Js.uncheckedCast(Js.asPropertyMap(host).get("shadowRoot"));
