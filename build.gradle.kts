@@ -121,6 +121,7 @@ tasks {
                 "dev.sayaya.SwitchElementTest",
                 "dev.sayaya.TabsElementTest",
                 "dev.sayaya.TextFieldElementTest",
+                "dev.sayaya.TimePickerElementTest",
                 "dev.sayaya.ToolbarElementTest",
                 "dev.sayaya.WavyProgressElementTest"
             )
