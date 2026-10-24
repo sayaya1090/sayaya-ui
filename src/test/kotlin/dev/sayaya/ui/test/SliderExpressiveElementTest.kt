@@ -2,6 +2,7 @@ package dev.sayaya.ui.test
 
 import dev.sayaya.gwt.test.GwtHtml
 import dev.sayaya.gwt.test.GwtTestSpec
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.string.shouldNotContain
 
@@ -59,6 +60,47 @@ internal class SliderExpressiveElementTest: GwtTestSpec({
                 log.shouldNotBeNull()
                 log shouldNotContain "Assertion failed!"
             }
+        }
+        // 회전(-90°)된 세로 슬라이더를 실제 입력으로 조작한다(Playwright 키보드·마우스, 합성 이벤트 아님)
+        fun value(): Double = (page.evaluate("document.getElementById('sx-v-input').value") as Number).toDouble()
+        fun reset() { page.evaluate("(() => { const s = document.getElementById('sx-v-input'); s.value = 50; })()") }
+        Then("세로 실제 입력: ArrowUp 은 값을 올리고 ArrowDown 은 내린다") {
+            reset()
+            page.focus("#sx-v-input")
+            page.keyboard().press("ArrowUp")
+            val up = value()
+            page.keyboard().press("ArrowDown")
+            page.keyboard().press("ArrowDown")
+            val down = value()
+            println("sx-v-input key: up=$up down=$down")
+            (up > 50.0).shouldBeTrue()
+            (down < 50.0).shouldBeTrue()
+        }
+        Then("세로 실제 입력: 위쪽 끝을 누르면 큰 값, 아래쪽 끝을 누르면 작은 값") {
+            reset()
+            val box = page.locator("#sx-v-input").boundingBox()!!
+            println("sx-v-input box: x=${box.x} y=${box.y} w=${box.width} h=${box.height}")
+            (box.height > box.width).shouldBeTrue()
+            val cx = box.x + box.width / 2
+            page.mouse().click(cx, box.y + box.height * 0.1)
+            val top = value()
+            page.mouse().click(cx, box.y + box.height * 0.9)
+            val bottom = value()
+            println("sx-v-input click: top=$top bottom=$bottom")
+            (top > 75.0).shouldBeTrue()
+            (bottom < 25.0).shouldBeTrue()
+        }
+        Then("세로 실제 입력: 아래에서 위로 드래그하면 값이 커진다") {
+            reset()
+            val box = page.locator("#sx-v-input").boundingBox()!!
+            val cx = box.x + box.width / 2
+            page.mouse().move(cx, box.y + box.height * 0.5)
+            page.mouse().down()
+            page.mouse().move(cx, box.y + box.height * 0.2, com.microsoft.playwright.Mouse.MoveOptions().setSteps(10))
+            page.mouse().up()
+            val dragged = value()
+            println("sx-v-input drag: $dragged")
+            (dragged > 65.0).shouldBeTrue()
         }
     }
 })

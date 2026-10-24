@@ -46,11 +46,13 @@ public class SliderExpressiveComponentsTest {
         var vLow = slider().vertical(true).value(20).element();
         var vHigh = slider().vertical(true).size(Size.M).value(80).element();
         var vStops = slider().ticks(10).vertical(true).value(50).element();
+        var vInput = slider().vertical(true).value(50).element();
+        vInput.id = "sx-v-input"; // Playwright 실제 입력(키·포인터) 검사용
         demo(section, "📘 Vertical standard slider", "가이드라인 그림 \"Vertical standard slider with an end stop indicator\". 아래가 최솟값입니다. range slider 는 \"Because of the additional cognitive load of a range slider, avoid using it in vertical orientation\" 에 따라 세로를 제공하지 않습니다.",
             """
             slider().vertical(true).value(20).element();
             slider().ticks(10).vertical(true).value(50).element();   // stops 와 함께
-            """, div().style("display", "flex").style("gap", "24px").style("align-items", "flex-start").add(vLow).add(vHigh).add(vStops).element());
+            """, div().style("display", "flex").style("gap", "24px").style("align-items", "flex-start").add(vLow).add(vHigh).add(vStops).add(vInput).element());
 
         var volHigh = slider().size(Size.M).insetIcon("volume_up").value(70).element();
         var volLow = slider().size(Size.M).insetIcon("volume_down").value(5).element();
