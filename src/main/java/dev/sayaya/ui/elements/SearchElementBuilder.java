@@ -32,6 +32,21 @@ public final class SearchElementBuilder implements
     public static final String CLASS = "sayaya-search";
     static final String STYLE_ID = "sayaya-search-style";
     private static int seq = 0;
+    /** UI 문구. 기본은 영어이고 {@link #label(Label, String)} 로 덮어쓴다 */
+    public enum Label {
+        Search("Search"), Clear("Clear"), CloseSearch("Close search");
+        public final String english;
+        Label(String english) { this.english = english; }
+    }
+    private final java.util.Map<Label, String> labels = new java.util.EnumMap<>(Label.class);
+    /** UI 문구 덮어쓰기(기본 영어) */
+    public SearchElementBuilder label(Label label, String text) { labels.put(label, text); applyLabels(); return this; }
+    private String text(Label l) { String v = labels.get(l); return v == null ? l.english : v; }
+    private void applyLabels() {
+        boolean closing = isOpen() && element().classList.contains("fullscreen");
+        leading.setAttribute("aria-label", text(closing ? Label.CloseSearch : Label.Search));
+        clear.setAttribute("aria-label", text(Label.Clear));
+    }
 
     public static SearchPrepare search() { return new SearchPrepare(); }
     public static final class SearchPrepare {
@@ -55,11 +70,11 @@ public final class SearchElementBuilder implements
         listId = "sayaya-search-list-" + id;
         element().classList.add(CLASS, fullScreen ? "fullscreen" : "docked");
         element().setAttribute("role", "search");
-        leading = button().css("leading").attr("type", "button").attr("tabindex", "-1").attr("aria-label", "검색")
+        leading = button().css("leading").attr("type", "button").attr("tabindex", "-1")
                 .add(span().css("icon").attr("aria-hidden", "true").text("search")).element();
         input = Elements.input(InputType.search).css("input").attr("role", "combobox").attr("aria-expanded", "false")
                 .attr("aria-controls", listId).attr("aria-autocomplete", "list").attr("autocomplete", "off").element();
-        clear = button().css("clear").attr("type", "button").attr("aria-label", "지우기").attr("hidden", "")
+        clear = button().css("clear").attr("type", "button").attr("hidden", "")
                 .add(span().css("icon").attr("aria-hidden", "true").text("close")).element();
         trailing = span().css("trailing").element();
         list = div().css("list").attr("role", "listbox").attr("id", listId).element();
@@ -75,6 +90,7 @@ public final class SearchElementBuilder implements
         leading.addEventListener("click", e -> { if (isOpen() && element().classList.contains("fullscreen")) open(false); else input.focus(); });
         clear.addEventListener("click", e -> { input.value = ""; render(); input.focus(); if (onInput != null) onInput.accept(""); });
         scrim.addEventListener("click", e -> open(false));
+        applyLabels();
     }
     @Override public SearchElementBuilder that() { return this; }
     @Override public HTMLDivElement element() { return that.element(); }
@@ -106,7 +122,7 @@ public final class SearchElementBuilder implements
         input.setAttribute("aria-expanded", String.valueOf(open));
         boolean full = element().classList.contains("fullscreen");
         ((HTMLElement) leading.firstElementChild).textContent = open && full ? "arrow_back" : "search";
-        leading.setAttribute("aria-label", open && full ? "검색 닫기" : "검색");
+        applyLabels();
         if (open && full) leading.removeAttribute("tabindex"); else leading.setAttribute("tabindex", "-1");
         setActive(-1);
         if (!open && full) input.blur();

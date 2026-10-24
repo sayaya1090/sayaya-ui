@@ -39,7 +39,7 @@ public class DatePickerComponentsTest {
         List<String> docked = new ArrayList<>();
         List<String> modalChanges = new ArrayList<>();
 
-        var dp = datePicker().docked().today(2026, 10, 24).value(2026, 10, 15).onChange(docked::add).element();
+        var dp = datePicker().docked().locale("ko-KR").today(2026, 10, 24).value(2026, 10, 15).onChange(docked::add).element();
         demo(section, "📘 Docked date picker", "너비 360dp, 모서리 28dp, surface container high 색의 달력입니다. 날짜는 40dp 원형이며 선택한 날짜는 primary, 오늘은 primary 1dp 테두리로 표시합니다. 날짜를 고르면 onChange 로 바로 전달됩니다.",
             """
             datePicker().docked().value(2026, 10, 15)
@@ -47,7 +47,7 @@ public class DatePickerComponentsTest {
                 .element();
             """, dp);
 
-        var modal = datePicker().modal().headline("날짜 선택").today(2026, 10, 24).value(2026, 10, 15).onChange(modalChanges::add);
+        var modal = datePicker().modal().locale("ko-KR").headline("날짜 선택").today(2026, 10, 24).value(2026, 10, 15).onChange(modalChanges::add);
         body().add(modal.element());
         demo(section, "📘 Modal date picker", "스크림 위 대화상자로 열리며 헤더(120dp)에 고른 날짜가 보입니다. 확인을 눌러야 onChange 가 불리고, 취소·스크림·Esc 는 고른 날짜를 되돌립니다.",
             """
@@ -142,13 +142,13 @@ public class DatePickerComponentsTest {
     /** 연도 선택(SelectionYear)과 기간 선택(RangeSelection) */
     private static void yearAndRange(HTMLElement section) {
         List<String> ranges = new ArrayList<>();
-        var yp = datePicker().docked().today(2026, 10, 24).value(2026, 10, 15).element();
+        var yp = datePicker().docked().locale("ko-KR").today(2026, 10, 24).value(2026, 10, 15).element();
         demo(section, "📘 연도 선택", "월 표시(2026년 10월 ▾)를 누르면 연도 목록으로 바뀝니다. 연도는 72×36dp 이며 선택한 연도는 primary 입니다. 연도를 고르면 같은 달의 달력으로 돌아옵니다.",
             """
             datePicker().docked().value(2026, 10, 15).element();   // 월 표시 → 연도 목록
             """, yp);
         var rp = datePicker().docked().range(true).today(2026, 10, 24).month(2026, 10).onRangeChange((a, b) -> ranges.add(a + "/" + b)).element();
-        var mr = datePicker().modal().range(true).headline("기간 선택").today(2026, 10, 24).month(2026, 10).onRangeChange((a, b) -> ranges.add("modal:" + a + "/" + b));
+        var mr = datePicker().modal().range(true).locale("ko-KR").headline("기간 선택").today(2026, 10, 24).month(2026, 10).onRangeChange((a, b) -> ranges.add("modal:" + a + "/" + b));
         body().add(mr.element());
         demo(section, "📘 기간 선택", "range(true)는 시작일과 종료일을 차례로 고릅니다(거꾸로 골라도 순서를 맞춤). 범위는 높이 40dp secondary container 띠로, 시작·끝은 primary 원으로 표시합니다. modal 기간 선택은 헤더가 128dp 이며 확인을 눌러야 onRangeChange 가 불립니다.",
             """

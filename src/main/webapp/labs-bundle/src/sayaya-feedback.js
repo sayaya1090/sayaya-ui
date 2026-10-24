@@ -145,6 +145,7 @@ export class MdSnackbar extends LitElement {
     open: {type: Boolean, reflect: true},
     action: {type: String},                       // 액션 라벨
     closeable: {type: Boolean, reflect: true},    // 닫기(X) 아이콘
+    closeLabel: {type: String, attribute: 'close-label'}, // 닫기 버튼 접근성 라벨, 기본 'Close'
     timeout: {type: Number},                      // ms, 0 이면 자동으로 닫지 않음. -1(기본) = 자동: 액션이 있으면 닫지 않고, 없으면 4초
     align: {type: String, reflect: true},         // center(기본) | start — 가이드: 같은 위치에 일관되게 왼쪽 또는 가운데
     multiline: {type: Boolean, reflect: true},    // 두 줄(68dp)
@@ -212,7 +213,7 @@ export class MdSnackbar extends LitElement {
       <div class="text"><slot></slot></div>
       <div class="trail">
         ${this.action ? html`<button class="action" part="action" @click=${this._action}>${this.action}</button>` : ''}
-        ${this.closeable ? html`<button class="close" part="close" aria-label="닫기" @click=${() => this.close('dismiss')}><svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>` : ''}
+        ${this.closeable ? html`<button class="close" part="close" aria-label=${this.closeLabel || 'Close'} @click=${() => this.close('dismiss')}><svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>` : ''}
       </div></div>`;
   }
 }
@@ -260,6 +261,7 @@ export class MdToast extends LitElement {
     level: {type: String, reflect: true},         // info | success | warning | error
     action: {type: String},                       // 액션 라벨(선택)
     closeable: {type: Boolean, reflect: true},    // 닫기(X) 버튼, 기본 true
+    closeLabel: {type: String, attribute: 'close-label'}, // 닫기 버튼 접근성 라벨, 기본 'Close'
     timeout: {type: Number},                      // ms. -1(기본) 자동, 0 닫지 않음
     max: {type: Number},                          // 스택에 동시에 보일 최대 개수(기본 5)
     leaving: {type: Boolean, reflect: true},      // 퇴장 애니메이션 중
@@ -353,7 +355,7 @@ export class MdToast extends LitElement {
     return html`<div class="container" part="container">
       <div class="text" part="text"><slot></slot></div>
       ${this.action ? html`<button class="action" part="action" @click=${this._action}>${this.action}</button>` : ''}
-      ${this.closeable ? html`<button class="close" part="close" aria-label="닫기" @click=${() => this.close('dismiss')}><svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>` : ''}
+      ${this.closeable ? html`<button class="close" part="close" aria-label=${this.closeLabel || 'Close'} @click=${() => this.close('dismiss')}><svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>` : ''}
     </div>`;
   }
 }

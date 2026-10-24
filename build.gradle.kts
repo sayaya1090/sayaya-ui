@@ -107,6 +107,7 @@ tasks {
                 "dev.sayaya.FeedbackElementTest",
                 "dev.sayaya.FocusRingElementTest",
                 "dev.sayaya.GbElementTest",
+                "dev.sayaya.I18nElementTest",
                 "dev.sayaya.IconElementTest",
                 "dev.sayaya.ListElementTest",
                 "dev.sayaya.LoadingIndicatorElementTest",

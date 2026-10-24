@@ -108,6 +108,8 @@ export class MdNavigationRail extends LitElement {
     expanded: {type: Boolean, reflect: true},
     narrow: {type: Boolean, reflect: true},        // 접힌 너비 80dp (narrow-container-width)
     modal: {type: Boolean, reflect: true},         // 펼쳤을 때 본문 위에 뜨는 modal expanded rail
+    menuOpenLabel: {type: String, attribute: 'menu-open-label'},   // 메뉴 버튼 접근성 라벨(접힘 상태), 기본 'Open menu'
+    menuCloseLabel: {type: String, attribute: 'menu-close-label'}, // 메뉴 버튼 접근성 라벨(펼침 상태), 기본 'Close menu'
     menu: {type: Boolean, reflect: true},          // 내장 메뉴 버튼: 펼침/접힘 전환, 펼치면 아이콘이 바뀐다
     hideWhenCollapsed: {type: Boolean, attribute: 'hide-when-collapsed', reflect: true}, // Expanded behavior: hide when collapsed
     hideCollapsedLabels: {type: Boolean, attribute: 'hide-collapsed-labels', reflect: true}, // [M3 외] 접힌 레일에서 라벨을 숨김(아이콘만, 라벨은 툴팁·aria-label)
@@ -166,7 +168,7 @@ export class MdNavigationRail extends LitElement {
     this._footer = !!this.querySelector(':scope > [slot="footer"]');
   }
   render() {
-    const menuBtn = this.menu ? html`<md-icon-button class="menu" part="menu" aria-label=${this.expanded ? '메뉴 닫기' : '메뉴 열기'}
+    const menuBtn = this.menu ? html`<md-icon-button class="menu" part="menu" aria-label=${this.expanded ? (this.menuCloseLabel || 'Close menu') : (this.menuOpenLabel || 'Open menu')}
         aria-expanded=${this.expanded ? 'true' : 'false'} @click=${() => this.toggle()}><md-icon>${this.expanded ? 'menu_open' : 'menu'}</md-icon></md-icon-button>` : nothing;
     return html`
       ${this.modal && this.expanded ? html`<div class="scrim" part="scrim" @click=${() => this.toggle(false)}></div>` : nothing}

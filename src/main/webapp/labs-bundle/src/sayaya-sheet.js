@@ -66,7 +66,7 @@ export class MdSideSheet extends LitElement {
   constructor() {
     super();
     this.modal = false; this.open = false; this.pivot = 'end'; this.detached = false; this.divider = false; this.back = false;
-    this.headline = ''; this.closeLabel = '닫기'; this.backLabel = '뒤로';
+    this.headline = ''; this.closeLabel = 'Close'; this.backLabel = 'Back';
     this._restore = null;
     this.addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.open && this.modal) { e.stopPropagation(); this.close('escape'); } });
   }
@@ -149,7 +149,7 @@ export class MdBottomSheet extends LitElement {
   `;
   constructor() {
     super();
-    this.modal = false; this.open = false; this.expanded = false; this.dragHandle = true; this.handleLabel = '시트 크기 조절';
+    this.modal = false; this.open = false; this.expanded = false; this.dragHandle = true; this.handleLabel = 'Resize sheet';
     this._restore = null; this._dragY = null; this._dy = 0; this._moved = false;
     this.addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.open && this.modal) { e.stopPropagation(); this.close('escape'); } });
   }

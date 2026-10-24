@@ -53,6 +53,7 @@ public final class CenteredSliderElementBuilder implements
         element().appendChild(input);
         input.addEventListener("input", e -> layout());
         layout();
+        DomGlobal.requestAnimationFrame(t -> layout()); // 문서에 붙은 뒤 방향(dir)을 반영
     }
     @Override public CenteredSliderElementBuilder that() { return this; }
     @Override public HTMLDivElement element() { return that.element(); }
@@ -77,6 +78,7 @@ public final class CenteredSliderElementBuilder implements
     private void layout() {
         double min = Double.parseDouble(input.min), max = Double.parseDouble(input.max), v = Double.parseDouble(input.value);
         double p = max == min ? 0.5 : (v - min) / (max - min);
+        if (Locales.rtl(element())) p = 1 - p; // RTL 에서 네이티브 range 는 오른쪽이 최솟값
         String pos = "calc(" + (p * 100) + "% ";
         handle.style.setProperty("left", pos + "- 2px)");
         if (p >= 0.5) {

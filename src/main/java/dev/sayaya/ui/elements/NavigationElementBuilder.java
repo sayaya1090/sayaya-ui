@@ -167,6 +167,10 @@ public final class NavigationElementBuilder {
         public NavigationRailBuilder modal(boolean modal) { element().modal = modal; return this; }
         /** 내장 메뉴 버튼: 펼침/접힘 전환, 펼치면 아이콘이 menu_open 으로 바뀐다 */
         public NavigationRailBuilder menu(boolean menu) { element().menu = menu; return this; }
+        /** 메뉴 버튼 접근성 라벨(기본 "Open menu" / "Close menu") */
+        public NavigationRailBuilder menuLabels(String openLabel, String closeLabel) {
+            element().setAttribute("menu-open-label", openLabel); element().setAttribute("menu-close-label", closeLabel); return this;
+        }
         /** 접혀 있을 때 레일을 숨긴다(펼칠 때만 보임) */
         public NavigationRailBuilder hideWhenCollapsed(boolean hide) { element().hideWhenCollapsed = hide; return this; }
         /**

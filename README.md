@@ -81,6 +81,36 @@ dependencies {
 | **Carousel** | `carousel()` | Multi-browse·Hero·Uncontained(가장자리 항목 축소·parallax, slide 역할, 모두 보기 버튼) | [🔗](https://sayaya1090.github.io/sayaya-ui/carousel.html) |
 | **Wavy progress** | `wavyProgress()` | M3 Expressive 물결 선형 진행 표시기(determinate/indeterminate) | [🔗](https://sayaya1090.github.io/sayaya-ui/wavy_progress.html) |
 | **Centered slider** | `centeredSlider()` | M3 Expressive 가운데 슬라이더(0 기준 양·음 범위, 네이티브 range 키보드) | [🔗](https://sayaya1090.github.io/sayaya-ui/centered_slider.html) |
+| **i18n** | `Locales`, 각 빌더의 `locale()`·`label()` | 영어 기본 문구 덮어쓰기, Intl 기반 날짜·시간 표기, 주 시작 요일, 12/24시간, RTL | [🔗](https://sayaya1090.github.io/sayaya-ui/i18n.html) |
+
+## 지역화(i18n)
+
+sayaya-ui 가 직접 구현한 컴포넌트(위 표의 Navigation, Tooltip/Snackbar/Button group, Toast, Side·Bottom sheet, 그리고 Loading indicator 이후 항목)의 규칙입니다. Material Web 을 감싼 컴포넌트는 Material Web 의 동작을 따릅니다.
+
+- **UI 문구는 영어가 기본**이고 빌더로 덮어씁니다. locale 을 바꿔도 문구는 번역되지 않습니다.
+- **날짜·월·요일·오전/오후 표기, 주 시작 요일, 12/24시간 기본값**은 브라우저 `Intl` 로 locale 을 따릅니다.
+- locale 결정 순서: 빌더의 `locale(...)` → `Locales.setDefault(...)` → `<html lang>` → 브라우저 언어 → `en-US`
+- `dir="rtl"` 안에서는 툴바·캐러셀·달력의 ←/→ 의미, 캐러셀 시작 위치, 가운데 슬라이더 방향이 뒤집힙니다.
+
+```java
+import dev.sayaya.ui.elements.Locales;
+
+Locales.setDefault("ko-KR");   // 날짜·시간 표기 기준(문구는 아래처럼 직접 지정)
+
+datePicker().modal().weekStart(1)
+    .label(DatePickerElementBuilder.Label.Cancel, "취소")
+    .label(DatePickerElementBuilder.Label.Ok, "확인");
+timePicker().dial().hour24(true).label(TimePickerElementBuilder.Label.SelectTime, "시간 선택");
+search().docked().label(SearchElementBuilder.Label.Clear, "지우기");
+
+snackbar().closeable(true).closeLabel("닫기");
+toast().info().closeable(true).closeLabel("닫기");
+navigationRail().menu(true).menuLabels("메뉴 열기", "메뉴 닫기");
+sideSheet().modal().closeLabel("닫기").backLabel("뒤로");
+bottomSheet().modal().handleLabel("시트 크기 조절");
+```
+
+> **동작 변경(2.5.0.3 이후):** snackbar·toast 닫기 버튼, navigation rail 메뉴 버튼, side sheet 닫기·뒤로 버튼, bottom sheet 핸들의 접근성 라벨 기본값이 한국어(닫기, 메뉴 열기/닫기, 뒤로, 시트 크기 조절)에서 영어(Close, Open menu/Close menu, Back, Resize sheet)로 바뀌었습니다. 한국어 라벨이 필요하면 위 메서드로 지정하세요.
 
 ## 사용 예제
 

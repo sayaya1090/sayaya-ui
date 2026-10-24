@@ -33,6 +33,14 @@ public final class TimePickerElementBuilder implements
     /** [파생] 숫자 배치 반경(바깥 고리/24시간 안쪽 고리). 토큰에 값이 없어 256dp 다이얼과 48dp 핸들에 맞춰 정했다 */
     static final int OUTER_RADIUS = 104, INNER_RADIUS = 68;
     private static int seq = 0;
+    /** UI 문구. 기본은 영어이고 {@link #label(Label, String)} 로 덮어쓴다 */
+    public enum Label {
+        SelectTime("Select time"), EnterTime("Enter time"), SelectHour("Select hour"), SelectMinute("Select minute"),
+        Hour("Hour"), Minute("Minute"), Period("AM/PM"), Clock("Clock"), HoursSuffix("hours"), MinutesSuffix("minutes"),
+        Cancel("Cancel"), Ok("OK");
+        public final String english;
+        Label(String english) { this.english = english; }
+    }
 
     public static TimePickerPrepare timePicker() { return new TimePickerPrepare(); }
     public static final class TimePickerPrepare {
@@ -48,7 +56,11 @@ public final class TimePickerElementBuilder implements
     private HTMLInputElement hourInput, minuteInput;
     private int hour = 0, minute = 0;          // 24시간제
     private int committedHour = 0, committedMinute = 0;
-    private boolean hour24 = false, modal = false, minuteMode = false;
+    private boolean modal = false, minuteMode = false;
+    private Boolean hour24Explicit = null;
+    private String locale = null, customHeadline = null;
+    private final java.util.Map<Label, String> labels = new java.util.EnumMap<>(Label.class);
+    private HTMLElement cancelBtn, okBtn;
     private Consumer<String> onChange;
 
     private TimePickerElementBuilder(boolean dial) {
@@ -56,36 +68,37 @@ public final class TimePickerElementBuilder implements
         this.dial = dial;
         String id = "sayaya-time-" + (++seq);
         element().classList.add(CLASS, dial ? "dial" : "input");
-        headline = div().css("headline").attr("id", id + "-headline").text(dial ? "Select time" : "Enter time").element();
+        headline = div().css("headline").attr("id", id + "-headline").element();
         if (dial) {
-            hourField = button().css("field", "hour").attr("type", "button").attr("aria-label", "시 선택").element();
-            minuteField = button().css("field", "minute").attr("type", "button").attr("aria-label", "분 선택").element();
+            hourField = button().css("field", "hour").attr("type", "button").element();
+            minuteField = button().css("field", "minute").attr("type", "button").element();
             hourField.addEventListener("click", e -> mode(false));
             minuteField.addEventListener("click", e -> mode(true));
         } else {
-            hourInput = Elements.input(InputType.text).css("field", "hour").attr("inputmode", "numeric").attr("maxlength", "2").attr("aria-label", "시").element();
-            minuteInput = Elements.input(InputType.text).css("field", "minute").attr("inputmode", "numeric").attr("maxlength", "2").attr("aria-label", "분").element();
+            hourInput = Elements.input(InputType.text).css("field", "hour").attr("inputmode", "numeric").attr("maxlength", "2").element();
+            minuteInput = Elements.input(InputType.text).css("field", "minute").attr("inputmode", "numeric").attr("maxlength", "2").element();
             hourInput.addEventListener("change", e -> fromInputs());
             minuteInput.addEventListener("change", e -> fromInputs());
             hourInput.addEventListener("keydown", e -> step(e, true));
             minuteInput.addEventListener("keydown", e -> step(e, false));
             hourField = hourInput; minuteField = minuteInput;
         }
-        am = button().css("period", "am").attr("type", "button").text("AM").element();
-        pm = button().css("period", "pm").attr("type", "button").text("PM").element();
+        am = button().css("period", "am").attr("type", "button").element();
+        pm = button().css("period", "pm").attr("type", "button").element();
         am.addEventListener("click", e -> setPeriod(false));
         pm.addEventListener("click", e -> setPeriod(true));
-        periodBox = div().css("periods").attr("role", "group").attr("aria-label", "오전/오후").add(am).add(pm).element();
+        periodBox = div().css("periods").attr("role", "group").add(am).add(pm).element();
         var row = div().css("time-row").add(hourField).add(span().css("separator").text(":")).add(minuteField).add(periodBox).element();
         card = div().css("card").add(headline).add(row).element();
         if (dial) {
             track = div().css("track").element();
             handle = div().css("handle").element();
-            face = div().css("face").attr("role", "listbox").attr("aria-label", "시계").add(track).add(handle).add(div().css("center")).element();
+            face = div().css("face").attr("role", "listbox").add(track).add(handle).add(div().css("center")).element();
             card.appendChild(div().css("face-wrap").add(face).element());
         } else { track = handle = face = null; }
-        var cancel = button().css("action").attr("type", "button").text("취소").element();
-        var ok = button().css("action", "ok").attr("type", "button").text("확인").element();
+        var cancel = button().css("action").attr("type", "button").element();
+        var ok = button().css("action", "ok").attr("type", "button").element();
+        cancelBtn = cancel; okBtn = ok;
         cancel.addEventListener("click", e -> { hour = committedHour; minute = committedMinute; render(); open(false); });
         ok.addEventListener("click", e -> { fromInputsIfNeeded(); commit(); open(false); });
         actions = div().css("actions").add(cancel).add(ok).element();
@@ -107,8 +120,15 @@ public final class TimePickerElementBuilder implements
         render();
         return this;
     }
-    public TimePickerElementBuilder hour24(boolean hour24) { this.hour24 = hour24; render(); return this; }
-    public TimePickerElementBuilder headline(String text) { headline.textContent = text; return this; }
+    /** 24시간제 여부. 지정하지 않으면 locale 기본 시계(hourCycle)를 따른다 */
+    public TimePickerElementBuilder hour24(boolean hour24) { this.hour24Explicit = hour24; render(); return this; }
+    public TimePickerElementBuilder headline(String text) { customHeadline = text; render(); return this; }
+    /** 오전/오후 표기와 12/24시간 기본값의 기준 locale. 기본: Locales.setDefault → html lang → 브라우저 언어 */
+    public TimePickerElementBuilder locale(String locale) { this.locale = locale; render(); return this; }
+    /** UI 문구 덮어쓰기(기본 영어) */
+    public TimePickerElementBuilder label(Label label, String text) { labels.put(label, text); render(); return this; }
+    private String text(Label l) { String v = labels.get(l); return v == null ? l.english : v; }
+    private boolean h24() { return hour24Explicit != null ? hour24Explicit : !Locales.hour12(locale); }
     /** 스크림 위 대화상자로 띄우고 확인/취소로 확정한다 */
     public TimePickerElementBuilder modal(boolean modal) {
         this.modal = modal;
@@ -132,7 +152,7 @@ public final class TimePickerElementBuilder implements
     }
 
     private static String pad(int v) { return v < 10 ? "0" + v : String.valueOf(v); }
-    private int displayHour() { return hour24 ? hour : (hour % 12 == 0 ? 12 : hour % 12); }
+    private int displayHour() { return h24() ? hour : (hour % 12 == 0 ? 12 : hour % 12); }
     private void changed() { if (!modal) commit(); render(); }
     private void commit() {
         committedHour = hour; committedMinute = minute;
@@ -145,7 +165,7 @@ public final class TimePickerElementBuilder implements
     }
     private void pick(int value) {
         if (minuteMode) { minute = value; changed(); return; }
-        if (hour24) hour = value % 24;
+        if (h24()) hour = value % 24;
         else { int h = value % 12; hour = hour >= 12 ? h + 12 : h; }
         minuteMode = true;
         changed();
@@ -154,7 +174,7 @@ public final class TimePickerElementBuilder implements
     private void fromInputs() {
         int h = parse(hourInput.value, displayHour()), m = parse(minuteInput.value, minute);
         m = Math.max(0, Math.min(59, m));
-        if (hour24) hour = Math.max(0, Math.min(23, h));
+        if (h24()) hour = Math.max(0, Math.min(23, h));
         else { h = Math.max(1, Math.min(12, h)) % 12; hour = hour >= 12 ? h + 12 : h; }
         minute = m;
         changed();
@@ -170,6 +190,14 @@ public final class TimePickerElementBuilder implements
     }
 
     private void render() {
+        headline.textContent = customHeadline != null ? customHeadline : text(dial ? Label.SelectTime : Label.EnterTime);
+        am.textContent = Locales.dayPeriod(locale, false);
+        pm.textContent = Locales.dayPeriod(locale, true);
+        periodBox.setAttribute("aria-label", text(Label.Period));
+        if (face != null && !minuteMode) face.setAttribute("aria-label", text(Label.SelectHour));
+        cancelBtn.textContent = text(Label.Cancel); okBtn.textContent = text(Label.Ok);
+        hourField.setAttribute("aria-label", text(dial ? Label.SelectHour : Label.Hour));
+        minuteField.setAttribute("aria-label", text(dial ? Label.SelectMinute : Label.Minute));
         if (dial) {
             hourField.textContent = pad(displayHour());
             minuteField.textContent = pad(minute);
@@ -180,27 +208,27 @@ public final class TimePickerElementBuilder implements
             hourInput.value = pad(displayHour());
             minuteInput.value = pad(minute);
         }
-        periodBox.style.setProperty("display", hour24 ? "none" : "");
+        periodBox.style.setProperty("display", h24() ? "none" : "");
         am.setAttribute("aria-pressed", String.valueOf(hour < 12));
         pm.setAttribute("aria-pressed", String.valueOf(hour >= 12));
-        element().classList.toggle("h24", hour24);
+        element().classList.toggle("h24", h24());
     }
     private void renderFace() {
         for (Element old = face.querySelector(".label"); old != null; old = face.querySelector(".label")) face.removeChild(old);
         int selValue; boolean inner = false;
         if (minuteMode) selValue = minute;
-        else if (hour24) { selValue = hour; inner = hour == 0 || hour > 12; }
+        else if (h24()) { selValue = hour; inner = hour == 0 || hour > 12; }
         else selValue = displayHour();
         for (int i = 1; i <= 12; i++) {
             int value = minuteMode ? (i % 12) * 5 : i;
             addLabel(value, minuteMode ? pad(value) : String.valueOf(value), i, OUTER_RADIUS, value == selValue && !inner);
         }
-        if (hour24 && !minuteMode) for (int i = 1; i <= 12; i++) {
+        if (h24() && !minuteMode) for (int i = 1; i <= 12; i++) {
             int value = (i + 12) % 24;
             addLabel(value, pad(value), i, INNER_RADIUS, inner && value == selValue);
         }
         // 핸들·트랙: 분은 5분 단위가 아니어도 그 각도에 둔다
-        double angle = minuteMode ? minute * 6 : (hour24 ? (hour % 12) * 30 : displayHour() * 30);
+        double angle = minuteMode ? minute * 6 : (h24() ? (hour % 12) * 30 : displayHour() * 30);
         int r = inner ? INNER_RADIUS : OUTER_RADIUS;
         double rad = Math.toRadians(angle);
         double x = 128 + r * Math.sin(rad), y = 128 - r * Math.cos(rad);
@@ -208,13 +236,13 @@ public final class TimePickerElementBuilder implements
         handle.style.setProperty("top", (y - 24) + "px");
         track.style.setProperty("height", r + "px");
         track.style.setProperty("transform", "rotate(" + angle + "deg)");
-        face.setAttribute("aria-label", minuteMode ? "분 선택" : "시 선택");
+        face.setAttribute("aria-label", text(minuteMode ? Label.SelectMinute : Label.SelectHour));
     }
     private void addLabel(int value, String text, int position, int radius, boolean selected) {
         double rad = Math.toRadians(position * 30);
         double x = 128 + radius * Math.sin(rad), y = 128 - radius * Math.cos(rad);
         var label = button().css("label").attr("type", "button").attr("role", "option").attr("data-value", String.valueOf(value))
-                .attr("aria-selected", String.valueOf(selected)).attr("aria-label", text + (minuteMode ? "분" : "시")).text(text).element();
+                .attr("aria-selected", String.valueOf(selected)).attr("aria-label", text + " " + text(minuteMode ? Label.MinutesSuffix : Label.HoursSuffix)).text(text).element();
         label.style.setProperty("left", (x - 24) + "px");
         label.style.setProperty("top", (y - 24) + "px");
         if (radius == INNER_RADIUS) label.classList.add("inner");

@@ -35,7 +35,13 @@ public final class DatePickerElementBuilder implements
         ElementConsumerMethods<HTMLDivElement, DatePickerElementBuilder> {
     public static final String CLASS = "sayaya-date-picker";
     static final String STYLE_ID = "sayaya-date-picker-style";
-    private static final String[] WEEKDAYS = {"S", "M", "T", "W", "T", "F", "S"};
+    /** UI 문구. 기본은 영어이고 {@link #label(Label, String)} 로 덮어쓴다 */
+    public enum Label {
+        PreviousMonth("Previous month"), NextMonth("Next month"), SelectYear("Select year"),
+        Cancel("Cancel"), Ok("OK"), NoSelection("Select a date"), RangeStart("Start date"), RangeEnd("End date");
+        public final String english;
+        Label(String english) { this.english = english; }
+    }
     private static int seq = 0;
 
     public static DatePickerPrepare datePicker() { return new DatePickerPrepare(); }
@@ -52,7 +58,11 @@ public final class DatePickerElementBuilder implements
     private boolean range = false, yearMode = false;
     private String rangeStart, rangeEnd, committedStart, committedEnd;
     private BiConsumer<String, String> onRangeChange;
-    private String[] monthNames = {"1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"};
+    private String[] monthNames = null; // 지정하면 Intl 월 이름 대신 쓴다
+    private String locale = null;       // null 이면 Locales.resolve 기본
+    private Integer weekStart = null;   // null 이면 locale 기본(0=일요일)
+    private final java.util.Map<Label, String> labels = new java.util.EnumMap<>(Label.class);
+    private HTMLElement prevBtn, nextBtn, cancelBtn, okBtn;
     private int viewYear, viewMonth;      // 보이는 달 (month 0~11)
     private int fy, fm, fd;              // 포커스된 날짜
     private String selected, committed;  // ISO
@@ -74,11 +84,12 @@ public final class DatePickerElementBuilder implements
         headerDate = div().css("header-date").element();
         monthLabel = button().css("month").attr("type", "button").attr("aria-live", "polite").attr("aria-expanded", "false").element();
         monthLabel.addEventListener("click", e -> { yearMode = !yearMode; render(); if (yearMode) scrollYear(); else focusCell(); });
-        years = div().css("years").attr("role", "listbox").attr("aria-label", "연도 선택").element();
-        var prev = button().css("nav", "prev").attr("type", "button").attr("aria-label", "이전 달")
+        years = div().css("years").attr("role", "listbox").element();
+        var prev = button().css("nav", "prev").attr("type", "button")
                 .add(span().css("icon").attr("aria-hidden", "true").text("chevron_left")).element();
-        var next = button().css("nav", "next").attr("type", "button").attr("aria-label", "다음 달")
+        var next = button().css("nav", "next").attr("type", "button")
                 .add(span().css("icon").attr("aria-hidden", "true").text("chevron_right")).element();
+        prevBtn = prev; nextBtn = next;
         prev.addEventListener("click", e -> moveMonth(-1, false));
         next.addEventListener("click", e -> moveMonth(1, false));
         grid = div().css("grid").attr("role", "grid").attr("id", gridId).element();
@@ -98,8 +109,9 @@ public final class DatePickerElementBuilder implements
         card.appendChild(years);
         card.appendChild(grid);
         if (modal) {
-            var cancel = button().css("action").attr("type", "button").text("취소").element();
-            var ok = button().css("action", "ok").attr("type", "button").text("확인").element();
+            var cancel = button().css("action").attr("type", "button").element();
+            var ok = button().css("action", "ok").attr("type", "button").element();
+            cancelBtn = cancel; okBtn = ok;
             cancel.addEventListener("click", e -> cancel());
             ok.addEventListener("click", e -> confirm());
             card.appendChild(div().css("actions").add(cancel).add(ok).element());
@@ -109,6 +121,7 @@ public final class DatePickerElementBuilder implements
             element().addEventListener("keydown", e -> { if ("Escape".equals(((KeyboardEvent) Js.uncheckedCast(e)).key)) { cancel(); e.preventDefault(); } });
         }
         element().appendChild(card);
+        applyLabels();
         render();
     }
     @Override public DatePickerElementBuilder that() { return this; }
@@ -131,7 +144,23 @@ public final class DatePickerElementBuilder implements
     /** 보이는 달 이동(월 1~12) */
     public DatePickerElementBuilder month(int year, int month) { viewYear = fy = year; viewMonth = fm = month - 1; fd = 1; render(); return this; }
     public DatePickerElementBuilder headline(String text) { headline.textContent = text; return this; }
+    /** 월 이름을 직접 지정(12개). 지정하지 않으면 locale 의 Intl 월 이름을 쓴다 */
     public DatePickerElementBuilder monthNames(String... names) { if (names.length == 12) monthNames = names; render(); return this; }
+    /** 날짜 표기·요일·주 시작 요일의 기준 locale(예: "ko-KR", "en-US"). 기본: Locales.setDefault → html lang → 브라우저 언어 */
+    public DatePickerElementBuilder locale(String locale) { this.locale = locale; render(); return this; }
+    /** 주의 첫 요일(0=일요일 … 6=토요일). 기본은 locale 을 따른다 */
+    public DatePickerElementBuilder weekStart(int day) { this.weekStart = ((day % 7) + 7) % 7; render(); return this; }
+    /** UI 문구 덮어쓰기(기본 영어) */
+    public DatePickerElementBuilder label(Label label, String text) { labels.put(label, text); applyLabels(); render(); return this; }
+    private String text(Label l) { String v = labels.get(l); return v == null ? l.english : v; }
+    private void applyLabels() {
+        prevBtn.setAttribute("aria-label", text(Label.PreviousMonth));
+        nextBtn.setAttribute("aria-label", text(Label.NextMonth));
+        years.setAttribute("aria-label", text(Label.SelectYear));
+        if (cancelBtn != null) { cancelBtn.textContent = text(Label.Cancel); okBtn.textContent = text(Label.Ok); }
+    }
+    private int ws() { return weekStart != null ? weekStart : Locales.firstDayOfWeek(locale); }
+    private String fmt(int y, int m0, int d, String... opts) { return Locales.formatDate(locale, y, m0, d, Locales.options(opts)); }
     /** 기간 선택(시작·끝 두 번 선택) */
     public DatePickerElementBuilder range(boolean range) {
         this.range = range;
@@ -213,12 +242,12 @@ public final class DatePickerElementBuilder implements
         KeyboardEvent k = Js.uncheckedCast(e);
         int delta;
         switch (k.key) {
-            case "ArrowLeft": delta = -1; break;
-            case "ArrowRight": delta = 1; break;
+            case "ArrowLeft": delta = Locales.rtl(element()) ? 1 : -1; break;
+            case "ArrowRight": delta = Locales.rtl(element()) ? -1 : 1; break;
             case "ArrowUp": delta = -7; break;
             case "ArrowDown": delta = 7; break;
-            case "Home": delta = -new JsDate(fy, fm, fd).getDay(); break;
-            case "End": delta = 6 - new JsDate(fy, fm, fd).getDay(); break;
+            case "Home": delta = -((new JsDate(fy, fm, fd).getDay() - ws() + 7) % 7); break;
+            case "End": delta = 6 - ((new JsDate(fy, fm, fd).getDay() - ws() + 7) % 7); break;
             case "PageUp": moveMonth(-1, true); e.preventDefault(); return;
             case "PageDown": moveMonth(1, true); e.preventDefault(); return;
             case "Enter": case " ": choose(fy, fm, fd); e.preventDefault(); return;
@@ -241,21 +270,25 @@ public final class DatePickerElementBuilder implements
     private static String iso(int y, int m0, int d) { return y + "-" + pad(m0 + 1) + "-" + pad(d); }
 
     private void render() {
-        monthLabel.textContent = viewYear + "년 " + monthNames[viewMonth];
+        monthLabel.textContent = monthNames != null ? monthNames[viewMonth] + " " + viewYear : fmt(viewYear, viewMonth, 1, "year", "numeric", "month", "long");
         monthLabel.setAttribute("aria-expanded", String.valueOf(yearMode));
         if (yearMode) element().classList.add("years-mode"); else element().classList.remove("years-mode");
         renderYears();
         if (range) {
-            headerDate.textContent = rangeStart == null ? "시작일 – 종료일" : shortDate(rangeStart) + " – " + (rangeEnd == null ? "종료일" : shortDate(rangeEnd));
+            headerDate.textContent = (rangeStart == null ? text(Label.RangeStart) : shortDate(rangeStart)) + " – " + (rangeEnd == null ? text(Label.RangeEnd) : shortDate(rangeEnd));
         } else if (selected != null) {
-            String[] p = selected.split("-");
-            headerDate.textContent = Integer.parseInt(p[1]) + "월 " + Integer.parseInt(p[2]) + "일";
-        } else headerDate.textContent = "날짜를 고르세요";
+            headerDate.textContent = shortDate(selected);
+        } else headerDate.textContent = text(Label.NoSelection);
         while (grid.firstChild != null) grid.removeChild(grid.firstChild);
         var head = div().css("row", "weekdays").attr("role", "row").element();
-        for (String w : WEEKDAYS) head.appendChild(span().css("weekday").attr("role", "columnheader").text(w).element());
+        int ws = ws();
+        for (int i = 0; i < 7; i++) { // 2026-10-04 는 일요일 — 요일 이름만 얻는 기준일
+            int dow = (ws + i) % 7;
+            head.appendChild(span().css("weekday").attr("role", "columnheader").attr("data-day", String.valueOf(dow))
+                    .attr("aria-label", fmt(2026, 9, 4 + dow, "weekday", "long")).text(fmt(2026, 9, 4 + dow, "weekday", "narrow")).element());
+        }
         grid.appendChild(head);
-        int first = new JsDate(viewYear, viewMonth, 1).getDay();
+        int first = (new JsDate(viewYear, viewMonth, 1).getDay() - ws + 7) % 7;
         int days = daysIn(viewYear, viewMonth);
         HTMLElement row = null;
         for (int i = 0; i < first + days; i++) {
@@ -267,7 +300,7 @@ public final class DatePickerElementBuilder implements
             boolean sel = range ? (id.equals(rangeStart) || id.equals(rangeEnd)) : id.equals(selected);
             var cell = button().css("cell").attr("type", "button").attr("role", "gridcell").attr("data-date", id)
                     .attr("tabindex", focus ? "0" : "-1").attr("aria-selected", String.valueOf(sel))
-                    .attr("aria-label", viewYear + "년 " + (viewMonth + 1) + "월 " + day + "일").text(String.valueOf(day)).element();
+                    .attr("aria-label", fmt(viewYear, viewMonth, day, "year", "numeric", "month", "long", "day", "numeric")).text(String.valueOf(day)).element();
             if (id.equals(today)) cell.setAttribute("aria-current", "date");
             if (range && rangeStart != null && rangeEnd != null && !rangeStart.equals(rangeEnd)) {
                 if (id.compareTo(rangeStart) > 0 && id.compareTo(rangeEnd) < 0) cell.classList.add("in-range");
@@ -280,9 +313,9 @@ public final class DatePickerElementBuilder implements
         }
     }
 
-    private static String shortDate(String iso) {
+    private String shortDate(String iso) {
         String[] p = iso.split("-");
-        return Integer.parseInt(p[1]) + "월 " + Integer.parseInt(p[2]) + "일";
+        return fmt(Integer.parseInt(p[0]), Integer.parseInt(p[1]) - 1, Integer.parseInt(p[2]), "month", "short", "day", "numeric");
     }
     private void renderYears() {
         while (years.firstChild != null) years.removeChild(years.firstChild);
@@ -311,7 +344,8 @@ public final class DatePickerElementBuilder implements
           + c + " .header{box-sizing:border-box;height:120px;margin:0 -12px;padding:16px 24px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant,#cac4d0);display:flex;flex-direction:column;justify-content:space-between}"
           + c + " .headline{font-size:14px;line-height:20px;font-weight:500;color:var(--md-sys-color-on-surface-variant,#49454f)}"
           + c + " .header-date{font-size:32px;line-height:40px;color:var(--md-sys-color-on-surface-variant,#49454f)}"
-          + c + " .nav-row{display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 4px 0 12px}"
+          + c + " .nav-row{display:flex;align-items:center;justify-content:space-between;height:56px;padding-inline:12px 4px}"
+          + c + ":dir(rtl) .nav .icon{transform:scaleX(-1)}"
           + c + " .month{font-size:14px;font-weight:500;color:var(--md-sys-color-on-surface-variant,#49454f);border:0;background:none;cursor:pointer;height:40px;padding:0 8px;border-radius:9999px;font-family:inherit}"
           + c + " .month::after{content:' \\25BE'}"
           // 연도 선택: 72×36dp, 선택 primary/on primary, 기본 on surface variant
@@ -336,10 +370,10 @@ public final class DatePickerElementBuilder implements
           + c + ".range .header{height:128px}"
           + c + ".range .cell{position:relative;isolation:isolate}"
           + c + ".range .cell.in-range{color:var(--md-sys-color-on-secondary-container,#1d192b)}"
-          + c + ".range .cell.in-range::before," + c + ".range .cell.range-start::before," + c + ".range .cell.range-end::before{content:'';position:absolute;top:0;height:40px;left:-4px;right:-4px;"
+          + c + ".range .cell.in-range::before," + c + ".range .cell.range-start::before," + c + ".range .cell.range-end::before{content:'';position:absolute;top:0;height:40px;inset-inline:-4px;"
           + "background:var(--md-sys-color-secondary-container,#e8def8);z-index:-1}"
-          + c + ".range .cell.range-start::before{left:50%}"
-          + c + ".range .cell.range-end::before{right:50%}"
+          + c + ".range .cell.range-start::before{inset-inline-start:50%}"
+          + c + ".range .cell.range-end::before{inset-inline-end:50%}"
           + c + ".range .cell[aria-selected=true]{background:none;color:var(--md-sys-color-on-primary,#ffffff)}"
           + c + ".range .cell[aria-selected=true]::after{content:'';position:absolute;inset:0;border-radius:9999px;background:var(--md-sys-color-primary,#6750a4);z-index:-1}"
           + c + " .actions{display:flex;justify-content:flex-end;gap:8px;padding-top:8px}"

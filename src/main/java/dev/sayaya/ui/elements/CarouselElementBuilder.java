@@ -122,9 +122,10 @@ public final class CarouselElementBuilder implements
         for (int i = 0; i < items.length; i++) items.item(i).setAttribute("tabindex", i == index ? "0" : "-1");
         HTMLElement it = Js.uncheckedCast(items.item(index));
         it.focus();
-        // 보이도록 스크롤(스냅 위치 = 항목 시작 - 앞 여백)
-        double target = it.offsetLeft - PADDING;
-        if (target < track.scrollLeft || it.offsetLeft + it.offsetWidth > track.scrollLeft + track.clientWidth - PADDING) track.scrollLeft = target;
+        // 보이도록 스크롤(LTR·RTL 모두 브라우저가 계산)
+        elemental2.core.Function siv = Js.uncheckedCast(Js.asPropertyMap(it).get("scrollIntoView"));
+        jsinterop.base.JsPropertyMap<Object> o = jsinterop.base.JsPropertyMap.of("block", "nearest", "inline", "nearest");
+        siv.call(it, o);
         mask();
     }
     private void onKey(Event e) {
@@ -133,8 +134,11 @@ public final class CarouselElementBuilder implements
         if (!t.classList.contains("item")) return;
         int i = Integer.parseInt(t.getAttribute("data-index"));
         switch (k.key) {
-            case "ArrowRight": if (i < count - 1) focusItem(i + 1); e.preventDefault(); break;
-            case "ArrowLeft": if (i > 0) focusItem(i - 1); e.preventDefault(); break;
+            case "ArrowRight": case "ArrowLeft": {
+                boolean forward = "ArrowRight".equals(k.key) != Locales.rtl(element()); // RTL 에서는 ← 가 다음 항목
+                if (forward && i < count - 1) focusItem(i + 1); else if (!forward && i > 0) focusItem(i - 1);
+                e.preventDefault(); break;
+            }
             case "Home": focusItem(0); e.preventDefault(); break;
             case "End": focusItem(count - 1); e.preventDefault(); break;
             case "Enter": case " ": activate(i); e.preventDefault(); break;
@@ -144,7 +148,8 @@ public final class CarouselElementBuilder implements
     /** [파생] 가장자리에 걸린 항목을 잘라 크기 변화를 근사하고, 내용은 절반만큼 반대로 밀어 parallax 를 준다 */
     private void mask() {
         if ("uncontained".equals(layout)) return;
-        double v = track.clientWidth, scroll = track.scrollLeft;
+        double v = track.clientWidth;
+        double trackLeft = track.getBoundingClientRect().left + track.clientLeft;
         if (v <= 0) { // 아직 문서에 붙지 않았다 — 붙을 때까지 다음 프레임에 다시(최대 약 10초)
             if (pendingFrames++ < 600) DomGlobal.requestAnimationFrame(t -> mask());
             return;
@@ -154,7 +159,7 @@ public final class CarouselElementBuilder implements
         NodeList<Element> items = items();
         for (int i = 0; i < items.length; i++) {
             HTMLElement it = Js.uncheckedCast(items.item(i));
-            double x = it.offsetLeft - scroll, w = it.offsetWidth;
+            double x = it.getBoundingClientRect().left - trackLeft, w = it.offsetWidth; // 화면 좌표 기준이라 RTL 에서도 같다
             double left = Math.max(0, start - x), right = Math.max(0, (x + w) - end);
             double visible = w - left - right;
             if (visible < SMALL_MIN) { // 가장자리에서도 작은 항목 최소 너비만큼은 보인다
@@ -178,7 +183,7 @@ public final class CarouselElementBuilder implements
           + c + " .track{position:relative;display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:0 16px;scroll-padding:0 16px;"
           + "scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}"
           + c + " .track::-webkit-scrollbar{display:none}"
-          + c + ".uncontained .track{padding-right:0}"
+          + c + ".uncontained .track{padding-inline-end:0}"
           + c + " .track::after{content:'';flex:0 0 1px}"
           // 항목 모서리 28dp
           + c + " .item{position:relative;flex:none;height:var(--md-carousel-height,220px);border-radius:28px;overflow:hidden;scroll-snap-align:start;cursor:pointer;"

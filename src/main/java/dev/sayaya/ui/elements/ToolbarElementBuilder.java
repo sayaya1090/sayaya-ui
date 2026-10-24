@@ -75,7 +75,8 @@ public final class ToolbarElementBuilder implements
     private void onKey(Event e) {
         KeyboardEvent k = Js.uncheckedCast(e);
         boolean vertical = element().classList.contains("vertical");
-        String next = vertical ? "ArrowDown" : "ArrowRight", prev = vertical ? "ArrowUp" : "ArrowLeft";
+        boolean rtl = !vertical && Locales.rtl(element()); // 오른쪽→왼쪽 언어에서는 ← 가 다음 항목
+        String next = vertical ? "ArrowDown" : (rtl ? "ArrowLeft" : "ArrowRight"), prev = vertical ? "ArrowUp" : (rtl ? "ArrowRight" : "ArrowLeft");
         if (!k.key.equals(next) && !k.key.equals(prev) && !k.key.equals("Home") && !k.key.equals("End")) return;
         NodeList<Element> items = element().querySelectorAll(":scope > *");
         int n = items.length;
@@ -112,8 +113,8 @@ public final class ToolbarElementBuilder implements
               // 화면 고정 위치(가장자리 16dp)
               + c + "[data-position]{position:fixed;z-index:3}"
               + c + "[data-position=bottom-center]{bottom:16px;left:50%;transform:translateX(-50%)}"
-              + c + "[data-position=bottom-end]{bottom:16px;right:16px}"
-              + c + "[data-position=end-center]{right:16px;top:50%;transform:translateY(-50%)}";
+              + c + "[data-position=bottom-end]{bottom:16px;inset-inline-end:16px}"
+              + c + "[data-position=end-center]{inset-inline-end:16px;top:50%;transform:translateY(-50%)}";
         DomGlobal.document.head.appendChild(style);
     }
 }
