@@ -45,6 +45,7 @@ internal class FabMenuElementTest: GwtTestSpec({
         "secondary 항목 secondary-container",
         "secondary 닫기 버튼 secondary",
         "tertiary 항목 tertiary-container",
+        "한글 라벨 한 줄(줄바꿈 없음)",
         "열어도 FAB 위치 그대로(떠 있는 메뉴)",
         "열어도 자리 크기 그대로",
         "열어도 문서 높이 그대로(숨은 스크롤 없음)",

@@ -94,6 +94,7 @@ public class FabMenuComponentsTest {
                     assertEquals("fm: secondary 항목 secondary-container", "rgb(232, 222, 248)", cs(q(secondary.element(), ".item")).getPropertyValue("background-color"));
                     assertEquals("fm: secondary 닫기 버튼 secondary", "rgb(98, 91, 113)", cs(q(secondary.element(), ".toggle")).getPropertyValue("background-color"));
                     assertEquals("fm: tertiary 항목 tertiary-container", "rgb(255, 216, 228)", cs(q(tertiary.element(), ".item")).getPropertyValue("background-color"));
+                    assertTrue("fm: 한글 라벨 한 줄(줄바꿈 없음)", h(q(secondary.element(), ".label")) <= 24 && h(q(tertiary.element(), ".label")) <= 24);
                     secondary.open(false); tertiary.open(false);
                 });
             });
