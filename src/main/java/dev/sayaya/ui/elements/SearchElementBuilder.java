@@ -143,6 +143,7 @@ public final class SearchElementBuilder extends CustomElementBuilder<SearchEleme
             list.appendChild(opt);
         }
         if (input.value == null || input.value.isEmpty()) clear.setAttribute("hidden", ""); else clear.removeAttribute("hidden");
+        if (list.firstChild == null) element().classList.add("empty"); else element().classList.remove("empty");
         setActive(-1);
     }
     private NodeList<Element> options() { return list.querySelectorAll("[role=option]"); }
@@ -179,6 +180,10 @@ public final class SearchElementBuilder extends CustomElementBuilder<SearchEleme
         String c = "." + CLASS;
         style.textContent =
             c + "{position:relative;display:block;--_bg:var(--md-search-container-color,var(--md-sys-color-surface-container-high,#ece6f0))}"
+          // 검색마다 쌓임 맥락을 만들어 열린 검색(스크림 포함)만 형제 위로 올린다 - 다른 검색 바가 스크림 위에 떠 같이 활성화돼 보이지 않게.
+          // 닫을 때는 스크림/목록이 사라지는 전환(250ms)이 끝난 뒤 내려간다.
+          + c + ".docked{z-index:0;transition:z-index 0s linear 250ms}"
+          + c + ".docked.open{z-index:var(--md-search-open-z-index,10);transition-delay:0s}"
           + c + " .icon{font-family:'Material Symbols Outlined';font-size:24px;line-height:1;font-weight:normal;font-style:normal;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}"
           // Search bar: 56dp, full, surface container high, 앞 아이콘 on surface, 뒤 아이콘 on surface variant
           + c + " .bar{position:relative;z-index:2;box-sizing:border-box;height:56px;border-radius:var(--md-search-bar-container-shape,var(--md-sys-shape-corner-full,9999px));background:var(--_bg);display:flex;align-items:center;gap:4px;padding:0 4px;"
@@ -187,8 +192,8 @@ public final class SearchElementBuilder extends CustomElementBuilder<SearchEleme
           + c + ".docked.open .bar{margin-inline:var(--md-search-bar-focused-margin,12px)}"
           + c + ".fullscreen.open .bar{margin-inline:0}"
           // 목록도 바와 같은 여백에서 출발해 같은 곡선으로 넓어진다(열 때 display:none 에서 나타나므로 출발값은 @starting-style)
-          + c + ".docked.open .view{inset-inline:var(--md-search-bar-focused-margin,12px)}"
-          + "@starting-style{" + c + ".docked.open .view{inset-inline:var(--md-search-bar-margin,24px)}}"
+          + c + ".docked.open .view{inset-inline:var(--md-search-bar-focused-margin,12px);opacity:1;clip-path:inset(0)}"
+          + "@starting-style{" + c + ".docked.open .view{inset-inline:var(--md-search-bar-margin,24px);opacity:0;clip-path:inset(0 0 100% 0)}}"
           + c + " .leading," + c + " .clear{flex:none;width:48px;height:48px;border:0;border-radius:var(--md-search-icon-button-shape,var(--md-sys-shape-corner-full,50%));background:none;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}"
           + c + " .leading{color:var(--md-sys-color-on-surface,#1d1b20)}"
           + c + " .clear," + c + " .trailing{color:var(--md-sys-color-on-surface-variant,#49454f)}"
@@ -200,19 +205,25 @@ public final class SearchElementBuilder extends CustomElementBuilder<SearchEleme
           + c + " .input::-webkit-search-cancel-button{display:none}"
           + c + " .view{display:none;box-sizing:border-box;background:var(--_bg);overflow:auto}"
           + c + ".open .view{display:block}"
+          + c + ".docked.open.empty .view{display:none;transition:none}" // 걸러진 제안이 없으면 빈 목록 띠를 남기지 않는다
           + c + " .option{display:flex;align-items:center;gap:16px;min-height:56px;padding:0 16px;cursor:pointer;font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface,#1d1b20)}"
           + c + " .option .icon{color:var(--md-sys-color-on-surface-variant,#49454f)}"
           + c + " .option[aria-selected=true]," + c + " .option:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface,#1d1b20) 8%,transparent)}"
           + c + ".divided.open .view{border-top:1px solid var(--md-sys-color-outline,#79747e)}" // SearchView DividerColor outline
           // Docked: 열리면 바 위 모서리 28dp(extra large) + 목록 아래 모서리 28dp, 본문은 스크림
           + c + " .scrim{display:none}"
-          + c + ".docked.open .scrim{display:block;position:fixed;inset:0;z-index:1;background:var(--md-sys-color-scrim,#000);opacity:.32}"
-          + c + ".docked.open .bar{border-radius:var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) 0 0}"
-          + c + ".docked .view{position:absolute;z-index:2;inset-inline:var(--md-search-bar-margin,24px);transition:inset-inline-start 200ms cubic-bezier(0.2,0,0,1),inset-inline-end 200ms cubic-bezier(0.2,0,0,1);top:56px;max-height:min(480px,70vh);border-radius:0 0 var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px));padding-bottom:8px}"
+          + c + ".docked .scrim{position:fixed;inset:0;z-index:1;background:var(--md-sys-color-scrim,#000);opacity:0;transition:opacity 200ms linear,display 200ms allow-discrete}"
+          + c + ".docked.open .scrim{display:block;opacity:.32}"
+          + "@starting-style{" + c + ".docked.open .scrim{opacity:0}}"
+          + c + ".docked.open:not(.empty) .bar{border-radius:var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) 0 0}"
+          + c + ".docked .view{position:absolute;z-index:2;inset-inline:var(--md-search-bar-margin,24px);opacity:0;clip-path:inset(0 0 100% 0);transition:inset-inline-start 200ms cubic-bezier(0.2,0,0,1),inset-inline-end 200ms cubic-bezier(0.2,0,0,1),opacity 150ms linear,clip-path 250ms cubic-bezier(0.2,0,0,1),display 250ms allow-discrete;top:56px;max-height:min(480px,70vh);border-radius:0 0 var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px));padding-bottom:8px}"
           // Full-screen: 화면 전체, 모서리 없음, 헤더 72dp
           + c + ".fullscreen.open{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;background:var(--_bg)}"
           + c + ".fullscreen.open .bar{height:72px;border-radius:var(--md-search-view-full-screen-shape,var(--md-sys-shape-corner-none,0px));flex:none}"
-          + c + ".fullscreen.open .view{flex:1}";
+          + c + ".fullscreen.open .view{flex:1}"
+          + c + ".fullscreen{transition:opacity 200ms linear}"
+          + "@starting-style{" + c + ".fullscreen.open{opacity:0}}"
+          + "@media (prefers-reduced-motion:reduce){" + c + "," + c + " *{transition:none!important}}";
         DomGlobal.document.head.appendChild(style);
     }
 }

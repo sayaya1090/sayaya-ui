@@ -28,7 +28,7 @@ internal class SearchElementTest: GwtTestSpec({
         "docked 열림 바 아래 모서리 0",
         "docked 목록 아래 모서리 28px",
         "docked 목록 배경 surface-container-high",
-        "docked 스크림 0.32",
+        "하나를 열면 다른 검색 바는 스크림 아래",
         "입력하면 제안 걸러짐",
         "onInput 호출",
         "입력 있으면 지우기 버튼",
@@ -41,6 +41,8 @@ internal class SearchElementTest: GwtTestSpec({
         "제안 없이 Enter 는 입력값 검색",
         "Esc 로 닫힘",
         "스크림 클릭으로 닫힘",
+        "걸러진 제안이 없으면 빈 목록 숨김",
+        "테스트 뒤 데모 입력 비움(제안 4개 복원)",
         "full-screen 화면 고정",
         "full-screen 화면 전체 높이",
         "full-screen 헤더 72px",
@@ -51,11 +53,18 @@ internal class SearchElementTest: GwtTestSpec({
         "닫힌 바 여백 24px",
         "닫힌 바 너비(400-48)",
         "여백 변수로 변경",
+        "여는 도중 목록 페이드 인(opacity < 1)",
+        "여는 도중 스크림 페이드 인(opacity < 0.32)",
         "여는 도중 목록 왼쪽 끝 = 바 왼쪽 끝",
         "여는 도중 목록 오른쪽 끝 = 바 오른쪽 끝",
         "포커스하면 여백 12px",
         "포커스하면 바가 24px 넓어짐",
-        "목록은 바와 같은 왼쪽 끝"
+        "목록은 바와 같은 왼쪽 끝",
+        "docked 스크림 0.32",
+        "열린 검색은 형제 위로(z-index)",
+        "닫는 도중 목록이 바로 사라지지 않음(전환)",
+        "닫힘 전환 뒤 목록 숨김",
+        "닫힘 전환 뒤 z-index 복귀"
     )
     Given("M3 Search") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용

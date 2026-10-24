@@ -31,7 +31,7 @@ public class SearchComponentsTest {
         printDescription("검색어로 제품 안을 찾아가는 검색입니다. 검색 바에 포커스하면 제안 목록이 열리고, 입력할수록 제안이 걸러집니다. docked 는 검색 바 아래로 목록이 열리고 스크림이 본문을 덮으며, full-screen 은 화면 전체로 펼쳐집니다. ↑/↓ 로 제안을 고르고 Enter 로 선택하며 Esc 로 닫습니다.");
         printSeparator();
         var section = section("Search");
-        documented(section);
+        var docEl = documented(section);
         List<String> searched = new ArrayList<>();
         List<String> inputs = new ArrayList<>();
 
@@ -86,7 +86,9 @@ public class SearchComponentsTest {
                 assertEquals("se: docked 열림 바 아래 모서리 0", "0px", cs(bar).getPropertyValue("border-bottom-left-radius"));
                 assertEquals("se: docked 목록 아래 모서리 28px", "28px", cs(view).getPropertyValue("border-bottom-left-radius"));
                 assertEquals("se: docked 목록 배경 surface-container-high", "rgb(236, 230, 240)", cs(view).getPropertyValue("background-color"));
-                assertEquals("se: docked 스크림 0.32", "0.32", cs(q(el, ".scrim")).getPropertyValue("opacity"));
+                var dbr = q(docEl, ".bar").getBoundingClientRect();
+                var hit = DomGlobal.document.elementFromPoint(dbr.left + dbr.width / 2, dbr.top + dbr.height / 2);
+                assertTrue("se: 하나를 열면 다른 검색 바는 스크림 아래", hit != null && !docEl.contains(hit) && el.contains(hit));
                 type(input, "회의");
                 assertEquals("se: 입력하면 제안 걸러짐", 2, el.querySelectorAll("[role=option]").length);
                 assertTrue("se: onInput 호출", inputs.contains("회의"));
@@ -112,6 +114,12 @@ public class SearchComponentsTest {
                 docked.open(true);
                 q(el, ".scrim").click();
                 assertTrue("se: 스크림 클릭으로 닫힘", !docked.isOpen());
+                docked.open(true);
+                type(input, "없는 검색어");
+                assertEquals("se: 걸러진 제안이 없으면 빈 목록 숨김", "none", cs(q(el, ".view")).getPropertyValue("display"));
+                type(input, "");
+                docked.open(false);
+                assertEquals("se: 테스트 뒤 데모 입력 비움(제안 4개 복원)", 4, el.querySelectorAll("[role=option]").length);
 
                 var fel = full.element();
                 full.input().focus();
@@ -131,7 +139,7 @@ public class SearchComponentsTest {
     }
 
     /** 가이드라인: "In M3 Expressive, the search bar expands when focused. The margins change from 24dp to 12dp." */
-    private static void documented(HTMLElement section) {
+    private static HTMLElement documented(HTMLElement section) {
         var s = search().docked().placeholder("Search messages").suggestions("Weekly report", "Meeting notes");
         var el = s.element();
         el.style.setProperty("width", "400px");
@@ -152,6 +160,8 @@ public class SearchComponentsTest {
             s.open(true);
             later(30, () -> { // 여는 도중(전환 중)에도 목록이 바와 같은 폭이어야 한다
                 var br = bar.getBoundingClientRect(); var vr = q(el, ".view").getBoundingClientRect();
+                assertTrue("se: 여는 도중 목록 페이드 인(opacity < 1)", Double.parseDouble(cs(q(el, ".view")).getPropertyValue("opacity")) < 0.99);
+                assertTrue("se: 여는 도중 스크림 페이드 인(opacity < 0.32)", Double.parseDouble(cs(q(el, ".scrim")).getPropertyValue("opacity")) < 0.31);
                 assertTrue("se: 여는 도중 목록 왼쪽 끝 = 바 왼쪽 끝", Math.abs(br.left - vr.left) <= 1);
                 assertTrue("se: 여는 도중 목록 오른쪽 끝 = 바 오른쪽 끝", Math.abs(br.right - vr.right) <= 1);
             });
@@ -159,8 +169,19 @@ public class SearchComponentsTest {
                 assertEquals("se: 포커스하면 여백 12px", "12px", cs(bar).getPropertyValue("margin-left"));
                 assertEquals("se: 포커스하면 바가 24px 넓어짐", 376, (int) Math.round(bar.getBoundingClientRect().width));
                 assertEquals("se: 목록은 바와 같은 왼쪽 끝", (int) Math.round(bar.getBoundingClientRect().left), (int) Math.round(q(el, ".view").getBoundingClientRect().left));
+                assertEquals("se: docked 스크림 0.32", "0.32", cs(q(el, ".scrim")).getPropertyValue("opacity"));
+                assertEquals("se: 열린 검색은 형제 위로(z-index)", "10", cs(el).getPropertyValue("z-index"));
                 s.open(false);
+                later(40, () -> {
+                    var v = q(el, ".view");
+                    assertTrue("se: 닫는 도중 목록이 바로 사라지지 않음(전환)", "block".equals(cs(v).getPropertyValue("display")) && Double.parseDouble(cs(v).getPropertyValue("opacity")) < 0.99);
+                    later(500, () -> {
+                        assertEquals("se: 닫힘 전환 뒤 목록 숨김", "none", cs(q(el, ".view")).getPropertyValue("display"));
+                        assertEquals("se: 닫힘 전환 뒤 z-index 복귀", "0", cs(el).getPropertyValue("z-index"));
+                    });
+                });
             });
         });
+        return el;
     }
 }
