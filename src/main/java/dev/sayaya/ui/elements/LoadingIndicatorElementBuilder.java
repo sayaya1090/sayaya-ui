@@ -33,6 +33,7 @@ public final class LoadingIndicatorElementBuilder implements
     public static final int DEFAULT_SIZE = 48, MIN_SIZE = 24, MAX_SIZE = 240;
     public static final String CLASS = "sayaya-loading-indicator";
     public static final String ACTIVE_CLASS = "sayaya-loading-indicator-active";
+    static final String SPIN_CLASS = "sayaya-loading-indicator-spin";
     static final String STYLE_ID = "sayaya-loading-indicator-style";
 
     public static LoadingIndicatorElementBuilder loadingIndicator() { return new LoadingIndicatorElementBuilder(); }
@@ -43,7 +44,7 @@ public final class LoadingIndicatorElementBuilder implements
         element().classList.add(CLASS);
         element().setAttribute("role", "progressbar"); // 스펙: progress bar 역할
         element().setAttribute("aria-label", "Loading"); // 용도를 설명하는 라벨로 바꿀 것(ariaLabel)
-        element().appendChild(div().css(ACTIVE_CLASS).attr("aria-hidden", "true").element());
+        element().appendChild(div().css(SPIN_CLASS).attr("aria-hidden", "true").add(div().css(ACTIVE_CLASS)).element());
     }
     @Override public LoadingIndicatorElementBuilder that() { return this; }
     @Override public HTMLDivElement element() { return that.element(); }
@@ -62,8 +63,14 @@ public final class LoadingIndicatorElementBuilder implements
 
     // ---------- 스타일 ----------
     private static final int POINTS = 48;
-    /** [파생] 7개 도형의 한 번 전환 간격. 공식 토큰에 값이 없어 근사로 정했다 */
+    /** Compose Material3 LoadingIndicator.kt: MorphIntervalMillis = 650 */
     private static final int MORPH_MS = 650;
+    /** Compose Material3 LoadingIndicator.kt: GlobalRotationDurationMillis = 4666 (LinearEasing, 360°) */
+    private static final int GLOBAL_ROTATION_MS = 4666;
+    /** 도형 전환마다 +90°(QuarterRotation). 7×90=630° 는 360° 의 배수가 아니므로 4바퀴(28회, 2520°)를 한 주기로 둔다 */
+    private static final int CYCLES = 4;
+    /** [파생] Compose 는 spring(dampingRatio=0.6, stiffness=200). CSS 로는 넘침(overshoot)이 있는 cubic-bezier 로 근사 */
+    private static final String MORPH_EASING = "cubic-bezier(0.34,1.45,0.64,1)";
 
     private static void injectStyle() {
         if (DomGlobal.document.getElementById(STYLE_ID) != null) return;
@@ -72,8 +79,8 @@ public final class LoadingIndicatorElementBuilder implements
         DomGlobal.document.head.appendChild(style);
     }
     static String css() {
-        // [파생] M3 shape library 의 7개 도형(soft burst, 9-sided cookie, pentagon, pill, sunny, 4-sided cookie, oval)을
-        // 같은 점 수의 다각형으로 근사한다. clip-path polygon 은 점 수가 같아야 보간되므로 모두 POINTS 개로 만든다.
+        // 도형 순서는 Compose IndeterminateIndicatorPolygons 와 같다(SoftBurst, Cookie9Sided, Pentagon, Pill, Sunny, Cookie4Sided, Oval).
+        // [파생] 각 도형 좌표는 MaterialShapes(RoundedPolygon)의 공식 좌표가 아니라 같은 점 수의 다각형으로 근사한다. clip-path polygon 은 점 수가 같아야 보간되므로 모두 POINTS 개로 만든다.
         String[] shapes = {
                 polygon(t -> polar(t, 0.45 + 0.05 * Math.cos(10 * t))),
                 polygon(t -> polar(t, 0.44 + 0.06 * Math.cos(9 * t))),
@@ -83,21 +90,26 @@ public final class LoadingIndicatorElementBuilder implements
                 polygon(t -> polar(t, 0.42 + 0.08 * Math.cos(4 * t))),
                 polygon(t -> superellipse(t, 0.5, 0.35, 2, -Math.PI / 4))
         };
+        // 한 주기 = 7개 도형 × 4바퀴 = 28회 전환. 각 전환에서 다음 도형으로 바뀌며 90° 더 회전한다.
+        int steps = shapes.length * CYCLES;
         StringBuilder kf = new StringBuilder("@keyframes sayaya-li-morph{");
-        for (int i = 0; i <= shapes.length; i++)
-            kf.append(round(100.0 * i / shapes.length)).append("%{clip-path:").append(shapes[i % shapes.length]).append('}');
+        for (int i = 0; i <= steps; i++)
+            kf.append(round(100.0 * i / steps)).append("%{clip-path:").append(shapes[i % shapes.length])
+              .append(";transform:rotate(").append(i * 90).append("deg)}");
         kf.append('}');
-        int cycle = MORPH_MS * shapes.length;
         return kf
                 + "@keyframes sayaya-li-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}"
                 + "." + CLASS + "{--_size:var(--md-loading-indicator-size," + DEFAULT_SIZE + "px);display:inline-flex;align-items:center;justify-content:center;"
                 + "flex:none;box-sizing:border-box;width:var(--_size);height:var(--_size);border-radius:50%;vertical-align:middle}"
                 + "." + CLASS + ".contained{background:var(--md-loading-indicator-container-color,var(--md-sys-color-primary-container,#eaddff))}"
+                + "." + SPIN_CLASS + "{display:flex;align-items:center;justify-content:center;animation:sayaya-li-spin " + GLOBAL_ROTATION_MS + "ms linear infinite}"
                 // 스펙: 크기 48dp 일 때 도형 38dp — 비율 38/48 유지
                 + "." + ACTIVE_CLASS + "{width:calc(var(--_size) * 38 / 48);height:calc(var(--_size) * 38 / 48);"
                 + "background:var(--md-loading-indicator-active-indicator-color,var(--md-sys-color-primary,#6750a4));clip-path:" + shapes[0] + ";"
-                + "animation:sayaya-li-morph " + cycle + "ms cubic-bezier(0.2,0,0,1) infinite,sayaya-li-spin " + cycle + "ms linear infinite}"
-                + "." + CLASS + ".contained ." + ACTIVE_CLASS + "{background:var(--md-loading-indicator-active-indicator-color,var(--md-sys-color-on-primary-container,#21005d))}";
+                + "animation:sayaya-li-morph " + (MORPH_MS * steps) + "ms " + MORPH_EASING + " infinite}"
+                + "." + CLASS + ".contained ." + ACTIVE_CLASS + "{background:var(--md-loading-indicator-active-indicator-color,var(--md-sys-color-on-primary-container,#21005d))}"
+                // 움직임 줄이기 설정: 회전·전환을 멈추고 첫 도형만 보인다
+                + "@media (prefers-reduced-motion: reduce){." + SPIN_CLASS + ",." + ACTIVE_CLASS + "{animation:none}}";
     }
     private static String polygon(DoubleFunction<double[]> f) {
         StringBuilder sb = new StringBuilder("polygon(");

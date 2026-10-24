@@ -72,7 +72,7 @@ public class LoadingIndicatorComponentsTest {
         assertEquals("li: role progressbar", "progressbar", basic.getAttribute("role"));
         assertEquals("li: aria-label 설정", "뉴스 기사 불러오는 중", basic.getAttribute("aria-label"));
         assertEquals("li: 기본 aria-label", "Loading", tooSmall.getAttribute("aria-label"));
-        assertEquals("li: 지시자는 aria-hidden", "true", active(basic).getAttribute("aria-hidden"));
+        assertEquals("li: 지시자는 aria-hidden", "true", basic.querySelector(".sayaya-loading-indicator-spin").getAttribute("aria-hidden"));
         assertEquals("li: 스타일시트 한 번만 주입", 1, DomGlobal.document.querySelectorAll("style#sayaya-loading-indicator-style").length);
 
         later(300, () -> {
@@ -90,9 +90,15 @@ public class LoadingIndicatorComponentsTest {
             assertEquals("li: 240px 일 때 도형 190px(비율 유지)", 190, ow(active(large)));
             assertEquals("li: 24 미만은 24px 로 제한", 24, (int) w(tooSmall));
             assertEquals("li: 240 초과는 240px 로 제한", 240, (int) w(tooLarge));
-            var anim = cs(active(basic)).getPropertyValue("animation-name");
-            assertTrue("li: shape morph·회전 애니메이션", anim.contains("sayaya-li-morph") && anim.contains("sayaya-li-spin"));
-            assertEquals("li: 무한 반복", "infinite, infinite", cs(active(basic)).getPropertyValue("animation-iteration-count"));
+            var spin = (HTMLElement) basic.querySelector(".sayaya-loading-indicator-spin");
+            assertTrue("li: shape morph·회전 애니메이션", "sayaya-li-morph".equals(cs(active(basic)).getPropertyValue("animation-name"))
+                    && spin != null && "sayaya-li-spin".equals(cs(spin).getPropertyValue("animation-name")));
+            assertTrue("li: 무한 반복", "infinite".equals(cs(active(basic)).getPropertyValue("animation-iteration-count"))
+                    && "infinite".equals(cs(spin).getPropertyValue("animation-iteration-count")));
+            assertEquals("li: 전체 회전 4666ms 등속", "4.666s linear", cs(spin).getPropertyValue("animation-duration") + " " + cs(spin).getPropertyValue("animation-timing-function"));
+            assertEquals("li: 전환 650ms × 28회 주기", "18.2s", cs(active(basic)).getPropertyValue("animation-duration"));
+            var css = DomGlobal.document.getElementById("sayaya-loading-indicator-style").textContent;
+            assertTrue("li: 움직임 줄이기 설정 지원", css.contains("prefers-reduced-motion"));
             String clip1 = cs(active(basic)).getPropertyValue("clip-path");
             assertTrue("li: 도형은 clip-path polygon", clip1.startsWith("polygon("));
             later(500, () -> {

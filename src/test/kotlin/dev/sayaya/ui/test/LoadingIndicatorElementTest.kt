@@ -30,6 +30,9 @@ internal class LoadingIndicatorElementTest: GwtTestSpec({
         "240 초과는 240px 로 제한",
         "shape morph·회전 애니메이션",
         "무한 반복",
+        "전체 회전 4666ms 등속",
+        "전환 650ms × 28회 주기",
+        "움직임 줄이기 설정 지원",
         "도형은 clip-path polygon",
         "시간이 지나면 도형이 바뀜(morph)"
     )
