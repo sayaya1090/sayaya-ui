@@ -25,11 +25,8 @@ import static org.jboss.elemento.Elements.*;
  * ←/→ 로 항목을 옮기고 Enter·Space 로 활성화한다. 세로 스크롤 페이지에서는 showAll 로 "모두 보기" 버튼(여백 4dp)을 캐러셀 아래에 둔다.
  * [파생] multi-browse·hero 의 크기 변화는 공식 keyline 알고리즘이 아니라, 컨테이너 가장자리에 걸린 항목을 clip-path 로 잘라(최소 40dp) 근사한다.
  */
-public final class CarouselElementBuilder implements
-        HTMLElementStyleMethods<HTMLDivElement, CarouselElementBuilder>, HTMLElementVisibilityMethods<HTMLDivElement, CarouselElementBuilder>,
-        ElementAttributeMethods<HTMLDivElement, CarouselElementBuilder>, ElementClassListMethods<HTMLDivElement, CarouselElementBuilder>,
-        ElementEventMethods<HTMLDivElement, CarouselElementBuilder>, ElementIdMethods<HTMLDivElement, CarouselElementBuilder>,
-        ElementConsumerMethods<HTMLDivElement, CarouselElementBuilder>, HasAriaLabel<HTMLDivElement, CarouselElementBuilder> {
+public final class CarouselElementBuilder extends CustomElementBuilder<CarouselElementBuilder> implements
+        HasAriaLabel<HTMLDivElement, CarouselElementBuilder> {
     public static final String CLASS = "sayaya-carousel";
     static final String STYLE_ID = "sayaya-carousel-style";
     static final int PADDING = 16, GAP = 8, SMALL_MIN = 40;
@@ -44,7 +41,6 @@ public final class CarouselElementBuilder implements
         public CarouselElementBuilder uncontained() { return new CarouselElementBuilder("uncontained", 200); }
     }
 
-    private final HTMLContainerBuilder<HTMLDivElement> that = div();
     private final HTMLElement track;
     private final String layout;
     private int itemWidth;
@@ -66,7 +62,6 @@ public final class CarouselElementBuilder implements
         DomGlobal.window.addEventListener("resize", e -> mask());
     }
     @Override public CarouselElementBuilder that() { return this; }
-    @Override public HTMLDivElement element() { return that.element(); }
 
     /** 큰 항목 너비(dp=px). 기본 multi-browse·uncontained 200, hero 320 */
     public CarouselElementBuilder itemWidth(int width) {
@@ -174,8 +169,8 @@ public final class CarouselElementBuilder implements
     }
 
     private static void injectStyle() {
-        if (DomGlobal.document.getElementById(STYLE_ID) != null) return;
-        HTMLStyleElement style = htmlElement("style", HTMLStyleElement.class).id(STYLE_ID).element();
+        HTMLStyleElement style = newStyle(STYLE_ID);
+        if (style == null) return;
         String c = "." + CLASS;
         style.textContent =
             c + "{display:block;box-sizing:border-box}"

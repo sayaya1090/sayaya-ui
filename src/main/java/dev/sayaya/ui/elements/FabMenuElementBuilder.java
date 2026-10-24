@@ -1,5 +1,7 @@
 package dev.sayaya.ui.elements;
 
+import dev.sayaya.ui.elements.interfaces.HasAriaLabel;
+import dev.sayaya.ui.elements.interfaces.Openable;
 import elemental2.dom.*;
 import elemental2.dom.DomGlobal;
 import jsinterop.base.Js;
@@ -24,11 +26,8 @@ import static org.jboss.elemento.Elements.*;
  * 아이콘-라벨 8dp, 닫기 버튼-목록 8dp, elevation level 3), 닫힌 FAB 은 FabBaseline 56dp·모서리 16dp.
  * Esc 를 누르거나 항목을 고르면 닫히고 포커스는 토글 버튼으로 돌아간다.
  */
-public final class FabMenuElementBuilder implements
-        HTMLElementStyleMethods<HTMLDivElement, FabMenuElementBuilder>, HTMLElementVisibilityMethods<HTMLDivElement, FabMenuElementBuilder>,
-        ElementAttributeMethods<HTMLDivElement, FabMenuElementBuilder>, ElementClassListMethods<HTMLDivElement, FabMenuElementBuilder>,
-        ElementEventMethods<HTMLDivElement, FabMenuElementBuilder>, ElementIdMethods<HTMLDivElement, FabMenuElementBuilder>,
-        ElementConsumerMethods<HTMLDivElement, FabMenuElementBuilder> {
+public final class FabMenuElementBuilder extends CustomElementBuilder<FabMenuElementBuilder> implements
+        HasAriaLabel<HTMLDivElement, FabMenuElementBuilder>, Openable<FabMenuElementBuilder> {
     public static final String CLASS = "sayaya-fab-menu";
     static final String STYLE_ID = "sayaya-fab-menu-style";
     public enum Color { Primary("primary"), Secondary("secondary"), Tertiary("tertiary");
@@ -36,7 +35,6 @@ public final class FabMenuElementBuilder implements
 
     public static FabMenuElementBuilder fabMenu() { return new FabMenuElementBuilder(); }
 
-    private final HTMLContainerBuilder<HTMLDivElement> that = div();
     private final HTMLButtonElement toggle;
     private final HTMLElement toggleIcon;
     private final HTMLElement list;
@@ -61,7 +59,6 @@ public final class FabMenuElementBuilder implements
     private static int seq = 0;
     private static String nextId() { return "sayaya-fab-menu-" + (++seq); }
     @Override public FabMenuElementBuilder that() { return this; }
-    @Override public HTMLDivElement element() { return that.element(); }
 
     /** 닫혀 있을 때 FAB 아이콘(Material Symbols 이름). 열리면 close 로 바뀐다 */
     public FabMenuElementBuilder icon(String icon) { this.icon = icon; if (!isOpen()) toggleIcon.textContent = icon; return this; }
@@ -97,8 +94,8 @@ public final class FabMenuElementBuilder implements
     }
 
     private static void injectStyle() {
-        if (DomGlobal.document.getElementById(STYLE_ID) != null) return;
-        HTMLStyleElement style = htmlElement("style", HTMLStyleElement.class).id(STYLE_ID).element();
+        HTMLStyleElement style = newStyle(STYLE_ID);
+        if (style == null) return;
         String c = "." + CLASS;
         String shadow = "box-shadow:0 1px 3px 0 rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15);"; // elevation level 3
         StringBuilder css = new StringBuilder()

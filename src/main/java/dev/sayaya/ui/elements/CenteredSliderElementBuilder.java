@@ -1,5 +1,7 @@
 package dev.sayaya.ui.elements;
 
+import dev.sayaya.ui.elements.interfaces.HasAriaLabel;
+import dev.sayaya.ui.elements.interfaces.Disableable;
 import elemental2.dom.*;
 import elemental2.dom.DomGlobal;
 import org.jboss.elemento.*;
@@ -22,11 +24,8 @@ import static org.jboss.elemento.Elements.*;
  * 핸들 4×44dp primary, 핸들 양옆 간격 6dp, 정지 표시 4dp.
  * 입력은 네이티브 input[type=range] 가 받으므로 키보드(←/→, Home/End, PageUp/PageDown)와 보조기술이 기본으로 동작한다.
  */
-public final class CenteredSliderElementBuilder implements
-        HTMLElementStyleMethods<HTMLDivElement, CenteredSliderElementBuilder>, HTMLElementVisibilityMethods<HTMLDivElement, CenteredSliderElementBuilder>,
-        ElementAttributeMethods<HTMLDivElement, CenteredSliderElementBuilder>, ElementClassListMethods<HTMLDivElement, CenteredSliderElementBuilder>,
-        ElementEventMethods<HTMLDivElement, CenteredSliderElementBuilder>, ElementIdMethods<HTMLDivElement, CenteredSliderElementBuilder>,
-        ElementConsumerMethods<HTMLDivElement, CenteredSliderElementBuilder> {
+public final class CenteredSliderElementBuilder extends CustomElementBuilder<CenteredSliderElementBuilder> implements
+        HasAriaLabel<HTMLDivElement, CenteredSliderElementBuilder>, Disableable<HTMLDivElement, CenteredSliderElementBuilder> {
     public static final String CLASS = "sayaya-centered-slider";
     static final String STYLE_ID = "sayaya-centered-slider-style";
     /** 핸들 너비의 절반(2dp) + 핸들 옆 간격(6dp) */
@@ -34,7 +33,6 @@ public final class CenteredSliderElementBuilder implements
 
     public static CenteredSliderElementBuilder centeredSlider() { return new CenteredSliderElementBuilder(); }
 
-    private final HTMLContainerBuilder<HTMLDivElement> that = div();
     private final HTMLInputElement input;
     private final HTMLElement left, active, right, handle;
 
@@ -56,7 +54,6 @@ public final class CenteredSliderElementBuilder implements
         DomGlobal.requestAnimationFrame(t -> layout()); // 문서에 붙은 뒤 방향(dir)을 반영
     }
     @Override public CenteredSliderElementBuilder that() { return this; }
-    @Override public HTMLDivElement element() { return that.element(); }
 
     /** 범위. 가운데 값((min+max)/2)이 활성 트랙의 시작점이다 */
     public CenteredSliderElementBuilder range(double min, double max) { input.min = fmt(min); input.max = fmt(max); layout(); return this; }
@@ -71,6 +68,7 @@ public final class CenteredSliderElementBuilder implements
     }
     public CenteredSliderElementBuilder onInput(Consumer<Double> cb) { input.addEventListener("input", e -> cb.accept(value())); return this; }
     public CenteredSliderElementBuilder onChange(Consumer<Double> cb) { input.addEventListener("change", e -> cb.accept(value())); return this; }
+    @Override public boolean isDisabled() { return input.disabled; }
     public double value() { return Double.parseDouble(input.value); }
     public HTMLInputElement input() { return input; }
 
@@ -95,8 +93,8 @@ public final class CenteredSliderElementBuilder implements
     private static void place(HTMLElement e, String left, String width) { e.style.setProperty("left", left); e.style.setProperty("width", width); }
 
     private static void injectStyle() {
-        if (DomGlobal.document.getElementById(STYLE_ID) != null) return;
-        HTMLStyleElement style = htmlElement("style", HTMLStyleElement.class).id(STYLE_ID).element();
+        HTMLStyleElement style = newStyle(STYLE_ID);
+        if (style == null) return;
         String c = "." + CLASS;
         style.textContent =
             c + "{position:relative;display:block;height:44px;min-width:120px;box-sizing:border-box;"

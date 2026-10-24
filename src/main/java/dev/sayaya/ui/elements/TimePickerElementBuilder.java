@@ -1,5 +1,9 @@
 package dev.sayaya.ui.elements;
 
+import dev.sayaya.ui.elements.interfaces.Openable;
+import dev.sayaya.ui.elements.interfaces.HasLabels;
+import dev.sayaya.ui.elements.interfaces.HasLocale;
+import dev.sayaya.ui.elements.interfaces.UiLabel;
 import elemental2.dom.*;
 import elemental2.dom.DomGlobal;
 import jsinterop.base.Js;
@@ -23,23 +27,21 @@ import static org.jboss.elemento.Elements.*;
  * 시간 선택칸 96×80dp 모서리 small(8dp)(선택 primary container / 기본 surface container highest), 오전·오후 52×80dp 테두리 1dp outline(선택 tertiary container),
  * 컨테이너 모서리 extra large(28dp) surface container high. TimeInputTokens — 입력칸 96×72dp, 오전·오후 52×72dp.
  */
-public final class TimePickerElementBuilder implements
-        HTMLElementStyleMethods<HTMLDivElement, TimePickerElementBuilder>, HTMLElementVisibilityMethods<HTMLDivElement, TimePickerElementBuilder>,
-        ElementAttributeMethods<HTMLDivElement, TimePickerElementBuilder>, ElementClassListMethods<HTMLDivElement, TimePickerElementBuilder>,
-        ElementEventMethods<HTMLDivElement, TimePickerElementBuilder>, ElementIdMethods<HTMLDivElement, TimePickerElementBuilder>,
-        ElementConsumerMethods<HTMLDivElement, TimePickerElementBuilder> {
+public final class TimePickerElementBuilder extends CustomElementBuilder<TimePickerElementBuilder> implements
+        Openable<TimePickerElementBuilder>, HasLabels<TimePickerElementBuilder.Label, TimePickerElementBuilder>, HasLocale<TimePickerElementBuilder> {
     public static final String CLASS = "sayaya-time-picker";
     static final String STYLE_ID = "sayaya-time-picker-style";
     /** [파생] 숫자 배치 반경(바깥 고리/24시간 안쪽 고리). 토큰에 값이 없어 256dp 다이얼과 48dp 핸들에 맞춰 정했다 */
     static final int OUTER_RADIUS = 104, INNER_RADIUS = 68;
     private static int seq = 0;
     /** UI 문구. 기본은 영어이고 {@link #label(Label, String)} 로 덮어쓴다 */
-    public enum Label {
+    public enum Label implements UiLabel {
         SelectTime("Select time"), EnterTime("Enter time"), SelectHour("Select hour"), SelectMinute("Select minute"),
         Hour("Hour"), Minute("Minute"), Period("AM/PM"), Clock("Clock"), HoursSuffix("hours"), MinutesSuffix("minutes"),
         Cancel("Cancel"), Ok("OK");
         public final String english;
         Label(String english) { this.english = english; }
+        @Override public String english() { return english; }
     }
 
     public static TimePickerPrepare timePicker() { return new TimePickerPrepare(); }
@@ -50,7 +52,6 @@ public final class TimePickerElementBuilder implements
         public TimePickerElementBuilder input() { return new TimePickerElementBuilder(false); }
     }
 
-    private final HTMLContainerBuilder<HTMLDivElement> that = div();
     private final boolean dial;
     private final HTMLElement card, headline, hourField, minuteField, periodBox, am, pm, face, handle, track, actions;
     private HTMLInputElement hourInput, minuteInput;
@@ -111,7 +112,6 @@ public final class TimePickerElementBuilder implements
         render();
     }
     @Override public TimePickerElementBuilder that() { return this; }
-    @Override public HTMLDivElement element() { return that.element(); }
 
     /** 24시간제 값 */
     public TimePickerElementBuilder value(int hour, int minute) {
@@ -251,8 +251,8 @@ public final class TimePickerElementBuilder implements
     }
 
     private static void injectStyle() {
-        if (DomGlobal.document.getElementById(STYLE_ID) != null) return;
-        HTMLStyleElement style = htmlElement("style", HTMLStyleElement.class).id(STYLE_ID).element();
+        HTMLStyleElement style = newStyle(STYLE_ID);
+        if (style == null) return;
         String c = "." + CLASS;
         style.textContent =
             c + "{display:inline-block;font-family:Roboto,system-ui,sans-serif}"

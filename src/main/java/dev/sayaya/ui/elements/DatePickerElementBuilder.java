@@ -1,5 +1,9 @@
 package dev.sayaya.ui.elements;
 
+import dev.sayaya.ui.elements.interfaces.Openable;
+import dev.sayaya.ui.elements.interfaces.HasLabels;
+import dev.sayaya.ui.elements.interfaces.HasLocale;
+import dev.sayaya.ui.elements.interfaces.UiLabel;
 import elemental2.core.JsDate;
 import elemental2.dom.*;
 import elemental2.dom.DomGlobal;
@@ -28,19 +32,17 @@ import static org.jboss.elemento.Elements.*;
  * range(true)는 기간 선택이다: 두 번 눌러 시작·끝을 고르며(거꾸로 누르면 바꿔 넣음), 범위는 높이 40dp secondary container 띠와
  * on secondary container 글자로 표시한다(RangeSelectionActiveIndicator*). modal 기간 선택의 헤더는 128dp(RangeSelectionHeaderContainerHeight).
  */
-public final class DatePickerElementBuilder implements
-        HTMLElementStyleMethods<HTMLDivElement, DatePickerElementBuilder>, HTMLElementVisibilityMethods<HTMLDivElement, DatePickerElementBuilder>,
-        ElementAttributeMethods<HTMLDivElement, DatePickerElementBuilder>, ElementClassListMethods<HTMLDivElement, DatePickerElementBuilder>,
-        ElementEventMethods<HTMLDivElement, DatePickerElementBuilder>, ElementIdMethods<HTMLDivElement, DatePickerElementBuilder>,
-        ElementConsumerMethods<HTMLDivElement, DatePickerElementBuilder> {
+public final class DatePickerElementBuilder extends CustomElementBuilder<DatePickerElementBuilder> implements
+        Openable<DatePickerElementBuilder>, HasLabels<DatePickerElementBuilder.Label, DatePickerElementBuilder>, HasLocale<DatePickerElementBuilder> {
     public static final String CLASS = "sayaya-date-picker";
     static final String STYLE_ID = "sayaya-date-picker-style";
     /** UI 문구. 기본은 영어이고 {@link #label(Label, String)} 로 덮어쓴다 */
-    public enum Label {
+    public enum Label implements UiLabel {
         PreviousMonth("Previous month"), NextMonth("Next month"), SelectYear("Select year"),
         Cancel("Cancel"), Ok("OK"), NoSelection("Select a date"), RangeStart("Start date"), RangeEnd("End date");
         public final String english;
         Label(String english) { this.english = english; }
+        @Override public String english() { return english; }
     }
     private static int seq = 0;
 
@@ -52,7 +54,6 @@ public final class DatePickerElementBuilder implements
         public DatePickerElementBuilder modal() { return new DatePickerElementBuilder(true); }
     }
 
-    private final HTMLContainerBuilder<HTMLDivElement> that = div();
     private final boolean modal;
     private final HTMLElement card, monthLabel, grid, headerDate, headline, years, navButtons;
     private boolean range = false, yearMode = false;
@@ -125,7 +126,6 @@ public final class DatePickerElementBuilder implements
         render();
     }
     @Override public DatePickerElementBuilder that() { return this; }
-    @Override public HTMLDivElement element() { return that.element(); }
 
     /** 선택된 날짜(월 1~12) */
     public DatePickerElementBuilder value(int year, int month, int day) {
@@ -331,8 +331,8 @@ public final class DatePickerElementBuilder implements
     }
 
     private static void injectStyle() {
-        if (DomGlobal.document.getElementById(STYLE_ID) != null) return;
-        HTMLStyleElement style = htmlElement("style", HTMLStyleElement.class).id(STYLE_ID).element();
+        HTMLStyleElement style = newStyle(STYLE_ID);
+        if (style == null) return;
         String c = "." + CLASS;
         style.textContent =
             c + "{display:inline-block;font-family:Roboto,system-ui,sans-serif}"

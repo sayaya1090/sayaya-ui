@@ -24,12 +24,8 @@ import static org.jboss.elemento.Elements.htmlElement;
  * 방향키(가로: ←/→, 세로: ↑/↓)와 Home/End 로 항목 사이를 이동한다(ARIA toolbar 패턴).
  * <p>CSS 변수: {@code --md-toolbar-container-color}, {@code --md-toolbar-content-color}.</p>
  */
-public final class ToolbarElementBuilder implements
-        HTMLElementStyleMethods<HTMLDivElement, ToolbarElementBuilder>, HTMLElementVisibilityMethods<HTMLDivElement, ToolbarElementBuilder>,
-        ElementAttributeMethods<HTMLDivElement, ToolbarElementBuilder>, ElementClassListMethods<HTMLDivElement, ToolbarElementBuilder>,
-        ElementContainerMethods<HTMLDivElement, ToolbarElementBuilder>, ElementEventMethods<HTMLDivElement, ToolbarElementBuilder>,
-        ElementIdMethods<HTMLDivElement, ToolbarElementBuilder>, ElementConsumerMethods<HTMLDivElement, ToolbarElementBuilder>,
-        HasAriaLabel<HTMLDivElement, ToolbarElementBuilder> {
+public final class ToolbarElementBuilder extends CustomElementBuilder<ToolbarElementBuilder> implements
+        ElementContainerMethods<HTMLDivElement, ToolbarElementBuilder>, HasAriaLabel<HTMLDivElement, ToolbarElementBuilder> {
     public static final String CLASS = "sayaya-toolbar";
     static final String STYLE_ID = "sayaya-toolbar-style";
 
@@ -44,7 +40,6 @@ public final class ToolbarElementBuilder implements
     public enum Position { None(null), BottomCenter("bottom-center"), BottomEnd("bottom-end"), EndCenter("end-center");
         final String value; Position(String v) { value = v; } }
 
-    private final HTMLContainerBuilder<HTMLDivElement> that = div();
     private ToolbarElementBuilder(String variant) {
         injectStyle();
         element().classList.add(CLASS, variant);
@@ -52,7 +47,6 @@ public final class ToolbarElementBuilder implements
         element().addEventListener("keydown", this::onKey);
     }
     @Override public ToolbarElementBuilder that() { return this; }
-    @Override public HTMLDivElement element() { return that.element(); }
 
     /** vibrant 색 구성(primary container). 더 강하게 강조할 때 */
     public ToolbarElementBuilder vibrant(boolean vibrant) { return setClass("vibrant", vibrant); }
@@ -65,10 +59,6 @@ public final class ToolbarElementBuilder implements
     public ToolbarElementBuilder position(Position position) {
         if (position == null || position.value == null) element().removeAttribute("data-position");
         else element().setAttribute("data-position", position.value);
-        return this;
-    }
-    private ToolbarElementBuilder setClass(String cls, boolean on) {
-        if (on) element().classList.add(cls); else element().classList.remove(cls);
         return this;
     }
 
@@ -93,8 +83,8 @@ public final class ToolbarElementBuilder implements
     }
 
     private static void injectStyle() {
-        if (DomGlobal.document.getElementById(STYLE_ID) != null) return;
-        HTMLStyleElement style = htmlElement("style", HTMLStyleElement.class).id(STYLE_ID).element();
+        HTMLStyleElement style = newStyle(STYLE_ID);
+        if (style == null) return;
         String c = "." + CLASS;
         style.textContent =
                 c + "{display:flex;align-items:center;box-sizing:border-box;height:64px;" // ContainerHeight 64

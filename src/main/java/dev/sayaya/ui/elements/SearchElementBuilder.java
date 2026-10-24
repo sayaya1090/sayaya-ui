@@ -1,5 +1,9 @@
 package dev.sayaya.ui.elements;
 
+import dev.sayaya.ui.elements.interfaces.HasAriaLabel;
+import dev.sayaya.ui.elements.interfaces.Openable;
+import dev.sayaya.ui.elements.interfaces.HasLabels;
+import dev.sayaya.ui.elements.interfaces.UiLabel;
 import elemental2.dom.*;
 import elemental2.dom.DomGlobal;
 import jsinterop.base.Js;
@@ -24,19 +28,17 @@ import static org.jboss.elemento.Elements.*;
  * SearchViewTokens(docked 모서리 extra large 28dp·헤더 56dp, full-screen 모서리 없음·헤더 72dp, 구분선 outline).
  * 입력창은 combobox, 제안 목록은 listbox 이다. ↑/↓ 로 제안을 고르고 Enter 로 선택·검색, Esc·스크림 클릭으로 닫는다.
  */
-public final class SearchElementBuilder implements
-        HTMLElementStyleMethods<HTMLDivElement, SearchElementBuilder>, HTMLElementVisibilityMethods<HTMLDivElement, SearchElementBuilder>,
-        ElementAttributeMethods<HTMLDivElement, SearchElementBuilder>, ElementClassListMethods<HTMLDivElement, SearchElementBuilder>,
-        ElementEventMethods<HTMLDivElement, SearchElementBuilder>, ElementIdMethods<HTMLDivElement, SearchElementBuilder>,
-        ElementConsumerMethods<HTMLDivElement, SearchElementBuilder> {
+public final class SearchElementBuilder extends CustomElementBuilder<SearchElementBuilder> implements
+        HasAriaLabel<HTMLDivElement, SearchElementBuilder>, Openable<SearchElementBuilder>, HasLabels<SearchElementBuilder.Label, SearchElementBuilder> {
     public static final String CLASS = "sayaya-search";
     static final String STYLE_ID = "sayaya-search-style";
     private static int seq = 0;
     /** UI 문구. 기본은 영어이고 {@link #label(Label, String)} 로 덮어쓴다 */
-    public enum Label {
+    public enum Label implements UiLabel {
         Search("Search"), Clear("Clear"), CloseSearch("Close search");
         public final String english;
         Label(String english) { this.english = english; }
+        @Override public String english() { return english; }
     }
     private final java.util.Map<Label, String> labels = new java.util.EnumMap<>(Label.class);
     /** UI 문구 덮어쓰기(기본 영어) */
@@ -56,7 +58,6 @@ public final class SearchElementBuilder implements
         public SearchElementBuilder fullScreen() { return new SearchElementBuilder(true); }
     }
 
-    private final HTMLContainerBuilder<HTMLDivElement> that = div();
     private final HTMLInputElement input;
     private final HTMLElement leading, clear, trailing, view, list, scrim;
     private final List<String> suggestions = new ArrayList<>();
@@ -93,7 +94,6 @@ public final class SearchElementBuilder implements
         applyLabels();
     }
     @Override public SearchElementBuilder that() { return this; }
-    @Override public HTMLDivElement element() { return that.element(); }
 
     public SearchElementBuilder placeholder(String placeholder) { input.placeholder = placeholder; return this; }
     /** 입력창 접근성 라벨(없으면 placeholder 가 읽힌다) */
@@ -174,8 +174,8 @@ public final class SearchElementBuilder implements
     }
 
     private static void injectStyle() {
-        if (DomGlobal.document.getElementById(STYLE_ID) != null) return;
-        HTMLStyleElement style = htmlElement("style", HTMLStyleElement.class).id(STYLE_ID).element();
+        HTMLStyleElement style = newStyle(STYLE_ID);
+        if (style == null) return;
         String c = "." + CLASS;
         style.textContent =
             c + "{position:relative;display:block;--_bg:var(--md-search-container-color,var(--md-sys-color-surface-container-high,#ece6f0))}"

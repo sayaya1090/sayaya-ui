@@ -21,17 +21,13 @@ import static org.jboss.elemento.Elements.htmlElement;
  * 두께 4dp, 활성-트랙 간격(TrackActiveSpace) 4dp, 끝 점(StopSize) 4dp. 색은 활성 primary, 트랙 secondary container.
  * <p>CSS 변수: {@code --md-wavy-progress-active-color}, {@code --md-wavy-progress-track-color}.</p>
  */
-public final class WavyProgressElementBuilder implements
-        HTMLElementStyleMethods<HTMLDivElement, WavyProgressElementBuilder>, HTMLElementVisibilityMethods<HTMLDivElement, WavyProgressElementBuilder>,
-        ElementAttributeMethods<HTMLDivElement, WavyProgressElementBuilder>, ElementClassListMethods<HTMLDivElement, WavyProgressElementBuilder>,
-        ElementEventMethods<HTMLDivElement, WavyProgressElementBuilder>, ElementIdMethods<HTMLDivElement, WavyProgressElementBuilder>,
-        ElementConsumerMethods<HTMLDivElement, WavyProgressElementBuilder>, HasAriaLabel<HTMLDivElement, WavyProgressElementBuilder> {
+public final class WavyProgressElementBuilder extends CustomElementBuilder<WavyProgressElementBuilder> implements
+        HasAriaLabel<HTMLDivElement, WavyProgressElementBuilder> {
     public static final String CLASS = "sayaya-wavy-progress";
     static final String STYLE_ID = "sayaya-wavy-progress-style";
 
     public static WavyProgressElementBuilder wavyProgress() { return new WavyProgressElementBuilder(); }
 
-    private final HTMLContainerBuilder<HTMLDivElement> that = div();
     private WavyProgressElementBuilder() {
         injectStyle();
         element().classList.add(CLASS);
@@ -44,7 +40,6 @@ public final class WavyProgressElementBuilder implements
         value(0);
     }
     @Override public WavyProgressElementBuilder that() { return this; }
-    @Override public HTMLDivElement element() { return that.element(); }
 
     /** 진행률 0~1 (범위를 벗어나면 잘라낸다) */
     public WavyProgressElementBuilder value(double value) {
@@ -68,8 +63,8 @@ public final class WavyProgressElementBuilder implements
         return "url(\"data:image/svg+xml," + svg.replace("<", "%3C").replace(">", "%3E").replace("#", "%23") + "\")";
     }
     private static void injectStyle() {
-        if (DomGlobal.document.getElementById(STYLE_ID) != null) return;
-        HTMLStyleElement style = htmlElement("style", HTMLStyleElement.class).id(STYLE_ID).element();
+        HTMLStyleElement style = newStyle(STYLE_ID);
+        if (style == null) return;
         String c = "." + CLASS;
         style.textContent =
             c + "{position:relative;display:block;box-sizing:border-box;height:10px;min-width:80px;overflow:hidden;"

@@ -24,11 +24,8 @@ import static org.jboss.elemento.Elements.htmlElement;
  * <p>CSS 변수: {@code --md-loading-indicator-size}, {@code --md-loading-indicator-active-indicator-color},
  * {@code --md-loading-indicator-container-color}.</p>
  */
-public final class LoadingIndicatorElementBuilder implements
-        HTMLElementStyleMethods<HTMLDivElement, LoadingIndicatorElementBuilder>, HTMLElementVisibilityMethods<HTMLDivElement, LoadingIndicatorElementBuilder>,
-        ElementAttributeMethods<HTMLDivElement, LoadingIndicatorElementBuilder>, ElementClassListMethods<HTMLDivElement, LoadingIndicatorElementBuilder>,
-        ElementEventMethods<HTMLDivElement, LoadingIndicatorElementBuilder>, ElementIdMethods<HTMLDivElement, LoadingIndicatorElementBuilder>,
-        ElementConsumerMethods<HTMLDivElement, LoadingIndicatorElementBuilder>, HasAriaLabel<HTMLDivElement, LoadingIndicatorElementBuilder> {
+public final class LoadingIndicatorElementBuilder extends CustomElementBuilder<LoadingIndicatorElementBuilder> implements
+        HasAriaLabel<HTMLDivElement, LoadingIndicatorElementBuilder> {
     /** 스펙: 기본 48dp, 24~240dp */
     public static final int DEFAULT_SIZE = 48, MIN_SIZE = 24, MAX_SIZE = 240;
     public static final String CLASS = "sayaya-loading-indicator";
@@ -38,7 +35,6 @@ public final class LoadingIndicatorElementBuilder implements
 
     public static LoadingIndicatorElementBuilder loadingIndicator() { return new LoadingIndicatorElementBuilder(); }
 
-    private final HTMLContainerBuilder<HTMLDivElement> that = div();
     private LoadingIndicatorElementBuilder() {
         injectStyle();
         element().classList.add(CLASS);
@@ -47,7 +43,6 @@ public final class LoadingIndicatorElementBuilder implements
         element().appendChild(div().css(SPIN_CLASS).attr("aria-hidden", "true").add(div().css(ACTIVE_CLASS)).element());
     }
     @Override public LoadingIndicatorElementBuilder that() { return this; }
-    @Override public HTMLDivElement element() { return that.element(); }
 
     /** 원형 컨테이너(primary container)와 on-primary-container 지시자. 다른 콘텐츠 위에 놓일 때 사용 */
     public LoadingIndicatorElementBuilder contained(boolean contained) {
@@ -73,8 +68,8 @@ public final class LoadingIndicatorElementBuilder implements
     private static final String MORPH_EASING = "cubic-bezier(0.34,1.45,0.64,1)";
 
     private static void injectStyle() {
-        if (DomGlobal.document.getElementById(STYLE_ID) != null) return;
-        HTMLStyleElement style = htmlElement("style", HTMLStyleElement.class).id(STYLE_ID).element();
+        HTMLStyleElement style = newStyle(STYLE_ID);
+        if (style == null) return;
         style.textContent = css();
         DomGlobal.document.head.appendChild(style);
     }
