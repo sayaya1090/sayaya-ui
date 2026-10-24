@@ -186,6 +186,9 @@ public final class SearchElementBuilder extends CustomElementBuilder<SearchEleme
           // M3 Expressive: 포커스하면 바가 넓어진다 — 여백 24dp → 12dp
           + c + ".docked.open .bar{margin-inline:var(--md-search-bar-focused-margin,12px)}"
           + c + ".fullscreen.open .bar{margin-inline:0}"
+          // 목록도 바와 같은 여백에서 출발해 같은 곡선으로 넓어진다(열 때 display:none 에서 나타나므로 출발값은 @starting-style)
+          + c + ".docked.open .view{inset-inline:var(--md-search-bar-focused-margin,12px)}"
+          + "@starting-style{" + c + ".docked.open .view{inset-inline:var(--md-search-bar-margin,24px)}}"
           + c + " .leading," + c + " .clear{flex:none;width:48px;height:48px;border:0;border-radius:var(--md-search-icon-button-shape,var(--md-sys-shape-corner-full,50%));background:none;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}"
           + c + " .leading{color:var(--md-sys-color-on-surface,#1d1b20)}"
           + c + " .clear," + c + " .trailing{color:var(--md-sys-color-on-surface-variant,#49454f)}"
@@ -205,7 +208,7 @@ public final class SearchElementBuilder extends CustomElementBuilder<SearchEleme
           + c + " .scrim{display:none}"
           + c + ".docked.open .scrim{display:block;position:fixed;inset:0;z-index:1;background:var(--md-sys-color-scrim,#000);opacity:.32}"
           + c + ".docked.open .bar{border-radius:var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) 0 0}"
-          + c + ".docked .view{position:absolute;z-index:2;inset-inline:var(--md-search-bar-focused-margin,12px);top:56px;max-height:min(480px,70vh);border-radius:0 0 var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px));padding-bottom:8px}"
+          + c + ".docked .view{position:absolute;z-index:2;inset-inline:var(--md-search-bar-margin,24px);transition:inset-inline-start 200ms cubic-bezier(0.2,0,0,1),inset-inline-end 200ms cubic-bezier(0.2,0,0,1);top:56px;max-height:min(480px,70vh);border-radius:0 0 var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px));padding-bottom:8px}"
           // Full-screen: 화면 전체, 모서리 없음, 헤더 72dp
           + c + ".fullscreen.open{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;background:var(--_bg)}"
           + c + ".fullscreen.open .bar{height:72px;border-radius:var(--md-search-view-full-screen-shape,var(--md-sys-shape-corner-none,0px));flex:none}"

@@ -123,8 +123,11 @@ public final class FabMenuElementBuilder extends CustomElementBuilder<FabMenuEle
             .append(c).append(".open .toggle{border-radius:var(--md-fab-menu-close-button-shape,var(--md-sys-shape-corner-full,9999px));background:var(--_strong);color:var(--_on-strong)}") // CloseButtonContainerShape full
             .append(c).append(".open .toggle .icon{font-size:20px}") // CloseButtonIconSize 20
             .append(c).append(" .items{display:none;flex-direction:column;align-items:flex-end;gap:4px;"
-                + "box-sizing:border-box;max-height:var(--md-fab-menu-max-height,calc(100vh - 96px));overflow-y:auto;overscroll-behavior:contain;padding:4px 4px 0;margin:-4px -4px 0}") // M3: 항목은 닫기 버튼 뒤로 스크롤, 닫기 버튼은 가리지 않는다 // ListItemBetweenSpace 4
+                + "box-sizing:border-box;max-height:var(--md-fab-menu-max-height,calc(100vh - 96px));overflow-y:auto;overscroll-behavior:contain;padding:4px 16px 16px;margin:-4px -16px -16px;"
+                + "scrollbar-width:none;pointer-events:none}") // 그림자(elevation 3: 아래 약 15px, 옆 약 11px)가 스크롤 영역에서 잘리지 않도록 안쪽 여백을 두고 같은 만큼 음수 margin 으로 배치를 유지 // M3: 항목은 닫기 버튼 뒤로 스크롤, 닫기 버튼은 가리지 않는다 // ListItemBetweenSpace 4
             .append(c).append(".open .items{display:flex}")
+            .append(c).append(" .items::-webkit-scrollbar{display:none}") // 스크롤은 되지만 스크롤바는 보이지 않는다
+            .append(c).append(" .items>*{pointer-events:auto}") // 그림자 여백(투명)이 닫기 버튼을 가려 클릭을 막지 않도록 항목만 입력을 받는다
             .append(c).append(" .item{box-sizing:border-box;height:56px;border:0;border-radius:var(--md-fab-menu-item-shape,var(--md-sys-shape-corner-full,9999px));padding:0 24px;gap:8px;display:inline-flex;align-items:center;cursor:pointer;")
             .append("background:var(--_container);color:var(--_on-container);font:500 16px/24px Roboto,system-ui,sans-serif;").append(shadow).append("}")
             .append(c).append(" .item .icon{font-size:24px}")

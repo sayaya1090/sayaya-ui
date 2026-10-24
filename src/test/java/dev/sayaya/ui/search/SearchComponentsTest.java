@@ -150,6 +150,11 @@ public class SearchComponentsTest {
             assertEquals("se: 닫힌 바 너비(400-48)", 352, (int) closed);
             assertEquals("se: 여백 변수로 변경", "0px", cs(q(custom, ".bar")).getPropertyValue("margin-left"));
             s.open(true);
+            later(30, () -> { // 여는 도중(전환 중)에도 목록이 바와 같은 폭이어야 한다
+                var br = bar.getBoundingClientRect(); var vr = q(el, ".view").getBoundingClientRect();
+                assertTrue("se: 여는 도중 목록 왼쪽 끝 = 바 왼쪽 끝", Math.abs(br.left - vr.left) <= 1);
+                assertTrue("se: 여는 도중 목록 오른쪽 끝 = 바 오른쪽 끝", Math.abs(br.right - vr.right) <= 1);
+            });
             later(400, () -> {
                 assertEquals("se: 포커스하면 여백 12px", "12px", cs(bar).getPropertyValue("margin-left"));
                 assertEquals("se: 포커스하면 바가 24px 넓어짐", 376, (int) Math.round(bar.getBoundingClientRect().width));

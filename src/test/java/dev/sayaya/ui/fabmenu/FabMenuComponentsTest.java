@@ -113,13 +113,26 @@ public class FabMenuComponentsTest {
                 // ... 최대 6개
                 .element();
             """, el);
+        var plain = fabMenu().icon("add").ariaLabel("Create").item("edit", "Note", null).item("photo_camera", "Photo", null).item("mic", "Voice", null);
+        section.appendChild(div().style("margin-top", "200px").add(plain.element()).element());
+        plain.open(true);
         b.open(true);
         later(700, () -> {
+            var pl = q(plain.element(), ".items");
+            var lastItem = (HTMLElement) pl.lastElementChild;
+            var lr = pl.getBoundingClientRect(); var ir = lastItem.getBoundingClientRect();
+            assertTrue("fm: 넘치지 않는 메뉴는 스크롤 없음", pl.scrollHeight <= pl.clientHeight && pl.scrollWidth <= pl.clientWidth);
+            assertTrue("fm: 마지막 항목 그림자가 아래에서 잘리지 않음(여유 15px 이상)", lr.bottom - ir.bottom >= 15);
+            assertTrue("fm: 항목 그림자가 옆에서 잘리지 않음(여유 11px 이상)", lr.right - ir.right >= 11 && ir.left - lr.left >= 11);
+            assertEquals("fm: 스크롤바 숨김", "none", cs(q(el, ".items")).getPropertyValue("scrollbar-width"));
+            plain.open(false);
             var list = q(el, ".items"); var close = q(el, ".toggle");
             assertEquals("fm: 6개 항목", 6, el.querySelectorAll(".item").length);
             assertEquals("fm: 목록 최대 높이", 150, (int) Math.round(list.getBoundingClientRect().height));
             assertTrue("fm: 넘치면 목록만 스크롤", "auto".equals(cs(list).getPropertyValue("overflow-y")) && list.scrollHeight > list.clientHeight);
-            assertTrue("fm: 닫기 버튼은 가려지지 않음", list.getBoundingClientRect().bottom <= close.getBoundingClientRect().top && h(close) == 56);
+            close.scrollIntoView(); // elementFromPoint 는 화면 안 좌표만 본다
+            var hit = DomGlobal.document.elementFromPoint(close.getBoundingClientRect().left + close.getBoundingClientRect().width / 2, close.getBoundingClientRect().top + 2);
+            assertTrue("fm: 닫기 버튼은 가려지지 않음", hit != null && (hit == close || close.contains(hit)) && h(close) == 56);
             b.open(false);
         });
     }
