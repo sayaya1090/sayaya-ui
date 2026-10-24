@@ -11,6 +11,7 @@ import static dev.sayaya.ui.TestHelper.*;
 import static dev.sayaya.ui.elements.ButtonElementBuilder.button;
 import static dev.sayaya.ui.elements.DatePickerElementBuilder.*;
 import static org.jboss.elemento.Elements.body;
+import static org.jboss.elemento.Elements.div;
 
 /** M3 date picker(docked/modal): 토큰 수치(computed style) + grid 키보드 + 확정/취소. 메시지 접두어 "dp: ". */
 public class DatePickerComponentsTest {
@@ -128,6 +129,82 @@ public class DatePickerComponentsTest {
                 modal.open(true);
                 key("Escape");
                 assertTrue("dp: modal Esc 로 닫힘", !modal.isOpen());
+            });
+        });
+        yearAndRange(section);
+    }
+
+    private static CSSStyleDeclaration pseudo(Element e, String which) {
+        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
+        return Js.uncheckedCast(f.call(DomGlobal.window, e, which));
+    }
+
+    /** 연도 선택(SelectionYear)과 기간 선택(RangeSelection) */
+    private static void yearAndRange(HTMLElement section) {
+        List<String> ranges = new ArrayList<>();
+        var yp = datePicker().docked().today(2026, 10, 24).value(2026, 10, 15).element();
+        demo(section, "📘 연도 선택", "월 표시(2026년 10월 ▾)를 누르면 연도 목록으로 바뀝니다. 연도는 72×36dp 이며 선택한 연도는 primary 입니다. 연도를 고르면 같은 달의 달력으로 돌아옵니다.",
+            """
+            datePicker().docked().value(2026, 10, 15).element();   // 월 표시 → 연도 목록
+            """, yp);
+        var rp = datePicker().docked().range(true).today(2026, 10, 24).month(2026, 10).onRangeChange((a, b) -> ranges.add(a + "/" + b)).element();
+        var mr = datePicker().modal().range(true).headline("기간 선택").today(2026, 10, 24).month(2026, 10).onRangeChange((a, b) -> ranges.add("modal:" + a + "/" + b));
+        body().add(mr.element());
+        demo(section, "📘 기간 선택", "range(true)는 시작일과 종료일을 차례로 고릅니다(거꾸로 골라도 순서를 맞춤). 범위는 높이 40dp secondary container 띠로, 시작·끝은 primary 원으로 표시합니다. modal 기간 선택은 헤더가 128dp 이며 확인을 눌러야 onRangeChange 가 불립니다.",
+            """
+            datePicker().docked().range(true)
+                .onRangeChange((start, end) -> search(start, end))   // "2026-10-05", "2026-10-09"
+                .element();
+            """, div().style("display", "flex").style("gap", "16px").style("flex-wrap", "wrap").style("align-items", "flex-start")
+                .add(rp).add(button().filled().text("기간 선택 열기").onClick(e -> mr.open(true))).element());
+
+        later(1500, () -> {
+            var month = q(yp, ".month");
+            month.click();
+            var years = q(yp, ".years");
+            assertEquals("dp: 월 버튼 aria-expanded", "true", month.getAttribute("aria-expanded"));
+            assertEquals("dp: 연도 목록 표시", "grid", cs(years).getPropertyValue("display"));
+            assertEquals("dp: 연도 모드에서 달력 숨김", "none", cs(q(yp, "[role=grid]")).getPropertyValue("display"));
+            assertEquals("dp: 연도 role listbox", "listbox", years.getAttribute("role"));
+            assertEquals("dp: 연도 201개", 201, yp.querySelectorAll(".year").length);
+            var y2026 = q(yp, ".year[data-year='2026']"); var y2027 = q(yp, ".year[data-year='2027']");
+            assertEquals("dp: 연도 72px", 72, (int) w(y2026));
+            assertEquals("dp: 연도 높이 36px", 36, (int) h(y2026));
+            assertEquals("dp: 선택 연도 aria-selected", "true", y2026.getAttribute("aria-selected"));
+            assertEquals("dp: 선택 연도 primary", "rgb(103, 80, 164)", cs(y2026).getPropertyValue("background-color"));
+            assertEquals("dp: 선택 연도 글자 on-primary", "rgb(255, 255, 255)", cs(y2026).getPropertyValue("color"));
+            assertEquals("dp: 다른 연도 on-surface-variant", "rgb(73, 69, 79)", cs(y2027).getPropertyValue("color"));
+            q(yp, ".year[data-year='2030']").click();
+            assertEquals("dp: 연도 고르면 달력으로", "2030년 10월", q(yp, ".month").textContent);
+            assertEquals("dp: 연도 고르면 목록 닫힘", "none", cs(q(yp, ".years")).getPropertyValue("display"));
+
+            day(rp, "2026-10-09").click();
+            assertTrue("dp: 기간 시작만 고르면 이벤트 없음", ranges.isEmpty());
+            day(rp, "2026-10-05").click();
+            assertTrue("dp: 거꾸로 골라도 시작·끝 정렬", ranges.contains("2026-10-05/2026-10-09"));
+            var start = day(rp, "2026-10-05"); var mid = day(rp, "2026-10-07"); var end = day(rp, "2026-10-09");
+            assertTrue("dp: 기간 양 끝 aria-selected", "true".equals(start.getAttribute("aria-selected")) && "true".equals(end.getAttribute("aria-selected")));
+            assertTrue("dp: 범위 안 날짜 표시", mid.classList.contains("in-range") && !"true".equals(mid.getAttribute("aria-selected")));
+            assertEquals("dp: 범위 띠 secondary-container", "rgb(232, 222, 248)", pseudo(mid, "::before").getPropertyValue("background-color"));
+            assertEquals("dp: 범위 띠 높이 40px", "40px", pseudo(mid, "::before").getPropertyValue("height"));
+            assertEquals("dp: 범위 안 글자 on-secondary-container", "rgb(29, 25, 43)", cs(mid).getPropertyValue("color"));
+            assertEquals("dp: 기간 끝 primary 원", "rgb(103, 80, 164)", pseudo(end, "::after").getPropertyValue("background-color"));
+            assertEquals("dp: 기간 끝 글자 on-primary", "rgb(255, 255, 255)", cs(end).getPropertyValue("color"));
+            assertTrue("dp: 시작 띠는 가운데부터", start.classList.contains("range-start") && end.classList.contains("range-end"));
+            day(rp, "2026-10-20").click();
+            assertTrue("dp: 새로 고르면 기간 다시 시작", "true".equals(day(rp, "2026-10-20").getAttribute("aria-selected"))
+                    && !"true".equals(day(rp, "2026-10-05").getAttribute("aria-selected")) && rp.querySelectorAll(".in-range").length == 0);
+
+            mr.open(true);
+            later(200, () -> {
+                var mel = mr.element();
+                assertEquals("dp: 기간 modal 헤더 128px", 128, (int) h(q(mel, ".header")));
+                day(mel, "2026-10-03").click();
+                day(mel, "2026-10-06").click();
+                assertEquals("dp: 기간 modal 헤더 범위", "10월 3일 – 10월 6일", q(mel, ".header-date").textContent);
+                assertTrue("dp: 기간 modal 확인 전 이벤트 없음", ranges.stream().noneMatch(x -> x.startsWith("modal:")));
+                q(mel, ".action.ok").click();
+                assertTrue("dp: 기간 modal 확인으로 확정", ranges.contains("modal:2026-10-03/2026-10-06") && "2026-10-03".equals(mr.rangeStart()) && "2026-10-06".equals(mr.rangeEnd()));
             });
         });
     }

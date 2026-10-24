@@ -76,7 +76,7 @@ dependencies {
 | **Toolbar** | `toolbar()` | Docked(bottom app bar 대체)·Floating toolbar(standard/vibrant, 가로/세로, 화면 고정 위치), 방향키 이동 | [🔗](https://sayaya1090.github.io/sayaya-ui/toolbar.html) |
 | **FAB menu** | `fabMenu()` | FAB 에서 열리는 메뉴(닫기 버튼 전환, primary/secondary/tertiary, Esc·항목 선택으로 닫힘) | [🔗](https://sayaya1090.github.io/sayaya-ui/fab_menu.html) |
 | **Search** | `search()` | Search bar + docked/full-screen view(제안 필터, combobox·listbox, ↑/↓·Enter·Esc, contained/divided) | [🔗](https://sayaya1090.github.io/sayaya-ui/search.html) |
-| **Date picker** | `datePicker()` | Docked·Modal 달력(오늘·선택 표시, ARIA grid 키보드, 확인/취소) | [🔗](https://sayaya1090.github.io/sayaya-ui/date_picker.html) |
+| **Date picker** | `datePicker()` | Docked·Modal 달력(오늘·선택 표시, ARIA grid 키보드, 확인/취소, 연도 선택, 기간 선택 `range(true)`) | [🔗](https://sayaya1090.github.io/sayaya-ui/date_picker.html) |
 | **Time picker** | `timePicker()` | Dial·Input(12/24시간, 오전/오후, modal 확인/취소) | [🔗](https://sayaya1090.github.io/sayaya-ui/time_picker.html) |
 | **Carousel** | `carousel()` | Multi-browse·Hero·Uncontained(가장자리 항목 축소·parallax, slide 역할, 모두 보기 버튼) | [🔗](https://sayaya1090.github.io/sayaya-ui/carousel.html) |
 | **Wavy progress** | `wavyProgress()` | M3 Expressive 물결 선형 진행 표시기(determinate/indeterminate) | [🔗](https://sayaya1090.github.io/sayaya-ui/wavy_progress.html) |
