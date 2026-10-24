@@ -152,12 +152,12 @@ public class I18nComponentsTest {
         section.appendChild(div().style("position", "absolute").style("left", "-9999px").add(tGb12).add(tLabel).element());
 
         later(600, () -> {
-            assertEquals("i18: en-US 월 표시", "October 2026", q(en, ".month").textContent);
+            assertTrue("i18: en-US 월 표시", "October".equals(q(en, ".month-menu").textContent) && "2026".equals(q(en, ".year-menu").textContent));
             assertEquals("i18: en-US 날짜 aria-label", "October 15, 2026", q(en, "[data-date='2026-10-15']").getAttribute("aria-label"));
             assertEquals("i18: 이전 달 기본 Previous month", "Previous month", aria(q(en, ".prev")));
             assertEquals("i18: en-US 첫 요일 일요일", "0", q(en, ".weekday").getAttribute("data-day"));
             assertEquals("i18: en-US 요일 narrow", "S", q(en, ".weekday").textContent);
-            assertEquals("i18: de-DE 월 표시", "Oktober 2026", q(de, ".month").textContent);
+            assertEquals("i18: de-DE 월 표시", "Oktober", q(de, ".month-menu").textContent);
             assertEquals("i18: de-DE 첫 요일 월요일", "1", q(de, ".weekday").getAttribute("data-day"));
             var deFirstRow = de.querySelectorAll("[role=row]").item(1);
             assertEquals("i18: de-DE 1일은 넷째 칸(목)", "2026-10-01", deFirstRow.querySelectorAll(":scope > *").item(3).getAttribute("data-date"));

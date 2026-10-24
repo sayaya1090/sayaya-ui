@@ -60,6 +60,57 @@ public final class Locales {
         return m;
     }
 
+    private static JsArray<Object> numericParts(String locale) {
+        JsPropertyMap<Object> o = options("year", "numeric", "month", "2-digit", "day", "2-digit");
+        return Js.uncheckedCast(invoke(dateFormat(locale, o), "formatToParts", new JsDate(2026, 10, 25)));
+    }
+    /** locale 의 숫자 날짜 입력 형식(예: en-US "mm/dd/yyyy", ko-KR "yyyy. mm. dd.") */
+    public static String datePattern(String locale) {
+        JsArray<Object> parts = numericParts(locale);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < parts.length; i++) {
+            JsPropertyMap<Object> part = Js.asPropertyMap(parts.getAt(i));
+            String type = Js.asString(part.get("type"));
+            if ("year".equals(type)) sb.append("yyyy");
+            else if ("month".equals(type)) sb.append("mm");
+            else if ("day".equals(type)) sb.append("dd");
+            else sb.append(Js.asString(part.get("value")));
+        }
+        return sb.toString();
+    }
+    /**
+     * locale 순서(연·월·일)대로 입력된 숫자 날짜를 읽는다. ISO(yyyy-mm-dd)도 받는다.
+     * @return {year, month0(0~11), day}, 형식이 틀리거나 없는 날짜면 null
+     */
+    public static int[] parseDate(String locale, String text) {
+        if (text == null) return null;
+        String t = text.trim();
+        java.util.List<Integer> nums = new java.util.ArrayList<>();
+        StringBuilder cur = new StringBuilder();
+        for (int i = 0; i <= t.length(); i++) {
+            char ch = i < t.length() ? t.charAt(i) : ' ';
+            if (ch >= '0' && ch <= '9') cur.append(ch);
+            else if (cur.length() > 0) { nums.add(Integer.parseInt(cur.toString())); cur.setLength(0); }
+        }
+        if (nums.size() != 3) return null;
+        int y, m, d;
+        if (t.matches("\\d{4}-\\d{1,2}-\\d{1,2}")) { y = nums.get(0); m = nums.get(1); d = nums.get(2); }
+        else {
+            JsArray<Object> parts = numericParts(locale);
+            int k = 0; y = m = d = -1;
+            for (int i = 0; i < parts.length && k < 3; i++) {
+                String type = Js.asString(Js.asPropertyMap(parts.getAt(i)).get("type"));
+                if ("year".equals(type)) y = nums.get(k++);
+                else if ("month".equals(type)) m = nums.get(k++);
+                else if ("day".equals(type)) d = nums.get(k++);
+            }
+        }
+        if (y < 1000 || m < 1 || m > 12 || d < 1) return null;
+        JsDate check = new JsDate(y, m - 1, d);
+        if (check.getMonth() != m - 1 || check.getDate() != d) return null;
+        return new int[]{y, m - 1, d};
+    }
+
     /** 주의 첫 요일(Date#getDay 기준 0=일요일 … 6=토요일). Intl.Locale weekInfo 를 지원하지 않으면 0 */
     public static int firstDayOfWeek(String locale) {
         try {

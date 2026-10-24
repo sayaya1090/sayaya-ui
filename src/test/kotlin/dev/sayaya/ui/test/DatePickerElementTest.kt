@@ -12,6 +12,7 @@ internal class DatePickerElementTest: GwtTestSpec({
         "요일 7개",
         "10월 31일",
         "월 표시",
+        "연도 표시",
         "1일은 목요일 칸",
         "선택 aria-selected",
         "오늘 aria-current",
@@ -53,6 +54,41 @@ internal class DatePickerElementTest: GwtTestSpec({
         "modal 취소는 되돌림",
         "modal 확인으로 확정",
         "modal Esc 로 닫힘",
+        "필드 라벨",
+        "필드 형식 힌트",
+        "필드 높이 56px",
+        "필드 모서리 extra-small 4px",
+        "필드 달린 docked 는 닫혀 있음",
+        "필드를 누르면 달력 열림",
+        "월 메뉴·연도 메뉴",
+        "이전 달 날짜 표시",
+        "이전 달 날짜 4개",
+        "10월은 31일이 토요일이라 다음 달 날짜 없음",
+        "다음 달 날짜로 마지막 주 채움",
+        "이전 달 날짜 on-surface-variant",
+        "날짜 고르면 필드에 반영·닫힘",
+        "필드에 입력 + Enter 로 확정",
+        "필드 형식 오류 표시",
+        "월 메뉴 목록 12개",
+        "월 목록에서 달력 숨김",
+        "월 고르면 달력으로",
+        "이전 연도 버튼",
+        "이전 연도 버튼 라벨",
+        "이전 달 날짜 누르면 그 달로",
+        "필드 달력 Esc 로 닫힘",
+        "modal date input 은 입력 모드",
+        "입력 모드 헤드라인 Enter date",
+        "달력 전환 버튼",
+        "입력 모드 달력 숨김",
+        "입력 필드 라벨·힌트",
+        "열면 입력 필드 포커스",
+        "없는 날짜는 오류·안 닫힘",
+        "입력 후 확인으로 확정",
+        "달력으로 전환",
+        "달력 모드 헤드라인 Select date",
+        "기간 입력 필드 2개 표시",
+        "기간 입력 라벨",
+        "기간 입력 확정(순서 정렬)",
         "월 버튼 aria-expanded",
         "연도 목록 표시",
         "연도 모드에서 달력 숨김",
@@ -84,7 +120,7 @@ internal class DatePickerElementTest: GwtTestSpec({
     )
     Given("M3 Date picker") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
-        page.waitForTimeout(4000.0)
+        page.waitForTimeout(6000.0)
         val logs = page.getConsoleLogs().map { it.toString() }
         println(logs)
         for (c in checks) {

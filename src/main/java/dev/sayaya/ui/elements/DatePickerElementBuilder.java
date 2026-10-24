@@ -39,7 +39,10 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
     /** UI 문구. 기본은 영어이고 {@link #label(Label, String)} 로 덮어쓴다 */
     public enum Label implements UiLabel {
         PreviousMonth("Previous month"), NextMonth("Next month"), SelectYear("Select year"),
-        Cancel("Cancel"), Ok("OK"), NoSelection("Select a date"), RangeStart("Start date"), RangeEnd("End date");
+        Cancel("Cancel"), Ok("OK"), NoSelection("Select a date"), RangeStart("Start date"), RangeEnd("End date"),
+        SelectDate("Select date"), EnterDate("Enter date"), Date("Date"), SwitchToInput("Switch to text input"),
+        SwitchToCalendar("Switch to calendar"), InvalidFormat("Invalid format. Use:"), SelectMonth("Select month"),
+        PreviousYear("Previous year"), NextYear("Next year");
         public final String english;
         Label(String english) { this.english = english; }
         @Override public String english() { return english; }
@@ -52,6 +55,8 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
         public DatePickerElementBuilder docked() { return new DatePickerElementBuilder(false); }
         /** 스크림 위 대화상자. 확인을 눌러야 확정된다 */
         public DatePickerElementBuilder modal() { return new DatePickerElementBuilder(true); }
+        /** 달력 없이 텍스트로 날짜를 입력하는 modal(M3 modal date input). 헤더의 아이콘 버튼으로 달력과 전환한다 */
+        public DatePickerElementBuilder modalInput() { return new DatePickerElementBuilder(true).inputMode(true); }
     }
 
     private final boolean modal;
@@ -70,6 +75,10 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
     private String today;
     private Consumer<String> onChange;
     private final String gridId;
+    private boolean inputMode = false, monthMode = false;
+    private String customHeadline = null;
+    private HTMLElement modeBtn, inputArea, months, monthMenu, yearMenu, prevYearBtn, nextYearBtn, fieldWrap, startField, endField;
+    private HTMLInputElement field;
 
     private DatePickerElementBuilder(boolean modal) {
         injectStyle();
@@ -81,7 +90,7 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
         fy = viewYear; fm = viewMonth; fd = now.getDate();
         element().classList.add(CLASS, modal ? "modal" : "docked");
 
-        headline = div().css("headline").text("Select date").element();
+        headline = div().css("headline").element();
         headerDate = div().css("header-date").element();
         monthLabel = button().css("month").attr("type", "button").attr("aria-live", "polite").attr("aria-expanded", "false").element();
         monthLabel.addEventListener("click", e -> { yearMode = !yearMode; render(); if (yearMode) scrollYear(); else focusCell(); });
@@ -96,7 +105,22 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
         grid = div().css("grid").attr("role", "grid").attr("id", gridId).element();
         grid.addEventListener("keydown", this::onKey);
         navButtons = div().css("nav-buttons").add(prev).add(next).element();
-        var nav = div().css("nav-row").add(monthLabel).add(navButtons).element();
+        months = div().css("months").attr("role", "listbox").element();
+        HTMLElement nav;
+        if (modal) nav = div().css("nav-row").add(monthLabel).add(navButtons).element();
+        else { // M3 docked: 월·연도 메뉴 버튼과 각각의 이전/다음 버튼
+            monthMenu = button().css("menu-btn", "month-menu").attr("type", "button").attr("aria-haspopup", "listbox").attr("aria-expanded", "false").element();
+            yearMenu = button().css("menu-btn", "year-menu").attr("type", "button").attr("aria-haspopup", "listbox").attr("aria-expanded", "false").element();
+            prevYearBtn = navBtn("prev-year", "chevron_left");
+            nextYearBtn = navBtn("next-year", "chevron_right");
+            monthMenu.addEventListener("click", e -> { monthMode = !monthMode; yearMode = false; render(); if (monthMode) focusSelected(months); else focusCell(); });
+            yearMenu.addEventListener("click", e -> { yearMode = !yearMode; monthMode = false; render(); if (yearMode) scrollYear(); else focusCell(); });
+            prevYearBtn.addEventListener("click", e -> moveMonth(-12, false));
+            nextYearBtn.addEventListener("click", e -> moveMonth(12, false));
+            nav = div().css("nav-row", "docked-nav")
+                    .add(div().css("nav-group", "month-group").add(prev).add(monthMenu).add(next))
+                    .add(div().css("nav-group", "year-group").add(prevYearBtn).add(yearMenu).add(nextYearBtn)).element();
+        }
         card = div().css("card").element();
         if (modal) {
             card.setAttribute("role", "dialog");
@@ -104,11 +128,21 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
             String hid = gridId + "-headline";
             headline.id = hid;
             card.setAttribute("aria-labelledby", hid);
-            card.appendChild(div().css("header").add(headline).add(headerDate).element());
+            modeBtn = button().css("mode").attr("type", "button").add(span().css("icon").attr("aria-hidden", "true")).element();
+            modeBtn.addEventListener("click", e -> inputMode(!inputMode));
+            card.appendChild(div().css("header").add(headline).add(div().css("header-row").add(headerDate).add(modeBtn)).element());
         }
         card.appendChild(nav);
         card.appendChild(years);
+        card.appendChild(months);
         card.appendChild(grid);
+        if (modal) { // M3 modal date input: outlined text field(기간이면 시작·끝)
+            startField = outlined("start"); endField = outlined("end");
+            inputArea = div().css("input-area").add(startField).add(endField).element();
+            for (HTMLElement f : new HTMLElement[]{startField, endField})
+                f.querySelector(".field-input").addEventListener("keydown", e -> { if ("Enter".equals(((KeyboardEvent) Js.uncheckedCast(e)).key)) { confirm(); e.preventDefault(); } });
+            card.appendChild(inputArea);
+        }
         if (modal) {
             var cancel = button().css("action").attr("type", "button").element();
             var ok = button().css("action", "ok").attr("type", "button").element();
@@ -143,7 +177,46 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
     public DatePickerElementBuilder today(int year, int month, int day) { today = iso(year, month - 1, day); render(); return this; }
     /** 보이는 달 이동(월 1~12) */
     public DatePickerElementBuilder month(int year, int month) { viewYear = fy = year; viewMonth = fm = month - 1; fd = 1; render(); return this; }
-    public DatePickerElementBuilder headline(String text) { headline.textContent = text; return this; }
+    public DatePickerElementBuilder headline(String text) { customHeadline = text; render(); return this; }
+    /** modal 의 입력 모드(텍스트로 날짜 입력). 헤더 아이콘 버튼으로도 전환한다 */
+    public DatePickerElementBuilder inputMode(boolean on) {
+        if (!modal) return this;
+        if (!on && inputMode) applyInputs(false); // 입력한 날짜가 맞으면 달력에도 반영
+        inputMode = on;
+        if (on) fillInputs();
+        render();
+        if (isOpen()) { if (on) input(startField).focus(); else focusCell(); }
+        return this;
+    }
+    public boolean isInputMode() { return inputMode; }
+    /**
+     * docked 에 outlined text field 를 붙인다(M3 docked date picker). 달력은 필드를 누를 때 아래로 열리고,
+     * 키보드로 locale 형식(예: mm/dd/yyyy)을 입력해 Enter 를 눌러도 된다.
+     */
+    public DatePickerElementBuilder field(String fieldLabel) {
+        if (modal) return this;
+        if (fieldWrap == null) {
+            fieldWrap = outlined("docked-field");
+            field = input(fieldWrap);
+            field.setAttribute("aria-haspopup", "dialog");
+            field.setAttribute("aria-controls", gridId);
+            field.addEventListener("click", e -> open(true));
+            field.addEventListener("change", e -> commitField());
+            field.addEventListener("keydown", e -> {
+                String k = ((KeyboardEvent) Js.uncheckedCast(e)).key;
+                if ("Enter".equals(k)) { commitField(); e.preventDefault(); }
+                else if ("ArrowDown".equals(k)) { open(true); focusCell(); e.preventDefault(); }
+            });
+            element().addEventListener("keydown", e -> { if ("Escape".equals(((KeyboardEvent) Js.uncheckedCast(e)).key) && isOpen()) { open(false); e.preventDefault(); } });
+            DomGlobal.document.addEventListener("mousedown", e -> { if (isOpen() && !element().contains(Js.<Node>uncheckedCast(e.target))) open(false); });
+            element().insertBefore(fieldWrap, card);
+            element().classList.add("with-field");
+        }
+        fieldWrap.querySelector(".field-label").textContent = fieldLabel;
+        render();
+        return this;
+    }
+    public HTMLInputElement field() { return field; }
     /** 월 이름을 직접 지정(12개). 지정하지 않으면 locale 의 Intl 월 이름을 쓴다 */
     public DatePickerElementBuilder monthNames(String... names) { if (names.length == 12) monthNames = names; render(); return this; }
     /** 날짜 표기·요일·주 시작 요일의 기준 locale(예: "ko-KR", "en-US"). 기본: Locales.setDefault → html lang → 브라우저 언어 */
@@ -155,6 +228,7 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
     private String text(Label l) { String v = labels.get(l); return v == null ? l.english : v; }
     private void applyLabels() {
         prevBtn.setAttribute("aria-label", text(Label.PreviousMonth));
+        if (prevYearBtn != null) { prevYearBtn.setAttribute("aria-label", text(Label.PreviousYear)); nextYearBtn.setAttribute("aria-label", text(Label.NextYear)); }
         nextBtn.setAttribute("aria-label", text(Label.NextMonth));
         years.setAttribute("aria-label", text(Label.SelectYear));
         if (cancelBtn != null) { cancelBtn.textContent = text(Label.Cancel); okBtn.textContent = text(Label.Ok); }
@@ -179,18 +253,20 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
     public boolean isOpen() { return element().classList.contains("open"); }
     /** modal 을 연다/닫는다. 열면 선택된(없으면 오늘) 날짜로 포커스가 간다 */
     public DatePickerElementBuilder open(boolean open) {
-        if (!modal) return this;
+        if (!modal && fieldWrap == null) return this;
         if (open) {
-            selected = committed; rangeStart = committedStart; rangeEnd = committedEnd; yearMode = false;
+            if (modal) { selected = committed; rangeStart = committedStart; rangeEnd = committedEnd; if (inputMode) fillInputs(); }
+            yearMode = false; monthMode = false;
             element().classList.add("open");
             render();
-            focusCell();
+            if (modal) { if (inputMode) input(startField).focus(); else focusCell(); }
         } else element().classList.remove("open");
         return this;
     }
 
     private void cancel() { selected = committed; rangeStart = committedStart; rangeEnd = committedEnd; open(false); }
     private void confirm() {
+        if (inputMode && !applyInputs(true)) return; // 형식이 틀리면 닫지 않는다
         if (range) {
             committedStart = rangeStart; committedEnd = rangeEnd;
             open(false);
@@ -207,6 +283,7 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
         else rangeEnd = id;
         if (!modal && rangeEnd != null) {
             committedStart = rangeStart; committedEnd = rangeEnd;
+            if (field != null) { field.value = fieldText(committedStart) + " – " + fieldText(committedEnd); open(false); }
             if (onRangeChange != null) onRangeChange.accept(committedStart, committedEnd);
         }
     }
@@ -226,7 +303,11 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
         if (range) { fy = y; fm = m; fd = d; chooseRange(iso(y, m, d)); render(); focusCell(); return; }
         selected = iso(y, m, d);
         fy = y; fm = m; fd = d;
-        if (!modal) { committed = selected; if (onChange != null) onChange.accept(committed); }
+        if (!modal) {
+            committed = selected;
+            if (field != null) { field.value = fieldText(committed); setInvalid(fieldWrap, false); open(false); }
+            if (onChange != null) onChange.accept(committed);
+        }
         render();
         focusCell();
     }
@@ -272,6 +353,26 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
     private void render() {
         monthLabel.textContent = monthNames != null ? monthNames[viewMonth] + " " + viewYear : fmt(viewYear, viewMonth, 1, "year", "numeric", "month", "long");
         monthLabel.setAttribute("aria-expanded", String.valueOf(yearMode));
+        headline.textContent = customHeadline != null ? customHeadline : text(inputMode ? Label.EnterDate : Label.SelectDate);
+        setClass("input-mode", inputMode);
+        setClass("months-mode", monthMode);
+        if (modeBtn != null) {
+            modeBtn.firstElementChild.textContent = inputMode ? "calendar_today" : "edit";
+            modeBtn.setAttribute("aria-label", text(inputMode ? Label.SwitchToCalendar : Label.SwitchToInput));
+        }
+        if (monthMenu != null) {
+            monthMenu.textContent = monthNames != null ? monthNames[viewMonth] : fmt(viewYear, viewMonth, 1, "month", "long");
+            yearMenu.textContent = fmt(viewYear, viewMonth, 1, "year", "numeric");
+            monthMenu.setAttribute("aria-expanded", String.valueOf(monthMode));
+            yearMenu.setAttribute("aria-expanded", String.valueOf(yearMode));
+        }
+        renderMonths();
+        String pattern = Locales.datePattern(locale);
+        if (startField != null) {
+            label(startField, text(range ? Label.RangeStart : Label.Date)); label(endField, text(Label.RangeEnd));
+            support(startField, pattern); support(endField, pattern);
+        }
+        if (fieldWrap != null) { support(fieldWrap, pattern); input(fieldWrap).placeholder = pattern; }
         if (yearMode) element().classList.add("years-mode"); else element().classList.remove("years-mode");
         renderYears();
         if (range) {
@@ -293,7 +394,12 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
         HTMLElement row = null;
         for (int i = 0; i < first + days; i++) {
             if (i % 7 == 0) { row = div().css("row").attr("role", "row").element(); grid.appendChild(row); }
-            if (i < first) { row.appendChild(span().css("cell", "empty").attr("role", "gridcell").element()); continue; }
+            if (i < first) {
+                if (modal) { row.appendChild(span().css("cell", "empty").attr("role", "gridcell").element()); continue; }
+                int prevDays = daysIn(viewMonth == 0 ? viewYear - 1 : viewYear, (viewMonth + 11) % 12);
+                row.appendChild(outsideCell(viewYear, viewMonth - 1, prevDays - first + 1 + i));
+                continue;
+            }
             int day = i - first + 1;
             String id = iso(viewYear, viewMonth, day);
             boolean focus = fy == viewYear && fm == viewMonth && fd == day;
@@ -311,6 +417,92 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
             cell.addEventListener("click", e -> choose(y, m, day));
             row.appendChild(cell);
         }
+        // docked: 마지막 주를 다음 달 날짜로 채운다(M3 outside month date)
+        if (!modal && row != null) for (int k = 1, rest = (7 - (first + days) % 7) % 7; k <= rest; k++) row.appendChild(outsideCell(viewYear, viewMonth + 1, k));
+    }
+    /** 이전·다음 달 날짜. 누르면 그 달로 넘어가며 선택된다 */
+    private HTMLElement outsideCell(int y, int m0, int d) {
+        JsDate date = new JsDate(y, m0, d);
+        int yy = date.getFullYear(), mm = date.getMonth(), dd = date.getDate();
+        var cell = button().css("cell", "outside").attr("type", "button").attr("role", "gridcell").attr("tabindex", "-1")
+                .attr("data-outside-date", iso(yy, mm, dd)).attr("aria-label", fmt(yy, mm, dd, "year", "numeric", "month", "long", "day", "numeric"))
+                .text(String.valueOf(dd)).element();
+        cell.addEventListener("click", e -> { viewYear = yy; viewMonth = mm; choose(yy, mm, dd); });
+        return cell;
+    }
+    private static HTMLElement navBtn(String cls, String icon) {
+        return button().css("nav", cls).attr("type", "button").add(span().css("icon").attr("aria-hidden", "true").text(icon)).element();
+    }
+    private void renderMonths() {
+        while (months.firstChild != null) months.removeChild(months.firstChild);
+        if (!monthMode) return;
+        months.setAttribute("aria-label", text(Label.SelectMonth));
+        for (int m = 0; m < 12; m++) {
+            int month = m;
+            var b = button().css("month-option").attr("type", "button").attr("role", "option").attr("data-month", String.valueOf(m))
+                    .attr("aria-selected", String.valueOf(m == viewMonth))
+                    .add(span().css("icon").attr("aria-hidden", "true").text(m == viewMonth ? "check" : ""))
+                    .add(span().text(monthNames != null ? monthNames[m] : fmt(viewYear, m, 1, "month", "long"))).element();
+            b.addEventListener("click", e -> { viewMonth = fm = month; fy = viewYear; fd = Math.min(fd, daysIn(viewYear, month)); monthMode = false; render(); focusCell(); });
+            months.appendChild(b);
+        }
+    }
+    private static void focusSelected(HTMLElement list) {
+        var sel = (HTMLElement) list.querySelector("[aria-selected=true]");
+        if (sel != null) sel.focus();
+    }
+    // ---------- outlined text field (M3 text field outlined, 모서리 extra-small 4dp) ----------
+    private HTMLElement outlined(String cls) {
+        String id = gridId + "-" + cls;
+        var in = Elements.input(InputType.text).css("field-input").attr("id", id).attr("autocomplete", "off")
+                .attr("aria-describedby", id + "-support").element();
+        return div().css("text-field", cls).add(Elements.label().css("field-label").attr("for", id))
+                .add(in).add(div().css("field-support").attr("id", id + "-support")).element();
+    }
+    private static HTMLInputElement input(HTMLElement wrap) { return (HTMLInputElement) wrap.querySelector(".field-input"); }
+    private static void label(HTMLElement wrap, String t) { wrap.querySelector(".field-label").textContent = t; }
+    private void support(HTMLElement wrap, String pattern) {
+        boolean bad = wrap.classList.contains("invalid");
+        wrap.querySelector(".field-support").textContent = bad ? text(Label.InvalidFormat) + " " + pattern : pattern;
+    }
+    private void setInvalid(HTMLElement wrap, boolean bad) {
+        if (bad) wrap.classList.add("invalid"); else wrap.classList.remove("invalid");
+        input(wrap).setAttribute("aria-invalid", String.valueOf(bad));
+        support(wrap, Locales.datePattern(locale));
+    }
+    /** 필드에 보이는 날짜(locale 숫자 형식, 예: 10/15/2026) */
+    private String fieldText(String iso) {
+        String[] q = iso.split("-");
+        return fmt(Integer.parseInt(q[0]), Integer.parseInt(q[1]) - 1, Integer.parseInt(q[2]), "year", "numeric", "month", "2-digit", "day", "2-digit");
+    }
+    private void fillInputs() {
+        input(startField).value = range ? (rangeStart == null ? "" : fieldText(rangeStart)) : (selected == null ? "" : fieldText(selected));
+        input(endField).value = rangeEnd == null ? "" : fieldText(rangeEnd);
+        setInvalid(startField, false); setInvalid(endField, false);
+    }
+    /** 입력 모드의 값을 읽어 선택에 반영한다. markErrors 이면 틀린 칸에 오류를 표시한다 */
+    private boolean applyInputs(boolean markErrors) {
+        int[] a = Locales.parseDate(locale, input(startField).value);
+        int[] b = range ? Locales.parseDate(locale, input(endField).value) : null;
+        boolean okA = a != null, okB = !range || b != null;
+        if (markErrors) { setInvalid(startField, !okA); setInvalid(endField, range && !okB); }
+        if (!okA || !okB) return false;
+        if (range) {
+            String s1 = iso(a[0], a[1], a[2]), s2 = iso(b[0], b[1], b[2]);
+            rangeStart = s1.compareTo(s2) <= 0 ? s1 : s2; rangeEnd = s1.compareTo(s2) <= 0 ? s2 : s1;
+        } else selected = iso(a[0], a[1], a[2]);
+        viewYear = fy = a[0]; viewMonth = fm = a[1]; fd = a[2];
+        return true;
+    }
+    /** docked 필드에 입력한 날짜를 확정한다 */
+    private void commitField() {
+        String v = field.value == null ? "" : field.value.trim();
+        if (v.isEmpty()) { setInvalid(fieldWrap, false); return; }
+        int[] a = Locales.parseDate(locale, v);
+        if (a == null) { setInvalid(fieldWrap, true); return; }
+        setInvalid(fieldWrap, false);
+        viewYear = a[0]; viewMonth = a[1];
+        choose(a[0], a[1], a[2]);
     }
 
     private String shortDate(String iso) {
@@ -344,6 +536,43 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
           + c + " .header{box-sizing:border-box;height:120px;margin:0 -12px;padding:16px 24px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant,#cac4d0);display:flex;flex-direction:column;justify-content:space-between}"
           + c + " .headline{font-size:14px;line-height:20px;font-weight:500;color:var(--md-sys-color-on-surface-variant,#49454f)}"
           + c + " .header-date{font-size:32px;line-height:40px;color:var(--md-sys-color-on-surface-variant,#49454f)}"
+          + c + " .header-row{display:flex;align-items:center;justify-content:space-between;gap:8px}"
+          + c + " .mode{flex:none;width:48px;height:48px;border:0;padding:0;border-radius:var(--md-date-picker-icon-button-shape,var(--md-sys-shape-corner-full,9999px));background:none;cursor:pointer;color:var(--md-sys-color-on-surface-variant,#49454f);display:inline-flex;align-items:center;justify-content:center}"
+          // docked: 월·연도 메뉴 버튼
+          + c + " .docked-nav{padding-inline:4px}"
+          + c + " .nav-group{display:flex;align-items:center}"
+          + c + " .menu-btn{font:500 14px/20px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f);border:0;background:none;cursor:pointer;height:40px;padding:0 4px;border-radius:var(--md-date-picker-month-button-shape,var(--md-sys-shape-corner-full,9999px))}"
+          + c + " .menu-btn::after{content:' \\25BE'}"
+          + c + " .months{display:none;flex-direction:column;max-height:336px;overflow-y:auto;padding:8px 0}"
+          + c + ".months-mode .months{display:flex}"
+          + c + ".months-mode .grid{display:none}"
+          + c + " .month-option{display:flex;align-items:center;gap:16px;height:48px;padding:0 16px;border:0;background:none;cursor:pointer;text-align:start;font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface,#1d1b20)}"
+          + c + " .month-option .icon{width:24px}"
+          + c + " .month-option[aria-selected=true]{background:var(--md-sys-color-surface-variant,#e7e0ec)}"
+          + c + " .month-option:focus-visible{outline:3px solid var(--md-sys-color-secondary,#625b71);outline-offset:-3px}"
+          // 이전·다음 달 날짜(outside month)
+          + c + " .cell.outside{color:var(--md-sys-color-on-surface-variant,#49454f)}"
+          // outlined text field: 높이 56, 테두리 outline 1dp(포커스 primary 2dp), 모서리 extra-small 4dp, 라벨은 테두리 위
+          + c + " .text-field{position:relative;display:flex;flex-direction:column;--_field-bg:var(--md-sys-color-surface,#fef7ff)}"
+          + c + " .field-input{box-sizing:border-box;width:100%;height:56px;padding:0 16px;border:1px solid var(--md-sys-color-outline,#79747e);outline:none;background:transparent;"
+          + "border-radius:var(--md-date-picker-text-field-shape,var(--md-sys-shape-corner-extra-small,4px));font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface,#1d1b20)}"
+          + c + " .field-input:focus{border:2px solid var(--md-sys-color-primary,#6750a4);padding:0 15px}"
+          + c + " .field-label{position:absolute;top:-8px;inset-inline-start:12px;padding:0 4px;background:var(--_field-bg);font:400 12px/16px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f)}"
+          + c + " .text-field:focus-within .field-label{color:var(--md-sys-color-primary,#6750a4)}"
+          + c + " .field-support{min-height:16px;padding:4px 16px 0;font:400 12px/16px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f)}"
+          + c + " .text-field.invalid .field-input{border-color:var(--md-sys-color-error,#b3261e)}"
+          + c + " .text-field.invalid .field-label," + c + " .text-field.invalid .field-support{color:var(--md-sys-color-error,#b3261e)}"
+          // modal date input
+          + c + " .input-area{display:none;flex-direction:column;gap:16px;padding:24px 12px 8px;--_field-bg:var(--md-sys-color-surface-container-high,#ece6f0)}"
+          + c + " .input-area .text-field{--_field-bg:var(--md-sys-color-surface-container-high,#ece6f0)}"
+          + c + ".input-mode .input-area{display:flex}"
+          + c + ".input-mode .nav-row," + c + ".input-mode .grid," + c + ".input-mode .years," + c + ".input-mode .months{display:none}"
+          + c + " .text-field.end{display:none}"
+          + c + ".range .text-field.end{display:flex}"
+          // docked + text field: 필드를 누르면 아래로 달력이 열린다
+          + c + ".docked.with-field{position:relative;width:360px}"
+          + c + ".docked.with-field .card{display:none;position:absolute;z-index:10;top:calc(100% - 12px);inset-inline-start:0}"
+          + c + ".docked.with-field.open .card{display:block}"
           + c + " .nav-row{display:flex;align-items:center;justify-content:space-between;height:56px;padding-inline:12px 4px}"
           + c + ":dir(rtl) .nav .icon{transform:scaleX(-1)}"
           + c + " .month{font-size:14px;font-weight:500;color:var(--md-sys-color-on-surface-variant,#49454f);border:0;background:none;cursor:pointer;height:40px;padding:0 8px;border-radius:var(--md-date-picker-month-button-shape,var(--md-sys-shape-corner-full,9999px));font-family:inherit}"

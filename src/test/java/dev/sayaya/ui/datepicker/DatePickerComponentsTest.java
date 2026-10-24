@@ -25,6 +25,11 @@ public class DatePickerComponentsTest {
     private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
     private static HTMLElement day(Element root, String iso) { return q(root, "[data-date='" + iso + "']"); }
     private static String focused() { var a = DomGlobal.document.activeElement; return a == null ? null : a.getAttribute("data-date"); }
+    private static void key(Element target, String key) {
+        JsPropertyMap<Object> m = JsPropertyMap.of();
+        m.set("key", key); m.set("bubbles", true); m.set("cancelable", true);
+        target.dispatchEvent(new KeyboardEvent("keydown", Js.<KeyboardEventInit>uncheckedCast(m)));
+    }
     private static void key(String key) {
         JsPropertyMap<Object> m = JsPropertyMap.of();
         m.set("key", key); m.set("bubbles", true); m.set("cancelable", true);
@@ -60,7 +65,8 @@ public class DatePickerComponentsTest {
         assertTrue("dp: role grid", grid != null);
         assertEquals("dp: 요일 7개", 7, dp.querySelectorAll("[role=columnheader]").length);
         assertEquals("dp: 10월 31일", 31, dp.querySelectorAll("[data-date]").length);
-        assertEquals("dp: 월 표시", "2026년 10월", q(dp, ".month").textContent);
+        assertEquals("dp: 월 표시", "10월", q(dp, ".month-menu").textContent);
+        assertEquals("dp: 연도 표시", "2026년", q(dp, ".year-menu").textContent);
         var firstRow = dp.querySelectorAll("[role=row]").item(1);
         assertEquals("dp: 1일은 목요일 칸", "2026-10-01", firstRow.querySelectorAll(":scope > *").item(4).getAttribute("data-date"));
         assertEquals("dp: 선택 aria-selected", "true", day(dp, "2026-10-15").getAttribute("aria-selected"));
@@ -91,7 +97,7 @@ public class DatePickerComponentsTest {
             assertEquals("dp: ↓ 다음 주", "2026-10-23", focused());
             key("PageDown");
             assertEquals("dp: PageDown 다음 달", "2026-11-23", focused());
-            assertEquals("dp: PageDown 월 표시", "2026년 11월", q(dp, ".month").textContent);
+            assertEquals("dp: PageDown 월 표시", "11월", q(dp, ".month-menu").textContent);
             key("PageUp");
             assertEquals("dp: PageUp 이전 달", "2026-10-23", focused());
             key("Home");
@@ -100,7 +106,7 @@ public class DatePickerComponentsTest {
             assertTrue("dp: Enter 로 선택·onChange", docked.contains("2026-10-18"));
             assertEquals("dp: 선택 이동", "true", day(dp, "2026-10-18").getAttribute("aria-selected"));
             q(dp, ".next").click();
-            assertEquals("dp: 다음 달 버튼", "2026년 11월", q(dp, ".month").textContent);
+            assertEquals("dp: 다음 달 버튼", "11월", q(dp, ".month-menu").textContent);
             day(dp, "2026-11-03").click();
             assertTrue("dp: 클릭으로 선택·onChange", docked.contains("2026-11-03"));
 
@@ -132,6 +138,107 @@ public class DatePickerComponentsTest {
             });
         });
         yearAndRange(section);
+        documented(section);
+    }
+
+    /** 가이드라인 예시: modal date input, text field + docked dropdown, 월·연도 메뉴, 이전·다음 달 날짜 */
+    private static void documented(HTMLElement section) {
+        List<String> inputs = new ArrayList<>();
+        List<String> fields = new ArrayList<>();
+        var mi = datePicker().modalInput().locale("en-US").today(2026, 10, 24).onChange(inputs::add);
+        var mir = datePicker().modalInput().range(true).locale("en-US").today(2026, 10, 24);
+        body().add(mi.element()); body().add(mir.element());
+        demo(section, "📘 Modal date input", "가이드라인: \"For dates that don't require a calendar view, the modal date input can be the default view\". 텍스트 필드에 locale 형식(en-US: mm/dd/yyyy)으로 입력하고, 헤더의 아이콘 버튼으로 달력과 전환합니다. 형식이 틀리면 오류를 보여 주고 닫지 않습니다.",
+            """
+            var birthday = datePicker().modalInput().onChange(iso -> save(iso));
+            body().add(birthday.element());
+            birthday.open(true);
+            """, button().filled().text("Enter date").onClick(e -> mi.open(true)).element());
+        var df = datePicker().docked().locale("en-US").today(2026, 10, 24).month(2026, 10).field("Date").onChange(fields::add);
+        var dfEl = df.element();
+        demo(section, "📘 Docked date picker + text field", "가이드라인: \"The docked date picker displays a date input field by default, and a dropdown calendar appears when the user taps on the input field\", \"Alternatively, a text field with appropriate hint text can prompt for dates, such as in a form\". 월·연도는 각각 메뉴 버튼으로 고르고, 이전·다음 달 날짜도 보입니다.",
+            """
+            datePicker().docked().field("Date")
+                .onChange(iso -> save(iso))
+                .element();
+            """, div().style("min-height", "520px").add(dfEl).element());
+
+        later(2500, () -> {
+            var card = q(dfEl, ".card");
+            var fieldIn = df.field();
+            assertEquals("dp: 필드 라벨", "Date", q(dfEl, ".field-label").textContent);
+            assertEquals("dp: 필드 형식 힌트", "mm/dd/yyyy", q(dfEl, ".field-support").textContent);
+            assertEquals("dp: 필드 높이 56px", 56, (int) h(fieldIn));
+            assertEquals("dp: 필드 모서리 extra-small 4px", "4px", cs(fieldIn).getPropertyValue("border-top-left-radius"));
+            assertEquals("dp: 필드 달린 docked 는 닫혀 있음", "none", cs(card).getPropertyValue("display"));
+            fieldIn.click();
+            assertEquals("dp: 필드를 누르면 달력 열림", "block", cs(card).getPropertyValue("display"));
+            assertTrue("dp: 월 메뉴·연도 메뉴", "October".equals(q(dfEl, ".month-menu").textContent) && "2026".equals(q(dfEl, ".year-menu").textContent));
+            var firstRow = dfEl.querySelectorAll("[role=row]").item(1);
+            assertEquals("dp: 이전 달 날짜 표시", "2026-09-27", firstRow.querySelectorAll(":scope > *").item(0).getAttribute("data-outside-date"));
+            assertEquals("dp: 이전 달 날짜 4개", 4, firstRow.querySelectorAll("[data-outside-date]").length);
+            assertEquals("dp: 10월은 31일이 토요일이라 다음 달 날짜 없음", "2026-09-30", dfEl.querySelectorAll("[data-outside-date]").item(dfEl.querySelectorAll("[data-outside-date]").length - 1).getAttribute("data-outside-date"));
+            var nov = datePicker().docked().locale("en-US").month(2026, 11).element();
+            section.appendChild(div().style("position", "absolute").style("left", "-9999px").add(nov).element());
+            var novOut = nov.querySelectorAll("[data-outside-date]");
+            assertTrue("dp: 다음 달 날짜로 마지막 주 채움", novOut.length == 5 && "2026-12-01".equals(novOut.item(0).getAttribute("data-outside-date")) && "2026-12-05".equals(novOut.item(4).getAttribute("data-outside-date")));
+            assertEquals("dp: 이전 달 날짜 on-surface-variant", "rgb(73, 69, 79)", cs(q(dfEl, "[data-outside-date='2026-09-30']")).getPropertyValue("color"));
+            day(dfEl, "2026-10-18").click();
+            assertTrue("dp: 날짜 고르면 필드에 반영·닫힘", "10/18/2026".equals(fieldIn.value) && !df.isOpen() && fields.contains("2026-10-18"));
+            fieldIn.value = "11/02/2026";
+            key(fieldIn, "Enter");
+            assertTrue("dp: 필드에 입력 + Enter 로 확정", fields.contains("2026-11-02") && "November".equals(q(dfEl, ".month-menu").textContent));
+            fieldIn.value = "13/45/2026";
+            key(fieldIn, "Enter");
+            assertTrue("dp: 필드 형식 오류 표시", "true".equals(fieldIn.getAttribute("aria-invalid")) && q(dfEl, ".field-support").textContent.startsWith("Invalid format. Use:"));
+            fieldIn.click();
+            q(dfEl, ".month-menu").click();
+            assertEquals("dp: 월 메뉴 목록 12개", 12, dfEl.querySelectorAll(".month-option").length);
+            assertEquals("dp: 월 목록에서 달력 숨김", "none", cs(q(dfEl, "[role=grid]")).getPropertyValue("display"));
+            q(dfEl, ".month-option[data-month='2']").click();
+            assertTrue("dp: 월 고르면 달력으로", "March".equals(q(dfEl, ".month-menu").textContent) && !"none".equals(cs(q(dfEl, "[role=grid]")).getPropertyValue("display")));
+            q(dfEl, ".prev-year").click();
+            assertEquals("dp: 이전 연도 버튼", "2025", q(dfEl, ".year-menu").textContent);
+            assertEquals("dp: 이전 연도 버튼 라벨", "Previous year", q(dfEl, ".prev-year").getAttribute("aria-label"));
+            q(dfEl, "[data-outside-date]").click();
+            assertTrue("dp: 이전 달 날짜 누르면 그 달로", fields.contains("2025-02-23"));
+            fieldIn.click();
+            key(fieldIn, "Escape");
+            assertTrue("dp: 필드 달력 Esc 로 닫힘", !df.isOpen());
+
+            mi.open(true);
+            later(200, () -> {
+                var el = mi.element();
+                var in = (HTMLInputElement) q(el, ".text-field.start .field-input");
+                assertTrue("dp: modal date input 은 입력 모드", mi.isInputMode() && el.classList.contains("input-mode"));
+                assertEquals("dp: 입력 모드 헤드라인 Enter date", "Enter date", q(el, ".headline").textContent);
+                assertEquals("dp: 달력 전환 버튼", "Switch to calendar", q(el, ".mode").getAttribute("aria-label"));
+                assertEquals("dp: 입력 모드 달력 숨김", "none", cs(q(el, "[role=grid]")).getPropertyValue("display"));
+                assertTrue("dp: 입력 필드 라벨·힌트", "Date".equals(q(el, ".text-field.start .field-label").textContent) && "mm/dd/yyyy".equals(q(el, ".text-field.start .field-support").textContent));
+                assertTrue("dp: 열면 입력 필드 포커스", DomGlobal.document.activeElement == in);
+                in.value = "02/30/2026";
+                q(el, ".action.ok").click();
+                assertTrue("dp: 없는 날짜는 오류·안 닫힘", mi.isOpen() && "true".equals(in.getAttribute("aria-invalid")) && inputs.isEmpty());
+                in.value = "10/20/2026";
+                q(el, ".action.ok").click();
+                assertTrue("dp: 입력 후 확인으로 확정", !mi.isOpen() && inputs.contains("2026-10-20"));
+                mi.open(true);
+                q(el, ".mode").click();
+                assertTrue("dp: 달력으로 전환", !mi.isInputMode() && "true".equals(day(el, "2026-10-20").getAttribute("aria-selected")) && "Switch to text input".equals(q(el, ".mode").getAttribute("aria-label")));
+                assertEquals("dp: 달력 모드 헤드라인 Select date", "Select date", q(el, ".headline").textContent);
+                q(el, ".action").click();
+                mir.open(true);
+                later(200, () -> {
+                    var rel = mir.element();
+                    assertEquals("dp: 기간 입력 필드 2개 표시", "flex", cs(q(rel, ".text-field.end")).getPropertyValue("display"));
+                    assertTrue("dp: 기간 입력 라벨", "Start date".equals(q(rel, ".text-field.start .field-label").textContent) && "End date".equals(q(rel, ".text-field.end .field-label").textContent));
+                    ((HTMLInputElement) q(rel, ".text-field.start .field-input")).value = "10/09/2026";
+                    ((HTMLInputElement) q(rel, ".text-field.end .field-input")).value = "10/05/2026";
+                    q(rel, ".action.ok").click();
+                    assertTrue("dp: 기간 입력 확정(순서 정렬)", "2026-10-05".equals(mir.rangeStart()) && "2026-10-09".equals(mir.rangeEnd()));
+                });
+            });
+        });
     }
 
     private static CSSStyleDeclaration pseudo(Element e, String which) {
@@ -159,7 +266,7 @@ public class DatePickerComponentsTest {
                 .add(rp).add(button().filled().text("기간 선택 열기").onClick(e -> mr.open(true))).element());
 
         later(1500, () -> {
-            var month = q(yp, ".month");
+            var month = q(yp, ".year-menu");
             month.click();
             var years = q(yp, ".years");
             assertEquals("dp: 월 버튼 aria-expanded", "true", month.getAttribute("aria-expanded"));
@@ -175,7 +282,7 @@ public class DatePickerComponentsTest {
             assertEquals("dp: 선택 연도 글자 on-primary", "rgb(255, 255, 255)", cs(y2026).getPropertyValue("color"));
             assertEquals("dp: 다른 연도 on-surface-variant", "rgb(73, 69, 79)", cs(y2027).getPropertyValue("color"));
             q(yp, ".year[data-year='2030']").click();
-            assertEquals("dp: 연도 고르면 달력으로", "2030년 10월", q(yp, ".month").textContent);
+            assertTrue("dp: 연도 고르면 달력으로", "2030년".equals(q(yp, ".year-menu").textContent) && "10월".equals(q(yp, ".month-menu").textContent));
             assertEquals("dp: 연도 고르면 목록 닫힘", "none", cs(q(yp, ".years")).getPropertyValue("display"));
 
             day(rp, "2026-10-09").click();
