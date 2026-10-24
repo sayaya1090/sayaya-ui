@@ -14,6 +14,12 @@ internal class LoadingIndicatorElementTest: GwtTestSpec({
         "기본 aria-label",
         "지시자는 aria-hidden",
         "스타일시트 한 번만 주입",
+        "버튼 안 지시자는 버튼 배경과 다른 색",
+        "filled 버튼 안 지시자 on-primary",
+        "버튼 안 지시자는 슬롯 아이콘 크기(18px)",
+        "버튼 안 지시자는 버튼 안에 다 들어감",
+        "버튼 높이 40px 유지",
+        "outlined 버튼 안 지시자 primary",
         "기본 크기 48px",
         "기본 높이 48px",
         "도형 38px",
@@ -36,7 +42,7 @@ internal class LoadingIndicatorElementTest: GwtTestSpec({
         "도형은 clip-path polygon",
         "시간이 지나면 도형이 바뀜(morph)"
     )
-    Given("M3 loading indicator") {
+    Given("M3 Loading indicator") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
         page.waitForTimeout(4000.0)
         val logs = page.getConsoleLogs().map { it.toString() }

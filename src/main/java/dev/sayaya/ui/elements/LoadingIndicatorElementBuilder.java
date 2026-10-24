@@ -23,6 +23,8 @@ import static org.jboss.elemento.Elements.htmlElement;
  * 기본 크기 48dp, 도형 38dp, 크기는 24~240dp 범위에서 비율을 유지한다. 다른 콘텐츠 위에 놓일 때는 contained 를 쓴다.
  * <p>CSS 변수: {@code --md-loading-indicator-size}, {@code --md-loading-indicator-active-indicator-color},
  * {@code --md-loading-indicator-container-color}.</p>
+ * <p>버튼 등의 {@code slot="icon"} 에 넣으면 크기는 그 슬롯의 아이콘 크기(1em)를, 색은 그 컴포넌트의 아이콘 색(currentColor)을 따른다.
+ * 그래서 버튼 높이가 바뀌지 않고 배경과 대비된다. 다르게 하려면 {@code size(...)} 나 {@code --md-loading-indicator-active-indicator-color} 로 지정한다.</p>
  */
 public final class LoadingIndicatorElementBuilder extends CustomElementBuilder<LoadingIndicatorElementBuilder> implements
         HasAriaLabel<HTMLDivElement, LoadingIndicatorElementBuilder> {
@@ -103,6 +105,10 @@ public final class LoadingIndicatorElementBuilder extends CustomElementBuilder<L
                 + "background:var(--md-loading-indicator-active-indicator-color,var(--md-sys-color-primary,#6750a4));clip-path:" + shapes[0] + ";"
                 + "animation:sayaya-li-morph " + (MORPH_MS * steps) + "ms " + MORPH_EASING + " infinite}"
                 + "." + CLASS + ".contained ." + ACTIVE_CLASS + "{background:var(--md-loading-indicator-active-indicator-color,var(--md-sys-color-on-primary-container,#21005d))}"
+                // 버튼 등 다른 컴포넌트의 icon 슬롯 안: 그 컴포넌트의 아이콘 색(currentColor)을 따라 배경과 대비되게 한다
+                + "." + CLASS + "[slot] ." + ACTIVE_CLASS + "{background:var(--md-loading-indicator-active-indicator-color,currentColor)}"
+                // 슬롯 안에서는 크기도 그 슬롯의 아이콘 크기(1em)를 따른다 — 슬롯보다 크면 버튼 높이가 바뀐다
+                + "." + CLASS + "[slot]{--_size:var(--md-loading-indicator-size,1em)}"
                 // 움직임 줄이기 설정: 회전·전환을 멈추고 첫 도형만 보인다
                 + "@media (prefers-reduced-motion: reduce){." + SPIN_CLASS + ",." + ACTIVE_CLASS + "{animation:none}}";
     }

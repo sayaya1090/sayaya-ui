@@ -49,17 +49,17 @@ public class LoadingIndicatorComponentsTest {
             """, sizes);
 
         var inButton = button().filled().text("확인 중")
-                .add(loadingIndicator().size(24).style("--md-loading-indicator-active-indicator-color", "var(--md-sys-color-on-primary)")
-                        .ariaLabel("양식 확인 중").attr("slot", "icon"))
+                .add(loadingIndicator().ariaLabel("양식 확인 중").attr("slot", "icon"))
                 .element();
-        demo(section, "📘 버튼 안의 loading indicator", "몇 초 걸리는 동작의 버튼에 넣어 진행 중임을 보여 줍니다. 버튼 색과 3:1 이상 대비가 나도록 지시자 색을 --md-loading-indicator-active-indicator-color 로 맞춥니다.",
+        var inOutlined = button().outlined().text("업데이트 확인 중")
+                .add(loadingIndicator().ariaLabel("업데이트 확인 중").attr("slot", "icon"))
+                .element();
+        demo(section, "📘 버튼 안의 loading indicator", "가이드라인: \"Loading indicators can be placed in buttons that take a few seconds to take effect\", \"make sure that the active indicator provides a visual contrast of at least 3:1 against the other component\". 버튼의 icon 슬롯에 넣으면 지시자는 그 버튼의 아이콘·라벨 색(filled 는 on-primary, outlined 는 primary)을 따라 버튼 배경과 대비됩니다. 다른 색이 필요하면 --md-loading-indicator-active-indicator-color 로 지정합니다.",
             """
             button().filled().text("확인 중")
-                .add(loadingIndicator().size(24)
-                    .style("--md-loading-indicator-active-indicator-color", "var(--md-sys-color-on-primary)")
-                    .ariaLabel("양식 확인 중").attr("slot", "icon"))
+                .add(loadingIndicator().ariaLabel("양식 확인 중").attr("slot", "icon"))
                 .element();
-            """, inButton);
+            """, div().style("display", "flex").style("gap", "12px").add(inButton).add(inOutlined).element());
         var hidden = div().style("position", "absolute").style("left", "-9999px").add(tooSmall).add(tooLarge).element();
         section.appendChild(hidden);
 
@@ -71,6 +71,16 @@ public class LoadingIndicatorComponentsTest {
         assertEquals("li: 스타일시트 한 번만 주입", 1, DomGlobal.document.querySelectorAll("style#sayaya-loading-indicator-style").length);
 
         later(300, () -> {
+            var btnActive = active((HTMLElement) inButton.querySelector("." + CLASS));
+            var outActive = active((HTMLElement) inOutlined.querySelector("." + CLASS));
+            assertTrue("li: 버튼 안 지시자는 버튼 배경과 다른 색", !"rgb(103, 80, 164)".equals(cs(btnActive).getPropertyValue("background-color")));
+            assertEquals("li: filled 버튼 안 지시자 on-primary", "rgb(255, 255, 255)", cs(btnActive).getPropertyValue("background-color"));
+            var btnLi = (HTMLElement) inButton.querySelector("." + CLASS);
+            var lr = btnLi.getBoundingClientRect(); var br = inButton.getBoundingClientRect();
+            assertEquals("li: 버튼 안 지시자는 슬롯 아이콘 크기(18px)", 18, (int) Math.round(lr.height));
+            assertTrue("li: 버튼 안 지시자는 버튼 안에 다 들어감", lr.top >= br.top && lr.bottom <= br.bottom);
+            assertEquals("li: 버튼 높이 40px 유지", 40, (int) Math.round(br.height));
+            assertEquals("li: outlined 버튼 안 지시자 primary", "rgb(103, 80, 164)", cs(outActive).getPropertyValue("background-color"));
             assertEquals("li: 기본 크기 48px", 48, (int) w(basic));
             assertEquals("li: 기본 높이 48px", 48, (int) h(basic));
             assertEquals("li: 도형 38px", 38, ow(active(basic)));
