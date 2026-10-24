@@ -121,6 +121,7 @@ tasks {
                 "dev.sayaya.ShapeElementTest",
                 "dev.sayaya.SideSheetElementTest",
                 "dev.sayaya.SliderElementTest",
+                "dev.sayaya.SliderExpressiveElementTest",
                 "dev.sayaya.SwitchElementTest",
                 "dev.sayaya.TabsElementTest",
                 "dev.sayaya.TextFieldElementTest",

@@ -58,7 +58,7 @@ dependencies {
 | **Progress** | `progress()` | Linear, Circular 진행률 표시 | [🔗](https://sayaya1090.github.io/sayaya-ui/progress.html) |
 | **Ripple** | `ripple()` | 인터랙티브 리플 효과 | [🔗](https://sayaya1090.github.io/sayaya-ui/ripple.html) |
 | **Select** | `select()` | Filled, Outlined 드롭다운 선택 | [🔗](https://sayaya1090.github.io/sayaya-ui/select.html) |
-| **Slider** | `slider()` | Continuous, Discrete, Range 슬라이더 | [🔗](https://sayaya1090.github.io/sayaya-ui/slider.html) |
+| **Slider** | `slider()` | Continuous, Discrete, Range 슬라이더. M3 Expressive 보완: `size(Size.XS…XL)`, `vertical(true)`(range 제외), `insetIcon("…")`(standard, M 이상) | [🔗](https://sayaya1090.github.io/sayaya-ui/slider.html) [Expressive](https://sayaya1090.github.io/sayaya-ui/slider_expressive.html) |
 | **Switch** | `sw()` | 아이콘 지원 토글 스위치 | [🔗](https://sayaya1090.github.io/sayaya-ui/sw.html) |
 | **Tabs** | `tabs()` | Primary, Secondary 탭 네비게이션 | [🔗](https://sayaya1090.github.io/sayaya-ui/tabs.html) |
 | **Text Field** | `textField()` | Filled, Outlined 텍스트 입력 | [🔗](https://sayaya1090.github.io/sayaya-ui/text_field.html) |
@@ -321,6 +321,14 @@ var temperatureRange = slider()
     .valueEnd(24)
     .ticks(2)
     .labeled(true)
+    .element();
+
+// M3 Expressive: 크기(XS 16 / S 24 / M 40 / L 56 / XL 96dp 트랙), 세로, inset icon
+var large = slider().size(SliderElementBuilder.Size.L).value(60).element();
+var vertical = slider().vertical(true).value(20).element();   // 아래가 최솟값, 길이는 --md-slider-vertical-length(기본 200px)
+var volume = slider().size(SliderElementBuilder.Size.M)       // inset icon 은 트랙 40dp 이상(M·L·XL)에서만 보입니다
+    .insetIcon("volume_up")                                   // 값이 작아지면 핸들 뒤(비활성 트랙)로 옮겨 갑니다
+    .value(70)
     .element();
 ```
 
