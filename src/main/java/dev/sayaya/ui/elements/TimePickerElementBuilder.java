@@ -38,7 +38,7 @@ public final class TimePickerElementBuilder extends CustomElementBuilder<TimePic
     public enum Label implements UiLabel {
         SelectTime("Select time"), EnterTime("Enter time"), SelectHour("Select hour"), SelectMinute("Select minute"),
         Hour("Hour"), Minute("Minute"), Period("AM/PM"), Clock("Clock"), HoursSuffix("hours"), MinutesSuffix("minutes"),
-        Cancel("Cancel"), Ok("OK");
+        Cancel("Cancel"), Ok("OK"), SwitchToInput("Switch to text input"), SwitchToClock("Switch to clock");
         public final String english;
         Label(String english) { this.english = english; }
         @Override public String english() { return english; }
@@ -52,9 +52,10 @@ public final class TimePickerElementBuilder extends CustomElementBuilder<TimePic
         public TimePickerElementBuilder input() { return new TimePickerElementBuilder(false); }
     }
 
-    private final boolean dial;
-    private final HTMLElement card, headline, hourField, minuteField, periodBox, am, pm, face, handle, track, actions;
-    private HTMLInputElement hourInput, minuteInput;
+    private boolean dial;
+    private final HTMLElement card, headline, periodBox, am, pm, face, handle, track, actions, row, separator, modeBtn, hourBtn, minuteBtn;
+    private final HTMLInputElement hourInput, minuteInput;
+    private HTMLElement hourField, minuteField; // 현재 모드의 시·분 칸
     private int hour = 0, minute = 0;          // 24시간제
     private int committedHour = 0, committedMinute = 0;
     private boolean modal = false, minuteMode = false;
@@ -68,49 +69,68 @@ public final class TimePickerElementBuilder extends CustomElementBuilder<TimePic
         injectStyle();
         this.dial = dial;
         String id = "sayaya-time-" + (++seq);
-        element().classList.add(CLASS, dial ? "dial" : "input");
+        element().classList.add(CLASS);
         headline = div().css("headline").attr("id", id + "-headline").element();
-        if (dial) {
-            hourField = button().css("field", "hour").attr("type", "button").element();
-            minuteField = button().css("field", "minute").attr("type", "button").element();
-            hourField.addEventListener("click", e -> mode(false));
-            minuteField.addEventListener("click", e -> mode(true));
-        } else {
-            hourInput = Elements.input(InputType.text).css("field", "hour").attr("inputmode", "numeric").attr("maxlength", "2").element();
-            minuteInput = Elements.input(InputType.text).css("field", "minute").attr("inputmode", "numeric").attr("maxlength", "2").element();
-            hourInput.addEventListener("change", e -> fromInputs());
-            minuteInput.addEventListener("change", e -> fromInputs());
-            hourInput.addEventListener("keydown", e -> step(e, true));
-            minuteInput.addEventListener("keydown", e -> step(e, false));
-            hourField = hourInput; minuteField = minuteInput;
-        }
+        // dial 의 시·분 선택칸(버튼)과 input 의 시·분 입력칸을 모두 만들어 두고 모드에 따라 바꿔 끼운다
+        hourBtn = button().css("field", "hour").attr("type", "button").element();
+        minuteBtn = button().css("field", "minute").attr("type", "button").element();
+        hourBtn.addEventListener("click", e -> mode(false));
+        minuteBtn.addEventListener("click", e -> mode(true));
+        hourInput = Elements.input(InputType.text).css("field", "hour").attr("inputmode", "numeric").attr("maxlength", "2").element();
+        minuteInput = Elements.input(InputType.text).css("field", "minute").attr("inputmode", "numeric").attr("maxlength", "2").element();
+        hourInput.addEventListener("change", e -> fromInputs());
+        minuteInput.addEventListener("change", e -> fromInputs());
+        hourInput.addEventListener("keydown", e -> step(e, true));
+        minuteInput.addEventListener("keydown", e -> step(e, false));
         am = button().css("period", "am").attr("type", "button").element();
         pm = button().css("period", "pm").attr("type", "button").element();
         am.addEventListener("click", e -> setPeriod(false));
         pm.addEventListener("click", e -> setPeriod(true));
         periodBox = div().css("periods").attr("role", "group").add(am).add(pm).element();
-        var row = div().css("time-row").add(hourField).add(span().css("separator").text(":")).add(minuteField).add(periodBox).element();
+        separator = span().css("separator").text(":").element();
+        row = div().css("time-row").element();
         card = div().css("card").add(headline).add(row).element();
-        if (dial) {
-            track = div().css("track").element();
-            handle = div().css("handle").element();
-            face = div().css("face").attr("role", "listbox").add(track).add(handle).add(div().css("center")).element();
-            card.appendChild(div().css("face-wrap").add(face).element());
-        } else { track = handle = face = null; }
+        track = div().css("track").element();
+        handle = div().css("handle").element();
+        face = div().css("face").attr("role", "listbox").add(track).add(handle).add(div().css("center")).element();
+        card.appendChild(div().css("face-wrap").add(face).element());
         var cancel = button().css("action").attr("type", "button").element();
         var ok = button().css("action", "ok").attr("type", "button").element();
         cancelBtn = cancel; okBtn = ok;
         cancel.addEventListener("click", e -> { hour = committedHour; minute = committedMinute; render(); open(false); });
         ok.addEventListener("click", e -> { fromInputsIfNeeded(); commit(); open(false); });
-        actions = div().css("actions").add(cancel).add(ok).element();
+        // M3: 키보드 아이콘으로 input 으로, 시계 아이콘으로 dial 로 전환한다
+        modeBtn = button().css("mode").attr("type", "button").add(span().css("icon").attr("aria-hidden", "true")).element();
+        modeBtn.addEventListener("click", e -> inputMode(this.dial)); // 생성자 매개변수 dial 이 아니라 현재 모드(필드)
+        actions = div().css("actions").add(modeBtn).add(cancel).add(ok).element();
         card.appendChild(actions);
         var scrim = div().css("scrim").element();
         scrim.addEventListener("click", e -> cancel.click());
         element().appendChild(scrim);
         element().appendChild(card);
         element().addEventListener("keydown", e -> { if (modal && "Escape".equals(((KeyboardEvent) Js.uncheckedCast(e)).key)) { cancel.click(); e.preventDefault(); } });
+        applyMode();
         render();
     }
+    private void applyMode() {
+        hourField = dial ? hourBtn : hourInput;
+        minuteField = dial ? minuteBtn : minuteInput;
+        while (row.firstChild != null) row.removeChild(row.firstChild);
+        row.appendChild(hourField); row.appendChild(separator); row.appendChild(minuteField); row.appendChild(periodBox);
+        setClass("dial", dial); setClass("input", !dial);
+    }
+    /** input 모드(키보드로 숫자 입력)와 dial 모드를 전환한다. 입력하던 값은 반영된다 */
+    public TimePickerElementBuilder inputMode(boolean on) {
+        if (on == !dial) return this;
+        if (!dial) fromInputs();
+        dial = !on;
+        minuteMode = false;
+        applyMode();
+        render();
+        if (isOpen()) hourField.focus();
+        return this;
+    }
+    public boolean isInputMode() { return !dial; }
     @Override public TimePickerElementBuilder that() { return this; }
 
     /** 24시간제 값 */
@@ -194,7 +214,9 @@ public final class TimePickerElementBuilder extends CustomElementBuilder<TimePic
         am.textContent = Locales.dayPeriod(locale, false);
         pm.textContent = Locales.dayPeriod(locale, true);
         periodBox.setAttribute("aria-label", text(Label.Period));
-        if (face != null && !minuteMode) face.setAttribute("aria-label", text(Label.SelectHour));
+        if (!minuteMode) face.setAttribute("aria-label", text(Label.SelectHour));
+        modeBtn.firstElementChild.textContent = dial ? "keyboard" : "schedule";
+        modeBtn.setAttribute("aria-label", text(dial ? Label.SwitchToInput : Label.SwitchToClock));
         cancelBtn.textContent = text(Label.Cancel); okBtn.textContent = text(Label.Ok);
         hourField.setAttribute("aria-label", text(dial ? Label.SelectHour : Label.Hour));
         minuteField.setAttribute("aria-label", text(dial ? Label.SelectMinute : Label.Minute));
@@ -217,14 +239,15 @@ public final class TimePickerElementBuilder extends CustomElementBuilder<TimePic
         for (Element old = face.querySelector(".label"); old != null; old = face.querySelector(".label")) face.removeChild(old);
         int selValue; boolean inner = false;
         if (minuteMode) selValue = minute;
-        else if (h24()) { selValue = hour; inner = hour == 0 || hour > 12; }
+        else if (h24()) { selValue = hour; inner = hour >= 12; } // M3: 0–11 은 바깥, 12–23 은 안쪽 다이얼
         else selValue = displayHour();
+        boolean h24Hours = h24() && !minuteMode;
         for (int i = 1; i <= 12; i++) {
-            int value = minuteMode ? (i % 12) * 5 : i;
-            addLabel(value, minuteMode ? pad(value) : String.valueOf(value), i, OUTER_RADIUS, value == selValue && !inner);
+            int value = minuteMode ? (i % 12) * 5 : (h24Hours ? i % 12 : i);
+            addLabel(value, minuteMode || h24Hours ? pad(value) : String.valueOf(value), i, OUTER_RADIUS, value == selValue && !inner);
         }
-        if (h24() && !minuteMode) for (int i = 1; i <= 12; i++) {
-            int value = (i + 12) % 24;
+        if (h24Hours) for (int i = 1; i <= 12; i++) {
+            int value = i % 12 + 12;
             addLabel(value, pad(value), i, INNER_RADIUS, inner && value == selValue);
         }
         // 핸들·트랙: 분은 5분 단위가 아니어도 그 각도에 둔다
@@ -283,8 +306,12 @@ public final class TimePickerElementBuilder extends CustomElementBuilder<TimePic
           + c + " .handle{position:absolute;width:48px;height:48px;border-radius:var(--md-time-picker-clock-dial-selector-handle-shape,var(--md-sys-shape-corner-full,9999px));background:var(--md-sys-color-primary,#6750a4);z-index:1}"
           + c + " .track{position:absolute;left:127px;bottom:128px;width:2px;transform-origin:50% 100%;background:var(--md-sys-color-primary,#6750a4)}"
           + c + " .center{position:absolute;left:124px;top:124px;width:8px;height:8px;border-radius:var(--md-time-picker-clock-dial-selector-center-shape,var(--md-sys-shape-corner-full,9999px));background:var(--md-sys-color-primary,#6750a4)}"
-          + c + " .actions{display:none;justify-content:flex-end;gap:8px}"
+          + c + " .actions{display:none;align-items:center;justify-content:flex-end;gap:8px}"
           + c + ".modal .actions{display:flex}"
+          + c + " .mode{margin-inline-end:auto;width:48px;height:48px;border:0;padding:0;background:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;"
+          + "color:var(--md-sys-color-on-surface-variant,#49454f);border-radius:var(--md-time-picker-icon-button-shape,var(--md-sys-shape-corner-full,9999px))}"
+          + c + " .mode .icon{font-family:'Material Symbols Outlined';font-size:24px;line-height:1;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}"
+          + c + ".input .face-wrap{display:none}"
           + c + " .action{height:40px;padding:0 12px;border:0;border-radius:var(--md-time-picker-action-shape,var(--md-sys-shape-corner-full,9999px));background:none;cursor:pointer;font:500 14px/20px Roboto,system-ui,sans-serif;color:var(--md-sys-color-primary,#6750a4)}"
           + c + " .scrim{display:none}"
           + c + ".modal{display:none}"

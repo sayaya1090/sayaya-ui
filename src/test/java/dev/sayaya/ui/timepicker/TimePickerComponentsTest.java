@@ -50,7 +50,7 @@ public class TimePickerComponentsTest {
             """, dial);
         var dial24 = timePicker().dial().hour24(true).value(15, 0).element();
         var input = timePicker().input().value(7, 5).onChange(inputChanges::add).element();
-        demo(section, "📘 24시간 다이얼 / Time input", "hour24(true)는 안쪽 고리에 13~00시를 두고 오전/오후 선택을 숨깁니다. input 은 96×72dp 입력칸에 숫자를 입력하며 ↑/↓ 로 값을 바꿉니다.",
+        demo(section, "📘 24시간 다이얼 / Time input", "가이드라인: \"Hours 0–11 use an outer dial, hours 12–23 use an inner dial\". hour24(true)는 오전/오후 선택을 숨깁니다. input 은 96×72dp 입력칸에 숫자를 입력하며 ↑/↓ 로 값을 바꿉니다.",
             """
             timePicker().dial().hour24(true).value(15, 0).element();
             timePicker().input().value(7, 5).onChange(hhmm -> save(hhmm)).element();
@@ -146,6 +146,54 @@ public class TimePickerComponentsTest {
                 modal.open(true);
                 key(DomGlobal.document.activeElement, "Escape");
                 assertTrue("tp: modal Esc 로 닫힘", !modal.isOpen());
+            });
+        });
+        documented(section);
+    }
+
+    /** 가이드라인 예시: 키보드 아이콘으로 input 전환, 24시간 다이얼(0–11 바깥, 12–23 안쪽) */
+    private static void documented(HTMLElement section) {
+        List<String> changes = new ArrayList<>();
+        var alarm = timePicker().dial().modal(true).locale("en-US").headline("Select time").value(7, 0).onChange(changes::add);
+        body().add(alarm.element());
+        var clock24 = timePicker().dial().hour24(true).locale("en-GB").value(20, 0).element();
+        demo(section, "📘 Time picker dial ↔ input", "가이드라인: \"Time input pickers allow people to specify a time using keyboard numbers. This input option should be accessible from any other mobile time picker interface by tapping the keyboard icon.\" 왼쪽 아래 아이콘 버튼으로 dial 과 input 을 오갑니다.",
+            """
+            var alarm = timePicker().dial().modal(true).headline("Select time").onChange(hhmm -> save(hhmm));
+            body().add(alarm.element());
+            alarm.open(true);   // 키보드 아이콘 → 숫자 입력, 시계 아이콘 → 다이얼
+            """, button().filled().text("Set alarm").onClick(e -> alarm.open(true)).element());
+        demo(section, "📘 24-hour dial view", "가이드라인 그림(\"Time picker with dial input selecting hour 20\"): 0–11시는 바깥 다이얼, 12–23시는 안쪽 다이얼에 있습니다.",
+            """
+            timePicker().dial().hour24(true).value(20, 0).element();
+            """, clock24);
+        later(2000, () -> {
+            assertEquals("tp: 24시간 바깥 다이얼 맨 위 00", "00", q(clock24, ".label:not(.inner)[data-value='0']").textContent);
+            assertEquals("tp: 24시간 안쪽 다이얼 맨 위 12", "12", q(clock24, ".label.inner[data-value='12']").textContent);
+            assertEquals("tp: 24시간 바깥 다이얼 0–11", 12, clock24.querySelectorAll(".label:not(.inner)").length);
+            assertEquals("tp: 20시는 안쪽 다이얼에서 선택", "true", q(clock24, ".label.inner[data-value='20']").getAttribute("aria-selected"));
+            assertTrue("tp: 12시 위치는 안쪽 맨 위", Math.abs(cy(q(clock24, ".label.inner[data-value='12']")) - cy(q(clock24, ".label.inner[data-value='18']"))) > 100);
+            alarm.open(true);
+            later(200, () -> {
+                var el = alarm.element();
+                var mode = q(el, ".mode");
+                assertEquals("tp: dial 에 키보드 아이콘", "keyboard", mode.textContent);
+                assertEquals("tp: 키보드 아이콘 라벨", "Switch to text input", mode.getAttribute("aria-label"));
+                assertEquals("tp: 전환 버튼 48px", 48, (int) w(mode));
+                mode.click();
+                var hourIn = (HTMLInputElement) q(el, ".field.hour");
+                assertTrue("tp: 키보드 아이콘으로 input 전환", alarm.isInputMode() && "INPUT".equals(hourIn.tagName) && "none".equals(cs(q(el, ".face-wrap")).getPropertyValue("display")));
+                assertEquals("tp: input 전환 시 입력칸 높이 72px", 72, (int) h(hourIn));
+                assertTrue("tp: input 에 시계 아이콘", "schedule".equals(q(el, ".mode").textContent) && "Switch to clock".equals(q(el, ".mode").getAttribute("aria-label")));
+                assertTrue("tp: 전환 후 입력칸 포커스", DomGlobal.document.activeElement == hourIn);
+                hourIn.value = "9";
+                q(el, ".mode").click();
+                assertFalse("tp: 시계 아이콘으로 dial 복귀", alarm.isInputMode());
+                assertEquals("tp: dial 복귀 시 입력한 시 반영", "09", q(el, ".field.hour").textContent);
+                assertEquals("tp: dial 복귀 시 다이얼 9시 선택", "true", label(el, "9") == null ? "(없음)" : label(el, "9").getAttribute("aria-selected"));
+                assertTrue("tp: 전환만으로는 확정 안 됨", changes.isEmpty());
+                q(el, ".action.ok").click();
+                assertTrue("tp: 확인으로 확정", changes.contains("09:00"));
             });
         });
     }

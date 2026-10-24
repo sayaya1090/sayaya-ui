@@ -59,11 +59,28 @@ internal class TimePickerElementTest: GwtTestSpec({
         "modal 확인 전 onChange 없음",
         "modal 취소는 되돌림",
         "modal 확인으로 확정",
-        "modal Esc 로 닫힘"
+        "modal Esc 로 닫힘",
+        "24시간 바깥 다이얼 맨 위 00",
+        "24시간 안쪽 다이얼 맨 위 12",
+        "24시간 바깥 다이얼 0–11",
+        "20시는 안쪽 다이얼에서 선택",
+        "12시 위치는 안쪽 맨 위",
+        "dial 에 키보드 아이콘",
+        "키보드 아이콘 라벨",
+        "전환 버튼 48px",
+        "키보드 아이콘으로 input 전환",
+        "input 전환 시 입력칸 높이 72px",
+        "input 에 시계 아이콘",
+        "전환 후 입력칸 포커스",
+        "시계 아이콘으로 dial 복귀",
+        "dial 복귀 시 입력한 시 반영",
+        "dial 복귀 시 다이얼 9시 선택",
+        "전환만으로는 확정 안 됨",
+        "확인으로 확정"
     )
     Given("M3 Time picker") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
-        page.waitForTimeout(3000.0)
+        page.waitForTimeout(5000.0)
         val logs = page.getConsoleLogs().map { it.toString() }
         println(logs)
         for (c in checks) {
