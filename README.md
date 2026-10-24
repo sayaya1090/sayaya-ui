@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.sayaya:ui:2.5.0.3")
+    implementation("dev.sayaya:ui:2.5.0.4")
 }
 ```
 
@@ -135,7 +135,7 @@ sideSheet().modal().closeLabel("닫기").backLabel("뒤로");
 bottomSheet().modal().handleLabel("시트 크기 조절");
 ```
 
-> **동작 변경(2.5.0.3 이후):** snackbar·toast 닫기 버튼, navigation rail 메뉴 버튼, side sheet 닫기·뒤로 버튼, bottom sheet 핸들의 접근성 라벨 기본값이 한국어(닫기, 메뉴 열기/닫기, 뒤로, 시트 크기 조절)에서 영어(Close, Open menu/Close menu, Back, Resize sheet)로 바뀌었습니다. 한국어 라벨이 필요하면 위 메서드로 지정하세요.
+> **동작 변경(2.5.0.4부터):** snackbar·toast 닫기 버튼, navigation rail 메뉴 버튼, side sheet 닫기·뒤로 버튼, bottom sheet 핸들의 접근성 라벨 기본값이 한국어(닫기, 메뉴 열기/닫기, 뒤로, 시트 크기 조절)에서 영어(Close, Open menu/Close menu, Back, Resize sheet)로 바뀌었습니다. 한국어 라벨이 필요하면 위 메서드로 지정하세요.
 
 ## 사용 예제
 
@@ -1239,4 +1239,4 @@ sayaya-ui는 Material Web Components와 동일한 브라우저를 지원합니�
 
 ## 버전
 
-현재 버전: **2.5.0.3**
+현재 버전: **2.5.0.4**
