@@ -67,7 +67,8 @@ public final class FeedbackElementBuilder {
         TooltipBuilder(String variant) { super("md-tooltip", MdTooltipElement.class); element().variant = variant; }
         @Override public TooltipBuilder that() { return this; }
         /** 본문 텍스트. textContent 를 덮어쓰지 않고 덧붙여 subhead/actions 슬롯을 보존한다(호출 순서 무관). */
-        @Override public TooltipBuilder text(String text) { element().appendChild(elemental2.dom.DomGlobal.document.createTextNode(text)); return this; }
+        /** 문구를 설정한다. 다시 부르면 이전 문구를 바꾼다(2.5.0.5 부터. 이전에는 이어 붙였다). subhead·action 은 그대로 둔다 */
+        @Override public TooltipBuilder text(String text) { element().text = text; return this; }
         /** 이 요소에 hover/focus 하면 표시된다. */
         public TooltipBuilder anchor(Element anchor) { element().anchor = anchor; return this; }
         public TooltipBuilder anchor(IsElement<? extends Element> anchor) { return anchor(anchor.element()); }
@@ -75,6 +76,8 @@ public final class FeedbackElementBuilder {
         public TooltipBuilder htmlFor(String id) { element().htmlFor = id; return this; }
         public TooltipBuilder position(TooltipPosition position) { element().position = position.value; return this; }
         public TooltipBuilder delay(int ms) { element().delay = ms; return this; }
+        /** 터치 길게 누르기로 여는 시간(ms). 기본 500 */
+        public TooltipBuilder longPressDelay(int ms) { element().longPressDelay = ms; return this; }
         /** rich: 제목 */
         public TooltipBuilder subhead(String text) { return slot("subhead", Elements.span().text(text)); }
         /** rich: 액션 버튼. 액션이 있으면 포인터가 툴팁으로 옮겨가도 닫히지 않는다. */

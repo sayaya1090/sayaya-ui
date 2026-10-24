@@ -1,7 +1,7 @@
 // sayaya-ui 자체 구현 M3 컴포넌트 (Material Web 2.5.0 에 컴포넌트가 없음)
 //   md-tooltip      : plain / rich tooltip
 //   md-snackbar     : snackbar
-//   md-button-group : standard / connected button group
+//   (md-button-group 은 sayaya-button-group.js 로 분리)
 //   md-toast        : [M3 외 확장] 데스크톱 웹용 스택 알림(handbook ToastContainer 이식). 모바일은 md-snackbar 를 쓴다
 // 수치 출처: @material/web/tokens/versions/latest/sass/_md-comp-{plain-tooltip,rich-tooltip,snackbar,button-group-*}.scss
 // [토큰 외] 값은 토큰에 없어 m3.material.io 스펙 페이지(tooltips/specs)와 Compose Material3(Tooltip.kt, Snackbar.kt) 상수로 대조한 값이다.
@@ -13,7 +13,21 @@ const ELEVATION = {
 };
 
 // ---------------------------------------------------------------- tooltip
+// 표시 규칙
+//   - 마우스: 앵커에 올리고 delay(기본 500ms) 뒤 표시, 떠나고 1.5초 뒤 닫힘(가이드)
+//   - 키보드: 포커스로 같은 규칙. 터치 직후(1초 안)의 focusin 은 탭으로 생긴 포커스라 무시한다
+//   - 터치: 길게 누르기(longPressDelay, 기본 500ms)로 표시. 그 전에 떼면 탭, TOUCH_SLOP 보다 움직이거나 pointercancel(스크롤 시작)이면 취소.
+//           길게 눌러 연 뒤 손을 떼면 1.5초 뒤 닫히고, 뒤따르는 click 은 앵커 동작을 일으키지 않게 막는다
+//           (M3 플랫폼 구현과 같다: Compose TooltipBox·Android 길게 누르기는 탭(onClick)을 일으키지 않는다)
+//   - 창 안에서 동시에 하나만 열린다(새 툴팁이 열리면 이전 것은 즉시 닫힘)
+//   - 표시 위치: popover 를 지원하는 브라우저에서는 popover=manual 로 top layer 에 올려, 조상의 overflow·transform·z-index 에 가려지지 않는다.
+//     열린 동안은 visibility:visible 이라 visibility:hidden 인 부모 안에 있어도 보인다(display:none 조상은 예외 — 문서 body 아래 두기를 권장)
+//   - DOM 에서 떼면 앵커 리스너·타이머를 정리하고, 다시 붙이면 같은 앵커에 다시 연결한다
 let currentTooltip = null; // 창에 동시에 하나만 (magi TipElement 규칙)
+const LONG_PRESS_MS = 500; // [토큰 외] 길게 누르기 판정 시간. 소비 측(magi) 요청값
+const TOUCH_SLOP = 10;     // [토큰 외] 이 거리(px)보다 움직이면 스크롤로 보고 길게 누르기를 취소한다(선택값)
+const TAP_FOCUS_MS = 1000; // [토큰 외] 터치 뒤 이 시간 안의 focusin 은 탭 포커스로 보고 무시한다(선택값)
+const HAS_POPOVER = typeof HTMLElement !== 'undefined' && Object.prototype.hasOwnProperty.call(HTMLElement.prototype, 'popover');
 export class MdTooltip extends LitElement {
   static properties = {
     variant: {type: String, reflect: true},      // plain | rich
@@ -22,10 +36,12 @@ export class MdTooltip extends LitElement {
     delay: {type: Number},                       // ms
     open: {type: Boolean, reflect: true},
     persistent: {type: Boolean, reflect: true},  // rich: 앵커를 떠나도 유지(액션이 있을 때)
+    longPressDelay: {type: Number, attribute: 'long-press-delay'}, // 터치 길게 누르기 판정(ms)
   };
   static styles = css`
-    :host { position: fixed; z-index: 1000; display: none; pointer-events: none; box-sizing: border-box; min-width: 40px; /* [토큰 외] Compose TooltipMinWidth */ }
-    :host([open]) { display: block; }
+    :host { position: fixed; z-index: 1000; display: none; pointer-events: none; box-sizing: border-box; min-width: 40px; /* [토큰 외] Compose TooltipMinWidth */
+      inset: auto; margin: 0; border: 0; overflow: visible; /* popover(top layer) UA 기본 스타일(inset:0·margin:auto·border) 되돌림 */ }
+    :host([open]) { display: block; visibility: visible; } /* visibility:hidden 인 부모 안에 있어도 열린 동안은 보인다 */
     :host([variant='plain']) {
       min-height: 24px; padding: 4px 8px;            /* [토큰 외] m3 스펙 24dp·8dp, Compose TooltipMinHeight/PlainTooltipContentPadding */
       max-width: 200px;                               /* [토큰 외] Compose plainTooltipMaxWidth */
@@ -65,10 +81,20 @@ export class MdTooltip extends LitElement {
   `;
   constructor() {
     super();
-    this.variant = 'plain'; this.position = ''; // '' = 자동: plain 위쪽, rich 오른쪽 아래(가이드) this.delay = 500; this.open = false; this.persistent = false;
-    this._anchor = null; this._timer = 0; this._hide = 0;
-    this._enter = () => this._schedule(true);
-    this._leave = () => this._schedule(false);
+    // 업그레이드 전에(정의되기 전 생성된 요소에) 설정된 anchor/text 는 인스턴스 속성으로 남아 접근자를 가리므로 옮겨 둔다
+    const pending = {};
+    for (const k of ['anchor', 'text']) if (Object.prototype.hasOwnProperty.call(this, k)) { pending[k] = this[k]; delete this[k]; }
+    this.variant = 'plain'; this.position = ''; // '' = 자동: plain 위쪽, rich 오른쪽 아래(가이드)
+    this.delay = 500; this.open = false; this.persistent = false; this.longPressDelay = LONG_PRESS_MS;
+    this._target = null; this._anchor = null; this._timer = 0; this._hide = 0;
+    this._press = 0; this._pressAt = null; this._longPressed = false; this._lastTouch = -Infinity;
+    this._pending = pending;
+    this._enter = (e) => {
+      if (e && e.pointerType === 'touch') return;                                   // 터치는 길게 누르기로만 연다
+      if (e && e.type === 'focusin' && performance.now() - this._lastTouch < TAP_FOCUS_MS) return; // 탭이 만든 포커스
+      this._schedule(true);
+    };
+    this._leave = (e) => { if (e && e.pointerType === 'touch') return; this._schedule(false); };
     this._key = (e) => { if (e.key === 'Escape') this.hide(); };
     // persistent rich: 클릭으로 열고, 다른 요소와 상호작용하면 닫는다(가이드 Persistent rich tooltips)
     this._click = () => { if (this._isPersistent()) { this.open ? this.hide() : this.show(); } };
@@ -77,18 +103,86 @@ export class MdTooltip extends LitElement {
       if (path.includes(this) || (this._anchor && path.includes(this._anchor))) return;
       this.hide();
     };
+    // 터치 길게 누르기
+    this._down = (e) => {
+      if (e.pointerType !== 'touch' || this._isPersistent()) return;
+      this._lastTouch = performance.now();
+      this._cancelPress();
+      this._pressAt = {x: e.clientX, y: e.clientY};
+      this._press = setTimeout(() => {
+        this._press = 0; this._longPressed = true;
+        clearTimeout(this._timer); clearTimeout(this._hide);
+        this.show();
+      }, this.longPressDelay);
+    };
+    this._move = (e) => {
+      if (e.pointerType !== 'touch' || !this._pressAt || this._longPressed) return;
+      if (Math.hypot(e.clientX - this._pressAt.x, e.clientY - this._pressAt.y) > TOUCH_SLOP) this._cancelPress(); // 스크롤로 본다
+    };
+    this._up = (e) => {
+      if (e.pointerType !== 'touch') return;
+      this._lastTouch = performance.now();
+      const long = this._longPressed;
+      this._cancelPress(); // 시간 전에 떼면 탭, pointercancel(스크롤 시작)이면 취소
+      if (!long) return;
+      if (e.type === 'pointerup') this._swallowClick();
+      clearTimeout(this._hide); this._hide = setTimeout(() => this.hide(), 1500); // 떼고 1.5초 뒤 닫힘
+    };
+    // 길게 누르는 동안 시스템 컨텍스트 메뉴(링크 미리보기 등)가 툴팁을 덮지 않게 한다
+    this._ctx = (e) => { if (this._pressAt || this._longPressed) e.preventDefault(); };
   }
-  get anchor() { return this._anchor; }
-  set anchor(el) { this._bind(el); }
-  connectedCallback() { super.connectedCallback(); if (!this._anchor && this.for) this._bind(this.getRootNode().getElementById?.(this.for) ?? document.getElementById(this.for)); }
-  disconnectedCallback() { super.disconnectedCallback(); this._bind(null); if (currentTooltip === this) currentTooltip = null; }
-  updated(changed) { if (changed.has('for') && this.isConnected && this.for) this._bind(document.getElementById(this.for)); }
+  get anchor() { return this._target; }
+  set anchor(el) { this._target = el || null; if (this.isConnected) this._bind(this._target); }
+  /** 기본 슬롯의 문구(바로 아래 텍스트 노드). 설정하면 기존 텍스트 노드를 바꾼다 — subhead/actions 슬롯은 그대로 둔다 */
+  get text() { return [...this.childNodes].filter(n => n.nodeType === Node.TEXT_NODE).map(n => n.data).join(''); }
+  set text(v) { this._setText(v); }
+  _setText(v) {
+    [...this.childNodes].filter(n => n.nodeType === Node.TEXT_NODE).forEach(n => n.remove());
+    if (v != null && v !== '') this.appendChild(document.createTextNode(String(v)));
+    if (this.open) this.updateComplete.then(() => this._place());
+  }
+  connectedCallback() {
+    super.connectedCallback();
+    const p = this._pending; this._pending = null;
+    if (p) { if ('text' in p) this._setText(p.text); if ('anchor' in p) this._target = p.anchor || null; }
+    if (HAS_POPOVER && !this.hasAttribute('popover')) this.setAttribute('popover', 'manual'); // top layer
+    if (!this._target && this.for) this._target = this._lookup();
+    this._bind(this._target);
+  }
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    // 앵커 리스너·타이머·문서 리스너를 정리한다. 앵커(_target)는 기억해 두었다가 다시 붙으면 다시 연결한다
+    this.hide(); this._cancelPress(); this._bind(null);
+    if (currentTooltip === this) currentTooltip = null;
+  }
+  updated(changed) { if (changed.has('for') && this.isConnected && this.for) { this._target = this._lookup(); this._bind(this._target); } }
+  _lookup() { return this.getRootNode().getElementById?.(this.for) ?? document.getElementById(this.for); }
+  _listeners() {
+    return [['pointerenter', this._enter], ['focusin', this._enter], ['pointerleave', this._leave], ['focusout', this._leave],
+      ['keydown', this._key], ['click', this._click],
+      ['pointerdown', this._down], ['pointermove', this._move], ['pointerup', this._up], ['pointercancel', this._up], ['contextmenu', this._ctx]];
+  }
   _bind(el) {
     const a = this._anchor;
-    if (a) { ['pointerenter','focusin'].forEach(t => a.removeEventListener(t, this._enter)); ['pointerleave','focusout'].forEach(t => a.removeEventListener(t, this._leave)); a.removeEventListener('keydown', this._key); a.removeEventListener('click', this._click); }
+    if (a) this._listeners().forEach(([t, f]) => a.removeEventListener(t, f));
     this._anchor = el || null;
-    if (el) { ['pointerenter','focusin'].forEach(t => el.addEventListener(t, this._enter)); ['pointerleave','focusout'].forEach(t => el.addEventListener(t, this._leave)); el.addEventListener('keydown', this._key); el.addEventListener('click', this._click);
-      if (this.variant === 'plain' && !el.hasAttribute('aria-describedby') && this.id) el.setAttribute('aria-describedby', this.id); }
+    if (el) {
+      this._listeners().forEach(([t, f]) => el.addEventListener(t, f));
+      if (this.variant === 'plain' && !el.hasAttribute('aria-describedby') && this.id) el.setAttribute('aria-describedby', this.id);
+    }
+  }
+  _cancelPress() { clearTimeout(this._press); this._press = 0; this._pressAt = null; this._longPressed = false; }
+  // 길게 누른 뒤 브라우저가 보내는 click 이 앵커 동작(버튼 클릭)을 일으키지 않게 한 번만 막는다
+  _swallowClick() {
+    const anchor = this._anchor;
+    let t = 0;
+    const done = () => { clearTimeout(t); window.removeEventListener('click', stop, true); };
+    const stop = (ev) => {
+      if (anchor && ev.composedPath().includes(anchor)) { ev.preventDefault(); ev.stopImmediatePropagation(); }
+      done();
+    };
+    window.addEventListener('click', stop, true);
+    t = setTimeout(done, 800);
   }
   _isPersistent() { return this.variant === 'rich' && this.persistent; }
   _schedule(show) {
@@ -97,13 +191,15 @@ export class MdTooltip extends LitElement {
     if (show) this._timer = setTimeout(() => this.show(), this.delay);
     else this._hide = setTimeout(() => this.hide(), 1500); // 가이드: 대상을 벗어나고 1.5초 뒤 사라진다
   }
-  /** 즉시 표시. autoHideMs > 0 이면 그 뒤 닫는다(handbook showImmediate). */
+  /** 즉시 표시. autoHideMs > 0 이면 그 뒤 닫는다(handbook showImmediate). 앵커가 문서에서 떨어져 있으면 열지 않는다 */
   show(autoHideMs = 0) {
+    if (!this.isConnected || (this._anchor && !this._anchor.isConnected)) return;
     if (currentTooltip && currentTooltip !== this) currentTooltip.hide();
     currentTooltip = this;
     this.setAttribute('role', 'tooltip');
     this.open = true;
-    if (this._isPersistent()) setTimeout(() => { document.addEventListener('pointerdown', this._outside, true); document.addEventListener('focusin', this._outside, true); });
+    if (HAS_POPOVER && this.popover && !this.matches(':popover-open')) { try { this.showPopover(); } catch (_) { /* 연결 전 등: fixed 로 표시 */ } }
+    if (this._isPersistent()) setTimeout(() => { if (!this.open) return; document.addEventListener('pointerdown', this._outside, true); document.addEventListener('focusin', this._outside, true); });
     this.updateComplete.then(() => this._place());
     this.dispatchEvent(new Event('opened', {bubbles: true, composed: true}));
     if (autoHideMs > 0) { clearTimeout(this._hide); this._hide = setTimeout(() => this.hide(), autoHideMs); }
@@ -111,6 +207,7 @@ export class MdTooltip extends LitElement {
   hide() {
     clearTimeout(this._timer); clearTimeout(this._hide);
     document.removeEventListener('pointerdown', this._outside, true); document.removeEventListener('focusin', this._outside, true);
+    if (HAS_POPOVER && this.popover) { try { if (this.matches(':popover-open')) this.hidePopover(); } catch (_) { /* 이미 닫힘 */ } }
     if (!this.open) return;
     this.open = false;
     if (currentTooltip === this) currentTooltip = null;
@@ -136,7 +233,7 @@ export class MdTooltip extends LitElement {
     return html`<slot name="subhead" class="subhead ${sub ? 'has' : ''}" @slotchange=${() => this.requestUpdate()}></slot><slot></slot><div class="actions ${act ? 'has' : ''}"><slot name="actions" @slotchange=${() => this.requestUpdate()}></slot></div>`;
   }
 }
-customElements.define('md-tooltip', MdTooltip);
+if (!customElements.get('md-tooltip')) customElements.define('md-tooltip', MdTooltip); // 이미 정의돼 있으면 건너뜀(다른 번들과 공존)
 
 // ---------------------------------------------------------------- snackbar
 let currentSnackbar = null; // 한 번에 하나 (M3: 동시에 여러 개를 띄우지 않는다)
@@ -217,7 +314,7 @@ export class MdSnackbar extends LitElement {
       </div></div>`;
   }
 }
-customElements.define('md-snackbar', MdSnackbar);
+if (!customElements.get('md-snackbar')) customElements.define('md-snackbar', MdSnackbar); // 이미 정의돼 있으면 건너뜀(다른 번들과 공존)
 
 // ---------------------------------------------------------------- toast  [M3 외 확장]
 // M3 에는 toast 컴포넌트가 없다(모바일 기준 snackbar 만 있음). 데스크톱 웹 앱에서 여러 알림을 화면 오른쪽 위에 쌓아 보여 주는
@@ -359,191 +456,5 @@ export class MdToast extends LitElement {
     </div>`;
   }
 }
-customElements.define('md-toast', MdToast);
+if (!customElements.get('md-toast')) customElements.define('md-toast', MdToast); // 이미 정의돼 있으면 건너뜀(다른 번들과 공존)
 
-// ---------------------------------------------------------------- button group
-// 출처: 토큰 _md-comp-button-group-{standard,connected}-{size}.scss, _md-comp-button-{size}.scss,
-//       _md-comp-button-{outlined,filled,tonal}.scss (selected 색), m3.material.io/components/button-groups (specs/guidelines)
-const GROUP = {
-  //        높이   standard 간격  connected 안쪽(가이드)  connected 누름 안쪽  standard 누름 모양  선택된 둥근 버튼 모양
-  xsmall: {h: 32, std: 18, inner: 4,  pressedInner: 4,  pressed: 8,  selected: 12},
-  small:  {h: 40, std: 12, inner: 8,  pressedInner: 4,  pressed: 8,  selected: 12},
-  medium: {h: 56, std: 8,  inner: 8,  pressedInner: 4,  pressed: 12, selected: 16},
-  large:  {h: 96, std: 8,  inner: 16, pressedInner: 12, pressed: 16, selected: 28},
-  xlarge: {h: 136, std: 8, inner: 20, pressedInner: 16, pressed: 16, selected: 28},
-};
-const CONNECTED_GAP = 2, PRESSED_WIDTH = 0.15, CONNECTED_MIN_WIDTH = 48; // XS·S connected: 최소 너비 48dp
-const PREFIXES = ['elevated-button','filled-button','filled-tonal-button','outlined-button','text-button',
-  'icon-button','filled-icon-button','filled-tonal-icon-button','outlined-icon-button'];
-// 토글(선택) 색: [unselected container, unselected label, selected container, selected label]
-const TOGGLE = {
-  'MD-FILLED-BUTTON': ['filled-button', 'surface-container', 'on-surface-variant', 'primary', 'on-primary'],
-  'MD-FILLED-ICON-BUTTON': ['filled-icon-button', 'surface-container', 'on-surface-variant', 'primary', 'on-primary'],
-  'MD-FILLED-TONAL-BUTTON': ['filled-tonal-button', 'secondary-container', 'on-secondary-container', 'secondary', 'on-secondary'],
-  'MD-FILLED-TONAL-ICON-BUTTON': ['filled-tonal-icon-button', 'secondary-container', 'on-secondary-container', 'secondary', 'on-secondary'],
-  'MD-OUTLINED-BUTTON': ['outlined-button', null, 'on-surface-variant', 'inverse-surface', 'inverse-on-surface'],
-  'MD-OUTLINED-ICON-BUTTON': ['outlined-icon-button', null, 'on-surface-variant', 'inverse-surface', 'inverse-on-surface'],
-};
-const SYS = {
-  'surface-container': '#f3edf7', 'on-surface-variant': '#49454f', 'primary': '#6750a4', 'on-primary': '#ffffff',
-  'secondary-container': '#e8def8', 'on-secondary-container': '#1d192b', 'secondary': '#625b71', 'on-secondary': '#ffffff',
-  'inverse-surface': '#322f35', 'inverse-on-surface': '#f5eff7',
-};
-const sys = (role) => `var(--md-sys-color-${role}, ${SYS[role]})`;
-// 토글·누름 전환(shape morph). 토큰 _md-sys-motion.scss: spring.fast.spatial(damping 0.9, stiffness 1400), spring.default.effects(damping 1, stiffness 1600).
-// Compose ToggleButton/ButtonGroup 은 모양·너비에 FastSpatial, 테두리 색에 DefaultEffects 를 쓰고 container·content 색은 바로 바꾼다.
-// CSS 에는 spring 이 없어 질량 1·초기 속도 0 인 스프링을 목표까지 0.1% 남을 때까지 풀어 linear() 로 근사했다 [파생: 지속 시간·곡선 점]
-const FAST_SPATIAL_MS = 224; // [파생] 아래 FAST_SPATIAL 의 지속 시간. 누름 확대가 끝까지 보이도록 최소 유지 시간으로도 쓴다
-const FAST_SPATIAL = FAST_SPATIAL_MS + 'ms linear(0, 0.1, 0.296, 0.494, 0.659, 0.783, 0.869, 0.925, 0.96, 0.98, 0.992, 0.998, 1, 1.001, 1.002, 1.001, 1)';
-const DEFAULT_EFFECTS = '231ms linear(0, 0.115, 0.321, 0.517, 0.671, 0.783, 0.86, 0.911, 0.945, 0.966, 0.979, 0.987, 0.992, 0.995, 0.997, 0.998, 1)';
-const RADII = ['border-start-start-radius', 'border-start-end-radius', 'border-end-start-radius', 'border-end-end-radius'];
-const motion = (props, m) => props.map(p => `${p} ${m}`).join(', ');
-// Material 버튼 안쪽에서 container-shape 변수를 직접 받는 요소(icon 버튼 본체, outlined 테두리, ripple)는 host 의 전환을 inherit 하지 못하므로
-// 그룹 안 버튼의 shadowRoot 에 같은 전환을 넣는다
-const INNER_MORPH = new CSSStyleSheet();
-INNER_MORPH.replaceSync(`
-  .icon-button, md-ripple { transition: ${motion(RADII, FAST_SPATIAL)}; }
-  .outline { transition: ${motion(RADII, FAST_SPATIAL)}, border-color ${DEFAULT_EFFECTS}; }
-  @media (prefers-reduced-motion: reduce) { .icon-button, md-ripple, .outline { transition: none; } }
-`);
-export class MdButtonGroup extends LitElement {
-  static properties = {
-    variant: {type: String, reflect: true},    // standard | connected
-    size: {type: String, reflect: true},       // xsmall | small | medium | large | xlarge
-    selection: {type: String, reflect: true},  // none | single | multiple. 지정하지 않으면 connected=single, standard=none
-  };
-  static styles = css`
-    :host { display: inline-flex; flex-wrap: nowrap; align-items: center; } /* 그룹은 줄바꿈하지 않는다 */
-    :host([variant='connected']) { display: flex; }
-    :host([variant='connected']) ::slotted(*) { flex: 1 1 0; }
-    ::slotted(*) { flex: none; transition: ${unsafeCSS(motion([...RADII, 'width', 'flex-basis'], FAST_SPATIAL))}; }
-    @media (prefers-reduced-motion: reduce) { ::slotted(*) { transition: none; } }
-  `;
-  constructor() {
-    super(); this.variant = 'standard'; this.size = 'small';
-    this.addEventListener('pointerdown', (e) => this._press(e, true));
-    ['pointerup','pointercancel','pointerleave'].forEach(t => this.addEventListener(t, (e) => this._press(e, false)));
-    this.addEventListener('click', (e) => this._click(e));
-  }
-  /** 실제 선택 방식. connected 는 토글 전용이라(가이드) 지정이 없으면 single. */
-  get mode() { return this.selection || (this.variant === 'connected' ? 'single' : 'none'); }
-  get buttons() { return Array.from(this.children); }
-  get selectedIndices() { return this.buttons.map((b, i) => b.hasAttribute('selected') ? i : -1).filter(i => i >= 0); }
-  _item(e) { return this.buttons.find(b => b === e.target || b.contains(e.target)); }
-  _press(e, down) {
-    const b = down ? this._item(e) : this._pressed;
-    if (!b) return;
-    clearTimeout(this._releaseTimer); clearTimeout(this._settleTimer);
-    if (down) {
-      if (this.variant !== 'connected') {
-        // standard: 누르기 직전 너비를 기억해 두고, 눌린 버튼 +15% 만큼 양옆 버튼이 나눠서 줄어든다(그룹 너비 유지).
-        // 너비 auto -> px 는 CSS transition 이 걸리지 않아 순간적으로 바뀌므로, 지금 너비를 px 로 먼저 고정한 뒤 목표 너비로 바꾼다
-        if (!this._widths) this._widths = this.buttons.map(x => x.getBoundingClientRect().width);
-        this.buttons.forEach(x => { x.style.width = x.getBoundingClientRect().width + 'px'; });
-        void this.offsetWidth; // 고정한 너비를 전환 시작점으로 확정(reflow)
-      }
-      if (this._pressed && this._pressed !== b) this._pressed.removeAttribute('data-pressed');
-      this._pressed = b; this._pressedAt = performance.now(); b.setAttribute('data-pressed', '');
-      this._layout();
-    } else {
-      // 짧은 클릭이라도 확대 전환이 끝까지 보인 뒤 복귀한다(최소 유지 = 전환 시간) [M3 외: 웹 마우스 클릭 보정]
-      const wait = Math.max(0, FAST_SPATIAL_MS - (performance.now() - this._pressedAt));
-      this._releaseTimer = setTimeout(() => this._release(b), wait);
-    }
-  }
-  _release(b) {
-    b.removeAttribute('data-pressed'); this._pressed = null;
-    this._layout(); // standard: 기억한 원래 너비(px)로 전환하며 돌아간다
-    // 복귀 전환이 끝나면 너비를 auto 로 되돌려 내용·크기 변화에 다시 맞춘다
-    this._settleTimer = setTimeout(() => { if (!this._pressed) { this._widths = null; this._layout(); } }, FAST_SPATIAL_MS + 20);
-  }
-  _click(e) {
-    const mode = this.mode;
-    if (mode === 'none') return;
-    const b = this._item(e);
-    if (!b || b.disabled) return;
-    const on = !b.hasAttribute('selected');
-    if (mode === 'single') { if (!on) return; this.buttons.forEach(x => this._select(x, x === b)); }
-    else this._select(b, on);
-    this._layout();
-    this.dispatchEvent(new CustomEvent('selection-changed', {detail: {selected: this.selectedIndices}, bubbles: true, composed: true}));
-  }
-  // Material 버튼은 host 의 aria-* 를 data-aria-* 로 옮겨 내부 버튼에 위임하므로 ariaPressed 속성(property)으로 설정한다
-  _pressedAria(b, v) { if ('ariaPressed' in b) b.ariaPressed = v; else b.setAttribute('aria-pressed', v); }
-  _select(b, on) { if (on) b.setAttribute('selected', ''); else b.removeAttribute('selected'); this._pressedAria(b, on ? 'true' : 'false'); }
-  updated() { this._layout(); }
-  _morph(b) {
-    const root = b.shadowRoot;
-    if (!root) { // 아직 업그레이드 전이면 정의·첫 렌더 뒤에 넣는다
-      if (b.localName.includes('-')) customElements.whenDefined(b.localName).then(() => Promise.resolve(b.updateComplete).then(() => b.shadowRoot && this._morph(b)));
-      return;
-    }
-    if (!root.adoptedStyleSheets.includes(INNER_MORPH)) root.adoptedStyleSheets = [...root.adoptedStyleSheets, INNER_MORPH];
-  }
-  _shape(b, ss, es, se, ee) {
-    PREFIXES.forEach(p => {
-      b.style.setProperty(`--md-${p}-container-shape-start-start`, ss);
-      b.style.setProperty(`--md-${p}-container-shape-end-start`, es);
-      b.style.setProperty(`--md-${p}-container-shape-start-end`, se);
-      b.style.setProperty(`--md-${p}-container-shape-end-end`, ee);
-    });
-  }
-  _color(b, toggle) {
-    const t = TOGGLE[b.tagName];
-    if (!t) return;
-    const [p, uc, ul, sc, sl] = t, sel = toggle && b.hasAttribute('selected');
-    const outlined = uc === null;
-    if (!toggle) {
-      ['container-color','label-text-color','icon-color','outline-color'].forEach(k => b.style.removeProperty(`--md-${p}-${k}`));
-      if (outlined) { b.style.removeProperty('background-color'); }
-      return;
-    }
-    const label = sys(sel ? sl : ul);
-    b.style.setProperty(`--md-${p}-label-text-color`, label);
-    b.style.setProperty(`--md-${p}-icon-color`, label);
-    if (outlined) {
-      // outlined 버튼에는 컨테이너 색 변수가 없어 host 배경으로 채운다(host 는 container-shape 로 둥글게 깎인다)
-      b.style.setProperty('background-color', sel ? sys(sc) : 'transparent');
-      b.style.setProperty(`--md-${p}-outline-color`, sel ? 'transparent' : '');
-      if (!sel) b.style.removeProperty(`--md-${p}-outline-color`);
-    } else b.style.setProperty(`--md-${p}-container-color`, sys(sel ? sc : uc));
-  }
-  _layout() {
-    const s = GROUP[this.size] || GROUP.small, list = this.buttons, connected = this.variant === 'connected';
-    const mode = this.mode, toggle = mode !== 'none';
-    this.style.gap = (connected ? CONNECTED_GAP : s.std) + 'px';
-    this.setAttribute('role', toggle ? 'toolbar' : 'group');
-    const full = s.h / 2 + 'px';
-    const pi = list.findIndex(b => b.hasAttribute('data-pressed'));
-    list.forEach((b, i) => {
-      PREFIXES.forEach(p => b.style.setProperty(`--md-${p}-container-height`, s.h + 'px'));
-      this._morph(b);
-      if (toggle && !b.hasAttribute('selected') && b.ariaPressed !== 'false') this._pressedAria(b, 'false');
-      this._color(b, toggle);
-      const pressed = i === pi, sel = toggle && b.hasAttribute('selected');
-      if (connected) {
-        // connected: 이웃은 반응하지 않고, 누른/선택한 버튼의 안쪽 모서리만 바뀐다(선택 시 50%)
-        const inner = sel ? full : (pressed ? s.pressedInner : s.inner) + 'px';
-        const startC = i === 0 ? full : inner, endC = i === list.length - 1 ? full : inner;
-        this._shape(b, startC, startC, endC, endC);
-        b.style.width = '';
-        b.style.minWidth = (this.size === 'xsmall' || this.size === 'small') ? CONNECTED_MIN_WIDTH + 'px' : '';
-      } else {
-        // standard: 누르면 그 버튼 모양이 pressed 로, 선택되면 둥근 모양이 각진 모양으로 바뀐다
-        const r = (pressed ? s.pressed : sel ? s.selected : null);
-        const c = r === null ? full : r + 'px';
-        this._shape(b, c, c, c, c);
-        b.style.minWidth = '0';
-        if (this._widths && this._widths.length === list.length) {
-          // 누르는 동안은 목표 너비, 뗀 뒤 복귀 전환 중에는 원래 너비(px). 둘 다 px 라서 전환이 걸린다
-          const w = this._widths, delta = pi >= 0 ? w[pi] * PRESSED_WIDTH : 0;
-          const nb = [pi - 1, pi + 1].filter(k => pi >= 0 && k >= 0 && k < list.length);
-          const width = i === pi ? w[i] + delta : nb.includes(i) ? w[i] - delta / nb.length : w[i];
-          b.style.width = width + 'px';
-        } else b.style.width = '';
-      }
-    });
-  }
-  render() { return html`<slot @slotchange=${() => this._layout()}></slot>`; }
-}
-customElements.define('md-button-group', MdButtonGroup);

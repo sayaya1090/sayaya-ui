@@ -41,3 +41,4 @@ bin/
 /gradle.properties
 ### labs-bundle 빌드 산출물 ###
 /src/main/webapp/labs-bundle/dist/
+/src/test/webapp/sayaya-ui-feedback.js

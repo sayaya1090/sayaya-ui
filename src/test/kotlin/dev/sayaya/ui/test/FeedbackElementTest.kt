@@ -107,11 +107,38 @@ internal class FeedbackElementTest: GwtTestSpec({
         "toast 포인터가 머무는 동안 닫히지 않음",
         "toast 포인터가 떠나면 다시 닫힘",
         "toast 기본 3초 뒤 자동 닫힘",
-        "toast 최대 개수를 넘으면 가장 오래된 것이 닫힘"
+        "toast 최대 개수를 넘으면 가장 오래된 것이 닫힘",
+        "tooltip overflow 컨테이너 밖에 위치",
+        "tooltip overflow·transform 조상에 잘리지 않고 보임",
+        "tooltip plain 둘 중 나중 것만 열림",
+        "tooltip pointercancel 이면 열지 않음",
+        "tooltip popover(top layer)로 표시",
+        "tooltip text 다시 부르면 문구 교체",
+        "tooltip text 속성으로 문구 교체(subhead 유지)",
+        "tooltip transform 조상 안에서도 앵커 바로 위에 배치",
+        "tooltip visibility:hidden 부모 안에서도 보임",
+        "tooltip visibility:hidden 부모 안에서도 크기 있음",
+        "tooltip 기본 길게 누르기 500ms",
+        "tooltip 기본 지연 500ms",
+        "tooltip 기본 지연 뒤 표시",
+        "tooltip 기본 지연 전(300ms)에는 닫혀 있음",
+        "tooltip 길게 누르기 전(300ms)에는 닫혀 있음",
+        "tooltip 길게 누른 뒤 click 은 앵커 동작을 막음",
+        "tooltip 길게 누른 뒤 떼고 1.5초 뒤 닫힘",
+        "tooltip 길게 누른 뒤 손을 떼도 1.5초 동안 유지",
+        "tooltip 다시 붙이면 같은 앵커로 동작",
+        "tooltip 닫으면 top layer 에서 내려감",
+        "tooltip 열린 채 제거하면 닫힘",
+        "tooltip 제거하면 앵커 리스너 해제",
+        "tooltip 제거하면 예약된 표시 타이머 정리",
+        "tooltip 짧은 탭(과 탭 포커스)으로는 열지 않음",
+        "tooltip 짧은 탭은 click 을 그대로 전달",
+        "tooltip 터치 길게 누르면 열림",
+        "tooltip 터치가 움직이면(스크롤) 열지 않음"
     )
     Given("M3 tooltip / snackbar / button group / toast") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
-        page.waitForTimeout(11500.0)
+        page.waitForTimeout(18000.0) // tooltip 터치·수명·가려짐 검사가 8초부터 약 16초까지 순서대로 돈다
         val logs = page.getConsoleLogs().map { it.toString() }
         println(logs)
         for (c in checks) {

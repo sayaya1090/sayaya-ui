@@ -59,6 +59,13 @@ jobs:
           cp src/main/webapp/labs-bundle/dist/sayaya-ui.js build/dist/sayaya-ui-$VERSION.js
           (cd build/dist && sha256sum sayaya-ui-$VERSION.js > sayaya-ui-$VERSION.js.sha256)
           head -c 300 build/dist/sayaya-ui-$VERSION.js; echo
+      - name: Build feedback ESM bundle
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }}
+          gradle buildFeedbackBundle --no-daemon
+          cp src/main/webapp/labs-bundle/dist/sayaya-ui-feedback.js build/dist/sayaya-ui-feedback-$VERSION.js
+          (cd build/dist && sha256sum sayaya-ui-feedback-$VERSION.js > sayaya-ui-feedback-$VERSION.js.sha256)
+          head -c 300 build/dist/sayaya-ui-feedback-$VERSION.js; echo
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
@@ -104,6 +111,10 @@ jobs:
             ### 단일 JS 번들 (CDN 불필요)
             `sayaya-ui-${{ steps.version.outputs.VERSION }}.js` 는 `@material/web/all.js` 와 sayaya-ui labs 번들(IIFE)을 이 순서로 이어 붙인 classic script 입니다.
             GWT 앱보다 먼저 `<script src="sayaya-ui-${{ steps.version.outputs.VERSION }}.js"></script>` 로 한 번 로드하세요. 체크섬은 `.sha256` 첨부물을 확인하세요.
+
+            ### 단독 feedback ESM 번들 (Material Web 을 따로 싣는 앱용)
+            `sayaya-ui-feedback-${{ steps.version.outputs.VERSION }}.js` 는 `md-tooltip`, `md-snackbar`, `md-toast` 만 정의하는 ES module 입니다(lit 포함, @material/web 컴포넌트·md-button-group 미포함). 각 정의는 이름이 이미 등록돼 있으면 건너뜁니다.
+            앱의 Material Web 번들 뒤에 `<script type="module" src="sayaya-ui-feedback-${{ steps.version.outputs.VERSION }}.js"></script>` 로 로드하세요.
 
             ### 변경사항
             자세한 변경사항은 커밋 히스토리를 확인해주세요.

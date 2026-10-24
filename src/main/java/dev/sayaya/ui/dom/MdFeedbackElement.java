@@ -18,6 +18,10 @@ public final class MdFeedbackElement {
         public double delay;
         public boolean open;
         public boolean persistent;
+        /** 터치 길게 누르기 판정 시간(ms). 기본 500 */
+        public double longPressDelay;
+        /** 기본 슬롯 문구(바로 아래 텍스트 노드). 설정하면 기존 문구를 바꾼다 — subhead·actions 는 유지 */
+        public String text;
         public Element anchor;
         public native void show();
         public native void show(double autoHideMs);

@@ -34,6 +34,13 @@ public class FeedbackComponentsTest {
         return sb.toString().trim();
     }
     private static boolean radiusMoving(Element e) { return transitions(e).contains("radius"); }
+    /** 손가락(pointerType touch) 포인터 이벤트 */
+    private static void touch(HTMLElement target, String type, double x, double y) {
+        jsinterop.base.JsPropertyMap<Object> m = jsinterop.base.JsPropertyMap.of();
+        m.set("clientX", x); m.set("clientY", y); m.set("bubbles", !type.equals("pointerenter") && !type.equals("pointerleave")); m.set("composed", true);
+        m.set("pointerId", 7); m.set("pointerType", "touch"); m.set("isPrimary", true);
+        target.dispatchEvent(new elemental2.dom.PointerEvent(type, Js.uncheckedCast(m)));
+    }
     private static boolean connected(Element e) { return Boolean.TRUE.equals(Js.asPropertyMap(e).get("isConnected")); }
 
     public static void test() {
@@ -433,6 +440,143 @@ public class FeedbackComponentsTest {
                 later(400, () -> {
                     assertTrue("fb: toast 최대 개수를 넘으면 가장 오래된 것이 닫힘", !connected(o1) && connected(o2) && connected(o3) && overflow.contains("overflow"));
                     o2.close(); o3.close();
+                });
+            });
+        });
+
+        // ---------- tooltip (2.5.0.5): 기본 지연, 터치 길게 누르기, 하나만 열림, 제거 시 정리, 문구 교체, 가려짐(top layer) ----------
+        var tAnchor = button().outlined().text("길게 누르기").element();
+        var tAnchor2 = button().outlined().text("기본 지연").element();
+        var hidAnchor = button().outlined().text("숨은 부모").element();
+        int[] tClicks = {0};
+        tAnchor.addEventListener("click", e -> tClicks[0]++);
+        // overflow:hidden + transform 컨테이너(위치 기준과 잘림을 모두 만든다) 안의 앵커와 툴팁
+        var clip = div().style("overflow", "hidden").style("transform", "translateZ(0)").style("width", "140px").style("height", "48px")
+                .style("margin-top", "48px").style("display", "flex").style("align-items", "center").element();
+        var clipAnchor = button().text().text("잘리는 곳").element();
+        clip.appendChild(clipAnchor);
+        var hiddenParent = div().style("visibility", "hidden").style("height", "0").element();
+        demo(section, "📘 Tooltip - 터치·수명·가려짐", "터치에서는 길게(500ms) 누르면 열리고, 떼고 1.5초 뒤 닫힙니다. 짧은 탭·스크롤(움직임)로는 열리지 않고, 길게 누른 뒤의 click 은 앵커 동작을 일으키지 않습니다. 툴팁은 popover(top layer)로 표시되어 overflow·transform 조상이나 visibility:hidden 부모에 가려지지 않습니다. 요소를 DOM 에서 떼면 리스너와 타이머가 정리되고, text() 를 다시 부르면 문구가 바뀝니다.",
+            """
+            var tip = tooltip().plain().anchor(iconButton).text("저장").element();
+            body().add(tip);           // document.body 아래에 두고 anchor 로 연결
+            tip.text = "다른 이름으로 저장"; // 문구만 바꾸기(빌더라면 .text(...) 를 다시 호출)
+            tip.remove();              // 떼면 앵커 리스너·타이머 정리
+            """, div().style("display", "flex").style("gap", "12px").style("align-items", "center").style("flex-wrap", "wrap")
+                .add(tAnchor).add(tAnchor2).add(hidAnchor).add(clip).add(hiddenParent).element());
+        var tDef = tooltip().plain().anchor(tAnchor2).text("기본 지연 500ms").element();
+        var tTouch = tooltip().plain().anchor(tAnchor).text("길게 누르면 보입니다").element();
+        var tClip = tooltip().plain().anchor(clipAnchor).text("overflow 밖으로").element();
+        var tHid = tooltip().plain().anchor(hidAnchor).text("숨은 부모 안의 툴팁").element();
+        body().add(tDef); body().add(tTouch); clip.appendChild(tClip); hiddenParent.appendChild(tHid);
+        var tTxt = tooltip().rich().subhead("제목").text("첫 문구").text("둘째 문구").element();
+        assertTrue("fb: tooltip text 다시 부르면 문구 교체", "둘째 문구".equals(tTxt.text) && "제목둘째 문구".equals(tTxt.textContent));
+        tTxt.text = "셋째 문구";
+        assertTrue("fb: tooltip text 속성으로 문구 교체(subhead 유지)", tTxt.textContent.equals("제목셋째 문구"));
+        assertEquals("fb: tooltip 기본 지연 500ms", 500, (int) tDef.delay);
+        assertEquals("fb: tooltip 기본 길게 누르기 500ms", 500, (int) tTouch.longPressDelay);
+        int T = 8000;
+        // 1) 기본 지연: 마우스 hover 뒤 500ms
+        later(T, () -> {
+            if (!isAutomated()) return;
+            tAnchor2.dispatchEvent(new elemental2.dom.Event("pointerenter"));
+            later(300, () -> assertTrue("fb: tooltip 기본 지연 전(300ms)에는 닫혀 있음", !tDef.open));
+            later(700, () -> { assertTrue("fb: tooltip 기본 지연 뒤 표시", tDef.open); tDef.hide(); });
+        });
+        // 2) 터치 길게 누르기: 500ms 뒤 열림, 떼면 click 차단, 1.5초 뒤 닫힘
+        later(T + 800, () -> {
+            if (!isAutomated()) return;
+            var r = tAnchor.getBoundingClientRect(); double x = r.left + r.width / 2, y = r.top + r.height / 2;
+            touch(tAnchor, "pointerenter", x, y); touch(tAnchor, "pointerdown", x, y);
+            later(300, () -> assertTrue("fb: tooltip 길게 누르기 전(300ms)에는 닫혀 있음", !tTouch.open));
+            later(650, () -> {
+                assertTrue("fb: tooltip 터치 길게 누르면 열림", tTouch.open);
+                touch(tAnchor, "pointerup", x, y); touch(tAnchor, "pointerleave", x, y);
+                tAnchor.click();
+                assertEquals("fb: tooltip 길게 누른 뒤 click 은 앵커 동작을 막음", 0, tClicks[0]);
+                later(1000, () -> assertTrue("fb: tooltip 길게 누른 뒤 손을 떼도 1.5초 동안 유지", tTouch.open));
+                later(1700, () -> assertTrue("fb: tooltip 길게 누른 뒤 떼고 1.5초 뒤 닫힘", !tTouch.open));
+            });
+        });
+        // 3) 짧은 탭: 열지 않고 click 은 그대로. 탭이 만든 focusin 으로도 열지 않음
+        later(T + 3300, () -> {
+            if (!isAutomated()) return;
+            var r = tAnchor.getBoundingClientRect(); double x = r.left + r.width / 2, y = r.top + r.height / 2;
+            touch(tAnchor, "pointerdown", x, y);
+            later(100, () -> {
+                touch(tAnchor, "pointerup", x, y); touch(tAnchor, "pointerleave", x, y);
+                tAnchor.dispatchEvent(new elemental2.dom.Event("focusin"));
+                tAnchor.click();
+                assertEquals("fb: tooltip 짧은 탭은 click 을 그대로 전달", 1, tClicks[0]);
+            });
+            later(800, () -> assertTrue("fb: tooltip 짧은 탭(과 탭 포커스)으로는 열지 않음", !tTouch.open));
+        });
+        // 4) 움직이면(스크롤) 취소, pointercancel 이면 취소
+        later(T + 4200, () -> {
+            if (!isAutomated()) return;
+            var r = tAnchor.getBoundingClientRect(); double x = r.left + r.width / 2, y = r.top + r.height / 2;
+            touch(tAnchor, "pointerdown", x, y);
+            later(100, () -> touch(tAnchor, "pointermove", x, y + 30));
+            later(700, () -> { assertTrue("fb: tooltip 터치가 움직이면(스크롤) 열지 않음", !tTouch.open); touch(tAnchor, "pointerup", x, y + 30); });
+        });
+        later(T + 5000, () -> {
+            if (!isAutomated()) return;
+            var r = tAnchor.getBoundingClientRect(); double x = r.left + r.width / 2, y = r.top + r.height / 2;
+            touch(tAnchor, "pointerdown", x, y);
+            later(100, () -> touch(tAnchor, "pointercancel", x, y));
+            later(700, () -> assertTrue("fb: tooltip pointercancel 이면 열지 않음", !tTouch.open));
+        });
+        // 5) 한 번에 하나: plain 끼리
+        later(T + 5800, () -> {
+            if (!isAutomated()) return;
+            tDef.show(); tTouch.show();
+            assertTrue("fb: tooltip plain 둘 중 나중 것만 열림", tTouch.open && !tDef.open);
+            tTouch.hide();
+        });
+        // 6) 수명: 표시 예약 중 떼었다 바로 붙여도 예약이 남지 않음, 뗀 동안 앵커에서 분리, 다시 붙이면 같은 앵커로 동작, 열린 채 떼면 닫힘
+        later(T + 6000, () -> {
+            if (!isAutomated()) return;
+            tAnchor2.dispatchEvent(new elemental2.dom.Event("pointerenter"));
+            later(100, () -> {
+                tDef.remove();
+                assertTrue("fb: tooltip 제거하면 앵커 리스너 해제", Js.asPropertyMap(tDef).get("_anchor") == null && tDef.anchor == tAnchor2);
+                body().add(tDef);
+            });
+            later(800, () -> {
+                assertTrue("fb: tooltip 제거하면 예약된 표시 타이머 정리", !tDef.open);
+                tDef.hide(); // 이전 예약으로 열렸더라도 닫고, 다시 붙인 뒤의 hover 로만 열리는지 본다
+                tAnchor2.dispatchEvent(new elemental2.dom.Event("pointerenter"));
+            });
+            later(1500, () -> {
+                assertTrue("fb: tooltip 다시 붙이면 같은 앵커로 동작", tDef.open);
+                tDef.remove();
+                assertTrue("fb: tooltip 열린 채 제거하면 닫힘", !tDef.open);
+                body().add(tDef);
+            });
+        });
+        // 7) 가려짐: overflow:hidden + transform 컨테이너 안에 두어도 top layer 로 앵커 위에 보임, visibility:hidden 부모 안에서도 보임
+        later(T + 7700, () -> {
+            if (!isAutomated()) return;
+            elemental2.core.Function siv = Js.uncheckedCast(Js.asPropertyMap(clip).get("scrollIntoView"));
+            siv.call(clip, jsinterop.base.JsPropertyMap.of("block", "center"));
+            tClip.show();
+            later(150, () -> {
+                assertTrue("fb: tooltip popover(top layer)로 표시", tClip.matches(":popover-open"));
+                var ar = clipAnchor.getBoundingClientRect(); var tr = tClip.getBoundingClientRect(); var cr = clip.getBoundingClientRect();
+                assertTrue("fb: tooltip transform 조상 안에서도 앵커 바로 위에 배치", Math.abs(tr.bottom - (ar.top - 4)) < 1.5);
+                assertTrue("fb: tooltip overflow 컨테이너 밖에 위치", tr.bottom <= cr.top + 0.5);
+                tClip.style.setProperty("pointer-events", "auto");
+                Element hit = DomGlobal.document.elementFromPoint(tr.left + tr.width / 2, tr.top + tr.height / 2);
+                tClip.style.removeProperty("pointer-events");
+                assertTrue("fb: tooltip overflow·transform 조상에 잘리지 않고 보임", hit == tClip);
+                tClip.hide();
+                tHid.show();
+                later(100, () -> {
+                    assertEquals("fb: tooltip visibility:hidden 부모 안에서도 보임", "visible", cs(tHid).getPropertyValue("visibility"));
+                    assertTrue("fb: tooltip visibility:hidden 부모 안에서도 크기 있음", tHid.getBoundingClientRect().height >= 24);
+                    tHid.hide();
+                    boolean outOfTopLayer = !tHid.matches(":popover-open"); // hidePopover 는 즉시, display 는 Lit 속성 반영(비동기) 뒤
+                    later(100, () -> assertTrue("fb: tooltip 닫으면 top layer 에서 내려감", outOfTopLayer && "none".equals(cs(tHid).getPropertyValue("display"))));
                 });
             });
         });

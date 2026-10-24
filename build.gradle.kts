@@ -18,7 +18,7 @@ repositories {
     }
 }
 group = "dev.sayaya"
-version = "2.5.0.4"
+version = "2.5.0.5"
 
 dependencies {
     implementation("org.jboss.elemento:elemento-core:2.5.9")
@@ -72,6 +72,31 @@ tasks {
         } else {
             commandLine("sh", "-c", "npm run build:standalone")
         }
+    }
+
+    // 단독 ESM 번들(md-tooltip, md-snackbar, md-toast 만 정의, 이미 정의돼 있으면 건너뜀). Release 첨부물 sayaya-ui-feedback-<version>.js 의 원본
+    val buildFeedbackBundle by registering(Exec::class) {
+        group = "build"
+        description = "Build feedback ESM bundle (md-tooltip/md-snackbar/md-toast) into src/main/webapp/labs-bundle/dist/sayaya-ui-feedback.js"
+        dependsOn(installLabsBundleDeps)
+        workingDir = file("src/main/webapp/labs-bundle")
+        environment("SAYAYA_UI_VERSION", project.version.toString())
+
+        if (System.getProperty("os.name").lowercase().contains("windows")) {
+            commandLine("cmd", "/c", "npm", "run", "build:feedback")
+        } else {
+            commandLine("sh", "-c", "npm run build:feedback")
+        }
+    }
+
+    // 테스트용 feedback ESM 번들 복사 태스크(feedback_esm.html 공존 검증)
+    val copyFeedbackBundleToTest by registering(Copy::class) {
+        group = "build"
+        description = "Copy sayaya-ui-feedback.js to test webapp"
+        dependsOn(buildFeedbackBundle)
+
+        from("src/main/webapp/labs-bundle/dist/sayaya-ui-feedback.js")
+        into("src/test/webapp")
     }
 
     // 테스트용 labs bundle 복사 태스크
@@ -139,6 +164,7 @@ tasks {
     }
     test {
         useJUnitPlatform()
+        dependsOn(copyFeedbackBundleToTest)
     }
     jar {
         from(sourceSets.main.get().allSource)

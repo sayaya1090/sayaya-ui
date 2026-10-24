@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>dev.sayaya.Ui Test - Feedback ESM bundle (tooltip / snackbar / toast)</title>
+    <!-- 소비 측 앱처럼 Material Web 2.5.0 의 필요한 컴포넌트만 따로 싣고, 그 위에 단독 ESM 번들 sayaya-ui-feedback.js 를 싣는다 -->
+    <script type="importmap">
+        {
+          "imports": {
+            "@material/web/": "https://esm.run/@material/web@2.5.0/"
+          }
+        }
+    </script>
+    <script type="module">
+        const log = (name, ok, detail = '') => console.log(`fbesm: ${name} - ${ok ? 'ok' : 'Assertion failed!'} ${detail}`);
+        const errors = [];
+        addEventListener('error', (e) => errors.push(String(e.message)));
+        addEventListener('unhandledrejection', (e) => errors.push(String(e.reason)));
+        // 1) 앱 자체 Material Web 번들 흉내: esm.run 묶음 하나(filled-button + ripple/focus-ring/elevation)
+        //    (esm.run 은 파일마다 의존성을 따로 묶어 filled-button.js 와 md-focus-ring.js 를 같이 실으면 md-focus-ring 중복 정의로 멈춘다)
+        await import('@material/web/button/filled-button.js');
+        const mw = ['md-filled-button', 'md-focus-ring', 'md-ripple', 'md-elevation'].filter((n) => customElements.get(n));
+        const mwCtors = mw.map((n) => customElements.get(n));
+        // 2) 단독 번들: 실행되는 동안 실제로 등록한 이름을 기록한다
+        const registered = [];
+        const origDefine = customElements.define;
+        customElements.define = function (name, ...rest) { registered.push(name); return origDefine.call(this, name, ...rest); };
+        let importError = null;
+        try { await import('./sayaya-ui-feedback.js'); } catch (e) { importError = e; }
+        customElements.define = origDefine;
+        log('단독 번들 import 오류 없음', !importError && errors.length === 0, importError ? String(importError) : errors.join(' | '));
+        for (const n of ['md-tooltip', 'md-snackbar', 'md-toast']) log(`${n} 정의`, !!customElements.get(n));
+        log('다른 md-* 는 정의하지 않음', registered.slice().sort().join(',') === 'md-snackbar,md-toast,md-tooltip', registered.join(','));
+        log('앱이 정의한 Material Web 요소는 그대로', mw.length === 4 && mw.every((n, i) => customElements.get(n) === mwCtors[i]), mw.join(','));
+        // 3) 같은 번들을 한 번 더 실어도(다른 URL = 별도 모듈 인스턴스) 중복 정의로 멈추지 않음
+        const Tip = customElements.get('md-tooltip');
+        let dupError = null;
+        const again = [];
+        customElements.define = function (name, ...rest) { again.push(name); return origDefine.call(this, name, ...rest); };
+        try { await import('./sayaya-ui-feedback.js?again'); } catch (e) { dupError = e; }
+        customElements.define = origDefine;
+        log('두 번 실어도 중복 정의 오류 없음', !dupError && errors.length === 0 && again.length === 0 && customElements.get('md-tooltip') === Tip, dupError ? String(dupError) : (errors.join(' | ') + again.join(',')));
+        // 4) Material Web 버튼을 앵커로 실제 표시
+        const btn = document.createElement('md-filled-button');
+        btn.textContent = '저장'; btn.style.margin = '80px'; document.body.append(btn);
+        const tip = document.createElement('md-tooltip');
+        tip.anchor = btn; tip.text = '문서를 저장합니다'; document.body.append(tip);
+        await btn.updateComplete;
+        tip.show(); await tip.updateComplete; await new Promise((r) => requestAnimationFrame(r));
+        const br = btn.getBoundingClientRect(), tr = tip.getBoundingClientRect();
+        log('MW 버튼 앵커에 툴팁 표시(top layer)', tip.open && tip.matches(':popover-open') && tr.height >= 24 && tip.textContent === '문서를 저장합니다');
+        log('툴팁이 MW 버튼 바로 위', Math.abs(tr.bottom - (br.top - 4)) < 1.5, `${tr.bottom} vs ${br.top}`);
+        tip.hide();
+        // 5) snackbar / toast
+        const sb = document.createElement('md-snackbar'); sb.textContent = '삭제했습니다'; document.body.append(sb);
+        sb.show(); await sb.updateComplete;
+        log('md-snackbar 표시', sb.open && !!sb.shadowRoot && sb.getBoundingClientRect().height >= 48);
+        sb.close();
+        const toast = document.createElement('md-toast'); toast.textContent = '저장했습니다';
+        toast.show(); await toast.updateComplete;
+        log('md-toast 표시', toast.open && toast.parentElement?.className === 'md-toast-stack' && toast.getBoundingClientRect().height >= 48);
+        toast.close();
+        log('검사 끝', errors.length === 0, errors.join(' | '));
+    </script>
+</head>
+<body></body>
+</html>

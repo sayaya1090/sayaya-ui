@@ -38,8 +38,10 @@ import './sayaya-navigation.js';
 // sayaya-ui 자체 구현: M3 flexible navigation bar (labs baseline 대체)
 import './sayaya-navbar.js';
 
-// sayaya-ui 자체 구현: tooltip, snackbar, button group
+// sayaya-ui 자체 구현: tooltip, snackbar, toast (단독 ESM 번들 sayaya-ui-feedback 의 진입점이기도 하다)
 import './sayaya-feedback.js';
+// sayaya-ui 자체 구현: button group
+import './sayaya-button-group.js';
 
 // sayaya-ui 자체 구현: side sheet, bottom sheet
 import './sayaya-sheet.js';

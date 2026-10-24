@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.sayaya:ui:2.5.0.4")
+    implementation("dev.sayaya:ui:2.5.0.5")
 }
 ```
 
@@ -992,9 +992,30 @@ var range = buttonGroup().connected().size(ButtonGroupSize.Small).selection(Butt
     .element();
 ```
 
-`md-tooltip`, `md-snackbar`, `md-button-group` 은 Material Web 에 없어 sayaya-ui 가 직접 구현한 엘리먼트입니다(`labs-bundle/src/sayaya-feedback.js`).
+`md-tooltip`, `md-snackbar`, `md-button-group` 은 Material Web 에 없어 sayaya-ui 가 직접 구현한 엘리먼트입니다(`labs-bundle/src/sayaya-feedback.js`, button group 은 2.5.0.5부터 `labs-bundle/src/sayaya-button-group.js`).
 색·모양·타이포·높이·간격은 `@material/web` 2.5.0 의 `md-comp-{plain-tooltip,rich-tooltip,snackbar,button-group-*}` 토큰 값을 따릅니다.
 토큰에 없는 레이아웃 값은 m3.material.io 스펙 페이지와 Compose Material3(`Tooltip.kt`, `Snackbar.kt`) 상수로 대조했습니다: plain tooltip 높이 24dp·패딩 8dp·최대 너비 200dp, rich tooltip 패딩 12/16/8dp·최대 너비 320dp, tooltip 최소 너비 40dp·앵커 간격 4dp, snackbar 최대 너비 600dp, 화면 가장자리 여백 8dp(material-components-android `m3_snackbar_margin`).
+
+#### Tooltip 동작 규칙 (2.5.0.5)
+
+| 입력 | 규칙 |
+|---|---|
+| 마우스 | 앵커에 올리고 `delay`(기본 500ms) 뒤 표시, 떠나고 1.5초 뒤 닫힘 |
+| 키보드 | 포커스로 같은 규칙. Esc 로 닫힘. 터치 직후 1초 안의 `focusin`(탭이 만든 포커스)은 무시 |
+| 터치 | `longPressDelay`(기본 500ms) 동안 누르고 있으면 표시. 그 전에 떼면 탭(열지 않고 click 은 그대로), 10px 넘게 움직이거나 `pointercancel`(스크롤 시작)이면 취소. 길게 눌러 연 뒤 떼면 1.5초 뒤 닫힘. 길게 누른 뒤 따라오는 click 은 앵커에 전달하지 않음(Compose `TooltipBox`·Android 길게 누르기처럼 탭 동작을 일으키지 않음). 누르는 동안 `contextmenu` 를 막음 |
+| 동시 표시 | 창 안에서 하나만. 새 툴팁이 열리면 열려 있던 툴팁은 즉시 닫힘(persistent rich 포함) |
+| 표시 위치 | `popover="manual"` 로 top layer 에 올림. 조상의 `overflow`·`transform`·`z-index` 에 잘리거나 가려지지 않고, 열린 동안 `visibility: visible` 이라 `visibility:hidden` 부모 안에서도 보임. `display:none` 조상 안에서는 보이지 않으므로 `document.body` 아래에 두고 `anchor(...)` 로 연결하기를 권장 |
+| 수명 | DOM 에서 떼면(`disconnectedCallback`) 닫히고 앵커 리스너·타이머·문서 리스너가 정리됨. 다시 붙이면 같은 앵커에 다시 연결됨 |
+| 문구 | `text(...)` 를 다시 부르거나 요소의 `text` 속성을 바꾸면 기본 슬롯 문구가 교체됨(subhead·action 유지) |
+
+```java
+var tip = tooltip().plain().anchor(iconButton).text("저장").element();
+body().add(tip);                // body 아래에 두고 anchor 로 연결
+tip.text = "다른 이름으로 저장"; // 문구만 바꾸기
+tip.remove();                   // 떼면 리스너·타이머 정리
+```
+
+> **동작 변경(2.5.0.5부터):** `TooltipBuilder.text(String)` 을 여러 번 부르면 이전에는 텍스트를 이어 붙였지만 이제 마지막 문구로 바뀝니다. 또 `delay` 를 지정하지 않은 툴팁은 2.5.0.4 까지 기본값이 적용되지 않아 바로 열렸는데, 이제 문서대로 500ms 뒤 열립니다.
 
 버튼 그룹의 토글·누름 전환: 선택하거나 누를 때 모서리 모양과 너비가 `md.sys.motion.spring.fast.spatial`(damping 0.9, stiffness 1400)을 따라 부드럽게 바뀌고, outlined 버튼의 테두리 색은 `md.sys.motion.spring.default.effects`(damping 1, stiffness 1600)로 사라집니다. Compose Material3 `ToggleButton`/`ButtonGroup` 과 같이 container·content 색은 바로 바뀝니다. CSS 에는 spring 이 없어 두 spring 을 `linear()` 곡선(약 224ms, 231ms)으로 근사했습니다. `prefers-reduced-motion: reduce` 이면 전환하지 않습니다.
 
@@ -1170,6 +1191,18 @@ jar 에는 JS 가 들어 있지 않습니다. CDN 없이 쓰려면 릴리스마�
 - 내용: `@material/web/all.js`(IIFE) 와 labs 번들 `src/index.js`(IIFE, 기존 rollup 플러그인 그대로)를 이 순서로 이어 붙인 파일. 헤더 주석에 sayaya-ui 버전·빌드 커밋·@material/web 버전이 적힙니다.
 - 사용: GWT 앱보다 먼저 `<script src="sayaya-ui-<version>.js"></script>` 로 한 번 로드합니다(`type="module"` 아님).
 - 로컬 빌드: `./gradlew buildStandaloneBundle` → `src/main/webapp/labs-bundle/dist/sayaya-ui.js`
+- 주의: 이 번들은 `@material/web/all.js` 를 함께 담고 있어, 앱이 Material Web 을 따로 싣는 경우 같은 `md-*` 이름을 두 번 정의하게 됩니다. 어느 쪽을 먼저 실어도 나중에 실린 쪽이 `NotSupportedError`(예: `md-elevation` has already been used)로 멈춥니다(2.5.0.4 첨부물로 확인). 이때는 아래 feedback 번들을 쓰세요.
+
+### 단독 feedback ESM 번들 (Release 첨부물, 2.5.0.5~)
+
+Material Web 을 앱이 따로 번들해 싣는 경우를 위한 ES module 입니다.
+
+- 파일: `sayaya-ui-feedback-<version>.js` (+ 체크섬 `sayaya-ui-feedback-<version>.js.sha256`)
+- URL: `https://github.com/sayaya1090/sayaya-ui/releases/download/v<version>/sayaya-ui-feedback-<version>.js`
+- 정의하는 요소: `md-tooltip`, `md-snackbar`, `md-toast` 만. `@material/web` 컴포넌트와 `md-button-group` 은 넣지 않습니다(`lit` 은 포함). 각 정의는 이름이 이미 등록돼 있으면 건너뜁니다.
+- 사용: 앱의 Material Web 번들 뒤에 `<script type="module" src="sayaya-ui-feedback-<version>.js"></script>`, 또는 앱 코드에서 `import './sayaya-ui-feedback-<version>.js'`.
+- 로컬 빌드: `./gradlew buildFeedbackBundle` → `src/main/webapp/labs-bundle/dist/sayaya-ui-feedback.js` (또는 `labs-bundle` 에서 `npm ci && npm run build:feedback`)
+- 자체 번들러로 묶을 때: 진입점 `labs-bundle/src/sayaya-feedback.js` 는 `lit` 만 import 하므로 앱의 `lit` 과 함께 묶을 수 있습니다.
 
 ## 아키텍처
 
@@ -1239,4 +1272,4 @@ sayaya-ui는 Material Web Components와 동일한 브라우저를 지원합니�
 
 ## 버전
 
-현재 버전: **2.5.0.4**
+현재 버전: **2.5.0.5**
