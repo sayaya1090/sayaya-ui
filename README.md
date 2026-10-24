@@ -73,13 +73,13 @@ dependencies {
 | **Side sheet** | `sideSheet()` | Standard·Modal side sheet(end/start, detached, 뒤로·닫기 버튼, 하단 액션, 스크림·Esc 닫기) | [🔗](https://sayaya1090.github.io/sayaya-ui/side_sheet.html) |
 | **Bottom sheet** | `bottomSheet()` | Standard·Modal bottom sheet(드래그 핸들로 펼침/접힘, 아래로 끌어 닫기, 스크림·Esc 닫기, 최대 너비 640dp) | [🔗](https://sayaya1090.github.io/sayaya-ui/bottom_sheet.html) |
 | **Loading indicator** | `loadingIndicator()` | 7개 M3 도형 shape morph 로딩 지시자(기본/contained, 24~240dp), progressbar 역할 | [🔗](https://sayaya1090.github.io/sayaya-ui/loading_indicator.html) |
-| **Toolbar** | `toolbar()` | Docked(bottom app bar 대체)·Floating toolbar(standard/vibrant, 가로/세로, 화면 고정 위치), 방향키 이동 | [🔗](https://sayaya1090.github.io/sayaya-ui/toolbar.html) |
-| **FAB menu** | `fabMenu()` | FAB 에서 열리는 메뉴(닫기 버튼 전환, primary/secondary/tertiary, Esc·항목 선택으로 닫힘) | [🔗](https://sayaya1090.github.io/sayaya-ui/fab_menu.html) |
-| **Search** | `search()` | Search bar + docked/full-screen view(제안 필터, combobox·listbox, ↑/↓·Enter·Esc, contained/divided) | [🔗](https://sayaya1090.github.io/sayaya-ui/search.html) |
-| **Date picker** | `datePicker()` | Docked·Modal 달력(오늘·선택 표시, ARIA grid 키보드, 확인/취소, 연도 선택, 기간 선택 `range(true)`) | [🔗](https://sayaya1090.github.io/sayaya-ui/date_picker.html) |
-| **Time picker** | `timePicker()` | Dial·Input(12/24시간, 오전/오후, modal 확인/취소) | [🔗](https://sayaya1090.github.io/sayaya-ui/time_picker.html) |
-| **Carousel** | `carousel()` | Multi-browse·Hero·Uncontained(가장자리 항목 축소·parallax, slide 역할, 모두 보기 버튼) | [🔗](https://sayaya1090.github.io/sayaya-ui/carousel.html) |
-| **Wavy progress** | `wavyProgress()` | M3 Expressive 물결 선형 진행 표시기(determinate/indeterminate) | [🔗](https://sayaya1090.github.io/sayaya-ui/wavy_progress.html) |
+| **Toolbar** | `toolbar()` | Docked(bottom app bar 대체, 기본 가운데 정렬·균등 간격 4~32dp, `alignment(Center/Start/End/Edges)`)·Floating toolbar(standard/vibrant, 가로/세로, 화면 고정 위치), 방향키 이동. FAB 와 함께 쓸 때는 M3 웹 지침대로 옆에 따로 배치 | [🔗](https://sayaya1090.github.io/sayaya-ui/toolbar.html) |
+| **FAB menu** | `fabMenu()` | FAB 에서 열리는 메뉴(닫기 버튼 전환, primary/secondary/tertiary, Esc·항목 선택으로 닫힘, 항목은 닫기 버튼 뒤로 스크롤 `--md-fab-menu-max-height`) | [🔗](https://sayaya1090.github.io/sayaya-ui/fab_menu.html) |
+| **Search** | `search()` | Search bar + docked/full-screen view(제안 필터, combobox·listbox, ↑/↓·Enter·Esc, contained/divided, 포커스 시 바 여백 24→12dp) | [🔗](https://sayaya1090.github.io/sayaya-ui/search.html) |
+| **Date picker** | `datePicker()` | Docked(`field(label)` 텍스트 필드 + 드롭다운, 월·연도 메뉴 버튼, 이전·다음 달 날짜)·Modal(입력/달력 전환 아이콘)·Modal date input(`modalInput()`, locale 형식 힌트·오류) — 오늘·선택 표시, ARIA grid 키보드, 연도 선택, 기간 선택 `range(true)` | [🔗](https://sayaya1090.github.io/sayaya-ui/date_picker.html) |
+| **Time picker** | `timePicker()` | Dial·Input(키보드/시계 아이콘으로 전환 `inputMode`, 12/24시간 — 24시간은 0–11 바깥·12–23 안쪽 다이얼, 오전/오후, modal 확인/취소) | [🔗](https://sayaya1090.github.io/sayaya-ui/time_picker.html) |
+| **Carousel** | `carousel()` | Multi-browse·Hero·Center-aligned hero(`heroCentered`)·Full-screen(`fullScreen`, 세로 snap)·Uncontained(일반 스크롤)·Multi-aspect ratio(`item(…, width)`) — 가장자리 항목 축소·parallax, slide 역할, 모두 보기 버튼 | [🔗](https://sayaya1090.github.io/sayaya-ui/carousel.html) |
+| **Wavy progress** | `wavyProgress()` | M3 Expressive 물결 진행 표시기 — linear·`circular()`, determinate/indeterminate | [🔗](https://sayaya1090.github.io/sayaya-ui/wavy_progress.html) |
 | **Centered slider** | `centeredSlider()` | M3 Expressive 가운데 슬라이더(0 기준 양·음 범위, 네이티브 range 키보드) | [🔗](https://sayaya1090.github.io/sayaya-ui/centered_slider.html) |
 | **i18n** | `Locales`, 각 빌더의 `locale()`·`label()` | 영어 기본 문구 덮어쓰기, Intl 기반 날짜·시간 표기, 주 시작 요일, 12/24시간, RTL | [🔗](https://sayaya1090.github.io/sayaya-ui/i18n.html) |
 | **Shape** | CSS 변수 | 직접 구현 컴포넌트의 모서리를 컴포넌트 변수·시스템 shape 토큰으로 변경 | [🔗](https://sayaya1090.github.io/sayaya-ui/shape.html) |
