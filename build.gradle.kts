@@ -112,6 +112,7 @@ tasks {
                 "dev.sayaya.ProgressElementTest",
                 "dev.sayaya.RadioElementTest",
                 "dev.sayaya.RippleElementTest",
+                "dev.sayaya.SearchElementTest",
                 "dev.sayaya.SelectElementTest",
                 "dev.sayaya.SideSheetElementTest",
                 "dev.sayaya.SliderElementTest",
