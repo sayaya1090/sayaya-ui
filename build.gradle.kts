@@ -95,6 +95,7 @@ tasks {
                 "dev.sayaya.BadgeElementTest",
                 "dev.sayaya.BottomSheetElementTest",
                 "dev.sayaya.ButtonElementTest",
+                "dev.sayaya.CarouselElementTest",
                 "dev.sayaya.CenteredSliderElementTest",
                 "dev.sayaya.DatePickerElementTest",
                 "dev.sayaya.DialogElementTest",
