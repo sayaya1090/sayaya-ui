@@ -36,13 +36,13 @@ public class FabMenuComponentsTest {
                 .item("photo_camera", "사진", e -> takePhoto())
                 .item("mic", "음성 메모", e -> record())
                 .element();
-            """, menu);
+            """, div().style("height", "260px").style("display", "flex").style("align-items", "flex-end").add(menu).element());
         var secondary = fabMenu().color(Color.Secondary).icon("edit").ariaLabel("편집").item("text_fields", "텍스트", null);
         var tertiary = fabMenu().color(Color.Tertiary).icon("star").ariaLabel("즐겨찾기").item("bookmark", "북마크", null);
         demo(section, "📘 색 구성 - secondary / tertiary", "color(Color.Secondary|Tertiary)로 색 구성을 바꿉니다.",
             """
             fabMenu().color(Color.Secondary).icon("edit").ariaLabel("편집").item("text_fields", "텍스트", e -> {}).element();
-            """, div().style("display", "flex").style("gap", "24px").add(secondary.element()).add(tertiary.element()).element());
+            """, div().style("height", "140px").style("display", "flex").style("align-items", "flex-end").style("gap", "24px").add(secondary.element()).add(tertiary.element()).element());
 
         var toggle = q(menu, ".toggle");
         var items = q(menu, ".items");
@@ -69,7 +69,7 @@ public class FabMenuComponentsTest {
                 assertEquals("fm: 닫기 버튼 56px", 56, (int) w(toggle));
                 assertEquals("fm: 닫기 버튼 아이콘 20px", "20px", cs(q(toggle, ".icon")).getPropertyValue("font-size"));
                 assertEquals("fm: 열림 목록 표시", "flex", cs(items).getPropertyValue("display"));
-                assertEquals("fm: 닫기 버튼-목록 간격 8px", "8px", cs(menu).getPropertyValue("row-gap"));
+                assertEquals("fm: 닫기 버튼-목록 간격 8px", 8, (int) Math.round(toggle.getBoundingClientRect().top - items.lastElementChild.getBoundingClientRect().bottom));
                 assertEquals("fm: 항목 간격 4px", "4px", cs(items).getPropertyValue("row-gap"));
                 assertEquals("fm: 항목 높이 56px", 56, (int) h(first));
                 assertEquals("fm: 항목 좌우 여백 24px", "24px", cs(first).getPropertyValue("padding-left"));
@@ -112,10 +112,28 @@ public class FabMenuComponentsTest {
                 .item("edit", "Note", e -> {}).item("photo_camera", "Photo", e -> {})
                 // ... 최대 6개
                 .element();
-            """, el);
+            """, div().style("height", "240px").style("display", "flex").style("align-items", "flex-end").add(el).element());
         var plain = fabMenu().icon("add").ariaLabel("Create").item("edit", "Note", null).item("photo_camera", "Photo", null).item("mic", "Voice", null);
-        section.appendChild(div().style("margin-top", "200px").add(plain.element()).element());
-        plain.open(true);
+        var pel = plain.element();
+        demo(section, "📘 FAB menu — 떠 있는 메뉴(항목이 적을 때)", "메뉴는 FAB 위에 떠서(absolute) 열립니다. 열어도 FAB 위치와 페이지 배치는 그대로이고, 항목이 넘치지 않으면 스크롤도 생기지 않습니다. 항목 그림자도 잘리지 않습니다.",
+            """
+            fabMenu().icon("add").ariaLabel("Create")
+                .item("edit", "Note", e -> {}).item("photo_camera", "Photo", e -> {}).item("mic", "Voice", e -> {})
+                .element();
+            """, div().style("height", "260px").style("display", "flex").style("align-items", "flex-end").add(pel).element());
+        var ptoggle = q(pel, ".toggle");
+        double[] before = {0, 0, 0};
+        later(300, () -> {
+            before[0] = ptoggle.getBoundingClientRect().top - pel.getBoundingClientRect().top; before[1] = pel.getBoundingClientRect().height;
+            before[2] = DomGlobal.document.documentElement.scrollHeight;
+            plain.open(true);
+            later(100, () -> {
+                assertTrue("fm: 열어도 FAB 위치 그대로(떠 있는 메뉴)", Math.abs(ptoggle.getBoundingClientRect().top - pel.getBoundingClientRect().top - before[0]) <= 0.5);
+                assertTrue("fm: 열어도 자리 크기 그대로", Math.abs(pel.getBoundingClientRect().height - before[1]) <= 0.5);
+                assertTrue("fm: 열어도 문서 높이 그대로(숨은 스크롤 없음)", DomGlobal.document.documentElement.scrollHeight <= before[2] + 0.5);
+                assertTrue("fm: 목록은 FAB 위에 뜸", q(pel, ".items").lastElementChild.getBoundingClientRect().bottom <= ptoggle.getBoundingClientRect().top - 7.5);
+            });
+        });
         b.open(true);
         later(700, () -> {
             var pl = q(plain.element(), ".items");

@@ -75,7 +75,12 @@ public class ShapeComponentsTest {
             """
             :root { --md-sys-shape-corner-extra-large: 10px; --md-sys-shape-corner-small: 3px; }
             """, div().style("display", "flex").style("gap", "16px").style("flex-wrap", "wrap").add(dpSysWrap).add(tpSysWrap).element());
-        section.appendChild(div().style("display", "flex").style("flex-direction", "column").style("gap", "16px")
+        demo(section, "📘 그 밖의 컴포넌트 모서리", "docked toolbar(12px), search bar(6px)·docked 뷰(14px), carousel 항목(8px), wavy progress 트랙(0px), centered slider 트랙(4px)·핸들(1px), FAB menu 닫기 버튼(10px)에 각각 컴포넌트 변수를 지정한 예시입니다.",
+            """
+            toolbar().docked().style("--md-toolbar-docked-container-shape", "12px")...
+            search().docked().style("--md-search-bar-container-shape", "6px").style("--md-search-view-docked-shape", "14px")...
+            carousel().multiBrowse().style("--md-carousel-item-shape", "8px")...
+            """, div().style("display", "flex").style("flex-direction", "column").style("gap", "16px").style("width", "100%").style("padding-top", "260px")
                 .add(docked).add(se.element()).add(ca).add(wp).add(cs).add(fmOpen.element()).element());
         fmOpen.open(true); // 모서리 전환(300ms)이 끝난 뒤에 잰다
 
