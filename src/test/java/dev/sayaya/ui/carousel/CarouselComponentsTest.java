@@ -110,5 +110,73 @@ public class CarouselComponentsTest {
                 assertEquals("ca: 모두 보기 동작", 1, showAll[0]);
             });
         });
+        documented(section);
+    }
+
+    /** 가이드라인 레이아웃: center-aligned hero, full-screen, uncontained multi-aspect ratio, 여백·스크롤 방식 */
+    private static void documented(HTMLElement section) {
+        var centered = fill(carousel().heroCentered().ariaLabel("Featured")).element();
+        centered.style.setProperty("width", "480px");
+        demo(section, "📘 Center-aligned hero", "가이드라인: \"The center-aligned hero layout shows at least one large item and two small items. The large item is centered.\" 큰 항목이 가운데에 snap 되고 양옆 작은 항목은 40–56dp 로 보입니다.",
+            """
+            carousel().heroCentered().ariaLabel("Featured")
+                .item("/img/a.jpg", "A").item("/img/b.jpg", "B").item("/img/c.jpg", "C")
+                .element();
+            """, centered);
+        var full = fill(carousel().fullScreen().ariaLabel("Video feed")).element();
+        full.style.setProperty("width", "320px");
+        full.style.setProperty("height", "400px");
+        demo(section, "📘 Full-screen", "가이드라인: \"The full-screen carousel layout shows one edge-to-edge large item at a time and scrolls vertically.\" 여백 0, 항목 간격 16dp 이며, \"Avoid scrolling freely on full-screen carousels\" 에 따라 한 번에 한 항목씩 snap 합니다. ↑/↓ 로 넘깁니다.",
+            """
+            carousel().fullScreen().ariaLabel("Video feed")
+                .style("--md-carousel-height", "100vh")
+                .item(video1, "Clip 1").item(video2, "Clip 2")
+                .element();
+            """, full);
+        var multi = carousel().uncontained().ariaLabel("Gallery")
+                .item(div().style("background", "#6750a4").style("height", "100%").element(), "16:9", 391)
+                .item(div().style("background", "#625b71").style("height", "100%").element(), "9:16", 124)
+                .item(div().style("background", "#7d5260").style("height", "100%").element(), "1:1", 220).element();
+        multi.style.setProperty("width", "480px");
+        demo(section, "📘 Uncontained multi-aspect ratio", "가이드라인: \"Uncontained multi-aspect ratio carousels only have leading padding, with 8dp of padding between items.\" 항목마다 너비(16:9, 9:16, 1:1)를 지정합니다. uncontained 는 snap 없이 일반 스크롤합니다.",
+            """
+            carousel().uncontained()
+                .item("/img/wide.jpg", "16:9", 391)
+                .item("/img/tall.jpg", "9:16", 124)
+                .item("/img/square.jpg", "1:1", 220)
+                .element();
+            """, multi);
+
+        later(1500, () -> {
+            var ct = q(centered, ".track");
+            assertEquals("ca: 위 여백 8px", "8px", cs(ct).getPropertyValue("padding-top"));
+            assertEquals("ca: 아래 여백 8px", "8px", cs(ct).getPropertyValue("padding-bottom"));
+            var big = item(centered, 1);
+            double mid = ct.getBoundingClientRect().left + ct.clientWidth / 2.0;
+            double bigMid = big.getBoundingClientRect().left + big.getBoundingClientRect().width / 2;
+            assertTrue("ca: center-aligned 큰 항목이 가운데", Math.abs(mid - bigMid) <= 2);
+            assertEquals("ca: center-aligned 큰 항목 320px", "320", big.getAttribute("data-visible"));
+            assertEquals("ca: center-aligned 왼쪽 작은 항목 56px", "56", item(centered, 0).getAttribute("data-visible"));
+            assertEquals("ca: center-aligned 오른쪽 작은 항목 56px", "56", item(centered, 2).getAttribute("data-visible"));
+            assertEquals("ca: center-aligned snap center", "center", cs(big).getPropertyValue("scroll-snap-align"));
+
+            var ft = q(full, ".track");
+            assertEquals("ca: full-screen 세로 배치", "column", cs(ft).getPropertyValue("flex-direction"));
+            assertEquals("ca: full-screen 여백 0", "0px", cs(ft).getPropertyValue("padding-left"));
+            assertEquals("ca: full-screen 항목 간격 16px", "16px", cs(ft).getPropertyValue("row-gap"));
+            assertEquals("ca: full-screen 세로 snap", "y mandatory", cs(ft).getPropertyValue("scroll-snap-type"));
+            assertEquals("ca: full-screen 한 항목씩(snap-stop always)", "always", cs(item(full, 0)).getPropertyValue("scroll-snap-stop"));
+            assertEquals("ca: full-screen 항목이 꽉 참(너비)", 320, (int) w(item(full, 0)));
+            assertEquals("ca: full-screen 항목이 꽉 참(높이)", 400, (int) Math.round(item(full, 0).getBoundingClientRect().height));
+            item(full, 0).focus();
+            key("ArrowDown");
+            assertTrue("ca: full-screen ↓ 로 다음 항목", DomGlobal.document.activeElement == item(full, 1));
+
+            var mt = q(multi, ".track");
+            assertEquals("ca: uncontained snap 없음", "none", cs(mt).getPropertyValue("scroll-snap-type"));
+            assertTrue("ca: multi-aspect 항목 너비", w(item(multi, 0)) == 391 && w(item(multi, 1)) == 124 && w(item(multi, 2)) == 220);
+            assertTrue("ca: multi-aspect 앞 여백만", "16px".equals(cs(mt).getPropertyValue("padding-left")) && "0px".equals(cs(mt).getPropertyValue("padding-right")));
+            assertEquals("ca: multi-aspect 항목 간격 8px", "8px", cs(mt).getPropertyValue("column-gap"));
+        });
     }
 }

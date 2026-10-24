@@ -39,6 +39,10 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
         public CarouselElementBuilder hero() { return new CarouselElementBuilder("hero", 320); }
         /** 항목 너비가 고정이고 컨테이너 끝까지 흘러 넘친다 */
         public CarouselElementBuilder uncontained() { return new CarouselElementBuilder("uncontained", 200); }
+        /** 큰 항목 하나를 가운데 두고 양옆에 작은 항목 두 개를 보인다(M3 center-aligned hero) */
+        public CarouselElementBuilder heroCentered() { return new CarouselElementBuilder("hero centered", 320); }
+        /** 화면을 꽉 채운 큰 항목 하나씩 세로로 넘긴다(M3 full-screen: 여백 0, 항목 간격 16dp, snap) */
+        public CarouselElementBuilder fullScreen() { return new CarouselElementBuilder("full-screen", 0); }
     }
 
     private final HTMLElement track;
@@ -47,12 +51,14 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
     private int count = 0;
     private Consumer<Integer> onActivate;
     private int pendingFrames = 0;
+    private boolean centeredOnce = false;
 
     private CarouselElementBuilder(String layout, int itemWidth) {
         injectStyle();
         this.layout = layout;
         this.itemWidth = itemWidth;
-        element().classList.add(CLASS, layout);
+        element().classList.add(CLASS);
+        for (String c : layout.split(" ")) element().classList.add(c);
         element().setAttribute("role", "region");
         element().setAttribute("aria-roledescription", "carousel");
         track = div().css("track").element();
@@ -91,6 +97,16 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
         return this;
     }
     public CarouselElementBuilder item(IsElement<? extends Element> content, String label) { return item(content.element(), label); }
+    /** 너비를 따로 지정한 항목(M3 uncontained multi-aspect ratio: 16:9, 9:16, 1:1, 3:4 등) */
+    public CarouselElementBuilder item(Element content, String label, int width) {
+        item(content, label);
+        ((HTMLElement) Js.uncheckedCast(items().item(count - 1))).style.setProperty("width", width + "px");
+        mask();
+        return this;
+    }
+    public CarouselElementBuilder item(String imageUrl, String label, int width) {
+        return item(img(imageUrl).css("media").attr("alt", "").attr("loading", "lazy").element(), label, width);
+    }
     /** 세로 스크롤 페이지에서 모든 항목을 보는 "모두 보기" 버튼(캐러셀 아래, 여백 4dp) */
     public CarouselElementBuilder showAll(String text, EventListener handler) {
         var b = button().css("show-all").attr("type", "button").text(text).element();
@@ -119,7 +135,8 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
         it.focus();
         // 보이도록 스크롤(LTR·RTL 모두 브라우저가 계산)
         elemental2.core.Function siv = Js.uncheckedCast(Js.asPropertyMap(it).get("scrollIntoView"));
-        jsinterop.base.JsPropertyMap<Object> o = jsinterop.base.JsPropertyMap.of("block", "nearest", "inline", "nearest");
+        boolean centered = element().classList.contains("centered") || element().classList.contains("full-screen");
+        jsinterop.base.JsPropertyMap<Object> o = jsinterop.base.JsPropertyMap.of("block", centered ? "center" : "nearest", "inline", centered ? "center" : "nearest");
         siv.call(it, o);
         mask();
     }
@@ -134,6 +151,11 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
                 if (forward && i < count - 1) focusItem(i + 1); else if (!forward && i > 0) focusItem(i - 1);
                 e.preventDefault(); break;
             }
+            case "ArrowDown": case "ArrowUp": { // full-screen 은 세로로 넘긴다
+                if (!element().classList.contains("full-screen")) return;
+                if ("ArrowDown".equals(k.key) && i < count - 1) focusItem(i + 1); else if ("ArrowUp".equals(k.key) && i > 0) focusItem(i - 1);
+                e.preventDefault(); break;
+            }
             case "Home": focusItem(0); e.preventDefault(); break;
             case "End": focusItem(count - 1); e.preventDefault(); break;
             case "Enter": case " ": activate(i); e.preventDefault(); break;
@@ -142,7 +164,7 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
     }
     /** [파생] 가장자리에 걸린 항목을 잘라 크기 변화를 근사하고, 내용은 절반만큼 반대로 밀어 parallax 를 준다 */
     private void mask() {
-        if ("uncontained".equals(layout)) return;
+        if ("uncontained".equals(layout) || "full-screen".equals(layout)) return;
         double v = track.clientWidth;
         double trackLeft = track.getBoundingClientRect().left + track.clientLeft;
         if (v <= 0) { // 아직 문서에 붙지 않았다 — 붙을 때까지 다음 프레임에 다시(최대 약 10초)
@@ -150,6 +172,11 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
             return;
         }
         pendingFrames = 0;
+        if (element().classList.contains("centered") && !centeredOnce && count > 1) { // 처음에는 둘째 항목을 가운데에
+            centeredOnce = true;
+            HTMLElement second = Js.uncheckedCast(items().item(1));
+            track.scrollLeft = second.offsetLeft + second.offsetWidth / 2.0 - v / 2;
+        }
         double start = PADDING, end = v - PADDING;
         NodeList<Element> items = items();
         for (int i = 0; i < items.length; i++) {
@@ -175,10 +202,16 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
         style.textContent =
             c + "{display:block;box-sizing:border-box}"
           // 앞뒤 여백 16dp, 간격 8dp, 스냅
-          + c + " .track{position:relative;display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:0 16px;scroll-padding:0 16px;"
+          + c + " .track{position:relative;display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:8px 16px;scroll-padding:0 16px;"
           + "scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}"
           + c + " .track::-webkit-scrollbar{display:none}"
-          + c + ".uncontained .track{padding-inline-end:0}"
+          + c + ".uncontained .track{padding-inline-end:0;scroll-snap-type:none}" // M3: uncontained 는 일반 스크롤 권장
+          + c + ".centered .item{scroll-snap-align:center}"
+          // full-screen: 여백 0, 항목 간격 16dp, 세로 snap. [미확인] 항목 모서리는 표에 없어 item shape 변수를 그대로 쓴다
+          + c + ".full-screen{height:var(--md-carousel-height,100%)}"
+          + c + ".full-screen .track{flex-direction:column;height:100%;box-sizing:border-box;overflow-x:hidden;overflow-y:auto;padding:0;gap:16px;scroll-padding:0;scroll-snap-type:y mandatory}"
+          + c + ".full-screen .track::after{display:none}"
+          + c + ".full-screen .item{width:100%!important;height:100%;scroll-snap-align:center;scroll-snap-stop:always}"
           + c + " .track::after{content:'';flex:0 0 1px}"
           // 항목 모서리 28dp
           + c + " .item{position:relative;flex:none;height:var(--md-carousel-height,220px);border-radius:var(--md-carousel-item-shape,var(--md-sys-shape-corner-extra-large,28px));overflow:hidden;scroll-snap-align:start;cursor:pointer;"

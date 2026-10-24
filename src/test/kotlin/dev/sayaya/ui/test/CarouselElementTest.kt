@@ -35,11 +35,30 @@ internal class CarouselElementTest: GwtTestSpec({
         "End 마지막 항목",
         "클릭으로 활성화",
         "모두 보기 여백 4px",
-        "모두 보기 동작"
+        "모두 보기 동작",
+        "위 여백 8px",
+        "아래 여백 8px",
+        "center-aligned 큰 항목이 가운데",
+        "center-aligned 큰 항목 320px",
+        "center-aligned 왼쪽 작은 항목 56px",
+        "center-aligned 오른쪽 작은 항목 56px",
+        "center-aligned snap center",
+        "full-screen 세로 배치",
+        "full-screen 여백 0",
+        "full-screen 항목 간격 16px",
+        "full-screen 세로 snap",
+        "full-screen 한 항목씩(snap-stop always)",
+        "full-screen 항목이 꽉 참(너비)",
+        "full-screen 항목이 꽉 참(높이)",
+        "full-screen ↓ 로 다음 항목",
+        "uncontained snap 없음",
+        "multi-aspect 항목 너비",
+        "multi-aspect 앞 여백만",
+        "multi-aspect 항목 간격 8px"
     )
     Given("M3 Carousel") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
-        page.waitForTimeout(3500.0)
+        page.waitForTimeout(4500.0)
         val logs = page.getConsoleLogs().map { it.toString() }
         println(logs)
         for (c in checks) {
