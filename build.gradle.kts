@@ -95,6 +95,7 @@ tasks {
                 "dev.sayaya.BadgeElementTest",
                 "dev.sayaya.BottomSheetElementTest",
                 "dev.sayaya.ButtonElementTest",
+                "dev.sayaya.CenteredSliderElementTest",
                 "dev.sayaya.DialogElementTest",
                 "dev.sayaya.CardElementTest",
                 "dev.sayaya.CheckboxElementTest",
@@ -119,7 +120,8 @@ tasks {
                 "dev.sayaya.SwitchElementTest",
                 "dev.sayaya.TabsElementTest",
                 "dev.sayaya.TextFieldElementTest",
-                "dev.sayaya.ToolbarElementTest"
+                "dev.sayaya.ToolbarElementTest",
+                "dev.sayaya.WavyProgressElementTest"
             )
             war = file("src/test/webapp")
         }
