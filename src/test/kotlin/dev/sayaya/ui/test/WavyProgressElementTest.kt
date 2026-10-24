@@ -31,11 +31,26 @@ internal class WavyProgressElementTest: GwtTestSpec({
         "indeterminate 파장 20px",
         "indeterminate 이동 애니메이션",
         "indeterminate 끝 점 없음",
-        "indeterminate 트랙 전체"
+        "indeterminate 트랙 전체",
+        "circular 크기 48px",
+        "circular 높이 48px",
+        "circular role progressbar",
+        "circular aria-valuenow",
+        "circular 활성 트랙은 물결(반지름 16.4~19.6)",
+        "circular 트랙은 평평한 원(반지름 18)",
+        "circular 진행률 0.6 만큼 활성",
+        "circular 트랙은 간격 뒤에서 시작",
+        "circular 활성 primary",
+        "circular 트랙 secondary-container",
+        "circular 두께 4px",
+        "circular 둥근 끝",
+        "circular 선형 막대 숨김",
+        "circular indeterminate 회전",
+        "circular indeterminate 는 aria-valuenow 없음"
     )
-    Given("M3 Wavy progress") {
+    Given("M3 Wavy_progress") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
-        page.waitForTimeout(3000.0)
+        page.waitForTimeout(4500.0)
         val logs = page.getConsoleLogs().map { it.toString() }
         println(logs)
         for (c in checks) {

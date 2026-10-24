@@ -47,11 +47,17 @@ internal class SearchElementTest: GwtTestSpec({
         "full-screen 모서리 없음",
         "full-screen 뒤로 가기 아이콘",
         "divided 구분선 1px",
-        "뒤로 가기로 닫힘"
+        "뒤로 가기로 닫힘",
+        "닫힌 바 여백 24px",
+        "닫힌 바 너비(400-48)",
+        "여백 변수로 변경",
+        "포커스하면 여백 12px",
+        "포커스하면 바가 24px 넓어짐",
+        "목록은 바와 같은 왼쪽 끝"
     )
     Given("M3 Search") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
-        page.waitForTimeout(4000.0)
+        page.waitForTimeout(4500.0)
         val logs = page.getConsoleLogs().map { it.toString() }
         println(logs)
         for (c in checks) {

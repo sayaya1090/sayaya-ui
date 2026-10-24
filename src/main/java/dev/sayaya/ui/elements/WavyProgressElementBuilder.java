@@ -44,14 +44,68 @@ public final class WavyProgressElementBuilder extends CustomElementBuilder<WavyP
     /** 진행률 0~1 (범위를 벗어나면 잘라낸다) */
     public WavyProgressElementBuilder value(double value) {
         double v = Math.max(0, Math.min(1, value));
+        this.val = v;
         element().style.setProperty("--_value", String.valueOf(v));
         element().setAttribute("aria-valuenow", String.valueOf(v));
+        updateCircle();
         return this;
+    }
+
+    // ---------- circular (CircularProgressIndicatorTokens: WaveSize 48, Size 40, 두께 4, 진폭 1.6, 파장 15, 활성-트랙 간격 4) ----------
+    static final double RADIUS = (40 - 4) / 2.0, AMPLITUDE = 1.6, WAVELENGTH = 15, TRACK_SPACE = 4, THICKNESS = 4;
+    private static final String SVG_NS = "http://www.w3.org/2000/svg";
+    private double val = 0;
+    private Element svg, activePath, trackPath;
+    /** 원형 물결 진행 표시기(M3 progress indicators: circular, Shape: wavy) */
+    public WavyProgressElementBuilder circular() {
+        if (svg != null) return this;
+        element().classList.add("circular");
+        svg = DomGlobal.document.createElementNS(SVG_NS, "svg");
+        svg.setAttribute("viewBox", "0 0 48 48");
+        svg.setAttribute("aria-hidden", "true");
+        trackPath = DomGlobal.document.createElementNS(SVG_NS, "path");
+        trackPath.setAttribute("class", "c-track");
+        trackPath.setAttribute("d", circlePath(0));
+        trackPath.setAttribute("pathLength", "1");
+        activePath = DomGlobal.document.createElementNS(SVG_NS, "path");
+        activePath.setAttribute("class", "c-active");
+        activePath.setAttribute("d", circlePath(AMPLITUDE));
+        activePath.setAttribute("pathLength", "1");
+        svg.appendChild(trackPath);
+        svg.appendChild(activePath);
+        element().appendChild(svg);
+        updateCircle();
+        return this;
+    }
+    /** 둘레에 파장 15dp 의 물결(정수 개)을 얹은 원. 12시 방향에서 시계 방향으로 그린다 */
+    static String circlePath(double amplitude) {
+        int waves = (int) Math.round(2 * Math.PI * RADIUS / WAVELENGTH);
+        StringBuilder d = new StringBuilder();
+        int points = 240;
+        for (int i = 0; i <= points; i++) {
+            double t = 2 * Math.PI * i / points;
+            double r = RADIUS + amplitude * Math.sin(waves * t);
+            double x = 24 + r * Math.sin(t), y = 24 - r * Math.cos(t);
+            d.append(i == 0 ? "M" : "L").append(num(x)).append(' ').append(num(y));
+        }
+        return d.toString();
+    }
+    private static String num(double v) { return String.valueOf(Math.round(v * 100) / 100.0); }
+    private void updateCircle() {
+        if (svg == null) return;
+        boolean ind = element().classList.contains("indeterminate");
+        double v = ind ? 0.25 : val;
+        // 둥근 끝(두께/2)만큼 양쪽이 늘어나므로 보이는 간격이 4dp 가 되도록 경로 길이 비율로 보정
+        double gap = (TRACK_SPACE + THICKNESS) / (2 * Math.PI * RADIUS);
+        activePath.setAttribute("stroke-dasharray", v <= 0 ? "0 1" : num(v) + " 1");
+        double len = 1 - v - 2 * gap;
+        trackPath.setAttribute("stroke-dasharray", ind || len <= 0 ? "0 1" : "0 " + num(v <= 0 ? 0 : v + gap) + " " + num(v <= 0 ? 1 : len) + " 1");
     }
     /** 진행률을 알 수 없을 때 */
     public WavyProgressElementBuilder indeterminate(boolean indeterminate) {
         if (indeterminate) { element().classList.add("indeterminate"); element().removeAttribute("aria-valuenow"); }
         else { element().classList.remove("indeterminate"); element().setAttribute("aria-valuenow", element().style.getPropertyValue("--_value")); }
+        updateCircle();
         return this;
     }
 
@@ -86,7 +140,15 @@ public final class WavyProgressElementBuilder extends CustomElementBuilder<WavyP
           + c + ".indeterminate .track{left:0}"
           + c + ".indeterminate .stop{display:none}"
           + "@keyframes sayaya-wave-sweep{from{transform:translateX(-100%)}to{transform:translateX(250%)}}"
-          + "@media (prefers-reduced-motion: reduce){" + c + " .active{animation:none}}";
+          + c + ".circular{width:48px;height:48px;min-width:0;overflow:visible}"
+          + c + ".circular .active," + c + ".circular .track," + c + ".circular .stop{display:none}"
+          + c + ".circular svg{display:block;width:48px;height:48px}"
+          + c + ".circular path{fill:none;stroke-width:4;stroke-linecap:round}"
+          + c + ".circular .c-active{stroke:var(--_active)}"
+          + c + ".circular .c-track{stroke:var(--_track)}"
+          + c + ".circular.indeterminate svg{animation:sayaya-wave-spin 1.5s linear infinite}"
+          + "@keyframes sayaya-wave-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}"
+          + "@media (prefers-reduced-motion: reduce){" + c + " .active," + c + ".circular svg{animation:none}}";
         DomGlobal.document.head.appendChild(style);
     }
 }

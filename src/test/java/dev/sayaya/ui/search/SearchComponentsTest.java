@@ -10,6 +10,7 @@ import java.util.List;
 import static dev.sayaya.ui.TestHelper.*;
 import static dev.sayaya.ui.elements.ButtonElementBuilder.button;
 import static dev.sayaya.ui.elements.SearchElementBuilder.*;
+import static org.jboss.elemento.Elements.div;
 
 /** M3 search(bar + docked/full-screen view): 토큰 수치(computed style) + combobox 동작. 메시지 접두어 "se: ". */
 public class SearchComponentsTest {
@@ -35,6 +36,7 @@ public class SearchComponentsTest {
         printDescription("검색어로 제품 안을 찾아가는 검색입니다. 검색 바에 포커스하면 제안 목록이 열리고, 입력할수록 제안이 걸러집니다. docked 는 검색 바 아래로 목록이 열리고 스크림이 본문을 덮으며, full-screen 은 화면 전체로 펼쳐집니다. ↑/↓ 로 제안을 고르고 Enter 로 선택하며 Esc 로 닫습니다.");
         printSeparator();
         var section = section("Search");
+        documented(section);
         List<String> searched = new ArrayList<>();
         List<String> inputs = new ArrayList<>();
 
@@ -129,6 +131,35 @@ public class SearchComponentsTest {
                     q(fel, ".leading").click();
                     assertTrue("se: 뒤로 가기로 닫힘", !full.isOpen() && "search".equals(q(fel, ".leading .icon").textContent));
                 });
+            });
+        });
+    }
+
+    /** 가이드라인: "In M3 Expressive, the search bar expands when focused. The margins change from 24dp to 12dp." */
+    private static void documented(HTMLElement section) {
+        var s = search().docked().placeholder("Search messages").suggestions("Weekly report", "Meeting notes");
+        var el = s.element();
+        el.style.setProperty("width", "400px");
+        var custom = search().docked().style("--md-search-bar-margin", "0px").element();
+        demo(section, "📘 Search bar expands when focused", "가이드라인: \"In M3 Expressive, the search bar expands when focused. The margins change from 24dp to 12dp.\" 여백은 --md-search-bar-margin / --md-search-bar-focused-margin 으로 바꿉니다.",
+            """
+            search().docked().placeholder("Search messages")
+                .suggestions("Weekly report", "Meeting notes")
+                .element();
+            """, el);
+        section.appendChild(div().style("position", "absolute").style("left", "-9999px").style("width", "300px").add(custom).element());
+        later(700, () -> {
+            var bar = q(el, ".bar");
+            assertEquals("se: 닫힌 바 여백 24px", "24px", cs(bar).getPropertyValue("margin-left"));
+            long closed = Math.round(bar.getBoundingClientRect().width);
+            assertEquals("se: 닫힌 바 너비(400-48)", 352, (int) closed);
+            assertEquals("se: 여백 변수로 변경", "0px", cs(q(custom, ".bar")).getPropertyValue("margin-left"));
+            s.open(true);
+            later(400, () -> {
+                assertEquals("se: 포커스하면 여백 12px", "12px", cs(bar).getPropertyValue("margin-left"));
+                assertEquals("se: 포커스하면 바가 24px 넓어짐", 376, (int) Math.round(bar.getBoundingClientRect().width));
+                assertEquals("se: 목록은 바와 같은 왼쪽 끝", (int) Math.round(bar.getBoundingClientRect().left), (int) Math.round(q(el, ".view").getBoundingClientRect().left));
+                s.open(false);
             });
         });
     }
