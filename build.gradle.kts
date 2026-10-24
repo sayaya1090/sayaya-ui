@@ -105,6 +105,7 @@ tasks {
                 "dev.sayaya.GbElementTest",
                 "dev.sayaya.IconElementTest",
                 "dev.sayaya.ListElementTest",
+                "dev.sayaya.LoadingIndicatorElementTest",
                 "dev.sayaya.MenuElementTest",
                 "dev.sayaya.NavigationElementTest",
                 "dev.sayaya.ProgressElementTest",
