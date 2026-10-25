@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>dev.sayaya.Ui Test - Navigation ESM bundle (rail / top app bar / navigation bar)</title>
+    <!-- 소비 측 앱처럼 Material Web 2.5.0 의 필요한 컴포넌트(icon-button)만 따로 싣고, 그 위에 단독 ESM 번들 sayaya-ui-navigation.js 를 싣는다.
+         아이콘 폰트(Material Symbols)는 싣지 않는다 -->
+    <script type="importmap">
+        { "imports": { "@material/web/": "https://esm.run/@material/web@2.5.0/" } }
+    </script>
+    <script type="module">
+        const log = (name, ok, detail = '') => console.log(`navesm: ${name} - ${ok ? 'ok' : 'Assertion failed!'} ${detail}`);
+        const errors = [];
+        addEventListener('error', (e) => errors.push(String(e.message)));
+        addEventListener('unhandledrejection', (e) => errors.push(String(e.reason)));
+        const frame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+        // 1) 앱 자체 Material Web 번들 흉내: icon-button(+ ripple/focus-ring 등 내부 요소)
+        await import('@material/web/iconbutton/icon-button.js');
+        const mw = ['md-icon-button', 'md-focus-ring', 'md-ripple'].filter((n) => customElements.get(n));
+        const mwCtors = mw.map((n) => customElements.get(n));
+        const registered = [];
+        const origDefine = customElements.define;
+        customElements.define = function (name, ...rest) { registered.push(name); return origDefine.call(this, name, ...rest); };
+        let importError = null;
+        try { await import('./sayaya-ui-navigation.js'); } catch (e) { importError = e; }
+        customElements.define = origDefine;
+        log('단독 번들 import 오류 없음', !importError && errors.length === 0, importError ? String(importError) : errors.join(' | '));
+        const names = ['md-navigation-bar', 'md-navigation-rail', 'md-navigation-rail-item', 'md-navigation-tab', 'md-top-app-bar'];
+        log('레일·앱 바·내비게이션 바 정의', names.every((n) => !!customElements.get(n)));
+        log('다른 md-* 는 정의하지 않음', registered.slice().sort().join(',') === names.join(','), registered.join(','));
+        log('앱이 정의한 Material Web 요소는 그대로', mw.length === 3 && mw.every((n, i) => customElements.get(n) === mwCtors[i]), mw.join(','));
+        const Rail = customElements.get('md-navigation-rail');
+        const again = [];
+        let dupError = null;
+        customElements.define = function (name, ...rest) { again.push(name); return origDefine.call(this, name, ...rest); };
+        try { await import('./sayaya-ui-navigation.js?again'); } catch (e) { dupError = e; }
+        customElements.define = origDefine;
+        log('두 번 실어도 중복 정의 오류 없음', !dupError && errors.length === 0 && again.length === 0 && customElements.get('md-navigation-rail') === Rail, dupError ? String(dupError) : again.join(','));
+
+        // 2) 링크 목적지
+        const rail = document.createElement('md-navigation-rail');
+        rail.menu = true; rail.style.height = '420px';
+        const hrefs = ['#nav-a', '#nav-b', '#nav-c', '#nav-d'];
+        const items = hrefs.map((h, i) => { const it = document.createElement('md-navigation-rail-item'); it.label = 'L' + i; it.href = h; rail.append(it); return it; });
+        items[2].disabled = true;
+        document.body.append(rail);
+        await wait(100); await frame();
+        const a = (it) => it.shadowRoot.querySelector('[part="button"]');
+        log('href 항목은 <a href> 로 그림', items.every((it, i) => a(it).localName === 'a' && a(it).getAttribute('href') === hrefs[i]));
+        log('링크 레일은 tablist 역할을 쓰지 않음', !rail.shadowRoot.querySelector('.items').hasAttribute('role'));
+        const activated = [];
+        let prevent = true;
+        rail.addEventListener('navigation-rail-activated', (e) => { activated.push(e.detail); if (prevent) e.preventDefault(); });
+        const click = (it, init = {}) => { const ev = new MouseEvent('click', {bubbles: true, composed: true, cancelable: true, button: 0, ...init}); a(it).dispatchEvent(ev); return ev; };
+        const before = location.hash;
+        let ev = click(items[1]);
+        await frame();
+        log('일반 클릭은 activated(index·href)', activated.length === 1 && activated[0].activeIndex === 1 && activated[0].href === '#nav-b' && rail.activeIndex === 1, JSON.stringify(activated.map((d) => [d.activeIndex, d.href])));
+        log('activated 에서 preventDefault 하면 기본 이동 막음', ev.defaultPrevented && location.hash === before, `${ev.defaultPrevented} ${location.hash}`);
+        prevent = false;
+        ev = click(items[3]);
+        await wait(50);
+        log('preventDefault 안 하면 링크대로 이동', !ev.defaultPrevented && location.hash === '#nav-d' && rail.activeIndex === 3, location.hash);
+        // 수식 키·가운데(보조) 버튼: activated 없음, 컴포넌트는 기본 동작을 막지 않음(window 에서 기록 뒤 테스트 브라우저 새 탭 방지용으로 막음)
+        const seen = [];
+        const guard = (e) => { seen.push(e.type + ':' + e.defaultPrevented); e.preventDefault(); };
+        addEventListener('click', guard); addEventListener('auxclick', guard);
+        const n0 = activated.length;
+        for (const mod of ['metaKey', 'ctrlKey', 'shiftKey', 'altKey']) click(items[0], {[mod]: true});
+        log('수식 키 클릭은 activated 없음·기본 동작 유지', activated.length === n0 && seen.length === 4 && seen.every((s) => s === 'click:false') && rail.activeIndex === 3, seen.join(','));
+        seen.length = 0;
+        a(items[0]).dispatchEvent(new MouseEvent('auxclick', {bubbles: true, composed: true, cancelable: true, button: 1}));
+        click(items[0], {button: 1});
+        log('가운데 클릭은 activated 없음·기본 동작 유지', activated.length === n0 && seen.join(',') === 'auxclick:false,click:false', seen.join(','));
+        removeEventListener('click', guard); removeEventListener('auxclick', guard);
+
+        // 3) aria-current
+        await wait(50);
+        log('활성 링크 항목 aria-current=page', a(items[3]).getAttribute('aria-current') === 'page' && items.filter((_, i) => i !== 3).every((it) => !a(it).hasAttribute('aria-current')));
+
+        // 4) 화살표 이동
+        const key = (k) => { const t = document.activeElement.shadowRoot.activeElement; t.dispatchEvent(new KeyboardEvent('keydown', {key: k, bubbles: true, composed: true, cancelable: true})); };
+        items[0].focus();
+        key('ArrowDown');
+        log('↓ 다음 항목으로 이동', document.activeElement === items[1], document.activeElement?.label);
+        key('ArrowDown');
+        log('↓ disabled 항목은 건너뜀', document.activeElement === items[3], document.activeElement?.label);
+        key('ArrowDown');
+        log('끝에서 ↓ 는 감기지 않음', document.activeElement === items[3], document.activeElement?.label);
+        key('ArrowUp'); key('ArrowUp');
+        log('↑ 이전 항목으로 이동', document.activeElement === items[0], document.activeElement?.label);
+        key('ArrowUp');
+        log('처음에서 ↑ 는 감기지 않음', document.activeElement === items[0], document.activeElement?.label);
+        key('End');
+        log('End 마지막 항목', document.activeElement === items[3]);
+        key('Home');
+        log('Home 첫 항목', document.activeElement === items[0]);
+        log('화살표 이동은 활성화하지 않음', rail.activeIndex === 3 && activated.length === n0);
+
+        // 5) 메뉴 아이콘: 폰트 없이 SVG
+        const menuBtn = rail.shadowRoot.querySelector('.menu');
+        const shown = () => { const s = menuBtn.querySelector('svg'); return s ? s.getAttribute('data-icon') : null; };
+        const svgBox = menuBtn.querySelector('svg')?.getBoundingClientRect();
+        log('기본 메뉴 아이콘 SVG(menu)', shown() === 'menu' && !menuBtn.querySelector('md-icon') && svgBox && Math.round(svgBox.width) === 24 && Math.round(svgBox.height) === 24, `${shown()} ${svgBox?.width}`);
+        rail.toggle(true); await rail.updateComplete; await frame();
+        log('펼치면 기본 아이콘 menu_open SVG', shown() === 'menu_open', shown());
+        const rail2 = document.createElement('md-navigation-rail');
+        rail2.menu = true; rail2.style.height = '200px';
+        const custom = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        custom.setAttribute('slot', 'menu-icon'); custom.setAttribute('viewBox', '0 0 24 24'); custom.setAttribute('width', '24'); custom.setAttribute('height', '24');
+        custom.innerHTML = '<rect width="24" height="24"/>';
+        rail2.append(custom);
+        document.body.append(rail2);
+        await rail2.updateComplete; await frame();
+        const slot2 = rail2.shadowRoot.querySelector('slot[name="menu-icon"]');
+        const cr = custom.getBoundingClientRect();
+        log('menu-icon 슬롯으로 아이콘 교체', slot2.assignedElements().includes(custom) && cr.width === 24 && cr.height === 24, `${cr.width}x${cr.height}`);
+        rail2.toggle(true); await rail2.updateComplete; await frame();
+        log('menu-open-icon 없으면 펼침에도 menu-icon', custom.getBoundingClientRect().width === 24);
+
+        // 기존 동작 유지: 앱 바 표시
+        const bar = document.createElement('md-top-app-bar'); bar.innerHTML = '<span slot="headline">제목</span>'; document.body.prepend(bar);
+        await bar.updateComplete;
+        log('md-top-app-bar 표시(64px)', Math.round(bar.getBoundingClientRect().height) === 64, String(bar.getBoundingClientRect().height));
+        log('검사 끝', errors.length === 0, errors.join(' | '));
+    </script>
+</head>
+<body></body>
+</html>
