@@ -66,6 +66,7 @@ public final class MdNavigationElement {
         public boolean menu;
         public boolean hideWhenCollapsed;
         public boolean hideCollapsedLabels;
+        public boolean fullWidthIndicator;
         public native void toggle();
         public native void toggle(boolean expanded);
     }
@@ -79,6 +80,7 @@ public final class MdNavigationElement {
         public String badgeValue;
         public boolean showBadge;
         public boolean hideCollapsedLabels;
+        public boolean fullWidthIndicator;
         /** 있으면 항목을 {@code <a href>} 로 그린다(링크 목적지) */
         public String href;
     }

@@ -120,6 +120,7 @@ export class MdNavigationRail extends LitElement {
     menu: {type: Boolean, reflect: true},          // 내장 메뉴 버튼: 펼침/접힘 전환, 펼치면 아이콘이 바뀐다
     hideWhenCollapsed: {type: Boolean, attribute: 'hide-when-collapsed', reflect: true}, // Expanded behavior: hide when collapsed
     hideCollapsedLabels: {type: Boolean, attribute: 'hide-collapsed-labels', reflect: true}, // [M3 외] 접힌 레일에서 라벨을 숨김(아이콘만, 라벨은 툴팁·aria-label)
+    fullWidthIndicator: {type: Boolean, attribute: 'full-width-indicator', reflect: true},   // 펼친 레일 indicator 를 항목 폭만큼 채움(M3 가이드 'fill the container' 변형, 기본은 내용 폭)
     _header: {state: true},
     _footer: {state: true},
     _links: {state: true},
@@ -149,7 +150,7 @@ export class MdNavigationRail extends LitElement {
   `]);
   constructor() {
     super();
-    this.activeIndex = 0; this.alignment = 'top'; this.expanded = false; this.narrow = false; this.modal = false; this.menu = false; this.hideWhenCollapsed = false; this.hideCollapsedLabels = false; this._header = false; this._footer = false; this._links = false;
+    this.activeIndex = 0; this.alignment = 'top'; this.expanded = false; this.narrow = false; this.modal = false; this.menu = false; this.hideWhenCollapsed = false; this.hideCollapsedLabels = false; this.fullWidthIndicator = false; this._header = false; this._footer = false; this._links = false;
     this.addEventListener('navigation-rail-item-interaction', (e) => {
       const index = this.items.indexOf(e.target);
       if (index < 0 || e.target.disabled) return;   // footer 항목은 목적지가 아니므로 activeIndex 를 바꾸지 않는다(각자 click 처리)
@@ -198,7 +199,7 @@ export class MdNavigationRail extends LitElement {
   updated() { this._sync(); }
   _sync() {
     this.items.forEach((item, i) => { item.active = i === this.activeIndex; });
-    this.querySelectorAll(':scope > md-navigation-rail-item').forEach((item) => { item.expanded = this.expanded; item.hideCollapsedLabels = this.hideCollapsedLabels; });
+    this.querySelectorAll(':scope > md-navigation-rail-item').forEach((item) => { item.expanded = this.expanded; item.hideCollapsedLabels = this.hideCollapsedLabels; item.fullWidthIndicator = this.fullWidthIndicator; });
     this._header = this.menu || !!this.querySelector(':scope > [slot="header"]');
     this._footer = !!this.querySelector(':scope > [slot="footer"]');
     this._links = this.items.some((it) => !!it.href);   // 링크 목적지면 tablist 역할을 쓰지 않는다
@@ -227,6 +228,7 @@ export class MdNavigationRailItem extends LitElement {
     showBadge: {type: Boolean, attribute: 'show-badge'},
     expanded: {type: Boolean, reflect: true},
     hideCollapsedLabels: {type: Boolean, attribute: 'hide-collapsed-labels', reflect: true}, // 레일이 전파
+    fullWidthIndicator: {type: Boolean, attribute: 'full-width-indicator', reflect: true},   // 레일이 전파
   };
   static styles = css([`
     :host { display: block; }
@@ -260,6 +262,8 @@ export class MdNavigationRailItem extends LitElement {
     .supporting:not(.has), .trailing:not(.has) { display: none; }
     .trailing { display: flex; align-items: center; flex: none; margin-inline-start: auto; }
     :host([expanded]) .indicator.wide { width: 100%; }               /* trailing 이 있으면 indicator 를 항목 끝까지 늘린다 */
+    /* full-width-indicator: 모든 항목의 indicator(활성·호버 영역)를 항목 폭만큼. 앞뒤 여백은 그대로 16(item.horizontal.full-width.leading/trailing-space 16) */
+    :host([expanded][full-width-indicator]) .indicator { width: 100%; }
     :host([expanded][active]) .label { color: var(--md-sys-color-on-secondary-container, #1d192b); }
     /* 배지: 접힌 레일은 아이콘 오른쪽 위, 펼친 레일은 라벨 옆 */
     .badge { box-sizing: border-box; min-width: 16px; height: 16px; padding: 0 4px; border-radius: var(--md-navigation-rail-badge-shape, var(--md-sys-shape-corner-full, 8px));
@@ -270,7 +274,7 @@ export class MdNavigationRailItem extends LitElement {
     .icon .badge.dot { top: 0; left: 18px; }
     .badge.after { flex: none; }
   `]);
-  constructor() { super(); this.active = false; this.disabled = false; this.label = ''; this.badgeValue = ''; this.showBadge = false; this.expanded = false; this.hideCollapsedLabels = false; }
+  constructor() { super(); this.active = false; this.disabled = false; this.label = ''; this.badgeValue = ''; this.showBadge = false; this.expanded = false; this.hideCollapsedLabels = false; this.fullWidthIndicator = false; }
   render() {
     const hasActive = !!this.querySelector(':scope > [slot="active-icon"]');
     const hasSupport = !!this.querySelector(':scope > [slot="supporting-text"]');

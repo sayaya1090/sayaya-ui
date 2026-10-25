@@ -85,6 +85,9 @@ internal class NavigationElementTest: GwtTestSpec({
         "레일 접힘 너비 변수 56px", "레일 항목 높이 변수 48px", "레일 indicator 너비 변수 40px", "레일 항목 part button/label",
         "접힌 레일 라벨 숨김", "펼친 레일은 라벨 숨김 무시", "펼친 레일 최소 너비 변수 256px",
         "레일 항목 supporting-text 슬롯", "레일 항목 trailing 슬롯은 끝에", "레일 footer 는 항목 아래·목적지 아님",
+        // 펼친 레일 indicator 폭 옵션·항목 간격 옵션
+        "펼친 레일 indicator 기본은 항목마다 내용 폭", "fullWidthIndicator 는 모든 항목 indicator 를 항목 폭만큼",
+        "펼친 레일 항목 간격 기본 0", "expandedItemSpace 8px",
     )
     Given("M3 네비게이션 컴포넌트") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용

@@ -959,6 +959,8 @@ var rail = navigationRail()
 - `headline(Element)` / `headline(IsElement<?>)`: 제목 슬롯에 요소를 둡니다. 다시 호출하면 이전 제목을 바꿉니다. DOM 요소는 한 곳에만 붙으므로 medium/large 의 확장 영역 제목에는 복제되지 않습니다(small 에서 쓰는 것을 권장).
 - `hideCollapsedLabels(true)` (`hide-collapsed-labels` 속성): 접힌 레일에서 라벨을 숨깁니다. 라벨은 버튼의 `aria-label` 과 `title`(툴팁)로 남고, 펼친 레일에서는 그대로 보입니다.
 - `supportingText(String)`, `trailing(Element)` (`supporting-text`/`trailing` 슬롯): 펼친 레일에서만 보입니다.
+- `fullWidthIndicator(true)` (`full-width-indicator` 속성): 펼친 레일에서 모든 항목의 indicator(활성 표시·호버 영역)를 항목 폭만큼 채웁니다. 기본(`false`)은 M3 Expressive 대로 indicator 가 아이콘·라벨 폭에 맞춰지고, 항목 사이 간격은 토큰(`md.comp.nav-rail.expanded.between-item-space`)대로 0 입니다. M3 가이드는 baseline navigation drawer 와 비슷한 모양이 필요할 때 indicator 를 컨테이너만큼 채우는 것을 허용합니다(*"consider modifying the active indicator to fill the container"*). 클릭 영역은 두 경우 모두 레일 전체 폭입니다.
+- `expandedItemSpace("4px")` (`--md-navigation-rail-expanded-item-space` 변수): 펼친 레일의 항목 사이 간격입니다. 기본은 `0` 으로 토큰(`between-item-space`)과 같습니다. 접힌 레일의 간격(기본 `4px`, `collapsed.item.vertical-space`)은 `--md-navigation-rail-item-space` 로 조정합니다.
 - `footer(...)` (`footer` 슬롯): 레일 맨 아래 영역입니다. footer 의 항목은 펼침 상태와 라벨 숨김을 따르지만, 목적지(`activeIndex`·`onActivated`) 대상이 아니므로 클릭은 직접 처리합니다.
 - 항목 내부 part: `button`, `indicator`, `label`, `supporting-text`, `trailing`, `badge`. 레일 part: `footer`, `menu`, `scrim`.
 

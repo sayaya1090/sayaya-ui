@@ -179,6 +179,16 @@ public final class NavigationElementBuilder {
          * 펼친 레일에서는 라벨이 그대로 보인다. 항목 높이를 줄이려면 {@code --md-navigation-rail-item-min-height} 를 함께 지정한다.
          */
         public NavigationRailBuilder hideCollapsedLabels(boolean hide) { element().hideCollapsedLabels = hide; return this; }
+        /**
+         * 펼친 레일에서 모든 항목의 indicator(활성 표시·호버 영역)를 항목 폭만큼 채운다. 기본(false)은 M3 Expressive 대로 내용 폭에 맞춘다.
+         * M3 가이드: "consider modifying the active indicator to fill the container"(baseline navigation drawer 와 비슷한 모양).
+         */
+        public NavigationRailBuilder fullWidthIndicator(boolean fill) { element().fullWidthIndicator = fill; return this; }
+        /**
+         * 펼친 레일의 항목 사이 간격(CSS 길이, 예: "4px"). 기본 0 = 토큰 md.comp.nav-rail.expanded.between-item-space.
+         * {@code --md-navigation-rail-expanded-item-space} 변수를 지정한다. 접힌 레일 간격(기본 4px)은 {@code --md-navigation-rail-item-space} 로 조정한다.
+         */
+        public NavigationRailBuilder expandedItemSpace(String length) { element().style.setProperty("--md-navigation-rail-expanded-item-space", length); return this; }
         /** 펼침/접힘이 바뀔 때 호출(expanded-changed) */
         public NavigationRailBuilder onExpandedChanged(java.util.function.Consumer<Boolean> callback) {
             element().addEventListener("expanded-changed", evt -> callback.accept(element().expanded));

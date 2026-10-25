@@ -328,7 +328,9 @@ public class NavigationComponentsTest {
         var wRail = navigationRail().expanded(true).hideCollapsedLabels(true).style("--md-navigation-rail-expanded-min-width", "256px")
                 .item(railItem().icon("folder").label("문서").supportingText("12개 항목").trailing(icon("more_vert")))
                 .item(railItem().icon("inbox").label("받은편지함")).element();
-        box.appendChild(div().style("display", "flex").style("gap", "24px").style("height", "360px").add(vRail).add(wRail).element());
+        var hugRail = navigationRail().expanded(true).item(railItem().icon("home").label("홈")).item(railItem().icon("inbox").label("받은편지함 보관")).element();
+        var fullRail = navigationRail().expanded(true).fullWidthIndicator(true).expandedItemSpace("8px").item(railItem().icon("home").label("홈")).item(railItem().icon("inbox").label("받은편지함 보관")).element();
+        box.appendChild(div().style("display", "flex").style("gap", "24px").style("height", "360px").add(vRail).add(wRail).add(hugRail).add(fullRail).element());
         DomGlobal.setTimeout(t -> {
             assertEquals("nav: 앱 바 높이 변수 56px", 56, (int) Math.round(bar56.getBoundingClientRect().height));
             assertEquals("nav: medium 앱 바는 높이 변수 + 48px", 104, (int) Math.round(med56.getBoundingClientRect().height));
@@ -358,6 +360,17 @@ public class NavigationComponentsTest {
             HTMLElement foot = Js.uncheckedCast(vRail.querySelector("[slot='footer']"));
             assertTrue("nav: 레일 footer 는 항목 아래·목적지 아님", foot.getBoundingClientRect().top >= inner(vRail, ".items").getBoundingClientRect().bottom - 1
                     && ((elemental2.core.JsArray<?>) Js.uncheckedCast(Js.asPropertyMap(vRail).get("items"))).length == 2 && foot.hasAttribute("hide-collapsed-labels"));
+            HTMLElement h0 = Js.uncheckedCast(hugRail.querySelectorAll("md-navigation-rail-item").item(0));
+            HTMLElement h1 = Js.uncheckedCast(hugRail.querySelectorAll("md-navigation-rail-item").item(1));
+            double hw0 = inner(h0, ".indicator").getBoundingClientRect().width, hw1 = inner(h1, ".indicator").getBoundingClientRect().width;
+            assertTrue("nav: 펼친 레일 indicator 기본은 항목마다 내용 폭", hw1 > hw0 + 8 && hw0 < h0.getBoundingClientRect().width - 8);
+            HTMLElement f0 = Js.uncheckedCast(fullRail.querySelectorAll("md-navigation-rail-item").item(0));
+            HTMLElement f1 = Js.uncheckedCast(fullRail.querySelectorAll("md-navigation-rail-item").item(1));
+            double fw0 = inner(f0, ".indicator").getBoundingClientRect().width, fw1 = inner(f1, ".indicator").getBoundingClientRect().width;
+            assertTrue("nav: fullWidthIndicator 는 모든 항목 indicator 를 항목 폭만큼",
+                    f0.hasAttribute("full-width-indicator") && Math.abs(fw0 - fw1) < 1 && Math.abs(fw0 - f0.getBoundingClientRect().width) < 1);
+            assertEquals("nav: 펼친 레일 항목 간격 기본 0", 0, (int) Math.round(h1.getBoundingClientRect().top - h0.getBoundingClientRect().bottom));
+            assertEquals("nav: expandedItemSpace 8px", 8, (int) Math.round(f1.getBoundingClientRect().top - f0.getBoundingClientRect().bottom));
         }, 1500);
     }
     private static void check(HTMLElement el, String tag, boolean props) {
