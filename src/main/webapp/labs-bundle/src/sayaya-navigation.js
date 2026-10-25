@@ -14,6 +14,20 @@ const MENU_OPEN_SVG = html`<svg viewBox="0 0 24 24" width="24" height="24" fill=
 // 이미 같은 이름이 등록돼 있으면 건너뜀(단독 navigation ESM 번들이 다른 번들과 공존)
 const define = (name, ctor) => { if (!customElements.get(name)) customElements.define(name, ctor); };
 
+// 레일 펼침/접힘 전환 모션 [파생: Compose Material3 WideNavigationRail·AnimatedNavigationItem 방식을 웹으로 옮김]
+// 하나의 진행도 p(spring)로 레일 폭·패딩·항목 간격·항목 높이·indicator 크기·아이콘 위치를 접힘↔펼침 값 사이에서 보간한다.
+// 라벨은 p=0.5 에서 자리를 바꾸며 alpha = 4(p-0.5)^2 (이전 라벨은 잔상으로 사라지고 새 라벨이 나타난다).
+// spring: Expressive motion DefaultSpatial(damping 0.8, stiffness 380), modal 은 FastSpatial(0.6, 800) (ExpressiveMotionTokens.kt)
+// prefers-reduced-motion: reduce 이면 전환 없이 바로 바뀐다.
+const SPRING_DEFAULT_SPATIAL = [0.8, 380], SPRING_FAST_SPATIAL = [0.6, 800];
+const spring = ([z, k], t) => { const w = Math.sqrt(k), wd = w * Math.sqrt(1 - z * z);
+  return 1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + (z * w / wd) * Math.sin(wd * t)); };
+const springSettle = ([z, k]) => Math.log(1000) / (z * Math.sqrt(k));   // 진폭이 0.1% 로 줄어드는 시간(초)
+const mix = (a, b, p) => a + (b - a) * p;
+// 이동량은 기기 픽셀 단위로 맞춘다(0.5·1px 처럼 정확히 표현되는 값이라 이동 중에도 요소 크기가 소수 오차 없이 유지되고 글자가 덜 흐려진다)
+const snap = (v) => { const d = window.devicePixelRatio || 1; return Math.round(v * d) / d; };
+const reducedMotion = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
 const ELEV1 = '0 1px 2px 0 rgba(0,0,0,.3), 0 1px 3px 1px rgba(0,0,0,.15)';
 const ELEV2 = '0 1px 2px 0 rgba(0,0,0,.3), 0 2px 6px 2px rgba(0,0,0,.15)';
 const type = (role, size, lh, weight) => `font-family: var(--md-sys-typescale-${role}-font, Roboto, sans-serif);
@@ -196,7 +210,133 @@ export class MdNavigationRail extends LitElement {
     this.expanded = next;
     this.dispatchEvent(new CustomEvent('expanded-changed', {detail: {expanded: next}, bubbles: true, composed: true}));
   }
-  updated() { this._sync(); }
+  willUpdate(changed) {
+    if (!changed.has('expanded') || !this.hasUpdated) return;
+    const from = this._motionSnapshot();   // 전환 중에 다시 바뀌면 지금 보이는 위치에서 이어 간다
+    this._motionStop();
+    this._motionFrom = reducedMotion() ? null : from;
+  }
+  updated() {
+    this._sync();
+    const from = this._motionFrom; this._motionFrom = null;
+    // 항목은 _sync 로 expanded 를 받은 뒤 다시 그려진다. 다 그려진 뒤(그리기 전 같은 태스크) 최종 위치를 재고 시작한다
+    if (from) Promise.all(this._allItems().map((it) => it.updateComplete)).then(() => this._motionStart(from));
+  }
+  disconnectedCallback() { super.disconnectedCallback(); this._motionStop(); }
+  _allItems() { return Array.from(this.querySelectorAll(':scope > md-navigation-rail-item')); }
+  _headerParts() { return [this.shadowRoot?.querySelector('.menu'), ...this.querySelectorAll(':scope > [slot="header"]')].filter(Boolean); }
+  /** 레일 기준 좌표로 지금 보이는(이동 포함) 위치를 잰다. 레일이 보이지 않으면 null */
+  _motionSnapshot() {
+    const base = this.getBoundingClientRect();
+    if (!base.width || !base.height || !this.shadowRoot) return null;
+    const rel = (el) => { if (!el) return null; const r = el.getBoundingClientRect(); return {x: r.left - base.left, y: r.top - base.top, w: r.width, h: r.height}; };
+    const cs = getComputedStyle(this), sr = this.shadowRoot;
+    const gap = (sel) => parseFloat(getComputedStyle(sr.querySelector(sel)).rowGap) || 0;
+    return {
+      w: base.width, padL: parseFloat(cs.paddingLeft) || 0, padR: parseFloat(cs.paddingRight) || 0, gap: gap('.items'), footGap: gap('.footer'),
+      header: this._headerParts().map((el) => ({el, r: rel(el)})),
+      items: this._allItems().map((it) => {
+        const s = it.shadowRoot, label = s && s.querySelector('.label'), ls = label && getComputedStyle(label);
+        const shown = label && ls.display !== 'none' && label.getBoundingClientRect().width > 0;
+        return {it, r: rel(it), ind: rel(s && s.querySelector('.indicator')), icon: rel(s && s.querySelector('.icon')),
+          label: shown ? {r: rel(label), text: label.textContent, op: parseFloat(ls.opacity) || 0, font: ls.font, color: ls.color,
+            align: ls.textAlign, letterSpacing: ls.letterSpacing} : null};
+      }),
+    };
+  }
+  _motionStart(from) {
+    if (!from || !this.isConnected) return;
+    const to = this._motionSnapshot();
+    if (!to) return;
+    const sr = this.shadowRoot, saved = this._motionSaved = new Map(), ghosts = this._motionGhosts = [];
+    // 인라인 스타일은 원래 값을 기억했다가 끝나면 되돌린다(소비자가 지정한 style 속성 보존)
+    const set = (el, prop, value) => {
+      if (!el) return; let m = saved.get(el); if (!m) saved.set(el, m = new Map());
+      if (!m.has(prop)) m.set(prop, [el.style.getPropertyValue(prop), el.style.getPropertyPriority(prop)]);
+      el.style.setProperty(prop, value);
+    };
+    const spec = this.modal ? SPRING_FAST_SPATIAL : SPRING_DEFAULT_SPATIAL, total = springSettle(spec) * 1000;
+    const items = to.items.map((t) => ({t, f: from.items.find((f) => f.it === t.it)})).filter(({t, f}) => f && f.ind && t.ind && f.icon && t.icon)
+      .map(({t, f}) => {
+        const s = t.it.shadowRoot, ind = s.querySelector('.indicator'), icon = s.querySelector('.icon');
+        // 새로 나타날 글자: indicator 밖에 있는 것(접힌 라벨)은 아이콘을 따라가게 따로 옮긴다
+        const texts = Array.from(s.querySelectorAll('.label, .supporting, .trailing, .badge.after'));
+        let ghost = null;
+        if (f.label) {   // 이전 라벨 잔상: 같은 글꼴·색으로 이전 자리에 두고 아이콘을 따라가며 사라진다
+          ghost = document.createElement('span');
+          ghost.textContent = f.label.text;
+          Object.assign(ghost.style, {position: 'absolute', left: '0', top: '0', margin: '0', boxSizing: 'border-box', width: f.label.r.w + 'px',
+            font: f.label.font, color: f.label.color, textAlign: f.label.align, letterSpacing: f.label.letterSpacing, pointerEvents: 'none',
+            overflowWrap: 'anywhere'});
+          ghost.setAttribute('aria-hidden', 'true');
+          s.appendChild(ghost); ghosts.push(ghost);
+        }
+        return {t, f, ind, icon, texts, outside: texts.filter((el) => !ind.contains(el)), ghost, off: new Map()};
+      });
+    const heads = to.header.map((t) => ({t, f: from.header.find((f) => f.el === t.el)})).filter(({t, f}) => f && f.r && t.r);
+    const headOff = new Map();
+    const start = performance.now();
+    const frame = (now) => {
+      if (now - start >= total) { this._motionStop(); return; }
+      const p = spring(spec, Math.max(0, now - start) / 1000);
+      // 1) 크기 쓰기
+      set(this, 'width', mix(from.w, to.w, p) + 'px'); set(this, 'min-width', '0px'); set(this, 'max-width', 'none');
+      set(this, 'padding-left', mix(from.padL, to.padL, p) + 'px'); set(this, 'padding-right', mix(from.padR, to.padR, p) + 'px');
+      set(sr.querySelector('.items'), 'gap', mix(from.gap, to.gap, p) + 'px');
+      set(sr.querySelector('.footer'), 'gap', mix(from.footGap, to.footGap, p) + 'px');
+      for (const x of items) {
+        const {t, f, ind} = x, tg = t.it.shadowRoot.querySelector('.target');
+        set(t.it, 'position', 'relative'); set(t.it, 'height', mix(f.r.h, t.r.h, p) + 'px');
+        set(tg, 'min-height', '0px'); set(tg, 'height', '100%');
+        set(ind, 'width', mix(f.ind.w, t.ind.w, p) + 'px'); set(ind, 'height', mix(f.ind.h, t.ind.h, p) + 'px');
+        set(ind, 'min-height', '0px'); set(ind, 'overflow', 'hidden');
+      }
+      // 2) 읽기: 이동량을 뺀 레이아웃 위치
+      const base = this.getBoundingClientRect();
+      const at = (el) => { const r = el.getBoundingClientRect(); return {x: r.left - base.left, y: r.top - base.top}; };
+      const offOf = (m, el) => m.get(el) || {x: 0, y: 0};
+      const plan = items.map((x) => {
+        const indOff = offOf(x.off, x.ind), iconOff = offOf(x.off, x.icon);
+        const ind = at(x.ind), icon = at(x.icon), host = at(x.t.it);
+        return {x, indLay: {x: ind.x - indOff.x, y: ind.y - indOff.y}, iconLay: {x: icon.x - indOff.x - iconOff.x, y: icon.y - indOff.y - iconOff.y}, host,
+          outside: x.outside.map((el) => { const o = offOf(x.off, el), a = at(el); return {el, lay: {x: a.x - o.x, y: a.y - o.y}}; })};
+      });
+      const headPlan = heads.map((h) => { const o = offOf(headOff, h.t.el), a = at(h.t.el); return {h, lay: {x: a.x - o.x, y: a.y - o.y}}; });
+      // 3) 이동 쓰기
+      const alpha = Math.min(1, 4 * (p - 0.5) * (p - 0.5));
+      const move = (m, el, dx, dy) => { dx = snap(dx); dy = snap(dy); m.set(el, {x: dx, y: dy}); set(el, 'transform', `translate(${dx}px, ${dy}px)`); };
+      for (const {x, indLay, iconLay, host, outside} of plan) {
+        const {t, f} = x;
+        const want = {x: mix(f.ind.x, t.ind.x, p), y: mix(f.ind.y, t.ind.y, p)};
+        const indOff = {x: want.x - indLay.x, y: want.y - indLay.y};
+        move(x.off, x.ind, indOff.x, indOff.y);
+        const icon = {x: mix(f.icon.x, t.icon.x, p), y: mix(f.icon.y, t.icon.y, p)};
+        move(x.off, x.icon, icon.x - iconLay.x - indOff.x, icon.y - iconLay.y - indOff.y);
+        if (t.label) for (const {el, lay} of outside) {   // 새 라벨(indicator 밖)은 최종 자리에서 아이콘과의 간격을 유지한 채 따라온다
+          move(x.off, el, t.label.r.x + (icon.x - t.icon.x) - lay.x, t.label.r.y + (icon.y - t.icon.y) - lay.y);
+        }
+        for (const el of x.texts) set(el, 'opacity', String(p < 0.5 ? 0 : alpha));
+        if (x.ghost) {
+          if (p >= 0.5) x.ghost.style.display = 'none';
+          else {
+            x.ghost.style.opacity = String(alpha * f.label.op);
+            x.ghost.style.transform = `translate(${snap(f.label.r.x + (icon.x - f.icon.x) - host.x)}px, ${snap(f.label.r.y + (icon.y - f.icon.y) - host.y)}px)`;
+          }
+        }
+      }
+      for (const {h, lay} of headPlan) move(headOff, h.t.el, mix(h.f.r.x, h.t.r.x, p) - lay.x, mix(h.f.r.y, h.t.r.y, p) - lay.y);
+      this._motionRaf = requestAnimationFrame(frame);
+    };
+    frame(start);   // 첫 프레임은 바로 적용해 최종 배치가 한 번 비치지 않게 한다
+  }
+  _motionStop() {
+    if (this._motionRaf) cancelAnimationFrame(this._motionRaf);
+    this._motionRaf = 0;
+    (this._motionGhosts || []).forEach((g) => g.remove());
+    this._motionGhosts = [];
+    if (this._motionSaved) this._motionSaved.forEach((m, el) => m.forEach(([v, pr], prop) => { if (v) el.style.setProperty(prop, v, pr); else el.style.removeProperty(prop); }));
+    this._motionSaved = null;
+  }
   _sync() {
     this.items.forEach((item, i) => { item.active = i === this.activeIndex; });
     this.querySelectorAll(':scope > md-navigation-rail-item').forEach((item) => { item.expanded = this.expanded; item.hideCollapsedLabels = this.hideCollapsedLabels; item.fullWidthIndicator = this.fullWidthIndicator; });

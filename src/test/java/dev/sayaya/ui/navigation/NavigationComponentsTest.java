@@ -185,6 +185,7 @@ public class NavigationComponentsTest {
         audit();
         extensions();
         links();
+        motion();
     }
 
     /** M3 토큰·가이드 대조(rail: nav-rail-*, Compose WideNavigationRail / app bar: app-bar-*, top-app-bar-*). */
@@ -372,6 +373,70 @@ public class NavigationComponentsTest {
             assertEquals("nav: 펼친 레일 항목 간격 기본 0", 0, (int) Math.round(h1.getBoundingClientRect().top - h0.getBoundingClientRect().bottom));
             assertEquals("nav: expandedItemSpace 8px", 8, (int) Math.round(f1.getBoundingClientRect().top - f0.getBoundingClientRect().bottom));
         }, 1500);
+    }
+    /** 펼침/접힘 전환 모션: 중간 프레임은 접힘↔펼침 사이 값, 끝나면 처음부터 그 상태인 레일과 같고 인라인 스타일·잔상이 정리된다 */
+    private static void motion() {
+        var box = section("펼침/접힘 전환 모션");
+        var anim = motionRail(false); var stillE = motionRail(true); var stillC = motionRail(false);
+        box.appendChild(div().style("display", "flex").style("gap", "24px").style("height", "320px").add(anim).add(stillE).add(stillC).element());
+        DomGlobal.setTimeout(t0 -> {
+            if (!isAutomated()) return; // 사람이 볼 때는 자동으로 펼치지 않는다(메뉴 레일 데모로 확인)
+            double yC = iconY(anim, 2), yE = iconY(stillE, 2);
+            anim.toggle(true);
+            DomGlobal.setTimeout(t1 -> {
+                double w = anim.getBoundingClientRect().width, y = iconY(anim, 2);
+                assertTrue("nav: 레일 펼침 전환 중 너비는 중간값", w > 100 && w < 236);
+                assertTrue("nav: 레일 펼침 전환 중 아이콘 위치는 중간값", Math.min(yC, yE) + 0.5 < y && y < Math.max(yC, yE) - 0.5);
+                HTMLElement i0 = Js.uncheckedCast(anim.querySelectorAll("md-navigation-rail-item").item(0));
+                assertTrue("nav: 레일 펼침 전환 중 라벨 페이드", Double.parseDouble(cs(inner(i0, ".label")).getPropertyValue("opacity")) < 0.95);
+                DomGlobal.setTimeout(t2 -> {
+                    assertTrue("nav: 레일 펼침 전환 후 정적 레일과 같음", sameLayout(anim, stillE));
+                    assertTrue("nav: 레일 전환 후 인라인 스타일 정리", motionClean(anim));
+                    anim.toggle(false);
+                    DomGlobal.setTimeout(t3 -> {
+                        double w2 = anim.getBoundingClientRect().width;
+                        assertTrue("nav: 레일 접힘 전환 중 너비는 중간값", w2 > 100 && w2 < 236);
+                        DomGlobal.setTimeout(t4 -> assertTrue("nav: 레일 접힘 전환 후 정적 레일과 같음", sameLayout(anim, stillC) && motionClean(anim)), 900);
+                    }, 80);
+                }, 900);
+            }, 80);
+        }, 1500);
+    }
+    private static dev.sayaya.ui.dom.MdNavigationElement.MdNavigationRailElement motionRail(boolean expanded) {
+        return navigationRail().expanded(expanded).style("--md-navigation-rail-expanded-min-width", "240px")
+                .item(railItem().icon("home").label("홈")).item(railItem().icon("inbox").label("받은편지함"))
+                .item(railItem().icon("settings").label("설정")).element();
+    }
+    private static double iconY(HTMLElement rail, int i) {
+        HTMLElement it = Js.uncheckedCast(rail.querySelectorAll("md-navigation-rail-item").item(i));
+        return inner(it, ".icon").getBoundingClientRect().top - rail.getBoundingClientRect().top;
+    }
+    /** 레일 너비와 항목별 indicator·아이콘·라벨 위치(레일 기준)가 0.5px 안에서 같다 */
+    private static boolean sameLayout(HTMLElement a, HTMLElement b) {
+        if (Math.abs(a.getBoundingClientRect().width - b.getBoundingClientRect().width) > 0.5) return false;
+        var ra = a.getBoundingClientRect(); var rb = b.getBoundingClientRect();
+        for (int i = 0; i < 3; i++) {
+            HTMLElement ia = Js.uncheckedCast(a.querySelectorAll("md-navigation-rail-item").item(i));
+            HTMLElement ib = Js.uncheckedCast(b.querySelectorAll("md-navigation-rail-item").item(i));
+            for (String sel : new String[]{".indicator", ".icon", ".label"}) {
+                var x = inner(ia, sel).getBoundingClientRect(); var y = inner(ib, sel).getBoundingClientRect();
+                if (Math.abs((x.left - ra.left) - (y.left - rb.left)) > 0.5 || Math.abs((x.top - ra.top) - (y.top - rb.top)) > 0.5
+                        || Math.abs(x.width - y.width) > 0.5 || Math.abs(x.height - y.height) > 0.5) return false;
+            }
+        }
+        return true;
+    }
+    /** 전환이 끝나면 레일·항목에 모션용 인라인 스타일과 라벨 잔상이 남지 않고, 소비자가 지정한 style 은 보존된다 */
+    private static boolean motionClean(HTMLElement rail) {
+        if (!rail.style.getPropertyValue("width").isEmpty() || !rail.getAttribute("style").contains("--md-navigation-rail-expanded-min-width")) return false;
+        for (int i = 0; i < 3; i++) {
+            HTMLElement it = Js.uncheckedCast(rail.querySelectorAll("md-navigation-rail-item").item(i));
+            if (it.hasAttribute("style") && !it.getAttribute("style").isEmpty()) return false;
+            if (shadow(it).querySelectorAll(":scope > span").length != 0) return false;
+            var ind = inner(it, ".indicator"); var lbl = inner(it, ".label");
+            if ((ind.hasAttribute("style") && !ind.getAttribute("style").isEmpty()) || (lbl.hasAttribute("style") && !lbl.getAttribute("style").isEmpty())) return false;
+        }
+        return true;
     }
     private static void check(HTMLElement el, String tag, boolean props) {
         assertEquals("nav: " + tag + " 태그명", tag.toUpperCase(), el.tagName);

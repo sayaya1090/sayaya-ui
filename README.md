@@ -961,6 +961,7 @@ var rail = navigationRail()
 - `supportingText(String)`, `trailing(Element)` (`supporting-text`/`trailing` 슬롯): 펼친 레일에서만 보입니다.
 - `fullWidthIndicator(true)` (`full-width-indicator` 속성): 펼친 레일에서 모든 항목의 indicator(활성 표시·호버 영역)를 항목 폭만큼 채웁니다. 기본(`false`)은 M3 Expressive 대로 indicator 가 아이콘·라벨 폭에 맞춰지고, 항목 사이 간격은 토큰(`md.comp.nav-rail.expanded.between-item-space`)대로 0 입니다. M3 가이드는 baseline navigation drawer 와 비슷한 모양이 필요할 때 indicator 를 컨테이너만큼 채우는 것을 허용합니다(*"consider modifying the active indicator to fill the container"*). 클릭 영역은 두 경우 모두 레일 전체 폭입니다.
 - `expandedItemSpace("4px")` (`--md-navigation-rail-expanded-item-space` 변수): 펼친 레일의 항목 사이 간격입니다. 기본은 `0` 으로 토큰(`between-item-space`)과 같습니다. 접힌 레일의 간격(기본 `4px`, `collapsed.item.vertical-space`)은 `--md-navigation-rail-item-space` 로 조정합니다.
+- 펼침/접힘 전환 모션: `expanded` 가 바뀌면(메뉴 버튼·`toggle()`·빌더 모두) 레일 폭, 항목 높이, indicator 크기와 아이콘 위치가 접힘↔펼침 사이에서 spring 으로 이어지고, 라벨은 중간에 사라졌다가 새 자리에서 나타납니다(Compose Material3 `WideNavigationRail` 방식, Expressive `DefaultSpatial` damping 0.8·stiffness 380, modal 은 `FastSpatial` 0.6·800). 최종 화면은 이전과 같습니다. 운영체제의 동작 줄이기(`prefers-reduced-motion: reduce`)가 켜져 있으면 전환 없이 바로 바뀝니다.
 - `footer(...)` (`footer` 슬롯): 레일 맨 아래 영역입니다. footer 의 항목은 펼침 상태와 라벨 숨김을 따르지만, 목적지(`activeIndex`·`onActivated`) 대상이 아니므로 클릭은 직접 처리합니다.
 - 항목 내부 part: `button`, `indicator`, `label`, `supporting-text`, `trailing`, `badge`. 레일 part: `footer`, `menu`, `scrim`.
 
