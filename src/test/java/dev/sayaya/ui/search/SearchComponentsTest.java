@@ -21,6 +21,21 @@ public class SearchComponentsTest {
         m.set("key", key); m.set("bubbles", true); m.set("cancelable", true);
         target.dispatchEvent(new KeyboardEvent("keydown", Js.<KeyboardEventInit>uncheckedCast(m)));
     }
+    /** keydown 을 보내고, 핸들러가 기본 동작을 막지 않았으면 true(dispatchEvent 반환값) */
+    private static boolean keyEv(Element target, String key, boolean composing) {
+        JsPropertyMap<Object> m = JsPropertyMap.of();
+        m.set("key", key); m.set("bubbles", true); m.set("cancelable", true); m.set("isComposing", composing);
+        return target.dispatchEvent(new KeyboardEvent("keydown", Js.<KeyboardEventInit>uncheckedCast(m)));
+    }
+    /** .leading 안에서 지금 보이는 아이콘의 data-icon */
+    private static String visibleIcon(Element root) {
+        var boxes = root.querySelectorAll(".leading .icon");
+        for (int i = 0; i < boxes.length; i++) {
+            var b = boxes.item(i);
+            if (!"none".equals(cs(b).getPropertyValue("display")) && b.firstElementChild != null) return b.firstElementChild.getAttribute("data-icon");
+        }
+        return null;
+    }
     private static void type(HTMLInputElement input, String text) {
         input.value = text;
         input.dispatchEvent(new Event("input"));
@@ -67,6 +82,7 @@ public class SearchComponentsTest {
         assertEquals("se: aria-controls 연결", q(el, "[role=listbox]").id, input.getAttribute("aria-controls"));
         assertEquals("se: 닫힘 aria-expanded false", "false", input.getAttribute("aria-expanded"));
         assertEquals("se: placeholder", "메일 검색", input.placeholder);
+        palette(); // 2.5.0.7 명령 팔레트 검사(동기, 아래 지연 검사보다 먼저 끝난다)
 
         later(500, () -> {
             assertEquals("se: 검색 바 높이 56px", 56, (int) h(bar));
@@ -136,13 +152,122 @@ public class SearchComponentsTest {
                     assertEquals("se: full-screen 화면 전체 높이", (int) DomGlobal.window.innerHeight, (int) h(fel));
                     assertEquals("se: full-screen 헤더 72px", 72, (int) h(fbar));
                     assertEquals("se: full-screen 모서리 없음", "0px", cs(fbar).getPropertyValue("border-top-left-radius"));
-                    assertEquals("se: full-screen 뒤로 가기 아이콘", "arrow_back", q(fel, ".leading .icon").textContent);
+                    assertEquals("se: full-screen 뒤로 가기 아이콘", "arrow_back", visibleIcon(fel));
                     assertEquals("se: divided 구분선 1px", "1px", cs(q(fel, ".view")).getPropertyValue("border-top-width"));
                     q(fel, ".leading").click();
-                    assertTrue("se: 뒤로 가기로 닫힘", !full.isOpen() && "search".equals(q(fel, ".leading .icon").textContent));
+                    assertTrue("se: 뒤로 가기로 닫힘", !full.isOpen() && "search".equals(visibleIcon(fel)));
                 });
             });
         });
+    }
+
+    /** 2.5.0.7: 명령 팔레트 — 풍부한 항목·행별 동작, 목록 교체(하이라이트 유지·늦은 결과 버림), IME 조합, SVG 아이콘, 다이얼로그 안(inline·focus·reset·Esc). 모두 동기 검사 */
+    private static void palette() {
+        var section = section("Search: 명령 팔레트(2.5.0.7)");
+        var demoPalette = search().docked().inline(true).filter(false).placeholder("명령 검색")
+                .suggestions(suggestion("새 세션", "세션 · ⌘N", div().text("S").element(), () -> {}),
+                             suggestion("설정 열기", "앱", div().text("A").element(), () -> {}));
+        demoPalette.element().style.setProperty("width", "360px");
+        demo(section, "📘 Command palette (inline, rich items)", "이름·보조 문구·앞 요소·행별 동작을 갖는 항목입니다. inline(true)는 목록을 바 아래 흐름 안에 두고 스크림을 쓰지 않아 다이얼로그 안에서 씁니다. filter(false)면 앱이 setSuggestions 로 정한 목록을 그대로 보여 줍니다.",
+            """
+            search().docked().inline(true).filter(false).placeholder("명령 검색")
+                .suggestions(suggestion("새 세션", "세션 · ⌘N", sIcon, () -> newSession()).key("new-session"))
+                .element();
+            // 다이얼로그를 연 뒤 palette.focus(), 닫을 때 palette.reset()
+            """, demoPalette.element());
+
+        List<String> ran = new ArrayList<>(), searched = new ArrayList<>(), selected = new ArrayList<>();
+        var letter = div().text("F").element();
+        var a = suggestion("열기", "파일", letter, () -> ran.add("open-file"));
+        var b = suggestion("열기", "세션", (Element) null, () -> ran.add("open-session"));
+        var p = search().docked().inline(true).filter(false).placeholder("명령 검색")
+                .suggestions(a, b).onSearch(searched::add).onSelect(s -> selected.add(s.supportingText()));
+        var pel = p.element();
+        pel.style.setProperty("width", "360px");
+        var dialog = (HTMLDialogElement) DomGlobal.document.createElement("dialog");
+        dialog.appendChild(pel);
+        section.appendChild(dialog);
+        dialog.show();
+        var input = p.input();
+        var opts = pel.querySelectorAll("[role=option]");
+        var row0 = opts.item(0);
+        assertTrue("se: 항목 이름·보조 문구·앞 요소", opts.length == 2 && "열기".equals(row0.querySelector(".headline").textContent)
+                && "파일".equals(row0.querySelector(".supporting").textContent) && row0.querySelector(".lead").firstElementChild == letter
+                && opts.item(1).querySelector(".lead") == null);
+        // 5) focus(): 입력 포커스 + 열림
+        p.focus();
+        assertTrue("se: focus() 로 입력 포커스·열림", DomGlobal.document.activeElement == input && p.isOpen());
+        assertEquals("se: inline 목록은 흐름 안(static)", "static", cs(q(pel, ".view")).getPropertyValue("position"));
+        assertEquals("se: inline 은 스크림 없음", "none", cs(q(pel, ".scrim")).getPropertyValue("display"));
+        // 1) 같은 이름 둘 중 두 번째를 클릭 -> 그 행의 동작만
+        ((HTMLElement) opts.item(1)).click();
+        assertTrue("se: 같은 이름 항목도 행별 동작 실행", ran.size() == 1 && "open-session".equals(ran.get(0)) && selected.size() == 1 && "세션".equals(selected.get(0)));
+        assertTrue("se: 동작 항목은 입력값·onSearch 를 건드리지 않고 닫음", "".equals(input.value) && searched.isEmpty() && !p.isOpen());
+        keyEv(input, "ArrowDown", false);
+        keyEv(input, "Enter", false);
+        assertTrue("se: ↓·Enter 로 동작 항목 실행", ran.size() == 2 && "open-file".equals(ran.get(1)) && !p.isOpen());
+        // 3) IME 조합 중 키는 무시
+        keyEv(input, "ArrowDown", false);
+        String act = input.getAttribute("aria-activedescendant");
+        boolean notPrevented = keyEv(input, "Enter", true);
+        assertTrue("se: 조합 중 Enter 는 선택하지 않음", ran.size() == 2 && p.isOpen() && notPrevented && act != null && act.equals(input.getAttribute("aria-activedescendant")));
+        keyEv(input, "ArrowDown", true);
+        assertEquals("se: 조합 중 ↓ 는 하이라이트를 옮기지 않음", act, input.getAttribute("aria-activedescendant"));
+        keyEv(input, "Escape", true);
+        assertTrue("se: 조합 중 Esc 는 닫지 않음", p.isOpen());
+        // 2) 목록 교체: 같은 객체가 남으면 하이라이트 유지(a 는 0번 -> 새 목록 1번)
+        var c = suggestion("새 세션", "세션", (Element) null, () -> ran.add("new"));
+        p.setSuggestions(List.of(c, a, b));
+        var o2 = pel.querySelectorAll("[role=option]");
+        assertTrue("se: 목록 교체 뒤 같은 항목에 하이라이트 유지", o2.length == 3 && o2.item(1).id.equals(input.getAttribute("aria-activedescendant"))
+                && "true".equals(o2.item(1).getAttribute("aria-selected")) && "false".equals(o2.item(0).getAttribute("aria-selected")));
+        var x = suggestion("X", "키 1", (Element) null, () -> {}).key("k1");
+        var y = suggestion("Y", "키 2", (Element) null, () -> {}).key("k2");
+        p.setSuggestions(x, y);
+        assertTrue("se: 사라진 항목이면 하이라이트 해제(aria-activedescendant 없음)", !input.hasAttribute("aria-activedescendant")
+                && pel.querySelectorAll("[aria-selected=true]").length == 0);
+        keyEv(input, "ArrowDown", false); keyEv(input, "ArrowDown", false);
+        p.setSuggestions(suggestion("Y", "키 2(새 객체)", (Element) null, () -> {}).key("k2"), suggestion("X", "키 1(새 객체)", (Element) null, () -> {}).key("k1"));
+        var o3 = pel.querySelectorAll("[role=option]");
+        String ad = input.getAttribute("aria-activedescendant");
+        assertTrue("se: key 가 같으면 새 객체로 바꿔도 하이라이트 유지", ad != null && ad.equals(o3.item(0).id) && DomGlobal.document.getElementById(ad) == o3.item(0)
+                && "키 2(새 객체)".equals(o3.item(0).querySelector(".supporting").textContent));
+        type(input, "ab");
+        var z = suggestion("Z", null, (Element) null, () -> {});
+        p.setSuggestions("a", List.of(z));
+        assertEquals("se: 늦게 온 다른 질의 결과는 버림", 2, pel.querySelectorAll("[role=option]").length);
+        p.setSuggestions("ab", List.of(z));
+        assertTrue("se: 현재 질의 결과는 그대로 반영(filter false)", pel.querySelectorAll("[role=option]").length == 1 && "Z".equals(q(pel, ".headline").textContent));
+        p.clearSuggestions();
+        assertTrue("se: clearSuggestions 로 비움", pel.querySelectorAll("[role=option]").length == 0 && pel.classList.contains("empty") && !input.hasAttribute("aria-activedescendant"));
+        // 5) Esc: 열려 있으면 소비, 닫혀 있으면 다이얼로그로 넘김 / reset()
+        p.setSuggestions(a, b);
+        p.open(true);
+        boolean openEsc = keyEv(input, "Escape", false);
+        assertTrue("se: 열린 상태 Esc 는 소비하고 닫음", !openEsc && !p.isOpen());
+        assertTrue("se: 닫힌 상태 Esc 는 기본 동작 유지(다이얼로그가 받음)", keyEv(input, "Escape", false));
+        type(input, "xyz");
+        p.open(true);
+        p.reset();
+        assertTrue("se: reset() 으로 값 비우고 닫음", "".equals(p.value()) && !p.isOpen() && "false".equals(input.getAttribute("aria-expanded")));
+        // 4) 아이콘: 폰트 없는 SVG 기본값, 교체
+        var hist = search().docked().suggestions("기록");
+        var hel = hist.element();
+        section.appendChild(hel);
+        assertTrue("se: 기본 아이콘은 SVG(search·close·arrow_back·history)",
+                "search".equals(pel.querySelector(".leading .search-icon svg").getAttribute("data-icon")) && "arrow_back".equals(pel.querySelector(".leading .back-icon svg").getAttribute("data-icon"))
+                && "close".equals(pel.querySelector(".clear svg").getAttribute("data-icon")) && "history".equals(hel.querySelector("[role=option] .lead svg").getAttribute("data-icon")));
+        assertTrue("se: 아이콘 글자 없음(폰트 불필요)", q(pel, ".leading").textContent.trim().isEmpty() && q(pel, ".clear").textContent.trim().isEmpty()
+                && "24".equals(String.valueOf(Math.round(pel.querySelector(".leading .search-icon svg").getBoundingClientRect().width))));
+        var mySearch = div().text("⌕").element();
+        var myClear = div().text("×").element();
+        var custom = search().docked().searchIcon(mySearch).clearIcon(myClear).historyIcon(() -> div().css("my-hist").text("•").element()).suggestions("a");
+        var cel = custom.element();
+        section.appendChild(cel);
+        assertTrue("se: 아이콘 교체(searchIcon·clearIcon·historyIcon)", q(cel, ".leading .search-icon").firstElementChild == mySearch
+                && q(cel, ".clear .icon").firstElementChild == myClear && q(cel, "[role=option] .lead .my-hist") != null);
+        dialog.close();
+        hel.remove(); cel.remove();
     }
 
     /** 가이드라인: "In M3 Expressive, the search bar expands when focused. The margins change from 24dp to 12dp." */

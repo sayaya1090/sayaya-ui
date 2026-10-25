@@ -67,7 +67,30 @@ internal class SearchElementTest: GwtTestSpec({
         "열린 검색은 형제 위로(z-index)",
         "닫는 도중 목록이 바로 사라지지 않음(전환)",
         "닫힘 전환 뒤 목록 숨김",
-        "닫힘 전환 뒤 z-index 복귀"
+        "닫힘 전환 뒤 z-index 복귀",
+        // 2.5.0.7 명령 팔레트
+        "항목 이름·보조 문구·앞 요소",
+        "focus() 로 입력 포커스·열림",
+        "inline 목록은 흐름 안(static)",
+        "inline 은 스크림 없음",
+        "같은 이름 항목도 행별 동작 실행",
+        "동작 항목은 입력값·onSearch 를 건드리지 않고 닫음",
+        "↓·Enter 로 동작 항목 실행",
+        "조합 중 Enter 는 선택하지 않음",
+        "조합 중 ↓ 는 하이라이트를 옮기지 않음",
+        "조합 중 Esc 는 닫지 않음",
+        "목록 교체 뒤 같은 항목에 하이라이트 유지",
+        "사라진 항목이면 하이라이트 해제(aria-activedescendant 없음)",
+        "key 가 같으면 새 객체로 바꿔도 하이라이트 유지",
+        "늦게 온 다른 질의 결과는 버림",
+        "현재 질의 결과는 그대로 반영(filter false)",
+        "clearSuggestions 로 비움",
+        "열린 상태 Esc 는 소비하고 닫음",
+        "닫힌 상태 Esc 는 기본 동작 유지(다이얼로그가 받음)",
+        "reset() 으로 값 비우고 닫음",
+        "기본 아이콘은 SVG(search·close·arrow_back·history)",
+        "아이콘 글자 없음(폰트 불필요)",
+        "아이콘 교체(searchIcon·clearIcon·historyIcon)"
     )
     Given("M3 Search") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용

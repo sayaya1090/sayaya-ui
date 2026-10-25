@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.sayaya:ui:2.5.0.6")
+    implementation("dev.sayaya:ui:2.5.0.7")
 }
 ```
 
@@ -75,7 +75,7 @@ dependencies {
 | **Loading indicator** | `loadingIndicator()` | 7개 M3 도형 shape morph 로딩 지시자(기본/contained, 24~240dp), progressbar 역할 | [🔗](https://sayaya1090.github.io/sayaya-ui/loading_indicator.html) |
 | **Toolbar** | `toolbar()` | Docked(bottom app bar 대체, 기본 가운데 정렬·균등 간격 4~32dp, `alignment(Center/Start/End/Edges)`)·Floating toolbar(standard/vibrant, 가로/세로, 화면 고정 위치), 방향키 이동. FAB 와 함께 쓸 때는 M3 웹 지침대로 옆에 따로 배치 | [🔗](https://sayaya1090.github.io/sayaya-ui/toolbar.html) |
 | **FAB menu** | `fabMenu()` | FAB 에서 열리는 메뉴(닫기 버튼 전환, primary/secondary/tertiary, Esc·항목 선택으로 닫힘, 항목은 닫기 버튼 뒤로 스크롤 `--md-fab-menu-max-height`) | [🔗](https://sayaya1090.github.io/sayaya-ui/fab_menu.html) |
-| **Search** | `search()` | Search bar + docked/full-screen view(제안 필터, combobox·listbox, ↑/↓·Enter·Esc, contained/divided, 포커스 시 바 여백 24→12dp) | [🔗](https://sayaya1090.github.io/sayaya-ui/search.html) |
+| **Search** | `search()` | Search bar + docked/full-screen view(제안 필터, combobox·listbox, ↑/↓·Enter·Esc, contained/divided, 포커스 시 바 여백 24→12dp, 이름·보조 문구·행별 동작 항목, 목록 교체, IME 조합 키 무시, SVG 아이콘, inline) | [🔗](https://sayaya1090.github.io/sayaya-ui/search.html) |
 | **Date picker** | `datePicker()` | Docked(`field(label)` 텍스트 필드 + 드롭다운, 월·연도 메뉴 버튼, 이전·다음 달 날짜)·Modal(입력/달력 전환 아이콘)·Modal date input(`modalInput()`, locale 형식 힌트·오류) — 오늘·선택 표시, ARIA grid 키보드, 연도 선택, 기간 선택 `range(true)` | [🔗](https://sayaya1090.github.io/sayaya-ui/date_picker.html) |
 | **Time picker** | `timePicker()` | Dial·Input(키보드/시계 아이콘으로 전환 `inputMode`, 12/24시간 — 24시간은 0–11 바깥·12–23 안쪽 다이얼, 오전/오후, modal 확인/취소) | [🔗](https://sayaya1090.github.io/sayaya-ui/time_picker.html) |
 | **Carousel** | `carousel()` | Multi-browse·Hero·Center-aligned hero(`heroCentered`)·Full-screen(`fullScreen`, 세로 snap)·Uncontained(일반 스크롤)·Multi-aspect ratio(`item(…, width)`) — 가장자리 항목 축소·parallax, slide 역할, 모두 보기 버튼 | [🔗](https://sayaya1090.github.io/sayaya-ui/carousel.html) |
@@ -980,6 +980,31 @@ var rail = navigationRail().menu(true)
 - 메뉴 버튼 아이콘: 기본값이 아이콘 폰트 없이 그려지는 SVG(menu / menu_open)입니다. `menuIcon(...)`(`menu-icon` 슬롯), `menuOpenIcon(...)`(`menu-open-icon` 슬롯)으로 바꿀 수 있고, 펼침 아이콘을 주지 않으면 펼침에도 `menu-icon` 을 씁니다.
 
 > **동작 변경(2.5.0.6부터):** 레일 내장 메뉴 버튼의 기본 아이콘이 `<md-icon>menu</md-icon>`(Material Symbols 글리프)에서 같은 모양의 SVG 로 바뀌었습니다. 메뉴 버튼 안의 `md-icon` 이나 그 텍스트를 직접 찾던 코드는 `svg[data-icon]` 을 보거나 `menu-icon` 슬롯을 쓰세요.
+
+### Search · 명령 팔레트 (2.5.0.7~)
+
+```java
+import static dev.sayaya.ui.elements.SearchElementBuilder.*;
+
+var palette = search().docked()
+    .inline(true)          // 목록을 바 아래 흐름 안에 두고 스크림을 쓰지 않음(md-dialog 안에서)
+    .filter(false)         // 앱이 정한 목록을 그대로 보여 줌(걸러내지 않음)
+    .placeholder("명령 검색");
+palette.onInput(q -> server.find(q, items -> palette.setSuggestions(q, items)));   // 늦게 온 결과는 q 가 지금 입력과 같을 때만 반영
+palette.setSuggestions(List.of(
+    suggestion("새 세션", "세션 · ⌘N", sessionSvg, () -> newSession()).key("cmd:new-session"),
+    suggestion("열기", "파일", fileSvg, () -> openFile()),
+    suggestion("열기", "세션", sessionSvg, () -> openSession())));               // 같은 이름도 행마다 따로 실행
+// md-dialog 를 연 뒤 palette.focus(), 닫을 때 palette.reset()
+```
+
+- 항목: `suggestion(name, supportingText, leading, onSelect)`(`leading` 은 `Element`/`IsElement`, 모두 null 가능), `suggestion(name, onSelect)`. 행은 이름(body-large) + 보조 문구(body-medium) + 앞 요소로 그려집니다. 동작(`onSelect`)이 있는 항목을 고르면 목록을 닫고 그 동작만 실행합니다(입력값을 바꾸지 않고 `onSearch` 도 부르지 않음). 동작이 없는 항목은 이전처럼 입력값을 이름으로 바꾸고 `onSearch` 를 부릅니다. 모든 선택은 `onSelect(Consumer<Suggestion>)` 로도 받습니다.
+- 목록: `suggestions(Suggestion...)`(뒤에 더함), `setSuggestions(List|...)`(통째로 교체), `setSuggestions(forQuery, list)`(지금 입력값이 `forQuery` 와 다르면 버림), `clearSuggestions()`. 교체할 때 하이라이트된 항목이 새 목록에도 있으면(같은 객체 또는 같은 `key(String)`) 그 행에 남고, 없으면 해제되어 `aria-activedescendant` 가 지워집니다. 입력할 때(사용자가 글자를 바꿀 때)는 이전처럼 하이라이트가 해제됩니다.
+- IME: 조합 중(`KeyboardEvent.isComposing`, 또는 Safari 의 조합 확정 `keyCode 229`) keydown 은 Enter·↑/↓·Esc 모두 처리하지 않습니다.
+- 아이콘: 앞 검색·뒤로 가기·지우기·기록 아이콘이 폰트 없이 그려지는 SVG(`data-icon` = search/arrow_back/close/history)입니다. `searchIcon(...)`, `backIcon(...)`, `clearIcon(...)`, `historyIcon(Supplier)` 로 바꿉니다.
+- 다이얼로그: `focus()` 는 입력에 포커스를 주고 엽니다, `reset()` 은 값을 비우고 닫습니다(`onInput` 은 부르지 않음, 목록은 유지). Esc 는 목록이 열려 있을 때만 소비하고(닫기), 닫혀 있으면 기본 동작을 막지 않아 감싼 다이얼로그가 받습니다.
+
+> **동작 변경(2.5.0.7부터):** 검색의 아이콘이 Material Symbols 글리프 글자에서 SVG 로 바뀌었습니다(`.leading .icon` 의 텍스트를 읽던 코드는 `svg[data-icon]` 을 보세요). 또 닫힌 상태의 Esc 는 더 이상 `preventDefault` 하지 않습니다.
 
 ### Tooltip / Snackbar / Button group
 

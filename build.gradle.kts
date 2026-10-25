@@ -18,7 +18,7 @@ repositories {
     }
 }
 group = "dev.sayaya"
-version = "2.5.0.6"
+version = "2.5.0.7"
 
 dependencies {
     implementation("org.jboss.elemento:elemento-core:2.5.9")
