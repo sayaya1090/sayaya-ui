@@ -56,7 +56,7 @@ export class MdNavigationBar extends LitElement {
   }
   render() { return html`<nav class="items" role="tablist"><slot @slotchange=${() => this._sync()}></slot></nav>`; }
 }
-customElements.define('md-navigation-bar', MdNavigationBar);
+if (!customElements.get('md-navigation-bar')) customElements.define('md-navigation-bar', MdNavigationBar); // 이미 정의돼 있으면 건너뜀(다른 번들과 공존)
 
 export class MdNavigationTab extends LitElement {
   static properties = {
@@ -126,4 +126,4 @@ export class MdNavigationTab extends LitElement {
     </button>`;
   }
 }
-customElements.define('md-navigation-tab', MdNavigationTab);
+if (!customElements.get('md-navigation-tab')) customElements.define('md-navigation-tab', MdNavigationTab); // 이미 정의돼 있으면 건너뜀(다른 번들과 공존)

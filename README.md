@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.sayaya:ui:2.5.0.5")
+    implementation("dev.sayaya:ui:2.5.0.6")
 }
 ```
 
@@ -67,7 +67,7 @@ dependencies {
 | **Card** | `card()` | Elevated, Filled, Outlined 카드 컨테이너 | [🔗](https://sayaya1090.github.io/sayaya-ui/card.html) |
 | **Badge** | `badge()` | 알림이나 상태를 나타내는 배지 | [🔗](https://sayaya1090.github.io/sayaya-ui/badge.html) |
 | **Expressive (labs/gb)** | `gb()` | Material Web 2.5.0 Expressive 컴포넌트 16종 (`md-gb-*`): button, split button, icon button, fab, icon, card, badge, checkbox, radio, switch, divider, list/list-item, menu/menu-group/menu-item | [🔗](https://sayaya1090.github.io/sayaya-ui/gb.html) |
-| **Navigation** | `topAppBar()`, `navigationBar()`, `navigationRail()`, `navigationDrawer()` | Top app bar(small·medium flexible·large flexible, 가운데 정렬·부제), Navigation bar, Navigation rail(접힘 96dp·narrow 80dp / 펼침 220~360dp, modal, 메뉴 버튼), Navigation drawer(고정/모달) | [🔗](https://sayaya1090.github.io/sayaya-ui/navigation.html) |
+| **Navigation** | `topAppBar()`, `navigationBar()`, `navigationRail()`, `navigationDrawer()` | Top app bar(small·medium flexible·large flexible, 가운데 정렬·부제), Navigation bar, Navigation rail(접힘 96dp·narrow 80dp / 펼침 220~360dp, modal, 메뉴 버튼, 링크 목적지·↑/↓ 이동), Navigation drawer(고정/모달) | [🔗](https://sayaya1090.github.io/sayaya-ui/navigation.html) |
 | **Tooltip / Snackbar / Button group** | `tooltip()`, `snackbar()`, `buttonGroup()` | Plain·Rich tooltip, Snackbar(액션/닫기/자동 닫힘), Standard·Connected button group(xsmall~xlarge, 토글 선택) | [🔗](https://sayaya1090.github.io/sayaya-ui/feedback.html) |
 | **Toast** [M3 외 확장] | `toast()` | 데스크톱 웹용 스택 알림(오른쪽 위에 쌓임, info·success·warning·error, 액션/닫기/자동 닫힘·hover 정지). M3 에 없는 컴포넌트로, 모바일에서는 Snackbar 사용 권장 | [🔗](https://sayaya1090.github.io/sayaya-ui/feedback.html) |
 | **Side sheet** | `sideSheet()` | Standard·Modal side sheet(end/start, detached, 뒤로·닫기 버튼, 하단 액션, 스크림·Esc 닫기) | [🔗](https://sayaya1090.github.io/sayaya-ui/side_sheet.html) |
@@ -962,6 +962,25 @@ var rail = navigationRail()
 - `footer(...)` (`footer` 슬롯): 레일 맨 아래 영역입니다. footer 의 항목은 펼침 상태와 라벨 숨김을 따르지만, 목적지(`activeIndex`·`onActivated`) 대상이 아니므로 클릭은 직접 처리합니다.
 - 항목 내부 part: `button`, `indicator`, `label`, `supporting-text`, `trailing`, `badge`. 레일 part: `footer`, `menu`, `scrim`.
 
+#### 링크 목적지·키보드·메뉴 아이콘 (2.5.0.6~)
+
+```java
+var rail = navigationRail().menu(true)
+    .menuIcon(menuSvg)                                  // 선택: menu-icon 슬롯(폰트 없이 기본 SVG가 이미 그려짐)
+    .interceptLinks(href -> router.go(href))            // 일반 클릭은 앱 라우터로, 수식 키·가운데 클릭은 새 탭
+    .item(railItem().icon(homeSvg).label("홈").href("/home"))
+    .item(railItem().icon(inboxSvg).label("받은편지함").href("/inbox").badge("3"))
+    .element();
+```
+
+- `railItem().href(String)` (`href` 속성): 항목을 `<button>` 대신 진짜 `<a href>` 로 그립니다(part 는 그대로 `button`). 가운데 클릭·Cmd/Ctrl/Shift/Alt 클릭은 브라우저 기본 동작(새 탭·창, 주소 복사)에 맡기고 `navigation-rail-activated` 를 내지 않습니다.
+- 일반 클릭은 `navigation-rail-activated`(detail `{activeIndex, item, href}`, **cancelable**)를 냅니다. 앱이 이 이벤트에서 `preventDefault()` 하면 기본 이동을 막고, 하지 않으면 링크대로 이동합니다. Java: `onActivatedEvent(Consumer<CustomEvent<?>>)`, 또는 막고 href 를 넘겨주는 `interceptLinks(Consumer<String>)`.
+- 활성 링크 항목에는 `aria-current="page"` 가 붙습니다. 링크 항목이 있는 레일은 `tablist`/`tab` 역할을 쓰지 않습니다(버튼 항목만 있는 레일은 이전과 같이 `tablist`).
+- 키보드: 목적지 항목에 포커스가 있을 때 ↓/↑ 는 다음/이전 항목, Home/End 는 처음/끝 항목으로 포커스를 옮깁니다. 첫/끝에서 감기지 않고, disabled 항목은 건너뛰며, 활성화(이동)는 하지 않습니다(Enter/클릭으로 활성화). Tab 은 이전과 같이 항목을 차례로 지납니다. header·footer 는 화살표 대상이 아닙니다.
+- 메뉴 버튼 아이콘: 기본값이 아이콘 폰트 없이 그려지는 SVG(menu / menu_open)입니다. `menuIcon(...)`(`menu-icon` 슬롯), `menuOpenIcon(...)`(`menu-open-icon` 슬롯)으로 바꿀 수 있고, 펼침 아이콘을 주지 않으면 펼침에도 `menu-icon` 을 씁니다.
+
+> **동작 변경(2.5.0.6부터):** 레일 내장 메뉴 버튼의 기본 아이콘이 `<md-icon>menu</md-icon>`(Material Symbols 글리프)에서 같은 모양의 SVG 로 바뀌었습니다. 메뉴 버튼 안의 `md-icon` 이나 그 텍스트를 직접 찾던 코드는 `svg[data-icon]` 을 보거나 `menu-icon` 슬롯을 쓰세요.
+
 ### Tooltip / Snackbar / Button group
 
 ```java
@@ -1203,6 +1222,19 @@ Material Web 을 앱이 따로 번들해 싣는 경우를 위한 ES module 입�
 - 사용: 앱의 Material Web 번들 뒤에 `<script type="module" src="sayaya-ui-feedback-<version>.js"></script>`, 또는 앱 코드에서 `import './sayaya-ui-feedback-<version>.js'`.
 - 로컬 빌드: `./gradlew buildFeedbackBundle` → `src/main/webapp/labs-bundle/dist/sayaya-ui-feedback.js` (또는 `labs-bundle` 에서 `npm ci && npm run build:feedback`)
 - 자체 번들러로 묶을 때: 진입점 `labs-bundle/src/sayaya-feedback.js` 는 `lit` 만 import 하므로 앱의 `lit` 과 함께 묶을 수 있습니다.
+
+### 단독 navigation ESM 번들 (Release 첨부물, 2.5.0.6~)
+
+Material Web 을 앱이 따로 번들해 싣는 경우를 위한 ES module 입니다.
+
+- 파일: `sayaya-ui-navigation-<version>.js` (+ 체크섬 `sayaya-ui-navigation-<version>.js.sha256`)
+- URL: `https://github.com/sayaya1090/sayaya-ui/releases/download/v<version>/sayaya-ui-navigation-<version>.js`
+- 정의하는 요소: `md-top-app-bar`, `md-navigation-rail`, `md-navigation-rail-item`, `md-navigation-bar`, `md-navigation-tab` 만(`lit` 포함). 각 정의는 이름이 이미 등록돼 있으면 건너뜁니다.
+- 넣지 않는 것: `@material/web` 컴포넌트, `md-navigation-drawer(-modal)`(Material Web labs 요소라 앱 번들의 내부 요소와 겹칠 수 있음).
+- 필요한 Material Web 요소: 레일 내장 메뉴 버튼(`menu(true)`)은 `md-icon-button` 을 씁니다. 앱이 `@material/web/iconbutton/icon-button.js` 를 함께 실어야 합니다. 메뉴 아이콘은 기본 SVG 라 아이콘 폰트는 필요 없습니다. 항목 아이콘(`icon(String)` = `md-icon`)을 쓰면 `md-icon` 과 아이콘 폰트가 필요하고, `icon(Element)` 로 SVG 를 넣으면 필요 없습니다.
+- 사용: 앱의 Material Web 번들 뒤에 `<script type="module" src="sayaya-ui-navigation-<version>.js"></script>`, 또는 앱 코드에서 `import './sayaya-ui-navigation-<version>.js'`. feedback 번들과 함께 실어도 됩니다.
+- 로컬 빌드: `./gradlew buildNavigationBundle` → `src/main/webapp/labs-bundle/dist/sayaya-ui-navigation.js` (또는 `labs-bundle` 에서 `npm ci && npm run build:navigation`)
+- 자체 번들러로 묶을 때: 진입점 `labs-bundle/src/sayaya-navigation-standalone.js` 는 `lit` 만 import 합니다.
 
 ## 아키텍처
 

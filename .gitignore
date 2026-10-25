@@ -42,3 +42,4 @@ bin/
 ### labs-bundle 빌드 산출물 ###
 /src/main/webapp/labs-bundle/dist/
 /src/test/webapp/sayaya-ui-feedback.js
+/src/test/webapp/sayaya-ui-navigation.js

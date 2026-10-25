@@ -9,6 +9,7 @@ import elemental2.dom.HTMLElement;
 import jsinterop.base.Js;
 import org.jboss.elemento.*;
 
+import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 import static org.jboss.elemento.Elements.htmlContainer;
@@ -195,6 +196,34 @@ public final class NavigationElementBuilder {
         public NavigationRailBuilder footer(IsElement<? extends Element> e) { return slot("footer", e); }
         /** 항목 활성화 시 호출(navigation-rail-activated) */
         public NavigationRailBuilder onActivated(IntConsumer callback) { return onIndexEvent("navigation-rail-activated", callback); }
+        /**
+         * navigation-rail-activated 원본 이벤트 구독. detail 은 {@code {activeIndex, item, href}} 이다.
+         * 링크 항목({@link NavigationRailItemBuilder#href(String)})에서 {@code evt.preventDefault()} 를 부르면 브라우저 기본 이동을 막는다.
+         * 수식 키(Cmd/Ctrl/Shift/Alt) 클릭·가운데 클릭은 이 이벤트 없이 브라우저 기본 동작(새 탭 등)으로 간다.
+         */
+        public NavigationRailBuilder onActivatedEvent(Consumer<CustomEvent<?>> callback) {
+            element().addEventListener("navigation-rail-activated", evt -> callback.accept(Js.uncheckedCast(evt)));
+            return this;
+        }
+        /**
+         * 링크 항목의 일반 클릭을 앱 라우터로 넘긴다: 기본 이동을 막고 href 를 router 에 준다(SPA 라우팅).
+         * 수식 키·가운데 클릭은 그대로 새 탭으로 열린다. href 가 없는 항목에는 호출하지 않는다.
+         */
+        public NavigationRailBuilder interceptLinks(Consumer<String> router) {
+            return onActivatedEvent(evt -> {
+                Object detail = evt.detail;
+                Object href = detail == null ? null : Js.asPropertyMap(detail).get("href");
+                if (href == null) return;
+                evt.preventDefault();
+                router.accept(Js.asString(href));
+            });
+        }
+        /** 메뉴 버튼 아이콘(접힘 상태, 펼침 아이콘을 따로 주지 않으면 펼침에도 쓰인다). 기본은 폰트 없이 그려지는 menu SVG */
+        public NavigationRailBuilder menuIcon(Element e) { return slot("menu-icon", e); }
+        public NavigationRailBuilder menuIcon(IsElement<? extends Element> e) { return slot("menu-icon", e); }
+        /** 메뉴 버튼 아이콘(펼침 상태). 기본은 menu-icon, 그것도 없으면 menu_open SVG */
+        public NavigationRailBuilder menuOpenIcon(Element e) { return slot("menu-open-icon", e); }
+        public NavigationRailBuilder menuOpenIcon(IsElement<? extends Element> e) { return slot("menu-open-icon", e); }
     }
 
     public static final class NavigationRailItemBuilder extends NavBuilder<MdNavigationRailItemElement, NavigationRailItemBuilder> implements
@@ -202,6 +231,11 @@ public final class NavigationElementBuilder {
         NavigationRailItemBuilder() { super("md-navigation-rail-item", MdNavigationRailItemElement.class); }
         @Override public NavigationRailItemBuilder that() { return this; }
         public NavigationRailItemBuilder label(String label) { element().label = label; return this; }
+        /**
+         * 링크 목적지: 항목을 {@code <a href>} 로 그린다(가운데 클릭·Cmd/Ctrl 클릭 새 탭, 주소 복사). 활성이면 aria-current="page".
+         * 일반 클릭은 navigation-rail-activated 를 내고, 앱이 그 이벤트를 preventDefault 하지 않으면 링크대로 이동한다.
+         */
+        public NavigationRailItemBuilder href(String href) { element().href = href; return this; }
         public NavigationRailItemBuilder icon(String icon) { return slot("inactive-icon", IconElementBuilder.icon(icon)); }
         public NavigationRailItemBuilder icon(Element icon) { return slot("inactive-icon", icon); }
         public NavigationRailItemBuilder activeIcon(String icon) { return slot("active-icon", IconElementBuilder.icon(icon).filled(true)); }

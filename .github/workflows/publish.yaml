@@ -66,6 +66,13 @@ jobs:
           cp src/main/webapp/labs-bundle/dist/sayaya-ui-feedback.js build/dist/sayaya-ui-feedback-$VERSION.js
           (cd build/dist && sha256sum sayaya-ui-feedback-$VERSION.js > sayaya-ui-feedback-$VERSION.js.sha256)
           head -c 300 build/dist/sayaya-ui-feedback-$VERSION.js; echo
+      - name: Build navigation ESM bundle
+        run: |
+          VERSION=${{ steps.version.outputs.VERSION }}
+          gradle buildNavigationBundle --no-daemon
+          cp src/main/webapp/labs-bundle/dist/sayaya-ui-navigation.js build/dist/sayaya-ui-navigation-$VERSION.js
+          (cd build/dist && sha256sum sayaya-ui-navigation-$VERSION.js > sayaya-ui-navigation-$VERSION.js.sha256)
+          head -c 300 build/dist/sayaya-ui-navigation-$VERSION.js; echo
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
@@ -115,6 +122,10 @@ jobs:
             ### 단독 feedback ESM 번들 (Material Web 을 따로 싣는 앱용)
             `sayaya-ui-feedback-${{ steps.version.outputs.VERSION }}.js` 는 `md-tooltip`, `md-snackbar`, `md-toast` 만 정의하는 ES module 입니다(lit 포함, @material/web 컴포넌트·md-button-group 미포함). 각 정의는 이름이 이미 등록돼 있으면 건너뜁니다.
             앱의 Material Web 번들 뒤에 `<script type="module" src="sayaya-ui-feedback-${{ steps.version.outputs.VERSION }}.js"></script>` 로 로드하세요.
+
+            ### 단독 navigation ESM 번들 (Material Web 을 따로 싣는 앱용)
+            `sayaya-ui-navigation-${{ steps.version.outputs.VERSION }}.js` 는 `md-top-app-bar`, `md-navigation-rail`, `md-navigation-rail-item`, `md-navigation-bar`, `md-navigation-tab` 만 정의하는 ES module 입니다(lit 포함, @material/web 컴포넌트·md-navigation-drawer 미포함). 각 정의는 이름이 이미 등록돼 있으면 건너뜁니다.
+            레일 내장 메뉴 버튼(`menu`)은 `md-icon-button` 을 쓰므로 앱이 Material Web icon-button 을 함께 실어야 합니다(메뉴 아이콘은 기본 SVG라 아이콘 폰트는 필요 없음). 앱의 Material Web 번들 뒤에 `<script type="module" src="sayaya-ui-navigation-${{ steps.version.outputs.VERSION }}.js"></script>` 로 로드하세요.
 
             ### 변경사항
             자세한 변경사항은 커밋 히스토리를 확인해주세요.

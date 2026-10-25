@@ -7,6 +7,13 @@
 // [파생] 표시 값은 공식 높이(112/136/120/152)를 맞추도록 줄높이에서 역산한 패딩이다(스펙 측정 이미지는 텍스트로 읽을 수 없음).
 import {LitElement, html, css, nothing} from 'lit';
 
+// 메뉴 버튼 기본 아이콘: 아이콘 폰트 없이 그려지는 SVG
+// (google/material-design-icons src/navigation/{menu,menu_open}/materialicons/24px.svg 의 path)
+const MENU_SVG = html`<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true" data-icon="menu"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>`;
+const MENU_OPEN_SVG = html`<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true" data-icon="menu_open"><path d="M3 18h13v-2H3v2zm0-5h10v-2H3v2zm0-7v2h13V6H3zm18 9.59L17.42 12 21 8.41 19.59 7l-5 5 5 5L21 15.59z"/></svg>`;
+// 이미 같은 이름이 등록돼 있으면 건너뜀(단독 navigation ESM 번들이 다른 번들과 공존)
+const define = (name, ctor) => { if (!customElements.get(name)) customElements.define(name, ctor); };
+
 const ELEV1 = '0 1px 2px 0 rgba(0,0,0,.3), 0 1px 3px 1px rgba(0,0,0,.15)';
 const ELEV2 = '0 1px 2px 0 rgba(0,0,0,.3), 0 2px 6px 2px rgba(0,0,0,.15)';
 const type = (role, size, lh, weight) => `font-family: var(--md-sys-typescale-${role}-font, Roboto, sans-serif);
@@ -98,7 +105,7 @@ export class MdTopAppBar extends LitElement {
         <span class="xsub ${sub}"><slot name="expanded-subtitle" @slotchange=${() => this._checkSub()}></slot></span></div>`;
   }
 }
-customElements.define('md-top-app-bar', MdTopAppBar);
+define('md-top-app-bar', MdTopAppBar);
 
 // ---------------------------------------------------------------- navigation rail
 export class MdNavigationRail extends LitElement {
@@ -115,6 +122,7 @@ export class MdNavigationRail extends LitElement {
     hideCollapsedLabels: {type: Boolean, attribute: 'hide-collapsed-labels', reflect: true}, // [M3 외] 접힌 레일에서 라벨을 숨김(아이콘만, 라벨은 툴팁·aria-label)
     _header: {state: true},
     _footer: {state: true},
+    _links: {state: true},
   };
   static styles = css([`
     :host { display: flex; flex-direction: column; box-sizing: border-box; flex: none;
@@ -141,18 +149,45 @@ export class MdNavigationRail extends LitElement {
   `]);
   constructor() {
     super();
-    this.activeIndex = 0; this.alignment = 'top'; this.expanded = false; this.narrow = false; this.modal = false; this.menu = false; this.hideWhenCollapsed = false; this.hideCollapsedLabels = false; this._header = false; this._footer = false;
+    this.activeIndex = 0; this.alignment = 'top'; this.expanded = false; this.narrow = false; this.modal = false; this.menu = false; this.hideWhenCollapsed = false; this.hideCollapsedLabels = false; this._header = false; this._footer = false; this._links = false;
     this.addEventListener('navigation-rail-item-interaction', (e) => {
       const index = this.items.indexOf(e.target);
       if (index < 0 || e.target.disabled) return;   // footer 항목은 목적지가 아니므로 activeIndex 를 바꾸지 않는다(각자 click 처리)
       this.activeIndex = index;
-      this.dispatchEvent(new CustomEvent('navigation-rail-activated', {detail: {activeIndex: index, item: e.target}, bubbles: true, composed: true}));
+      const activated = new CustomEvent('navigation-rail-activated',
+        {detail: {activeIndex: index, item: e.target, href: e.target.href || null}, bubbles: true, composed: true, cancelable: true});
+      this.dispatchEvent(activated);
+      // 링크 항목: 앱이 activated 에서 preventDefault() 하면 브라우저 기본 이동을 막는다(앱 라우터가 처리). 안 하면 링크대로 이동
+      const original = e.detail && e.detail.originalEvent;
+      if (activated.defaultPrevented && original) original.preventDefault();
       if (this.modal && this.expanded) this.toggle(false);
     });
-    this.addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.modal && this.expanded) this.toggle(false); });
+    this.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.modal && this.expanded) { this.toggle(false); return; }
+      this._arrowKey(e);
+    });
   }
   /** 목적지 항목(기본 슬롯). footer 슬롯의 항목은 activeIndex 대상이 아니다. */
   get items() { return Array.from(this.querySelectorAll(':scope > md-navigation-rail-item:not([slot])')); }
+  /**
+   * 목적지 사이 키보드 이동: ↓/↑ 다음·이전, Home/End 처음·끝. 첫/끝에서 감기지 않는다. disabled 항목은 건너뛴다.
+   * 포커스가 목적지 항목에 있을 때만 동작한다(header·footer 는 대상 아님). Tab 은 기존대로 각 항목을 차례로 지난다.
+   */
+  _arrowKey(e) {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    const step = {ArrowDown: 1, ArrowUp: -1, Home: 'first', End: 'last'}[e.key];
+    if (step === undefined) return;
+    const items = this.items;
+    const path = e.composedPath();
+    const current = items.findIndex((it) => path.includes(it));
+    if (current < 0) return;
+    let target = null;
+    if (step === 'first') target = items.find((it) => !it.disabled);
+    else if (step === 'last') target = [...items].reverse().find((it) => !it.disabled);
+    else for (let i = current + step; i >= 0 && i < items.length; i += step) { if (!items[i].disabled) { target = items[i]; break; } }
+    e.preventDefault();   // 끝에서도 페이지 스크롤로 새지 않게
+    if (target && target !== items[current]) target.focus();
+  }
   /** 펼침/접힘 전환. expanded-changed 이벤트를 보낸다. */
   toggle(force) {
     const next = force === undefined ? !this.expanded : !!force;
@@ -166,24 +201,28 @@ export class MdNavigationRail extends LitElement {
     this.querySelectorAll(':scope > md-navigation-rail-item').forEach((item) => { item.expanded = this.expanded; item.hideCollapsedLabels = this.hideCollapsedLabels; });
     this._header = this.menu || !!this.querySelector(':scope > [slot="header"]');
     this._footer = !!this.querySelector(':scope > [slot="footer"]');
+    this._links = this.items.some((it) => !!it.href);   // 링크 목적지면 tablist 역할을 쓰지 않는다
   }
   render() {
     const menuBtn = this.menu ? html`<md-icon-button class="menu" part="menu" aria-label=${this.expanded ? (this.menuCloseLabel || 'Close menu') : (this.menuOpenLabel || 'Open menu')}
-        aria-expanded=${this.expanded ? 'true' : 'false'} @click=${() => this.toggle()}><md-icon>${this.expanded ? 'menu_open' : 'menu'}</md-icon></md-icon-button>` : nothing;
+        aria-expanded=${this.expanded ? 'true' : 'false'} @click=${() => this.toggle()}>${this.expanded
+          ? html`<slot name="menu-open-icon"><slot name="menu-icon">${MENU_OPEN_SVG}</slot></slot>`
+          : html`<slot name="menu-icon">${MENU_SVG}</slot>`}</md-icon-button>` : nothing;
     return html`
       ${this.modal && this.expanded ? html`<div class="scrim" part="scrim" @click=${() => this.toggle(false)}></div>` : nothing}
       <div class="header ${this._header ? 'has' : ''}">${menuBtn}<slot name="header" @slotchange=${() => this._sync()}></slot></div>
-      <div class="items" role="tablist" aria-orientation="vertical"><slot @slotchange=${() => this._sync()}></slot></div>
+      <div class="items" role=${this._links ? nothing : 'tablist'} aria-orientation=${this._links ? nothing : 'vertical'}><slot @slotchange=${() => this._sync()}></slot></div>
       <div class="footer ${this._footer ? 'has' : ''}" part="footer"><slot name="footer" @slotchange=${() => this._sync()}></slot></div>`;
   }
 }
-customElements.define('md-navigation-rail', MdNavigationRail);
+define('md-navigation-rail', MdNavigationRail);
 
 export class MdNavigationRailItem extends LitElement {
   static properties = {
     active: {type: Boolean, reflect: true},
     disabled: {type: Boolean, reflect: true},
     label: {type: String},
+    href: {type: String, reflect: true},   // 있으면 <a href> 로 그린다(링크 목적지)
     badgeValue: {type: String, attribute: 'badge-value'},
     showBadge: {type: Boolean, attribute: 'show-badge'},
     expanded: {type: Boolean, reflect: true},
@@ -191,15 +230,15 @@ export class MdNavigationRailItem extends LitElement {
   };
   static styles = css([`
     :host { display: block; }
-    button { all: unset; box-sizing: border-box; width: 100%; display: flex; cursor: pointer; position: relative;  /* target 은 레일 전체 너비 */
+    .target { all: unset; box-sizing: border-box; width: 100%; display: flex; cursor: pointer; position: relative;  /* target 은 레일 전체 너비 */
       color: var(--md-sys-color-on-surface-variant, #49454f); }
-    :host([disabled]) button { cursor: default; opacity: 0.38; }
+    :host([disabled]) .target { cursor: default; opacity: 0.38; }
     .indicator { position: relative; display: flex; align-items: center; justify-content: center; box-sizing: border-box; flex: none;
       border-radius: var(--md-sys-shape-corner-full, 9999px); }
     .indicator::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: currentColor; opacity: 0; pointer-events: none; }
-    button:hover .indicator::before { opacity: var(--md-sys-state-hover-state-layer-opacity, .08); }
-    button:active .indicator::before { opacity: var(--md-sys-state-pressed-state-layer-opacity, .1); }
-    button:focus-visible .indicator { outline: 3px solid var(--md-sys-color-secondary, #625b71); outline-offset: 2px; }
+    .target:hover .indicator::before { opacity: var(--md-sys-state-hover-state-layer-opacity, .08); }
+    .target:active .indicator::before { opacity: var(--md-sys-state-pressed-state-layer-opacity, .1); }
+    .target:focus-visible .indicator { outline: 3px solid var(--md-sys-color-secondary, #625b71); outline-offset: 2px; }
     :host([active]) .indicator { background: var(--md-sys-color-secondary-container, #e8def8); }
     .icon { position: relative; display: flex; width: 24px; height: 24px; --md-icon-size: 24px; color: var(--md-sys-color-on-surface-variant, #49454f); }
     :host([active]) .icon { color: var(--md-sys-color-on-secondary-container, #1d192b); }
@@ -207,13 +246,13 @@ export class MdNavigationRailItem extends LitElement {
     .label { ${type('label-medium', 12, 16, 500)} text-align: center; overflow-wrap: anywhere; }  /* 라벨은 줄이지 않는다(필요하면 줄바꿈) */
     /* 세로형(접힌 레일): 높이 64, 위아래 6, indicator 56x32, indicator-라벨 4. 활성 라벨 secondary
        치수 변수는 md-navigation-rail 에 지정하면 항목까지 상속된다(기본값 = M3 수치) */
-    :host(:not([expanded])) button { flex-direction: column; align-items: center; min-height: var(--md-navigation-rail-item-min-height, 64px);
+    :host(:not([expanded])) .target { flex-direction: column; align-items: center; min-height: var(--md-navigation-rail-item-min-height, 64px);
       padding: var(--md-navigation-rail-item-padding-block, 6px) 0; gap: var(--md-navigation-rail-item-label-space, 4px); }
     :host(:not([expanded])) .indicator { width: var(--md-navigation-rail-item-indicator-width, 56px); height: var(--md-navigation-rail-item-indicator-height, 32px); }
     :host([hide-collapsed-labels]:not([expanded])) .label { display: none; }
     :host(:not([expanded])[active]) .label { color: var(--md-sys-color-secondary, #625b71); }
     /* 가로형(펼친 레일): indicator 높이 56, 앞뒤 16, 아이콘-라벨 8, indicator 는 내용에 맞춤. 활성 라벨 on-secondary-container */
-    :host([expanded]) button { align-items: center; }
+    :host([expanded]) .target { align-items: center; }
     :host([expanded]) .indicator { min-height: var(--md-navigation-rail-item-expanded-indicator-height, 56px); padding: 0 16px; gap: 8px; justify-content: flex-start; }
     :host([expanded]) .label { text-align: start; }
     .text { display: flex; flex-direction: column; min-width: 0; }
@@ -245,18 +284,25 @@ export class MdNavigationRailItem extends LitElement {
     // supporting-text / trailing 은 펼친 레일에서만 보인다(접힌 레일은 공간이 없다)
     const text = html`<span class="text">${label}<span class="supporting ${hasSupport ? 'has' : ''}" part="supporting-text"><slot name="supporting-text" @slotchange=${changed}></slot></span></span>`;
     const trailing = html`<span class="trailing ${hasTrailing ? 'has' : ''}" part="trailing"><slot name="trailing" @slotchange=${changed}></slot></span>`;
+    const content = this.expanded
+      ? html`<span class="indicator ${hasTrailing ? 'wide' : ''}" part="indicator">${icon}${text}${this.showBadge ? badge('after') : nothing}${trailing}</span>`
+      : html`<span class="indicator" part="indicator">${icon}</span>${label}`;
+    const title = labelHidden && this.label ? this.label : nothing;
+    // 링크 목적지: 진짜 앵커(가운데 클릭·Cmd/Ctrl 클릭으로 새 탭, 주소 복사). 활성 항목은 aria-current="page"
+    if (this.href) return html`
+      <a class="target" part="button" href=${this.href} aria-current=${this.active ? 'page' : nothing} aria-disabled=${this.disabled ? 'true' : nothing}
+         aria-label=${this.label || nothing} title=${title} @click=${this._click}>${content}</a>`;
     return html`
-      <button part="button" role="tab" aria-selected=${this.active ? 'true' : 'false'} aria-disabled=${this.disabled ? 'true' : 'false'}
-              aria-label=${this.label || nothing} title=${labelHidden && this.label ? this.label : nothing} @click=${this._click}>
-        ${this.expanded
-          ? html`<span class="indicator ${hasTrailing ? 'wide' : ''}" part="indicator">${icon}${text}${this.showBadge ? badge('after') : nothing}${trailing}</span>`
-          : html`<span class="indicator" part="indicator">${icon}</span>${label}`}
-      </button>`;
+      <button class="target" part="button" role="tab" aria-selected=${this.active ? 'true' : 'false'} aria-disabled=${this.disabled ? 'true' : 'false'}
+              aria-label=${this.label || nothing} title=${title} @click=${this._click}>${content}</button>`;
   }
-  focus() { this.shadowRoot?.querySelector('button')?.focus(); }
-  _click() {
-    if (this.disabled) return;
-    this.dispatchEvent(new CustomEvent('navigation-rail-item-interaction', {bubbles: true, composed: true}));
+  focus() { this.shadowRoot?.querySelector('.target')?.focus(); }
+  _click(e) {
+    if (this.disabled) { e.preventDefault(); return; }
+    // 링크: 수식 키(Cmd/Ctrl/Shift/Alt)·보조 버튼 클릭은 브라우저 기본 동작(새 탭·창)에 맡기고 activated 를 내지 않는다.
+    // (가운데 클릭은 click 이 아니라 auxclick 이라 여기 오지 않는다)
+    if (this.href && (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)) return;
+    this.dispatchEvent(new CustomEvent('navigation-rail-item-interaction', {bubbles: true, composed: true, detail: {originalEvent: e}}));
   }
 }
-customElements.define('md-navigation-rail-item', MdNavigationRailItem);
+define('md-navigation-rail-item', MdNavigationRailItem);

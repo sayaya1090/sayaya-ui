@@ -18,7 +18,7 @@ repositories {
     }
 }
 group = "dev.sayaya"
-version = "2.5.0.5"
+version = "2.5.0.6"
 
 dependencies {
     implementation("org.jboss.elemento:elemento-core:2.5.9")
@@ -87,6 +87,31 @@ tasks {
         } else {
             commandLine("sh", "-c", "npm run build:feedback")
         }
+    }
+
+    // 단독 ESM 번들(md-top-app-bar, md-navigation-rail(-item), md-navigation-bar/tab 만 정의, 이미 정의돼 있으면 건너뜀). Release 첨부물 sayaya-ui-navigation-<version>.js 의 원본
+    val buildNavigationBundle by registering(Exec::class) {
+        group = "build"
+        description = "Build navigation ESM bundle (top app bar / rail / navigation bar) into src/main/webapp/labs-bundle/dist/sayaya-ui-navigation.js"
+        dependsOn(installLabsBundleDeps)
+        workingDir = file("src/main/webapp/labs-bundle")
+        environment("SAYAYA_UI_VERSION", project.version.toString())
+
+        if (System.getProperty("os.name").lowercase().contains("windows")) {
+            commandLine("cmd", "/c", "npm", "run", "build:navigation")
+        } else {
+            commandLine("sh", "-c", "npm run build:navigation")
+        }
+    }
+
+    // 테스트용 navigation ESM 번들 복사 태스크(navigation_esm.html 공존 검증)
+    val copyNavigationBundleToTest by registering(Copy::class) {
+        group = "build"
+        description = "Copy sayaya-ui-navigation.js to test webapp"
+        dependsOn(buildNavigationBundle)
+
+        from("src/main/webapp/labs-bundle/dist/sayaya-ui-navigation.js")
+        into("src/test/webapp")
     }
 
     // 테스트용 feedback ESM 번들 복사 태스크(feedback_esm.html 공존 검증)
@@ -164,7 +189,7 @@ tasks {
     }
     test {
         useJUnitPlatform()
-        dependsOn(copyFeedbackBundleToTest)
+        dependsOn(copyFeedbackBundleToTest, copyNavigationBundleToTest)
     }
     jar {
         from(sourceSets.main.get().allSource)

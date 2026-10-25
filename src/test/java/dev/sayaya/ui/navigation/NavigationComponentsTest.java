@@ -184,6 +184,7 @@ public class NavigationComponentsTest {
         }, 1500);
         audit();
         extensions();
+        links();
     }
 
     /** M3 토큰·가이드 대조(rail: nav-rail-*, Compose WideNavigationRail / app bar: app-bar-*, top-app-bar-*). */
@@ -273,18 +274,42 @@ public class NavigationComponentsTest {
             assertEquals("nav: narrow 레일 너비 80px", 80, (int) Math.round(narrowRail.getBoundingClientRect().width));
             var menuBtn = inner(menuRail, ".menu");
             assertTrue("nav: 레일 메뉴 버튼은 위쪽 header", menuBtn != null && menuBtn.getBoundingClientRect().top < inner(menuRail, ".items").getBoundingClientRect().top);
-            assertEquals("nav: 레일 메뉴 아이콘(접힘) menu", "menu", menuBtn.textContent.trim());
+            assertEquals("nav: 레일 메뉴 아이콘(접힘) menu", "menu", menuBtn.querySelector("svg").getAttribute("data-icon")); // 폰트 없는 기본 SVG
             if (!isAutomated()) return; // 사람이 볼 때는 modal 레일을 자동으로 열지 않는다
             menuBtn.click();
             DomGlobal.setTimeout(t2 -> {
                 var btn2 = inner(menuRail, ".menu");
                 assertTrue("nav: 메뉴 버튼으로 레일 펼침", Boolean.TRUE.equals(Js.asPropertyMap(menuRail).get("expanded")) && railChanged[0]);
-                assertEquals("nav: 레일 메뉴 아이콘(펼침) menu_open", "menu_open", btn2.textContent.trim());
+                assertEquals("nav: 레일 메뉴 아이콘(펼침) menu_open", "menu_open", btn2.querySelector("svg").getAttribute("data-icon"));
                 assertEquals("nav: modal 펼친 레일은 화면 기준(fixed)", "fixed", cs(menuRail).getPropertyValue("position"));
                 assertEquals("nav: modal 펼친 레일 모서리 16px", "16px", cs(menuRail).getPropertyValue("border-top-right-radius"));
                 inner(menuRail, ".scrim").click();
                 DomGlobal.setTimeout(t3 -> assertTrue("nav: modal 레일 스크림 클릭으로 접힘", !Boolean.TRUE.equals(Js.asPropertyMap(menuRail).get("expanded"))), 200);
             }, 300);
+        }, 1500);
+    }
+    /** 2.5.0.6: 링크 목적지(href)·aria-current·interceptLinks·메뉴 아이콘 슬롯(빌더 API). 키보드·수식 키 클릭은 NavigationEsmBundleTest 에서 검사 */
+    private static void links() {
+        var box = section("2.5.0.6 링크 목적지·메뉴 아이콘");
+        String[] routed = {null};
+        var custom = div().text("≡").element();
+        var linkRail = navigationRail().menu(true).menuIcon(custom).interceptLinks(h -> routed[0] = h)
+                .item(railItem().icon("home").label("홈").href("#home"))
+                .item(railItem().icon("inbox").label("받은편지함").href("#inbox")).element();
+        box.appendChild(div().style("height", "240px").add(linkRail).element());
+        DomGlobal.setTimeout(t -> {
+            HTMLElement i0 = Js.uncheckedCast(linkRail.querySelectorAll("md-navigation-rail-item").item(0));
+            HTMLElement i1 = Js.uncheckedCast(linkRail.querySelectorAll("md-navigation-rail-item").item(1));
+            var a1 = inner(i1, "[part='button']");
+            assertEquals("nav: railItem href 는 <a href>", "a #inbox", a1.localName + " " + a1.getAttribute("href"));
+            assertEquals("nav: 활성 링크 aria-current=page", "page", inner(i0, "[part='button']").getAttribute("aria-current"));
+            assertTrue("nav: menuIcon 슬롯", "menu-icon".equals(custom.getAttribute("slot")) && custom.getBoundingClientRect().width > 0);
+            if (!isAutomated()) return; // 사람이 볼 때는 자동 클릭하지 않는다
+            Object hashBefore = Js.asPropertyMap(DomGlobal.location).get("hash");
+            a1.click();
+            assertEquals("nav: interceptLinks 는 href 를 라우터로", "#inbox", routed[0]);
+            assertEquals("nav: interceptLinks 는 기본 이동을 막음", String.valueOf(hashBefore), String.valueOf(Js.asPropertyMap(DomGlobal.location).get("hash")));
+            assertEquals("nav: 링크 클릭 시 activeIndex", 1, (int) linkRail.activeIndex);
         }, 1500);
     }
     /** 2.5.0.3 확장: 앱 바 높이 변수·제목 요소, 레일 치수 변수·part·라벨 숨김·보조 슬롯·footer. */

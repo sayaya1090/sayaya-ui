@@ -5,7 +5,8 @@
   "scripts": {
     "build": "rollup -c",
     "build:standalone": "rollup -c rollup.standalone.config.js && node standalone.mjs",
-    "build:feedback": "rollup -c rollup.feedback.config.js"
+    "build:feedback": "rollup -c rollup.feedback.config.js",
+    "build:navigation": "rollup -c rollup.navigation.config.js"
   },
   "dependencies": {
     "@material/web": "^2.5.0"
