@@ -83,9 +83,9 @@ sequenceDiagram
   participant L as labs.bundle.js
   participant G as GWT nocache.js
   P->>MW: import (importmap → esm.run/@material/web@2.5.0)
-  P->>L: <script type=module>
+  P->>L: script type=module 로 로드
   L->>L: 이미 정의된 md-* 는 건너뛰고 labs·sayaya 요소 정의
-  P->>G: <script src=".../*.nocache.js">
+  P->>G: script src=.../*.nocache.js 로 로드
   G->>G: onModuleLoad → 빌더가 태그 생성
 ```
 

@@ -61,6 +61,6 @@ sequenceDiagram
   participant S as 배포 파이프라인
   M->>S: pushMain(version)
   S-->>M: 테스트 결과
-  M->>S: pushTag(v&lt;version&gt;)
+  M->>S: pushTag(v + version)
   S-->>M: jar(GitHub Packages, Central Portal), Release 첨부물
 ```
