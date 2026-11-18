@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.sayaya:ui:2.5.0.8")
+    implementation("dev.sayaya:ui:2.5.0.9")
 }
 ```
 
@@ -1356,9 +1356,11 @@ sayaya-ui/
 
 ## 의존성
 
-- **[Elemento](https://github.com/hal/elemento)** (2.5.9) - GWT용 타입 안전 HTML 빌더
+- **[Elemento](https://github.com/hal/elemento)** (2.5.14, 전이 의존성 elemental2 1.4.0) - GWT용 타입 안전 HTML 빌더
 - **[Material Web](https://github.com/material-components/material-web)** - Google의 Material Design 웹 컴포넌트
 - **GWT** (2.13.1) - Google Web Toolkit
+
+> **2.5.0.9 변경:** Elemento 를 2.5.9 → 2.5.14 로 올려 elemental2 가 1.3.2 → 1.4.0 으로 함께 올라갑니다(전이 의존성). 앱이 elemental2 를 직접 쓰면 1.4.0 의 union 타입 시그니처(예: `HTMLElement.hidden`)를 확인하세요. 같은 리비전에서 labs 커스텀 엘리먼트의 생명주기를 고쳤습니다: `md-top-app-bar[auto-scroll]` 은 떼었다 다시 붙여도 스크롤에 반응하고, `md-button-group`·`md-toast` 는 DOM 에서 떼면 타이머와 누름 상태를 정리하며, `md-side-sheet`·`md-bottom-sheet` 는 이미 등록된 이름이면 다시 정의하지 않습니다. 공개 Java API 는 바뀌지 않았습니다(`CustomElementBuilder.injectStyle` protected 메서드 추가만 있음).
 
 ## 브라우저 지원
 
