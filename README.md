@@ -1194,7 +1194,7 @@ sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제�
 
 ## 개발
 
-설계 문서(요구사항·유스케이스·도메인 모델·설계 시퀀스·클래스·패키지·배포·추적표, Unified Process 형식)는 [docs/design](docs/design/README.md) 에 있습니다.
+개발 문서(아키텍처 → 빌드 → 컴포넌트 추가 → 테스트 → 릴리스)는 [docs/development](docs/development/README.md), 설계 문서(요구사항·유스케이스·도메인 모델·설계 시퀀스·클래스·패키지·배포·추적표, Unified Process 형식)는 [docs/design](docs/design/README.md) 에 있습니다.
 
 ### 필수 조건
 
