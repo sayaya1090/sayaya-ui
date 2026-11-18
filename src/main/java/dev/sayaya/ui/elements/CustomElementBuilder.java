@@ -33,6 +33,16 @@ public abstract class CustomElementBuilder<SELF extends CustomElementBuilder<SEL
         HTMLStyleElement style = Elements.htmlElement("style", HTMLStyleElement.class).id(id).element();
         return style;
     }
+    /**
+     * 컴포넌트 스타일시트를 문서에 한 번만 주입한다. 같은 id 가 이미 있으면 css 를 만들지도 않는다.
+     * 같은 패키지의 다른 빌더(상속하지 않는 Slider 등)도 정적으로 호출한다.
+     */
+    protected static void injectStyle(String id, java.util.function.Supplier<String> css) {
+        HTMLStyleElement style = newStyle(id);
+        if (style == null) return;
+        style.textContent = css.get();
+        DomGlobal.document.head.appendChild(style);
+    }
     /** 루트에 클래스를 붙이거나 뗀다 */
     protected SELF setClass(String cls, boolean on) {
         if (on) element().classList.add(cls); else element().classList.remove(cls);

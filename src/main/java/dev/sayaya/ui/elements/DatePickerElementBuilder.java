@@ -523,95 +523,94 @@ public final class DatePickerElementBuilder extends CustomElementBuilder<DatePic
     }
 
     private static void injectStyle() {
-        HTMLStyleElement style = newStyle(STYLE_ID);
-        if (style == null) return;
-        String c = "." + CLASS;
-        style.textContent =
-            c + "{display:inline-block;font-family:Roboto,system-ui,sans-serif}"
-          + c + " .icon{font-family:'Material Symbols Outlined';font-size:24px;line-height:1;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}"
-          // 컨테이너 360dp, 모서리 28dp, surface container high, elevation 3
-          + c + " .card{box-sizing:border-box;width:360px;border-radius:var(--md-date-picker-container-shape,var(--md-sys-shape-corner-extra-large,28px));padding:0 12px 12px;background:var(--md-sys-color-surface-container-high,#ece6f0);"
-          + "color:var(--md-sys-color-on-surface,#1d1b20);box-shadow:0 1px 3px 0 rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15)}"
-          // 헤더 120dp (modal)
-          + c + " .header{box-sizing:border-box;height:120px;margin:0 -12px;padding:16px 24px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant,#cac4d0);display:flex;flex-direction:column;justify-content:space-between}"
-          + c + " .headline{font-size:14px;line-height:20px;font-weight:500;color:var(--md-sys-color-on-surface-variant,#49454f)}"
-          + c + " .header-date{font-size:32px;line-height:40px;color:var(--md-sys-color-on-surface-variant,#49454f)}"
-          + c + " .header-row{display:flex;align-items:center;justify-content:space-between;gap:8px}"
-          + c + " .mode{flex:none;width:48px;height:48px;border:0;padding:0;border-radius:var(--md-date-picker-icon-button-shape,var(--md-sys-shape-corner-full,9999px));background:none;cursor:pointer;color:var(--md-sys-color-on-surface-variant,#49454f);display:inline-flex;align-items:center;justify-content:center}"
-          // docked: 월·연도 메뉴 버튼
-          + c + " .docked-nav{padding-inline:4px}"
-          + c + " .nav-group{display:flex;align-items:center}"
-          + c + " .menu-btn{font:500 14px/20px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f);border:0;background:none;cursor:pointer;height:40px;padding:0 4px;border-radius:var(--md-date-picker-month-button-shape,var(--md-sys-shape-corner-full,9999px))}"
-          + c + " .menu-btn::after{content:' \\25BE'}"
-          + c + " .months{display:none;flex-direction:column;max-height:336px;overflow-y:auto;padding:8px 0}"
-          + c + ".months-mode .months{display:flex}"
-          + c + ".months-mode .grid{display:none}"
-          + c + " .month-option{display:flex;align-items:center;gap:16px;height:48px;padding:0 16px;border:0;background:none;cursor:pointer;text-align:start;font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface,#1d1b20)}"
-          + c + " .month-option .icon{width:24px}"
-          + c + " .month-option[aria-selected=true]{background:var(--md-sys-color-surface-variant,#e7e0ec)}"
-          + c + " .month-option:focus-visible{outline:3px solid var(--md-sys-color-secondary,#625b71);outline-offset:-3px}"
-          // 이전·다음 달 날짜(outside month)
-          + c + " .cell.outside{color:var(--md-sys-color-on-surface-variant,#49454f)}"
-          // outlined text field: 높이 56, 테두리 outline 1dp(포커스 primary 2dp), 모서리 extra-small 4dp, 라벨은 테두리 위
-          + c + " .text-field{position:relative;display:flex;flex-direction:column;--_field-bg:var(--md-sys-color-surface,#fef7ff)}"
-          + c + " .field-input{box-sizing:border-box;width:100%;height:56px;padding:0 16px;border:1px solid var(--md-sys-color-outline,#79747e);outline:none;background:transparent;"
-          + "border-radius:var(--md-date-picker-text-field-shape,var(--md-sys-shape-corner-extra-small,4px));font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface,#1d1b20)}"
-          + c + " .field-input:focus{border:2px solid var(--md-sys-color-primary,#6750a4);padding:0 15px}"
-          + c + " .field-label{position:absolute;top:-8px;inset-inline-start:12px;padding:0 4px;background:var(--_field-bg);font:400 12px/16px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f)}"
-          + c + " .text-field:focus-within .field-label{color:var(--md-sys-color-primary,#6750a4)}"
-          + c + " .field-support{min-height:16px;padding:4px 16px 0;font:400 12px/16px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f)}"
-          + c + " .text-field.invalid .field-input{border-color:var(--md-sys-color-error,#b3261e)}"
-          + c + " .text-field.invalid .field-label," + c + " .text-field.invalid .field-support{color:var(--md-sys-color-error,#b3261e)}"
-          // modal date input
-          + c + " .input-area{display:none;flex-direction:column;gap:16px;padding:24px 12px 8px;--_field-bg:var(--md-sys-color-surface-container-high,#ece6f0)}"
-          + c + " .input-area .text-field{--_field-bg:var(--md-sys-color-surface-container-high,#ece6f0)}"
-          + c + ".input-mode .input-area{display:flex}"
-          + c + ".input-mode .nav-row," + c + ".input-mode .grid," + c + ".input-mode .years," + c + ".input-mode .months{display:none}"
-          + c + " .text-field.end{display:none}"
-          + c + ".range .text-field.end{display:flex}"
-          // docked + text field: 필드를 누르면 아래로 달력이 열린다
-          + c + ".docked.with-field{position:relative;width:360px}"
-          + c + ".docked.with-field .card{display:none;position:absolute;z-index:10;top:calc(100% - 12px);inset-inline-start:0}"
-          + c + ".docked.with-field.open .card{display:block}"
-          + c + " .nav-row{display:flex;align-items:center;justify-content:space-between;height:56px;padding-inline:12px 4px}"
-          + c + ":dir(rtl) .nav .icon{transform:scaleX(-1)}"
-          + c + " .month{font-size:14px;font-weight:500;color:var(--md-sys-color-on-surface-variant,#49454f);border:0;background:none;cursor:pointer;height:40px;padding:0 8px;border-radius:var(--md-date-picker-month-button-shape,var(--md-sys-shape-corner-full,9999px));font-family:inherit}"
-          + c + " .month::after{content:' \\25BE'}"
-          // 연도 선택: 72×36dp, 선택 primary/on primary, 기본 on surface variant
-          + c + " .years{display:none;grid-template-columns:repeat(3,72px);justify-content:space-evenly;row-gap:16px;max-height:288px;overflow-y:auto;padding:8px 0}"
-          + c + ".years-mode .years{display:grid}"
-          + c + ".years-mode .grid," + c + ".years-mode .nav-buttons{display:none}"
-          + c + " .year{width:72px;height:36px;border:0;border-radius:var(--md-date-picker-year-shape,var(--md-sys-shape-corner-full,9999px));background:none;cursor:pointer;font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f)}"
-          + c + " .year[aria-selected=true]{background:var(--md-sys-color-primary,#6750a4);color:var(--md-sys-color-on-primary,#ffffff)}"
-          + c + " .year:focus-visible{outline:3px solid var(--md-sys-color-secondary,#625b71);outline-offset:2px}"
-          + c + " .nav{width:40px;height:40px;border:0;border-radius:var(--md-date-picker-nav-button-shape,var(--md-sys-shape-corner-full,50%));background:none;cursor:pointer;color:var(--md-sys-color-on-surface-variant,#49454f);display:inline-flex;align-items:center;justify-content:center}"
-          + c + " .row{display:grid;grid-template-columns:repeat(7,48px);justify-content:center;height:48px;align-items:center;justify-items:center}"
-          + c + " .weekday{font-size:16px;color:var(--md-sys-color-on-surface,#1d1b20)}"
-          // 날짜 40dp 원형
-          + c + " .cell{box-sizing:border-box;width:40px;height:40px;border-radius:var(--md-date-picker-date-shape,var(--md-sys-shape-corner-full,9999px));border:0;padding:0;background:none;font:400 16px/24px Roboto,system-ui,sans-serif;"
-          + "color:var(--md-sys-color-on-surface,#1d1b20);cursor:pointer}"
-          + c + " .cell.empty{cursor:default}"
-          + c + " .cell:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface,#1d1b20) 8%,transparent)}"
-          + c + " .cell[aria-current=date]{border:1px solid var(--md-sys-color-primary,#6750a4);color:var(--md-sys-color-primary,#6750a4)}"
-          + c + " .cell[aria-selected=true]{background:var(--md-sys-color-primary,#6750a4);color:var(--md-sys-color-on-primary,#ffffff);border:0}"
-          + c + " .cell:focus-visible{outline:3px solid var(--md-sys-color-secondary,#625b71);outline-offset:2px}"
-          // 기간 선택: 범위 띠 40dp secondary container, 범위 안 글자 on secondary container, 시작·끝은 띠 위 primary 원
-          + c + ".range .header{height:128px}"
-          + c + ".range .cell{position:relative;isolation:isolate}"
-          + c + ".range .cell.in-range{color:var(--md-sys-color-on-secondary-container,#1d192b)}"
-          + c + ".range .cell.in-range::before," + c + ".range .cell.range-start::before," + c + ".range .cell.range-end::before{content:'';position:absolute;top:0;height:40px;inset-inline:-4px;"
-          + "background:var(--md-sys-color-secondary-container,#e8def8);z-index:-1}"
-          + c + ".range .cell.range-start::before{inset-inline-start:50%}"
-          + c + ".range .cell.range-end::before{inset-inline-end:50%}"
-          + c + ".range .cell[aria-selected=true]{background:none;color:var(--md-sys-color-on-primary,#ffffff)}"
-          + c + ".range .cell[aria-selected=true]::after{content:'';position:absolute;inset:0;border-radius:var(--md-date-picker-date-shape,var(--md-sys-shape-corner-full,9999px));background:var(--md-sys-color-primary,#6750a4);z-index:-1}"
-          + c + " .actions{display:flex;justify-content:flex-end;gap:8px;padding-top:8px}"
-          + c + " .action{height:40px;padding:0 12px;border:0;border-radius:var(--md-date-picker-action-shape,var(--md-sys-shape-corner-full,9999px));background:none;cursor:pointer;font:500 14px/20px Roboto,system-ui,sans-serif;color:var(--md-sys-color-primary,#6750a4)}"
-          // Modal: 스크림 위 가운데. 닫혀 있으면 숨김
-          + c + ".modal{display:none}"
-          + c + ".modal.open{display:flex;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center}"
-          + c + " .scrim{position:absolute;inset:0;background:var(--md-sys-color-scrim,#000);opacity:.32}"
-          + c + ".modal .card{position:relative}";
-        DomGlobal.document.head.appendChild(style);
+        injectStyle(STYLE_ID, () -> {
+            String c = "." + CLASS;
+            return
+                c + "{display:inline-block;font-family:Roboto,system-ui,sans-serif}"
+              + c + " .icon{font-family:'Material Symbols Outlined';font-size:24px;line-height:1;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}"
+              // 컨테이너 360dp, 모서리 28dp, surface container high, elevation 3
+              + c + " .card{box-sizing:border-box;width:360px;border-radius:var(--md-date-picker-container-shape,var(--md-sys-shape-corner-extra-large,28px));padding:0 12px 12px;background:var(--md-sys-color-surface-container-high,#ece6f0);"
+              + "color:var(--md-sys-color-on-surface,#1d1b20);box-shadow:0 1px 3px 0 rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15)}"
+              // 헤더 120dp (modal)
+              + c + " .header{box-sizing:border-box;height:120px;margin:0 -12px;padding:16px 24px 12px;border-bottom:1px solid var(--md-sys-color-outline-variant,#cac4d0);display:flex;flex-direction:column;justify-content:space-between}"
+              + c + " .headline{font-size:14px;line-height:20px;font-weight:500;color:var(--md-sys-color-on-surface-variant,#49454f)}"
+              + c + " .header-date{font-size:32px;line-height:40px;color:var(--md-sys-color-on-surface-variant,#49454f)}"
+              + c + " .header-row{display:flex;align-items:center;justify-content:space-between;gap:8px}"
+              + c + " .mode{flex:none;width:48px;height:48px;border:0;padding:0;border-radius:var(--md-date-picker-icon-button-shape,var(--md-sys-shape-corner-full,9999px));background:none;cursor:pointer;color:var(--md-sys-color-on-surface-variant,#49454f);display:inline-flex;align-items:center;justify-content:center}"
+              // docked: 월·연도 메뉴 버튼
+              + c + " .docked-nav{padding-inline:4px}"
+              + c + " .nav-group{display:flex;align-items:center}"
+              + c + " .menu-btn{font:500 14px/20px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f);border:0;background:none;cursor:pointer;height:40px;padding:0 4px;border-radius:var(--md-date-picker-month-button-shape,var(--md-sys-shape-corner-full,9999px))}"
+              + c + " .menu-btn::after{content:' \\25BE'}"
+              + c + " .months{display:none;flex-direction:column;max-height:336px;overflow-y:auto;padding:8px 0}"
+              + c + ".months-mode .months{display:flex}"
+              + c + ".months-mode .grid{display:none}"
+              + c + " .month-option{display:flex;align-items:center;gap:16px;height:48px;padding:0 16px;border:0;background:none;cursor:pointer;text-align:start;font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface,#1d1b20)}"
+              + c + " .month-option .icon{width:24px}"
+              + c + " .month-option[aria-selected=true]{background:var(--md-sys-color-surface-variant,#e7e0ec)}"
+              + c + " .month-option:focus-visible{outline:3px solid var(--md-sys-color-secondary,#625b71);outline-offset:-3px}"
+              // 이전·다음 달 날짜(outside month)
+              + c + " .cell.outside{color:var(--md-sys-color-on-surface-variant,#49454f)}"
+              // outlined text field: 높이 56, 테두리 outline 1dp(포커스 primary 2dp), 모서리 extra-small 4dp, 라벨은 테두리 위
+              + c + " .text-field{position:relative;display:flex;flex-direction:column;--_field-bg:var(--md-sys-color-surface,#fef7ff)}"
+              + c + " .field-input{box-sizing:border-box;width:100%;height:56px;padding:0 16px;border:1px solid var(--md-sys-color-outline,#79747e);outline:none;background:transparent;"
+              + "border-radius:var(--md-date-picker-text-field-shape,var(--md-sys-shape-corner-extra-small,4px));font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface,#1d1b20)}"
+              + c + " .field-input:focus{border:2px solid var(--md-sys-color-primary,#6750a4);padding:0 15px}"
+              + c + " .field-label{position:absolute;top:-8px;inset-inline-start:12px;padding:0 4px;background:var(--_field-bg);font:400 12px/16px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f)}"
+              + c + " .text-field:focus-within .field-label{color:var(--md-sys-color-primary,#6750a4)}"
+              + c + " .field-support{min-height:16px;padding:4px 16px 0;font:400 12px/16px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f)}"
+              + c + " .text-field.invalid .field-input{border-color:var(--md-sys-color-error,#b3261e)}"
+              + c + " .text-field.invalid .field-label," + c + " .text-field.invalid .field-support{color:var(--md-sys-color-error,#b3261e)}"
+              // modal date input
+              + c + " .input-area{display:none;flex-direction:column;gap:16px;padding:24px 12px 8px;--_field-bg:var(--md-sys-color-surface-container-high,#ece6f0)}"
+              + c + " .input-area .text-field{--_field-bg:var(--md-sys-color-surface-container-high,#ece6f0)}"
+              + c + ".input-mode .input-area{display:flex}"
+              + c + ".input-mode .nav-row," + c + ".input-mode .grid," + c + ".input-mode .years," + c + ".input-mode .months{display:none}"
+              + c + " .text-field.end{display:none}"
+              + c + ".range .text-field.end{display:flex}"
+              // docked + text field: 필드를 누르면 아래로 달력이 열린다
+              + c + ".docked.with-field{position:relative;width:360px}"
+              + c + ".docked.with-field .card{display:none;position:absolute;z-index:10;top:calc(100% - 12px);inset-inline-start:0}"
+              + c + ".docked.with-field.open .card{display:block}"
+              + c + " .nav-row{display:flex;align-items:center;justify-content:space-between;height:56px;padding-inline:12px 4px}"
+              + c + ":dir(rtl) .nav .icon{transform:scaleX(-1)}"
+              + c + " .month{font-size:14px;font-weight:500;color:var(--md-sys-color-on-surface-variant,#49454f);border:0;background:none;cursor:pointer;height:40px;padding:0 8px;border-radius:var(--md-date-picker-month-button-shape,var(--md-sys-shape-corner-full,9999px));font-family:inherit}"
+              + c + " .month::after{content:' \\25BE'}"
+              // 연도 선택: 72×36dp, 선택 primary/on primary, 기본 on surface variant
+              + c + " .years{display:none;grid-template-columns:repeat(3,72px);justify-content:space-evenly;row-gap:16px;max-height:288px;overflow-y:auto;padding:8px 0}"
+              + c + ".years-mode .years{display:grid}"
+              + c + ".years-mode .grid," + c + ".years-mode .nav-buttons{display:none}"
+              + c + " .year{width:72px;height:36px;border:0;border-radius:var(--md-date-picker-year-shape,var(--md-sys-shape-corner-full,9999px));background:none;cursor:pointer;font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f)}"
+              + c + " .year[aria-selected=true]{background:var(--md-sys-color-primary,#6750a4);color:var(--md-sys-color-on-primary,#ffffff)}"
+              + c + " .year:focus-visible{outline:3px solid var(--md-sys-color-secondary,#625b71);outline-offset:2px}"
+              + c + " .nav{width:40px;height:40px;border:0;border-radius:var(--md-date-picker-nav-button-shape,var(--md-sys-shape-corner-full,50%));background:none;cursor:pointer;color:var(--md-sys-color-on-surface-variant,#49454f);display:inline-flex;align-items:center;justify-content:center}"
+              + c + " .row{display:grid;grid-template-columns:repeat(7,48px);justify-content:center;height:48px;align-items:center;justify-items:center}"
+              + c + " .weekday{font-size:16px;color:var(--md-sys-color-on-surface,#1d1b20)}"
+              // 날짜 40dp 원형
+              + c + " .cell{box-sizing:border-box;width:40px;height:40px;border-radius:var(--md-date-picker-date-shape,var(--md-sys-shape-corner-full,9999px));border:0;padding:0;background:none;font:400 16px/24px Roboto,system-ui,sans-serif;"
+              + "color:var(--md-sys-color-on-surface,#1d1b20);cursor:pointer}"
+              + c + " .cell.empty{cursor:default}"
+              + c + " .cell:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface,#1d1b20) 8%,transparent)}"
+              + c + " .cell[aria-current=date]{border:1px solid var(--md-sys-color-primary,#6750a4);color:var(--md-sys-color-primary,#6750a4)}"
+              + c + " .cell[aria-selected=true]{background:var(--md-sys-color-primary,#6750a4);color:var(--md-sys-color-on-primary,#ffffff);border:0}"
+              + c + " .cell:focus-visible{outline:3px solid var(--md-sys-color-secondary,#625b71);outline-offset:2px}"
+              // 기간 선택: 범위 띠 40dp secondary container, 범위 안 글자 on secondary container, 시작·끝은 띠 위 primary 원
+              + c + ".range .header{height:128px}"
+              + c + ".range .cell{position:relative;isolation:isolate}"
+              + c + ".range .cell.in-range{color:var(--md-sys-color-on-secondary-container,#1d192b)}"
+              + c + ".range .cell.in-range::before," + c + ".range .cell.range-start::before," + c + ".range .cell.range-end::before{content:'';position:absolute;top:0;height:40px;inset-inline:-4px;"
+              + "background:var(--md-sys-color-secondary-container,#e8def8);z-index:-1}"
+              + c + ".range .cell.range-start::before{inset-inline-start:50%}"
+              + c + ".range .cell.range-end::before{inset-inline-end:50%}"
+              + c + ".range .cell[aria-selected=true]{background:none;color:var(--md-sys-color-on-primary,#ffffff)}"
+              + c + ".range .cell[aria-selected=true]::after{content:'';position:absolute;inset:0;border-radius:var(--md-date-picker-date-shape,var(--md-sys-shape-corner-full,9999px));background:var(--md-sys-color-primary,#6750a4);z-index:-1}"
+              + c + " .actions{display:flex;justify-content:flex-end;gap:8px;padding-top:8px}"
+              + c + " .action{height:40px;padding:0 12px;border:0;border-radius:var(--md-date-picker-action-shape,var(--md-sys-shape-corner-full,9999px));background:none;cursor:pointer;font:500 14px/20px Roboto,system-ui,sans-serif;color:var(--md-sys-color-primary,#6750a4)}"
+              // Modal: 스크림 위 가운데. 닫혀 있으면 숨김
+              + c + ".modal{display:none}"
+              + c + ".modal.open{display:flex;position:fixed;inset:0;z-index:1000;align-items:center;justify-content:center}"
+              + c + " .scrim{position:absolute;inset:0;background:var(--md-sys-color-scrim,#000);opacity:.32}"
+              + c + ".modal .card{position:relative}";
+        });
     }
 }

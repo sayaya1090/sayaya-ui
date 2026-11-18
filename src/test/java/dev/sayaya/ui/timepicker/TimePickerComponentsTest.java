@@ -19,7 +19,6 @@ public class TimePickerComponentsTest {
     private static long h(Element e) { return Math.round(e.getBoundingClientRect().height); }
     private static double cx(Element e) { var r = e.getBoundingClientRect(); return r.left + r.width / 2; }
     private static double cy(Element e) { var r = e.getBoundingClientRect(); return r.top + r.height / 2; }
-    private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
     private static HTMLElement label(Element root, String value) { return q(root, ".label[data-value='" + value + "']:not(.inner)"); }
     private static void key(Element target, String key) {
         JsPropertyMap<Object> m = JsPropertyMap.of();

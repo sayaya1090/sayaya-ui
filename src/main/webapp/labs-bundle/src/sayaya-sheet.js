@@ -122,7 +122,7 @@ export class MdSideSheet extends LitElement {
       </aside>`;
   }
 }
-customElements.define('md-side-sheet', MdSideSheet);
+if (!customElements.get('md-side-sheet')) customElements.define('md-side-sheet', MdSideSheet); // 이미 정의돼 있으면 건너뜀(다른 번들과 공존)
 
 // ---------------------------------------------------------------- bottom sheet
 // 출처: 토큰 _md-comp-sheet-bottom.scss (drag handle 32x4·opacity 0.4·on-surface-variant, surface-container-low,
@@ -229,4 +229,4 @@ export class MdBottomSheet extends LitElement {
       </section>`;
   }
 }
-customElements.define('md-bottom-sheet', MdBottomSheet);
+if (!customElements.get('md-bottom-sheet')) customElements.define('md-bottom-sheet', MdBottomSheet);

@@ -114,32 +114,31 @@ public final class ToolbarElementBuilder extends CustomElementBuilder<ToolbarEle
     }
 
     private static void injectStyle() {
-        HTMLStyleElement style = newStyle(STYLE_ID);
-        if (style == null) return;
-        String c = "." + CLASS;
-        style.textContent =
-                c + "{display:flex;align-items:center;box-sizing:border-box;height:64px;" // ContainerHeight 64
-              + "background:var(--md-toolbar-container-color,var(--md-sys-color-surface-container,#f3edf7));"
-              + "color:var(--md-toolbar-content-color,var(--md-sys-color-on-surface,#1d1b20));"
-              + "--md-icon-button-icon-color:var(--md-toolbar-content-color,var(--md-sys-color-on-surface-variant,#49454f))}"
-              // Docked: 전체 너비, 모서리 없음, 좌우 16dp, 항목 간격 최소 4dp, 균등 배치
-              + c + ".docked{width:100%;border-radius:var(--md-toolbar-docked-container-shape,var(--md-sys-shape-corner-none,0px));padding:0 16px;gap:var(--_gap,4px);justify-content:center}"
-              + c + ".docked[data-align=center]{gap:8px}"
-              + c + ".docked[data-align=start]{gap:8px;justify-content:flex-start}"
-              + c + ".docked[data-align=end]{gap:8px;justify-content:flex-end}"
-              + c + ".docked[data-align=edges]{gap:4px;justify-content:space-between}"
-              // Floating: 모서리 full, 좌우 8dp, 항목 간격 4dp. [파생] 그림자는 토큰에 없어 elevation level 3 으로 둔다
-              + c + ".floating{display:inline-flex;border-radius:var(--md-toolbar-floating-container-shape,var(--md-sys-shape-corner-full,9999px));padding:0 8px;gap:4px;justify-content:center;"
-              + "box-shadow:0 1px 3px 0 rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15)}"
-              + c + ".floating.vertical{flex-direction:column;height:auto;width:64px;padding:8px 0}"
-              // Vibrant: primary container / on primary container
-              + c + ".vibrant{--md-toolbar-container-color:var(--md-sys-color-primary-container,#eaddff);"
-              + "--md-toolbar-content-color:var(--md-sys-color-on-primary-container,#21005d)}"
-              // 화면 고정 위치(가장자리 16dp)
-              + c + "[data-position]{position:fixed;z-index:3}"
-              + c + "[data-position=bottom-center]{bottom:16px;left:50%;transform:translateX(-50%)}"
-              + c + "[data-position=bottom-end]{bottom:16px;inset-inline-end:16px}"
-              + c + "[data-position=end-center]{inset-inline-end:16px;top:50%;transform:translateY(-50%)}";
-        DomGlobal.document.head.appendChild(style);
+        injectStyle(STYLE_ID, () -> {
+            String c = "." + CLASS;
+            return
+                    c + "{display:flex;align-items:center;box-sizing:border-box;height:64px;" // ContainerHeight 64
+                  + "background:var(--md-toolbar-container-color,var(--md-sys-color-surface-container,#f3edf7));"
+                  + "color:var(--md-toolbar-content-color,var(--md-sys-color-on-surface,#1d1b20));"
+                  + "--md-icon-button-icon-color:var(--md-toolbar-content-color,var(--md-sys-color-on-surface-variant,#49454f))}"
+                  // Docked: 전체 너비, 모서리 없음, 좌우 16dp, 항목 간격 최소 4dp, 균등 배치
+                  + c + ".docked{width:100%;border-radius:var(--md-toolbar-docked-container-shape,var(--md-sys-shape-corner-none,0px));padding:0 16px;gap:var(--_gap,4px);justify-content:center}"
+                  + c + ".docked[data-align=center]{gap:8px}"
+                  + c + ".docked[data-align=start]{gap:8px;justify-content:flex-start}"
+                  + c + ".docked[data-align=end]{gap:8px;justify-content:flex-end}"
+                  + c + ".docked[data-align=edges]{gap:4px;justify-content:space-between}"
+                  // Floating: 모서리 full, 좌우 8dp, 항목 간격 4dp. [파생] 그림자는 토큰에 없어 elevation level 3 으로 둔다
+                  + c + ".floating{display:inline-flex;border-radius:var(--md-toolbar-floating-container-shape,var(--md-sys-shape-corner-full,9999px));padding:0 8px;gap:4px;justify-content:center;"
+                  + "box-shadow:0 1px 3px 0 rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15)}"
+                  + c + ".floating.vertical{flex-direction:column;height:auto;width:64px;padding:8px 0}"
+                  // Vibrant: primary container / on primary container
+                  + c + ".vibrant{--md-toolbar-container-color:var(--md-sys-color-primary-container,#eaddff);"
+                  + "--md-toolbar-content-color:var(--md-sys-color-on-primary-container,#21005d)}"
+                  // 화면 고정 위치(가장자리 16dp)
+                  + c + "[data-position]{position:fixed;z-index:3}"
+                  + c + "[data-position=bottom-center]{bottom:16px;left:50%;transform:translateX(-50%)}"
+                  + c + "[data-position=bottom-end]{bottom:16px;inset-inline-end:16px}"
+                  + c + "[data-position=end-center]{inset-inline-end:16px;top:50%;transform:translateY(-50%)}";
+        });
     }
 }

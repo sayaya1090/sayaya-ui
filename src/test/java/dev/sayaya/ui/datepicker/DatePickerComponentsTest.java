@@ -17,7 +17,6 @@ import static org.jboss.elemento.Elements.div;
 public class DatePickerComponentsTest {
     private static long w(Element e) { return Math.round(e.getBoundingClientRect().width); }
     private static long h(Element e) { return Math.round(e.getBoundingClientRect().height); }
-    private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
     private static HTMLElement day(Element root, String iso) { return q(root, "[data-date='" + iso + "']"); }
     private static String focused() { var a = DomGlobal.document.activeElement; return a == null ? null : a.getAttribute("data-date"); }
     private static void key(Element target, String key) {
@@ -236,11 +235,6 @@ public class DatePickerComponentsTest {
         });
     }
 
-    private static CSSStyleDeclaration pseudo(Element e, String which) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e, which));
-    }
-
     /** 연도 선택(SelectionYear)과 기간 선택(RangeSelection) */
     private static void yearAndRange(HTMLElement section) {
         List<String> ranges = new ArrayList<>();
@@ -287,10 +281,10 @@ public class DatePickerComponentsTest {
             var start = day(rp, "2026-10-05"); var mid = day(rp, "2026-10-07"); var end = day(rp, "2026-10-09");
             assertTrue("dp: 기간 양 끝 aria-selected", "true".equals(start.getAttribute("aria-selected")) && "true".equals(end.getAttribute("aria-selected")));
             assertTrue("dp: 범위 안 날짜 표시", mid.classList.contains("in-range") && !"true".equals(mid.getAttribute("aria-selected")));
-            assertEquals("dp: 범위 띠 secondary-container", "rgb(232, 222, 248)", pseudo(mid, "::before").getPropertyValue("background-color"));
-            assertEquals("dp: 범위 띠 높이 40px", "40px", pseudo(mid, "::before").getPropertyValue("height"));
+            assertEquals("dp: 범위 띠 secondary-container", "rgb(232, 222, 248)", cs(mid, "::before").getPropertyValue("background-color"));
+            assertEquals("dp: 범위 띠 높이 40px", "40px", cs(mid, "::before").getPropertyValue("height"));
             assertEquals("dp: 범위 안 글자 on-secondary-container", "rgb(29, 25, 43)", cs(mid).getPropertyValue("color"));
-            assertEquals("dp: 기간 끝 primary 원", "rgb(103, 80, 164)", pseudo(end, "::after").getPropertyValue("background-color"));
+            assertEquals("dp: 기간 끝 primary 원", "rgb(103, 80, 164)", cs(end, "::after").getPropertyValue("background-color"));
             assertEquals("dp: 기간 끝 글자 on-primary", "rgb(255, 255, 255)", cs(end).getPropertyValue("color"));
             assertTrue("dp: 시작 띠는 가운데부터", start.classList.contains("range-start") && end.classList.contains("range-end"));
             day(rp, "2026-10-20").click();

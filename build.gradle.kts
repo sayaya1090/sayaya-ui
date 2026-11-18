@@ -26,18 +26,21 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.48")
     testImplementation("dev.sayaya:gwt-test:2.3.0")
 }
+// labs-bundle 에서 npm 을 실행하는 Exec 공통 설정. Windows 는 cmd /c, 그 밖은 sh -c(셸의 PATH 로 npm 을 찾는다)
+val labsBundleDir = file("src/main/webapp/labs-bundle")
+val isWindows = System.getProperty("os.name").lowercase().contains("windows")
+fun Exec.npm(vararg args: String) {
+    workingDir = labsBundleDir
+    if (isWindows) commandLine(listOf("cmd", "/c", "npm") + args)
+    else commandLine("sh", "-c", (listOf("npm") + args).joinToString(" "))
+}
 tasks {
     // Labs bundle npm install 태스크
     val installLabsBundleDeps by registering(Exec::class) {
         group = "build"
         description = "Install labs-bundle npm dependencies"
-        workingDir = file("src/main/webapp/labs-bundle")
 
-        if (System.getProperty("os.name").lowercase().contains("windows")) {
-            commandLine("cmd", "/c", "npm", "install")
-        } else {
-            commandLine("sh", "-c", "npm install")
-        }
+        npm("install")
 
         // package.json 이 마지막 설치 때와 같으면 skip. node_modules 가 있어도 package.json 이 바뀌었으면 다시 설치한다
         // (전에는 node_modules 가 있기만 하면 건너뛰어 로컬에 오래된 @material/web·rollup 이 남았다)
@@ -52,13 +55,8 @@ tasks {
         group = "build"
         description = "Build Material Web Labs bundle"
         dependsOn(installLabsBundleDeps)
-        workingDir = file("src/main/webapp/labs-bundle")
 
-        if (System.getProperty("os.name").lowercase().contains("windows")) {
-            commandLine("cmd", "/c", "npm", "run", "build")
-        } else {
-            commandLine("sh", "-c", "npm run build")
-        }
+        npm("run", "build")
     }
 
     // 단일 classic-script 번들(@material/web all.js + labs, IIFE). Release 첨부물 sayaya-ui-<version>.js 의 원본
@@ -66,14 +64,9 @@ tasks {
         group = "build"
         description = "Build standalone IIFE bundle (all.js + labs) into src/main/webapp/labs-bundle/dist/sayaya-ui.js"
         dependsOn(installLabsBundleDeps)
-        workingDir = file("src/main/webapp/labs-bundle")
         environment("SAYAYA_UI_VERSION", project.version.toString())
 
-        if (System.getProperty("os.name").lowercase().contains("windows")) {
-            commandLine("cmd", "/c", "npm", "run", "build:standalone")
-        } else {
-            commandLine("sh", "-c", "npm run build:standalone")
-        }
+        npm("run", "build:standalone")
     }
 
     // 단독 ESM 번들(md-tooltip, md-snackbar, md-toast 만 정의, 이미 정의돼 있으면 건너뜀). Release 첨부물 sayaya-ui-feedback-<version>.js 의 원본
@@ -81,14 +74,9 @@ tasks {
         group = "build"
         description = "Build feedback ESM bundle (md-tooltip/md-snackbar/md-toast) into src/main/webapp/labs-bundle/dist/sayaya-ui-feedback.js"
         dependsOn(installLabsBundleDeps)
-        workingDir = file("src/main/webapp/labs-bundle")
         environment("SAYAYA_UI_VERSION", project.version.toString())
 
-        if (System.getProperty("os.name").lowercase().contains("windows")) {
-            commandLine("cmd", "/c", "npm", "run", "build:feedback")
-        } else {
-            commandLine("sh", "-c", "npm run build:feedback")
-        }
+        npm("run", "build:feedback")
     }
 
     // 단독 ESM 번들(md-top-app-bar, md-navigation-rail(-item), md-navigation-bar/tab 만 정의, 이미 정의돼 있으면 건너뜀). Release 첨부물 sayaya-ui-navigation-<version>.js 의 원본
@@ -96,14 +84,9 @@ tasks {
         group = "build"
         description = "Build navigation ESM bundle (top app bar / rail / navigation bar) into src/main/webapp/labs-bundle/dist/sayaya-ui-navigation.js"
         dependsOn(installLabsBundleDeps)
-        workingDir = file("src/main/webapp/labs-bundle")
         environment("SAYAYA_UI_VERSION", project.version.toString())
 
-        if (System.getProperty("os.name").lowercase().contains("windows")) {
-            commandLine("cmd", "/c", "npm", "run", "build:navigation")
-        } else {
-            commandLine("sh", "-c", "npm run build:navigation")
-        }
+        npm("run", "build:navigation")
     }
 
     // 테스트용 navigation ESM 번들 복사 태스크(navigation_esm.html 공존 검증)
@@ -143,44 +126,9 @@ tasks {
         sourceLevel = "auto"
         modules = listOf("dev.sayaya.Ui")
         devMode {
-            modules = listOf(
-                "dev.sayaya.BadgeElementTest",
-                "dev.sayaya.BottomSheetElementTest",
-                "dev.sayaya.ButtonElementTest",
-                "dev.sayaya.CarouselElementTest",
-                "dev.sayaya.CenteredSliderElementTest",
-                "dev.sayaya.DatePickerElementTest",
-                "dev.sayaya.DialogElementTest",
-                "dev.sayaya.CardElementTest",
-                "dev.sayaya.CheckboxElementTest",
-                "dev.sayaya.ChipElementTest",
-                "dev.sayaya.DividerElementTest",
-                "dev.sayaya.FabMenuElementTest",
-                "dev.sayaya.FeedbackElementTest",
-                "dev.sayaya.FocusRingElementTest",
-                "dev.sayaya.GbElementTest",
-                "dev.sayaya.I18nElementTest",
-                "dev.sayaya.IconElementTest",
-                "dev.sayaya.ListElementTest",
-                "dev.sayaya.LoadingIndicatorElementTest",
-                "dev.sayaya.MenuElementTest",
-                "dev.sayaya.NavigationElementTest",
-                "dev.sayaya.ProgressElementTest",
-                "dev.sayaya.RadioElementTest",
-                "dev.sayaya.RippleElementTest",
-                "dev.sayaya.SearchElementTest",
-                "dev.sayaya.SelectElementTest",
-                "dev.sayaya.ShapeElementTest",
-                "dev.sayaya.SideSheetElementTest",
-                "dev.sayaya.SliderElementTest",
-                "dev.sayaya.SliderExpressiveElementTest",
-                "dev.sayaya.SwitchElementTest",
-                "dev.sayaya.TabsElementTest",
-                "dev.sayaya.TextFieldElementTest",
-                "dev.sayaya.TimePickerElementTest",
-                "dev.sayaya.ToolbarElementTest",
-                "dev.sayaya.WavyProgressElementTest"
-            )
+            // 테스트 모듈 = src/test/java/dev/sayaya/*ElementTest.gwt.xml (컴포넌트를 추가해도 여기를 고칠 필요 없음)
+            modules = fileTree("src/test/java/dev/sayaya") { include("*ElementTest.gwt.xml") }.files
+                .map { "dev.sayaya." + it.name.removeSuffix(".gwt.xml") }.sorted()
             war = file("src/test/webapp")
         }
         generateJsInteropExports = true
@@ -191,7 +139,10 @@ tasks {
     }
     test {
         useJUnitPlatform()
-        dependsOn(copyFeedbackBundleToTest, copyNavigationBundleToTest)
+        dependsOn(copyLabsBundleToTest, copyFeedbackBundleToTest, copyNavigationBundleToTest)
+        // 테스트 페이지가 싣는 JS 번들을 입력으로 둔다. 없으면 JS 만 바꿨을 때 :test 가 UP-TO-DATE 로 건너뛰어진다
+        inputs.files("src/test/webapp/labs.bundle.js", "src/test/webapp/sayaya-ui-feedback.js", "src/test/webapp/sayaya-ui-navigation.js")
+            .withPropertyName("testBundles")
     }
     jar {
         from(sourceSets.main.get().allSource)

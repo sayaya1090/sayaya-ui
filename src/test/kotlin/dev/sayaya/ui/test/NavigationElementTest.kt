@@ -91,11 +91,18 @@ internal class NavigationElementTest: GwtTestSpec({
         // 펼침/접힘 전환 모션
         "레일 펼침 전환 중 너비는 중간값", "레일 펼침 전환 중 아이콘 위치는 중간값", "레일 펼침 전환 중 라벨 페이드",
         "레일 펼침 전환 후 정적 레일과 같음", "레일 전환 후 인라인 스타일 정리", "레일 접힘 전환 중 너비는 중간값", "레일 접힘 전환 후 정적 레일과 같음",
+        // 생명주기
+        "앱 바 auto-scroll 재부착 후에도 동작",
     )
     Given("M3 네비게이션 컴포넌트") {
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
         page.waitForTimeout(5000.0)
         val logs = page.getConsoleLogs().map { it.toString() }
+        // 목록에 등록되지 않은 검사도 실패하면 잡는다(이름 목록만 보면 미등록 실패가 통과로 숨는다)
+        Then("실패한 검사 로그가 없어야 한다(미등록 검사 포함)") {
+            val failed = logs.map { it.toString() }.filter { it.contains("Assertion failed!") }
+            if (failed.isNotEmpty()) throw AssertionError("실패한 검사 로그: $failed")
+        }
         println(logs)
         for (tag in tags) {
             When("$tag 를 빌더로 생성할 때") {

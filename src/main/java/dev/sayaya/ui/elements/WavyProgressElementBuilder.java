@@ -117,38 +117,37 @@ public final class WavyProgressElementBuilder extends CustomElementBuilder<WavyP
         return "url(\"data:image/svg+xml," + svg.replace("<", "%3C").replace(">", "%3E").replace("#", "%23") + "\")";
     }
     private static void injectStyle() {
-        HTMLStyleElement style = newStyle(STYLE_ID);
-        if (style == null) return;
-        String c = "." + CLASS;
-        style.textContent =
-            c + "{position:relative;display:block;box-sizing:border-box;height:10px;min-width:80px;overflow:hidden;"
-          + "--_active:var(--md-wavy-progress-active-color,var(--md-sys-color-primary,#6750a4));"
-          + "--_track:var(--md-wavy-progress-track-color,var(--md-sys-color-secondary-container,#e8def8))}"
-          // 활성 트랙: 물결 마스크(파장 40dp), 위상이 흐른다
-          + c + " .active{position:absolute;left:0;top:0;height:10px;width:calc(var(--_value) * 100%);background:var(--_active);"
-          + "-webkit-mask-image:" + wave(40) + ";mask-image:" + wave(40) + ";-webkit-mask-size:40px 10px;mask-size:40px 10px;"
-          + "-webkit-mask-repeat:repeat-x;mask-repeat:repeat-x;animation:sayaya-wave-flow 1s linear infinite}"
-          // 트랙: 평평한 4dp, 활성 끝에서 4dp 띄움
-          + c + " .track{position:absolute;top:3px;height:4px;border-radius:var(--md-wavy-progress-track-shape,var(--md-sys-shape-corner-full,2px));background:var(--_track);"
-          + "left:calc(var(--_value) * 100% + 4px);right:0}"
-          // 끝 점 4dp
-          + c + " .stop{position:absolute;right:0;top:3px;width:4px;height:4px;border-radius:var(--md-wavy-progress-stop-shape,var(--md-sys-shape-corner-full,50%));background:var(--_active)}"
-          + "@keyframes sayaya-wave-flow{from{-webkit-mask-position:0 0;mask-position:0 0}to{-webkit-mask-position:40px 0;mask-position:40px 0}}"
-          // Indeterminate: 파장 20dp, 활성 구간이 왼쪽에서 오른쪽으로 지나간다. 끝 점은 없다
-          + c + ".indeterminate .active{width:40%;-webkit-mask-image:" + wave(20) + ";mask-image:" + wave(20) + ";"
-          + "-webkit-mask-size:20px 10px;mask-size:20px 10px;animation:sayaya-wave-sweep 1.6s cubic-bezier(0.4,0,0.2,1) infinite}"
-          + c + ".indeterminate .track{left:0}"
-          + c + ".indeterminate .stop{display:none}"
-          + "@keyframes sayaya-wave-sweep{from{transform:translateX(-100%)}to{transform:translateX(250%)}}"
-          + c + ".circular{width:48px;height:48px;min-width:0;overflow:visible}"
-          + c + ".circular .active," + c + ".circular .track," + c + ".circular .stop{display:none}"
-          + c + ".circular svg{display:block;width:48px;height:48px}"
-          + c + ".circular path{fill:none;stroke-width:4;stroke-linecap:round}"
-          + c + ".circular .c-active{stroke:var(--_active)}"
-          + c + ".circular .c-track{stroke:var(--_track)}"
-          + c + ".circular.indeterminate svg{animation:sayaya-wave-spin 1.5s linear infinite}"
-          + "@keyframes sayaya-wave-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}"
-          + "@media (prefers-reduced-motion: reduce){" + c + " .active," + c + ".circular svg{animation:none}}";
-        DomGlobal.document.head.appendChild(style);
+        injectStyle(STYLE_ID, () -> {
+            String c = "." + CLASS;
+            return
+                c + "{position:relative;display:block;box-sizing:border-box;height:10px;min-width:80px;overflow:hidden;"
+              + "--_active:var(--md-wavy-progress-active-color,var(--md-sys-color-primary,#6750a4));"
+              + "--_track:var(--md-wavy-progress-track-color,var(--md-sys-color-secondary-container,#e8def8))}"
+              // 활성 트랙: 물결 마스크(파장 40dp), 위상이 흐른다
+              + c + " .active{position:absolute;left:0;top:0;height:10px;width:calc(var(--_value) * 100%);background:var(--_active);"
+              + "-webkit-mask-image:" + wave(40) + ";mask-image:" + wave(40) + ";-webkit-mask-size:40px 10px;mask-size:40px 10px;"
+              + "-webkit-mask-repeat:repeat-x;mask-repeat:repeat-x;animation:sayaya-wave-flow 1s linear infinite}"
+              // 트랙: 평평한 4dp, 활성 끝에서 4dp 띄움
+              + c + " .track{position:absolute;top:3px;height:4px;border-radius:var(--md-wavy-progress-track-shape,var(--md-sys-shape-corner-full,2px));background:var(--_track);"
+              + "left:calc(var(--_value) * 100% + 4px);right:0}"
+              // 끝 점 4dp
+              + c + " .stop{position:absolute;right:0;top:3px;width:4px;height:4px;border-radius:var(--md-wavy-progress-stop-shape,var(--md-sys-shape-corner-full,50%));background:var(--_active)}"
+              + "@keyframes sayaya-wave-flow{from{-webkit-mask-position:0 0;mask-position:0 0}to{-webkit-mask-position:40px 0;mask-position:40px 0}}"
+              // Indeterminate: 파장 20dp, 활성 구간이 왼쪽에서 오른쪽으로 지나간다. 끝 점은 없다
+              + c + ".indeterminate .active{width:40%;-webkit-mask-image:" + wave(20) + ";mask-image:" + wave(20) + ";"
+              + "-webkit-mask-size:20px 10px;mask-size:20px 10px;animation:sayaya-wave-sweep 1.6s cubic-bezier(0.4,0,0.2,1) infinite}"
+              + c + ".indeterminate .track{left:0}"
+              + c + ".indeterminate .stop{display:none}"
+              + "@keyframes sayaya-wave-sweep{from{transform:translateX(-100%)}to{transform:translateX(250%)}}"
+              + c + ".circular{width:48px;height:48px;min-width:0;overflow:visible}"
+              + c + ".circular .active," + c + ".circular .track," + c + ".circular .stop{display:none}"
+              + c + ".circular svg{display:block;width:48px;height:48px}"
+              + c + ".circular path{fill:none;stroke-width:4;stroke-linecap:round}"
+              + c + ".circular .c-active{stroke:var(--_active)}"
+              + c + ".circular .c-track{stroke:var(--_track)}"
+              + c + ".circular.indeterminate svg{animation:sayaya-wave-spin 1.5s linear infinite}"
+              + "@keyframes sayaya-wave-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}"
+              + "@media (prefers-reduced-motion: reduce){" + c + " .active," + c + ".circular svg{animation:none}}";
+        });
     }
 }

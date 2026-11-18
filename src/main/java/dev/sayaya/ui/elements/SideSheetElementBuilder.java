@@ -63,10 +63,7 @@ public final class SideSheetElementBuilder implements
     public SideSheetElementBuilder onBack(Consumer<MdSideSheetElement> cb) { element().addEventListener("back", e -> cb.accept(element())); return this; }
     /** 닫힘 사유: close | scrim | escape | 직접 close(reason) 에 넘긴 값 */
     public SideSheetElementBuilder onClosed(Consumer<String> cb) {
-        element().addEventListener("closed", e -> {
-            Object d = ((CustomEvent<?>) Js.uncheckedCast(e)).detail;
-            cb.accept(d == null ? null : Js.asString(Js.asPropertyMap(d).get("reason")));
-        });
+        element().addEventListener("closed", e -> cb.accept(ClosedReason.of(e)));
         return this;
     }
 }

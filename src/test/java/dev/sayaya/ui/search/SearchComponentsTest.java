@@ -15,7 +15,6 @@ import static org.jboss.elemento.Elements.div;
 /** M3 search(bar + docked/full-screen view): 토큰 수치(computed style) + combobox 동작. 메시지 접두어 "se: ". */
 public class SearchComponentsTest {
     private static long h(Element e) { return Math.round(e.getBoundingClientRect().height); }
-    private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
     private static void key(Element target, String key) {
         JsPropertyMap<Object> m = JsPropertyMap.of();
         m.set("key", key); m.set("bubbles", true); m.set("cancelable", true);

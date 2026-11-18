@@ -132,35 +132,34 @@ public abstract class SliderElementBuilder<SELF extends SliderElementBuilder<SEL
         element().setAttribute("data-icon-side", active >= icon + 24 ? "before" : "after");
     }
     private static void injectStyle() {
-        HTMLStyleElement style = CustomElementBuilder.newStyle(STYLE_ID); // 문서에 한 번만
-        if (style == null) return;
-        String m = "md-slider";
-        StringBuilder css = new StringBuilder();
-        for (Size z : Size.values()) // 치수는 Size 하나에서만 가져온다
-            css.append(m).append("[data-size=").append(z.name().toLowerCase()).append("]{--_sx-track:").append(z.track).append("px;--_sx-handle:").append(z.handle)
-               .append("px;--_sx-shape:var(--md-sys-shape-corner-").append(z.shapeToken).append(',').append(z.shape).append("px);--_sx-icon:").append(z.icon)
-               .append("px;--_sx-cross:").append(z.handle).append("px}");
-        css.append(m).append("[data-size]{--md-slider-active-track-height:var(--_sx-track);--md-slider-inactive-track-height:var(--_sx-track);")
-           .append("--md-slider-active-track-shape:var(--_sx-shape);--md-slider-inactive-track-shape:var(--_sx-shape);")
-           .append("--md-slider-handle-height:var(--_sx-handle);--md-slider-handle-width:4px;--md-slider-handle-shape:var(--md-sys-shape-corner-full,9999px);")
-           .append("padding-block:max(0px,calc((var(--_sx-handle) - var(--md-slider-state-layer-size,40px)) / 2))}")
-           // 세로: -90° 회전, 레이아웃 크기는 여백으로 보정(아래가 최솟값)
-           .append(m).append("[data-vertical]{--_sx-len:var(--md-slider-vertical-length,200px);inline-size:var(--_sx-len);min-inline-size:0;transform:rotate(-90deg);")
-           .append("margin-block:calc((var(--_sx-len) - var(--_sx-cross,var(--md-slider-state-layer-size,40px))) / 2);")
-           .append("margin-inline:calc((var(--_sx-cross,var(--md-slider-state-layer-size,40px)) - var(--_sx-len)) / 2)}")
-           // inset icon: 활성 트랙 안(on primary) 또는 핸들 뒤 비활성 트랙(on secondary container)
-           .append(m).append("[data-inset-icon]{position:relative}")
-           .append(m).append("[data-inset-icon]::before{content:attr(data-inset-icon);position:absolute;z-index:1;top:50%;transform:translateY(-50%);pointer-events:none;")
-           .append("font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;font-size:var(--_sx-icon,24px);")
-           .append("-webkit-font-feature-settings:'liga';font-feature-settings:'liga';color:var(--md-sys-color-on-primary,#ffffff);")
-           .append("inset-inline-start:calc(var(--md-slider-state-layer-size,40px) / 2 + 8px)}")
-           .append(m).append("[data-inset-icon][data-icon-side=after]::before{color:var(--md-sys-color-on-secondary-container,#1d192b);")
-           .append("inset-inline-start:calc(var(--md-slider-state-layer-size,40px) / 2 + (100% - var(--md-slider-state-layer-size,40px)) * var(--_sx-v,0) + 12px)}")
-           .append(m).append(":not([data-size])[data-inset-icon]::before{display:none}");
-        for (Size z : Size.values()) if (z.icon == 0) // 문서: "Don't use an inset icon with sliders that have track thicknesses under 40dp"
-            css.append(m).append("[data-size=").append(z.name().toLowerCase()).append("][data-inset-icon]::before{display:none}");
-        style.textContent = css.toString();
-        DomGlobal.document.head.appendChild(style);
+        CustomElementBuilder.injectStyle(STYLE_ID, () -> {
+            String m = "md-slider";
+            StringBuilder css = new StringBuilder();
+            for (Size z : Size.values()) // 치수는 Size 하나에서만 가져온다
+                css.append(m).append("[data-size=").append(z.name().toLowerCase()).append("]{--_sx-track:").append(z.track).append("px;--_sx-handle:").append(z.handle)
+                   .append("px;--_sx-shape:var(--md-sys-shape-corner-").append(z.shapeToken).append(',').append(z.shape).append("px);--_sx-icon:").append(z.icon)
+                   .append("px;--_sx-cross:").append(z.handle).append("px}");
+            css.append(m).append("[data-size]{--md-slider-active-track-height:var(--_sx-track);--md-slider-inactive-track-height:var(--_sx-track);")
+               .append("--md-slider-active-track-shape:var(--_sx-shape);--md-slider-inactive-track-shape:var(--_sx-shape);")
+               .append("--md-slider-handle-height:var(--_sx-handle);--md-slider-handle-width:4px;--md-slider-handle-shape:var(--md-sys-shape-corner-full,9999px);")
+               .append("padding-block:max(0px,calc((var(--_sx-handle) - var(--md-slider-state-layer-size,40px)) / 2))}")
+               // 세로: -90° 회전, 레이아웃 크기는 여백으로 보정(아래가 최솟값)
+               .append(m).append("[data-vertical]{--_sx-len:var(--md-slider-vertical-length,200px);inline-size:var(--_sx-len);min-inline-size:0;transform:rotate(-90deg);")
+               .append("margin-block:calc((var(--_sx-len) - var(--_sx-cross,var(--md-slider-state-layer-size,40px))) / 2);")
+               .append("margin-inline:calc((var(--_sx-cross,var(--md-slider-state-layer-size,40px)) - var(--_sx-len)) / 2)}")
+               // inset icon: 활성 트랙 안(on primary) 또는 핸들 뒤 비활성 트랙(on secondary container)
+               .append(m).append("[data-inset-icon]{position:relative}")
+               .append(m).append("[data-inset-icon]::before{content:attr(data-inset-icon);position:absolute;z-index:1;top:50%;transform:translateY(-50%);pointer-events:none;")
+               .append("font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;font-size:var(--_sx-icon,24px);")
+               .append("-webkit-font-feature-settings:'liga';font-feature-settings:'liga';color:var(--md-sys-color-on-primary,#ffffff);")
+               .append("inset-inline-start:calc(var(--md-slider-state-layer-size,40px) / 2 + 8px)}")
+               .append(m).append("[data-inset-icon][data-icon-side=after]::before{color:var(--md-sys-color-on-secondary-container,#1d192b);")
+               .append("inset-inline-start:calc(var(--md-slider-state-layer-size,40px) / 2 + (100% - var(--md-slider-state-layer-size,40px)) * var(--_sx-v,0) + 12px)}")
+               .append(m).append(":not([data-size])[data-inset-icon]::before{display:none}");
+            for (Size z : Size.values()) if (z.icon == 0) // 문서: "Don't use an inset icon with sliders that have track thicknesses under 40dp"
+                css.append(m).append("[data-size=").append(z.name().toLowerCase()).append("][data-inset-icon]::before{display:none}");
+            return css.toString();
+        });
     }
 
     public static class SliderContinuousElementBuilder extends SliderElementBuilder<SliderContinuousElementBuilder> {

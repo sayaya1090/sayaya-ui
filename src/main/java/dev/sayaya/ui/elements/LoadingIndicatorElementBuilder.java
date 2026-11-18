@@ -70,10 +70,9 @@ public final class LoadingIndicatorElementBuilder extends CustomElementBuilder<L
     private static final String MORPH_EASING = "cubic-bezier(0.34,1.45,0.64,1)";
 
     private static void injectStyle() {
-        HTMLStyleElement style = newStyle(STYLE_ID);
-        if (style == null) return;
-        style.textContent = css();
-        DomGlobal.document.head.appendChild(style);
+        injectStyle(STYLE_ID, () -> {
+            return css();
+        });
     }
     static String css() {
         // 도형 순서는 Compose IndeterminateIndicatorPolygons 와 같다(SoftBurst, Cookie9Sided, Pentagon, Pill, Sunny, Cookie4Sided, Oval).

@@ -12,7 +12,6 @@ public class WavyProgressComponentsTest {
     private static long w(Element e) { return Math.round(e.getBoundingClientRect().width); }
     private static long h(Element e) { return Math.round(e.getBoundingClientRect().height); }
     private static long left(Element e, Element base) { return Math.round(e.getBoundingClientRect().left - base.getBoundingClientRect().left); }
-    private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
     private static String mask(Element e, String prop) {
         String v = cs(e).getPropertyValue(prop);
         return v == null || v.isEmpty() ? cs(e).getPropertyValue("-webkit-" + prop) : v;

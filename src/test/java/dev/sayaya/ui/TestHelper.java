@@ -15,6 +15,12 @@ public class TestHelper {
         elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
         return Js.uncheckedCast(f.call(DomGlobal.window, e));
     }
+    /** 커스텀 엘리먼트의 shadowRoot(아직 업그레이드 전이면 null) */
+    public static elemental2.dom.ShadowRoot shadow(Element host) { return Js.uncheckedCast(Js.asPropertyMap(host).get("shadowRoot")); }
+    /** shadowRoot 안에서 sel 에 맞는 첫 요소(없거나 shadowRoot 가 없으면 null) */
+    public static HTMLElement inner(Element host, String sel) { var r = shadow(host); return r == null ? null : Js.uncheckedCast(r.querySelector(sel)); }
+    /** root 아래(light DOM)에서 sel 에 맞는 첫 요소 */
+    public static HTMLElement q(Element root, String sel) { return Js.uncheckedCast(root.querySelector(sel)); }
     /** 의사 요소(::before 등)의 계산된 스타일 */
     public static CSSStyleDeclaration cs(Element e, String pseudo) {
         elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));

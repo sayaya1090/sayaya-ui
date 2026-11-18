@@ -1194,6 +1194,8 @@ sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제�
 
 ## 개발
 
+설계 문서(요구사항·유스케이스·도메인 모델·설계 시퀀스·클래스·패키지·배포·추적표, Unified Process 형식)는 [docs/design](docs/design/README.md) 에 있습니다.
+
 ### 필수 조건
 
 - JDK 11+
@@ -1208,11 +1210,34 @@ sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제�
 
 빌드 시 자동으로 Material Web Labs 컴포넌트(Card 등)가 번들링됩니다.
 
+- npm 의존성은 `installLabsBundleDeps` 가 설치합니다. `labs-bundle/package.json` 이 마지막 설치 때와 같으면 건너뛰고, 바뀌었으면 `node_modules` 가 있어도 다시 설치합니다(설치 때의 `package.json` 을 `node_modules/.sayaya-installed-package.json` 에 기록해 비교). 강제로 다시 설치하려면 이 파일이나 `node_modules` 를 지우세요.
+- npm 을 실행하는 Exec 태스크(`installLabsBundleDeps`, `buildLabsBundle`, `buildStandaloneBundle`, `buildFeedbackBundle`, `buildNavigationBundle`)는 `build.gradle.kts` 의 `Exec.npm(...)` 헬퍼로 `labs-bundle` 에서 실행합니다(Windows 는 `cmd /c`, 그 밖은 `sh -c`). 새 npm 태스크도 이 헬퍼를 쓰세요.
+- `package-lock.json` 은 커밋하지 않으므로 빌드할 때마다 `package.json` 범위(예: `@material/web ^2.5.0`) 안의 최신 버전을 받습니다.
+
 ### 테스트 실행
 
 ```bash
 ./gradlew test
 ```
+
+테스트는 컴포넌트마다 두 부분으로 되어 있습니다.
+
+- **GWT 테스트(Java, `src/test/java/dev/sayaya/ui/<컴포넌트>/*ComponentsTest.java`)**: 실제 브라우저에서 컴포넌트를 만들고 `TestHelper.assertTrue/assertEquals` 로 검사합니다. 결과는 콘솔 로그 `<접두어>: <검사 이름> - PASS` 또는 `... - Assertion failed! ...` 로 남습니다(접두어 예: `nav:`, `fb:`).
+- **Kotest 명세(Kotlin, `src/test/kotlin/dev/sayaya/ui/test/*ElementTest.kt`)**: Playwright 로 테스트 페이지를 열고 콘솔 로그를 읽어 JUnit 결과로 바꿉니다.
+
+#### 테스트 작성 규칙
+
+- **새 검사는 Kotlin 이름 목록에도 등록합니다.** 목록의 이름마다 JUnit 테스트 한 건이 생겨 결과에 이름으로 보입니다. 검사 이름에 측정값처럼 바뀌는 문자열을 넣지 마세요(로그를 이름으로 찾습니다).
+- **등록을 빠뜨려도 실패는 잡힙니다.** 모든 명세 첫머리의 `실패한 검사 로그가 없어야 한다(미등록 검사 포함)` 가 페이지의 모든 로그에서 `Assertion failed!` 를 찾아, 하나라도 있으면 실패시킵니다. 예전에는 목록에 없는 검사가 실패해도 통과로 처리됐습니다.
+- **공용 헬퍼는 `TestHelper` 를 씁니다.** 테스트 클래스에 복사본을 만들지 마세요.
+  - `cs(e)`, `cs(e, "::before")`: 계산된 스타일
+  - `shadow(host)`, `inner(host, sel)`: shadowRoot 와 그 안의 요소(없으면 null)
+  - `q(root, sel)`: light DOM 조회
+  - `later(ms, runnable)`: 지연 실행
+  - `isAutomated()`: 자동화 브라우저 여부(사람이 데모를 볼 때는 자동 클릭·스크롤을 건너뜀)
+- **JS 만 바꿔도 테스트가 다시 돕니다.** `:test` 는 테스트 페이지가 싣는 번들(`src/test/webapp/labs.bundle.js`, `sayaya-ui-feedback.js`, `sayaya-ui-navigation.js`)을 입력으로 봅니다. 그 밖의 이유로 다시 돌리려면 `./gradlew cleanTest test` 를 쓰세요.
+- **테스트가 결함을 실제로 잡는지 확인합니다.** 고친 지점을 일부러 되돌리거나 망가뜨려(변조) 해당 검사만 실패하는지 본 뒤 원래대로 돌려놓습니다. 버그 수정은 고치기 전 코드에서 새 검사가 실패하는 것을 먼저 확인합니다.
+- 특정 스위트만: `./gradlew test --tests 'dev.sayaya.ui.test.NavigationElementTest'`
 
 ### GWT 개발 모드
 
@@ -1221,6 +1246,25 @@ sayaya-ui는 공통 패턴을 위한 재사용 가능한 인터페이스를 제�
 ```
 
 로컬에서 개발 모드로 실행하거나, [라이브 데모](https://sayaya1090.github.io/sayaya-ui/)에서 모든 컴포넌트를 확인할 수 있습니다.
+
+개발 모드 모듈 목록은 `src/test/java/dev/sayaya/*ElementTest.gwt.xml` 파일에서 자동으로 만듭니다. 새 컴포넌트 테스트 모듈을 추가할 때 `build.gradle.kts` 를 고칠 필요가 없습니다.
+
+### 직접 구현 빌더 작성 규칙
+
+Material Web 에 없어 elemento 만으로 만든 빌더(date/time picker, search, carousel, toolbar 등)는 `CustomElementBuilder<SELF>` 를 상속합니다.
+
+- **스타일시트**: `injectStyle(STYLE_ID, () -> css)` 로 문서에 한 번만 붙입니다. 같은 id 가 이미 있으면 CSS 문자열을 만들지도 않습니다. 상속하지 않는 같은 패키지 빌더(Slider)는 `CustomElementBuilder.injectStyle(...)` 로 정적 호출합니다.
+- **closed 이벤트의 사유**: sheet·snackbar·toast 의 `onClosed(Consumer<String>)` 는 패키지 내부 헬퍼 `ClosedReason.of(event)` 로 `detail.reason` 을 꺼냅니다(없으면 null).
+- **공개 API**: 정리 작업으로 공개 타입·메서드 시그니처를 바꾸지 않습니다. 공통 코드는 패키지 범위 헬퍼나 `protected` 메서드 추가로 묶고, 이름 변경·상속 계층 변경은 별칭과 deprecate 를 거쳐 메이저 버전에서 합니다.
+
+### labs 커스텀 엘리먼트 생명주기 규칙
+
+`labs-bundle/src/sayaya-*.js` 의 Lit 요소는 DOM 에서 떼었다 다시 붙여도 동작이 이어지고, 떼면 남는 작업이 없어야 합니다.
+
+- `window`·`document` 리스너는 `disconnectedCallback` 에서 떼고, `connectedCallback` 에서 상태에 맞게 다시 답니다. 예: `md-top-app-bar[auto-scroll]` 은 다시 붙이면 scroll 리스너를 다시 등록합니다(전에는 재부착 후 스크롤에 반응하지 않았음).
+- `setTimeout`·`requestAnimationFrame` 은 `disconnectedCallback` 에서 멈춥니다. 예: `md-button-group` 은 떼면 누름 복귀 타이머를 멈추고 누름 상태와 고정 너비를 정리합니다. `md-toast` 는 밖에서 떼면 자동 닫힘·제거 타이머를 멈춥니다(`show()` 로 스택에 옮기는 것은 영향 없음).
+- `customElements.define` 은 이미 등록된 이름이면 건너뜁니다(`if (!customElements.get(name))`). 단독 ESM 번들이나 다른 번들과 함께 실려도 오류가 나지 않게 하기 위해서입니다. side/bottom sheet 도 이 규칙을 따릅니다.
+- `prefers-reduced-motion: reduce` 이면 전환 모션을 생략합니다.
 
 ### Material Web Labs 번들
 
@@ -1265,6 +1309,8 @@ Material Web 을 앱이 따로 번들해 싣는 경우를 위한 ES module 입�
 - 사용: 앱의 Material Web 번들 뒤에 `<script type="module" src="sayaya-ui-navigation-<version>.js"></script>`, 또는 앱 코드에서 `import './sayaya-ui-navigation-<version>.js'`. feedback 번들과 함께 실어도 됩니다.
 - 로컬 빌드: `./gradlew buildNavigationBundle` → `src/main/webapp/labs-bundle/dist/sayaya-ui-navigation.js` (또는 `labs-bundle` 에서 `npm ci && npm run build:navigation`)
 - 자체 번들러로 묶을 때: 진입점 `labs-bundle/src/sayaya-navigation-standalone.js` 는 `lit` 만 import 합니다.
+
+두 단독 ESM 번들의 rollup 설정(`rollup.feedback.config.js`, `rollup.navigation.config.js`)은 공통 팩토리 `rollup.esm-bundle.js` 의 `esmBundle({input, file, describe, note})` 를 호출합니다. 새 단독 번들도 이 팩토리로 만드세요.
 
 ## 아키텍처
 

@@ -105,10 +105,7 @@ public final class FeedbackElementBuilder {
         public SnackbarBuilder onAction(Consumer<MdSnackbarElement> cb) { element().addEventListener("action", e -> cb.accept(element())); return this; }
         /** 닫힘 사유: action | dismiss | timeout | replaced */
         public SnackbarBuilder onClosed(Consumer<String> cb) {
-            element().addEventListener("closed", e -> {
-                Object d = ((CustomEvent<?>) Js.uncheckedCast(e)).detail;
-                cb.accept(d == null ? null : Js.asString(Js.asPropertyMap(d).get("reason")));
-            });
+            element().addEventListener("closed", e -> cb.accept(ClosedReason.of(e)));
             return this;
         }
     }
@@ -142,10 +139,7 @@ public final class FeedbackElementBuilder {
         public ToastBuilder onOpened(Consumer<MdToastElement> cb) { element().addEventListener("opened", e -> cb.accept(element())); return this; }
         /** 닫힘 사유: action | dismiss | timeout | overflow */
         public ToastBuilder onClosed(Consumer<String> cb) {
-            element().addEventListener("closed", e -> {
-                Object d = ((CustomEvent<?>) Js.uncheckedCast(e)).detail;
-                cb.accept(d == null ? null : Js.asString(Js.asPropertyMap(d).get("reason")));
-            });
+            element().addEventListener("closed", e -> cb.accept(ClosedReason.of(e)));
             return this;
         }
         /** 바로 띄운다(스택에 붙임). 반환값은 닫기 등에 쓰는 엘리먼트 */

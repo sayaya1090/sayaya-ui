@@ -61,6 +61,11 @@ internal class CarouselElementTest: GwtTestSpec({
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
         page.waitForTimeout(4500.0)
         val logs = page.getConsoleLogs().map { it.toString() }
+        // 목록에 등록되지 않은 검사도 실패하면 잡는다(이름 목록만 보면 미등록 실패가 통과로 숨는다)
+        Then("실패한 검사 로그가 없어야 한다(미등록 검사 포함)") {
+            val failed = logs.map { it.toString() }.filter { it.contains("Assertion failed!") }
+            if (failed.isNotEmpty()) throw AssertionError("실패한 검사 로그: $failed")
+        }
         println(logs)
         for (c in checks) {
             Then(c) {

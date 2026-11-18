@@ -18,10 +18,6 @@ import static org.jboss.elemento.Elements.div;
 /** M3 tooltip / snackbar / button group, [M3 외 확장] toast: 토큰 수치(computed style) + 동작 검증. 메시지 접두어 "fb: ". */
 public class FeedbackComponentsTest {
     private static HTMLElement child(HTMLElement host, int i) { return Js.uncheckedCast(host.querySelectorAll(":scope > *").item(i)); }
-    private static Element inner(HTMLElement host, String sel) {
-        Object root = Js.asPropertyMap(host).get("shadowRoot");
-        return root == null ? null : ((elemental2.dom.ShadowRoot) Js.uncheckedCast(root)).querySelector(sel);
-    }
     private static String prop(HTMLElement e, String name) { return e.style.getPropertyValue(name).trim(); }
     /** e 에서 지금 진행 중인 CSS transition 의 속성 이름들(getAnimations). 브라우저가 논리 속성을 물리 속성으로 바꿔 보고할 수 있다 */
     private static String transitions(Element e) {
@@ -43,11 +39,32 @@ public class FeedbackComponentsTest {
     }
     private static boolean connected(Element e) { return Boolean.TRUE.equals(Js.asPropertyMap(e).get("isConnected")); }
 
+    /** 생명주기: DOM 에서 떼어 낸 toast·button group 의 타이머와 누름 상태가 정리된다 */
+    private static void lifecycle() {
+        HTMLElement t = Js.uncheckedCast(DomGlobal.document.createElement("md-toast"));
+        Js.asPropertyMap(t).set("timeout", 300); t.textContent = "lifecycle";
+        int[] closed = {0};
+        t.addEventListener("closed", e -> closed[0]++);
+        ((elemental2.core.Function) Js.uncheckedCast(Js.asPropertyMap(t).get("show"))).call(t);
+        t.remove();
+        later(600, () -> assertEquals("fb: toast 밖에서 떼면 타이머 정지", 0, closed[0]));
+        HTMLElement g = Js.uncheckedCast(DomGlobal.document.createElement("md-button-group"));
+        for (String s : new String[]{"A", "B", "C"}) { HTMLElement b = Js.uncheckedCast(DomGlobal.document.createElement("button")); b.textContent = s; g.appendChild(b); }
+        DomGlobal.document.body.appendChild(g);
+        later(100, () -> {
+            HTMLElement b0 = child(g, 0);
+            touch(b0, "pointerdown", 1, 1);
+            g.remove();
+            later(400, () -> assertTrue("fb: button group 떼면 누름 상태 정리", !b0.hasAttribute("data-pressed") && prop(b0, "width").isEmpty() && prop(child(g, 1), "width").isEmpty()));
+        });
+    }
+
     public static void test() {
         printSectionHeader("M3 Tooltip / Snackbar / Button group");
         printDescription("sayaya-ui 가 직접 구현한 M3 tooltip·snackbar·button group 입니다. 색·모양·크기는 Material Web 2.5.0 의 md-comp 토큰과 M3 스펙 수치를 따릅니다.");
         printSeparator();
         var section = section("Tooltip / Snackbar / Button group");
+        lifecycle();
 
         // ---------- tooltip ----------
         var anchor1 = button().filled().text("저장").element();

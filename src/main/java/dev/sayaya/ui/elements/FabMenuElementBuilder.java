@@ -108,39 +108,38 @@ public final class FabMenuElementBuilder extends CustomElementBuilder<FabMenuEle
     }
 
     private static void injectStyle() {
-        HTMLStyleElement style = newStyle(STYLE_ID);
-        if (style == null) return;
-        String c = "." + CLASS;
-        String shadow = "box-shadow:0 1px 3px 0 rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15);"; // elevation level 3
-        StringBuilder css = new StringBuilder()
-            .append(c).append("{position:relative;display:inline-flex;flex-direction:column;align-items:flex-end}") // 목록은 FAB 위에 떠서(absolute) 열어도 FAB·페이지 배치가 움직이지 않는다
-            .append(c).append(" .icon{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;")
-            .append("text-transform:none;white-space:nowrap;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga';-webkit-font-smoothing:antialiased}")
-            .append(c).append(" .toggle{box-sizing:border-box;width:56px;height:56px;border:0;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;")
-            .append("border-radius:var(--md-fab-menu-fab-shape,var(--md-sys-shape-corner-large,16px));background:var(--_container);color:var(--_on-container);").append(shadow)
-            .append("transition:border-radius 300ms cubic-bezier(0.2,0,0,1),background-color 300ms linear,color 300ms linear}")
-            .append(c).append(" .toggle{position:relative;z-index:4}") // M3: 스크롤되는 항목은 닫기 버튼 "뒤로" 지나간다
-            .append(c).append(" .toggle .icon{font-size:24px}")
-            .append(c).append(".open .toggle{border-radius:var(--md-fab-menu-close-button-shape,var(--md-sys-shape-corner-full,9999px));background:var(--_strong);color:var(--_on-strong)}") // CloseButtonContainerShape full
-            .append(c).append(".open .toggle .icon{font-size:20px}") // CloseButtonIconSize 20
-            .append(c).append(" .items{display:none;position:absolute;z-index:3;bottom:calc(100% + 8px);inset-inline-end:0;width:max-content;flex-direction:column;align-items:flex-end;gap:4px;" // CloseButtonBetweenSpace 8
-                + "box-sizing:border-box;max-height:var(--md-fab-menu-max-height,calc(100vh - 96px));overflow-y:auto;overscroll-behavior:contain;padding:4px 16px 16px;margin:-4px -16px -16px;"
-                + "scrollbar-width:none;pointer-events:none}") // 그림자(elevation 3: 아래 약 15px, 옆 약 11px)가 스크롤 영역에서 잘리지 않도록 안쪽 여백을 두고 같은 만큼 음수 margin 으로 배치를 유지 // M3: 항목은 닫기 버튼 뒤로 스크롤, 닫기 버튼은 가리지 않는다 // ListItemBetweenSpace 4
-            .append(c).append(".open .items{display:flex}")
-            .append(c).append(" .items::-webkit-scrollbar{display:none}") // 스크롤은 되지만 스크롤바는 보이지 않는다
-            .append(c).append(" .items>*{pointer-events:auto}") // 그림자 여백(투명)이 닫기 버튼을 가려 클릭을 막지 않도록 항목만 입력을 받는다
-            .append(c).append(" .item{box-sizing:border-box;height:56px;white-space:nowrap;border:0;border-radius:var(--md-fab-menu-item-shape,var(--md-sys-shape-corner-full,9999px));padding:0 24px;gap:8px;display:inline-flex;align-items:center;cursor:pointer;")
-            .append("background:var(--_container);color:var(--_on-container);font:500 16px/24px Roboto,system-ui,sans-serif;").append(shadow).append("}")
-            .append(c).append(" .item .icon{font-size:24px}")
-            .append(c).append(" .item:focus-visible,").append(c).append(" .toggle:focus-visible{outline:3px solid var(--md-sys-color-secondary,#625b71);outline-offset:2px}")
-            .append(c).append(" .item:hover{filter:brightness(0.96)}");
-        for (Color k : Color.values())
-            css.append(c).append('.').append(k.value).append("{--_container:var(--md-sys-color-").append(k.container).append(',').append(k.containerFallback)
-               .append(");--_on-container:var(--md-sys-color-").append(k.onContainer).append(',').append(k.onContainerFallback)
-               .append(");--_strong:var(--md-sys-color-").append(k.strong).append(',').append(k.strongFallback)
-               .append(");--_on-strong:var(--md-sys-color-").append(k.onStrong).append(',').append(k.onStrongFallback).append(")}");
-        css.append("@media (prefers-reduced-motion: reduce){").append(c).append(" .toggle{transition:none}}");
-        style.textContent = css.toString();
-        DomGlobal.document.head.appendChild(style);
+        injectStyle(STYLE_ID, () -> {
+            String c = "." + CLASS;
+            String shadow = "box-shadow:0 1px 3px 0 rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15);"; // elevation level 3
+            StringBuilder css = new StringBuilder()
+                .append(c).append("{position:relative;display:inline-flex;flex-direction:column;align-items:flex-end}") // 목록은 FAB 위에 떠서(absolute) 열어도 FAB·페이지 배치가 움직이지 않는다
+                .append(c).append(" .icon{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;")
+                .append("text-transform:none;white-space:nowrap;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga';-webkit-font-smoothing:antialiased}")
+                .append(c).append(" .toggle{box-sizing:border-box;width:56px;height:56px;border:0;padding:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;")
+                .append("border-radius:var(--md-fab-menu-fab-shape,var(--md-sys-shape-corner-large,16px));background:var(--_container);color:var(--_on-container);").append(shadow)
+                .append("transition:border-radius 300ms cubic-bezier(0.2,0,0,1),background-color 300ms linear,color 300ms linear}")
+                .append(c).append(" .toggle{position:relative;z-index:4}") // M3: 스크롤되는 항목은 닫기 버튼 "뒤로" 지나간다
+                .append(c).append(" .toggle .icon{font-size:24px}")
+                .append(c).append(".open .toggle{border-radius:var(--md-fab-menu-close-button-shape,var(--md-sys-shape-corner-full,9999px));background:var(--_strong);color:var(--_on-strong)}") // CloseButtonContainerShape full
+                .append(c).append(".open .toggle .icon{font-size:20px}") // CloseButtonIconSize 20
+                .append(c).append(" .items{display:none;position:absolute;z-index:3;bottom:calc(100% + 8px);inset-inline-end:0;width:max-content;flex-direction:column;align-items:flex-end;gap:4px;" // CloseButtonBetweenSpace 8
+                    + "box-sizing:border-box;max-height:var(--md-fab-menu-max-height,calc(100vh - 96px));overflow-y:auto;overscroll-behavior:contain;padding:4px 16px 16px;margin:-4px -16px -16px;"
+                    + "scrollbar-width:none;pointer-events:none}") // 그림자(elevation 3: 아래 약 15px, 옆 약 11px)가 스크롤 영역에서 잘리지 않도록 안쪽 여백을 두고 같은 만큼 음수 margin 으로 배치를 유지 // M3: 항목은 닫기 버튼 뒤로 스크롤, 닫기 버튼은 가리지 않는다 // ListItemBetweenSpace 4
+                .append(c).append(".open .items{display:flex}")
+                .append(c).append(" .items::-webkit-scrollbar{display:none}") // 스크롤은 되지만 스크롤바는 보이지 않는다
+                .append(c).append(" .items>*{pointer-events:auto}") // 그림자 여백(투명)이 닫기 버튼을 가려 클릭을 막지 않도록 항목만 입력을 받는다
+                .append(c).append(" .item{box-sizing:border-box;height:56px;white-space:nowrap;border:0;border-radius:var(--md-fab-menu-item-shape,var(--md-sys-shape-corner-full,9999px));padding:0 24px;gap:8px;display:inline-flex;align-items:center;cursor:pointer;")
+                .append("background:var(--_container);color:var(--_on-container);font:500 16px/24px Roboto,system-ui,sans-serif;").append(shadow).append("}")
+                .append(c).append(" .item .icon{font-size:24px}")
+                .append(c).append(" .item:focus-visible,").append(c).append(" .toggle:focus-visible{outline:3px solid var(--md-sys-color-secondary,#625b71);outline-offset:2px}")
+                .append(c).append(" .item:hover{filter:brightness(0.96)}");
+            for (Color k : Color.values())
+                css.append(c).append('.').append(k.value).append("{--_container:var(--md-sys-color-").append(k.container).append(',').append(k.containerFallback)
+                   .append(");--_on-container:var(--md-sys-color-").append(k.onContainer).append(',').append(k.onContainerFallback)
+                   .append(");--_strong:var(--md-sys-color-").append(k.strong).append(',').append(k.strongFallback)
+                   .append(");--_on-strong:var(--md-sys-color-").append(k.onStrong).append(',').append(k.onStrongFallback).append(")}");
+            css.append("@media (prefers-reduced-motion: reduce){").append(c).append(" .toggle{transition:none}}");
+            return css.toString();
+        });
     }
 }

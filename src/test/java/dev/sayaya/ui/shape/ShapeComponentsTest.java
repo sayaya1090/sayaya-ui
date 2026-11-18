@@ -26,7 +26,6 @@ import static org.jboss.elemento.Elements.div;
 public class ShapeComponentsTest {
     private static String r(Element e) { return e == null ? "(없음)" : cs(e).getPropertyValue("border-top-left-radius"); }
     private static String rb(Element e) { return e == null ? "(없음)" : cs(e).getPropertyValue("border-bottom-left-radius"); }
-    private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
     private static HTMLElement sr(Element host, String sel) {
         ShadowRoot root = Js.uncheckedCast(Js.asPropertyMap(host).get("shadowRoot"));
         return root == null ? null : Js.uncheckedCast(root.querySelector(sel));

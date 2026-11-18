@@ -69,6 +69,13 @@ export class MdButtonGroup extends LitElement {
     ['pointerup','pointercancel','pointerleave'].forEach(t => this.addEventListener(t, (e) => this._press(e, false)));
     this.addEventListener('click', (e) => this._click(e));
   }
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    // DOM 에서 떼면 누름 복귀 타이머를 멈추고 누름 상태·고정 너비를 정리한다(다시 붙였을 때 원래 크기)
+    clearTimeout(this._releaseTimer); clearTimeout(this._settleTimer); this._releaseTimer = 0; this._settleTimer = 0;
+    if (this._pressed) { this._pressed.removeAttribute('data-pressed'); this._pressed = null; }
+    if (this._widths) { this._widths = null; this.buttons.forEach(x => x.style.removeProperty('width')); }
+  }
   /** 실제 선택 방식. connected 는 토글 전용이라(가이드) 지정이 없으면 single. */
   get mode() { return this.selection || (this.variant === 'connected' ? 'single' : 'none'); }
   get buttons() { return Array.from(this.children); }

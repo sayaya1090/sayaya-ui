@@ -16,8 +16,6 @@ import static org.jboss.elemento.Elements.div;
 
 /** M3 side sheet: 토큰·스펙 수치(computed style) + 열기/닫기/포커스/이벤트. 메시지 접두어 "ss: ". */
 public class SideSheetComponentsTest {
-    private static ShadowRoot root(HTMLElement host) { return Js.uncheckedCast(Js.asPropertyMap(host).get("shadowRoot")); }
-    private static HTMLElement inner(HTMLElement host, String sel) { ShadowRoot r = root(host); return r == null ? null : Js.uncheckedCast(r.querySelector(sel)); }
     private static String css(HTMLElement host, String sel, String prop) { var e = inner(host, sel); return e == null ? "" : cs(e).getPropertyValue(prop); }
     private static long w(HTMLElement e) { return e == null ? -1 : Math.round(e.getBoundingClientRect().width); }
     private static long h(HTMLElement e) { return e == null ? -1 : Math.round(e.getBoundingClientRect().height); }
@@ -70,7 +68,7 @@ public class SideSheetComponentsTest {
 
         later(1500, () -> {
             if (!isAutomated()) return; // 시트를 자동으로 열지 않는다. 데모 버튼으로 확인
-            assertTrue("ss: side-sheet 업그레이드", root(std) != null);
+            assertTrue("ss: side-sheet 업그레이드", shadow(std) != null);
             var c = inner(std, ".container");
             assertEquals("ss: standard 너비 256px", 256, (int) w(c));
             assertEquals("ss: standard 높이 100%", 500, (int) h(c));
@@ -107,7 +105,7 @@ public class SideSheetComponentsTest {
                 assertTrue("ss: modal 그림자(elevation 1)", !"none".equals(cs(m).getPropertyValue("box-shadow")));
                 assertEquals("ss: modal 오른쪽 가장자리에 붙음", (int) DomGlobal.document.documentElement.clientWidth, (int) Math.round(m.getBoundingClientRect().right));
                 assertEquals("ss: 스크림 불투명도 0.32", "0.32", css(modal, ".scrim", "opacity"));
-                Object active = Js.asPropertyMap(root(modal)).get("activeElement");
+                Object active = Js.asPropertyMap(shadow(modal)).get("activeElement");
                 assertTrue("ss: 열면 닫기 버튼으로 포커스", active != null && ((Element) Js.uncheckedCast(active)).classList.contains("close"));
                 KeyboardEventInit init = Js.uncheckedCast(JsPropertyMap.of("key", "Escape", "bubbles", true, "composed", true));
                 m.dispatchEvent(new KeyboardEvent("keydown", init));

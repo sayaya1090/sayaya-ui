@@ -186,6 +186,7 @@ public class NavigationComponentsTest {
         extensions();
         links();
         motion();
+        lifecycle();
     }
 
     /** M3 토큰·가이드 대조(rail: nav-rail-*, Compose WideNavigationRail / app bar: app-bar-*, top-app-bar-*). */
@@ -438,17 +439,29 @@ public class NavigationComponentsTest {
         }
         return true;
     }
+    /** 생명주기: auto-scroll 앱 바를 떼었다 다시 붙여도 스크롤에 반응한다(disconnect 에서 뗀 리스너를 connect 에서 다시 단다) */
+    private static void lifecycle() {
+        if (!isAutomated()) return; // 사람이 볼 때는 페이지를 자동으로 스크롤하지 않는다
+        HTMLElement bar = Js.uncheckedCast(DomGlobal.document.createElement("md-top-app-bar"));
+        Js.asPropertyMap(bar).set("autoScroll", true);
+        HTMLElement spacer = div().style("height", "4000px").element();
+        DomGlobal.document.body.appendChild(bar); DomGlobal.document.body.appendChild(spacer);
+        DomGlobal.window.scrollTo(0, 0);
+        later(100, () -> {
+            bar.remove(); DomGlobal.document.body.appendChild(bar);
+            later(100, () -> {
+                Js.asPropertyMap(bar).set("scrolled", false);
+                DomGlobal.window.scrollTo(0, 200);
+                later(150, () -> {
+                    assertTrue("nav: 앱 바 auto-scroll 재부착 후에도 동작", Boolean.TRUE.equals(Js.asPropertyMap(bar).get("scrolled")));
+                    DomGlobal.window.scrollTo(0, 0); bar.remove(); spacer.remove();
+                });
+            });
+        });
+    }
     private static void check(HTMLElement el, String tag, boolean props) {
         assertEquals("nav: " + tag + " 태그명", tag.toUpperCase(), el.tagName);
         assertTrue("nav: " + tag + " 속성 설정", props);
-    }
-    private static elemental2.dom.CSSStyleDeclaration cs(elemental2.dom.Element e) {
-        elemental2.core.Function f = Js.uncheckedCast(Js.asPropertyMap(DomGlobal.window).get("getComputedStyle"));
-        return Js.uncheckedCast(f.call(DomGlobal.window, e));
-    }
-    private static HTMLElement inner(HTMLElement host, String sel) { var r = shadow(host); return r == null ? null : Js.uncheckedCast(r.querySelector(sel)); }
-    private static ShadowRoot shadow(HTMLElement el) {
-        return Js.uncheckedCast(Js.asPropertyMap(el).get("shadowRoot"));
     }
     private static void click(HTMLElement el) {
         var root = shadow(el);

@@ -265,38 +265,37 @@ public final class CarouselElementBuilder extends CustomElementBuilder<CarouselE
     }
 
     private static void injectStyle() {
-        HTMLStyleElement style = newStyle(STYLE_ID);
-        if (style == null) return;
-        String c = "." + CLASS;
-        style.textContent =
-            c + "{display:block;box-sizing:border-box}"
-          // 앞뒤 여백 16dp, 간격 8dp, 스냅
-          + c + " .track{position:relative;display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:8px 16px;scroll-padding:0 16px;"
-          + "scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}"
-          + c + " .track::-webkit-scrollbar{display:none}"
-          + c + " .track{cursor:grab}"
-          + c + ".dragging .track{scroll-snap-type:none!important;user-select:none;cursor:grabbing}" // 끄는 동안은 스냅을 끄고, 놓으면 가까운 항목으로 맞춘다
-          + c + ".dragging .item{cursor:grabbing}"
-          + c + " .media{-webkit-user-drag:none;user-select:none}"
-          + c + ".uncontained .track{padding-inline-end:0;scroll-snap-type:none}" // M3: uncontained 는 일반 스크롤 권장
-          + c + ".centered .item{scroll-snap-align:center}"
-          // full-screen: 여백 0, 항목 간격 16dp, 세로 snap. [미확인] 항목 모서리는 표에 없어 item shape 변수를 그대로 쓴다
-          + c + ".full-screen{height:var(--md-carousel-height,100%)}"
-          + c + ".full-screen .track{flex-direction:column;height:100%;box-sizing:border-box;overflow-x:hidden;overflow-y:auto;padding:0;gap:16px;scroll-padding:0;scroll-snap-type:y mandatory}"
-          + c + ".full-screen .track::after{display:none}"
-          + c + ".full-screen .item{width:100%!important;height:100%;scroll-snap-align:center;scroll-snap-stop:always}"
-          + c + " .track::after{content:'';flex:0 0 1px}"
-          // 항목 모서리 28dp
-          + c + " .item{position:relative;flex:none;height:var(--md-carousel-height,220px);border-radius:var(--md-carousel-item-shape,var(--md-sys-shape-corner-extra-large,28px));overflow:hidden;scroll-snap-align:start;cursor:pointer;"
-          + "background:var(--md-sys-color-surface-container-highest,#e6e0e9);outline:none}"
-          + c + ".hero .item{height:var(--md-carousel-height,280px)}"
-          + c + " .item:focus-visible{box-shadow:inset 0 0 0 3px var(--md-sys-color-secondary,#625b71)}"
-          + c + " .content{position:absolute;inset:0;will-change:transform}"
-          + c + " .media{width:100%;height:100%;object-fit:cover;display:block}"
-          + c + " .label{position:absolute;left:16px;right:16px;bottom:16px;font:500 16px/24px Roboto,system-ui,sans-serif;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}"
-          + c + " .show-all-row{display:flex;justify-content:center;padding:4px}"
-          + c + " .show-all{height:40px;padding:0 12px;border:0;border-radius:var(--md-carousel-show-all-shape,var(--md-sys-shape-corner-full,9999px));background:none;cursor:pointer;font:500 14px/20px Roboto,system-ui,sans-serif;color:var(--md-sys-color-primary,#6750a4)}"
-          + "@media (prefers-reduced-motion: reduce){" + c + " .content{transform:none!important}}";
-        DomGlobal.document.head.appendChild(style);
+        injectStyle(STYLE_ID, () -> {
+            String c = "." + CLASS;
+            return
+                c + "{display:block;box-sizing:border-box}"
+              // 앞뒤 여백 16dp, 간격 8dp, 스냅
+              + c + " .track{position:relative;display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:8px 16px;scroll-padding:0 16px;"
+              + "scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}"
+              + c + " .track::-webkit-scrollbar{display:none}"
+              + c + " .track{cursor:grab}"
+              + c + ".dragging .track{scroll-snap-type:none!important;user-select:none;cursor:grabbing}" // 끄는 동안은 스냅을 끄고, 놓으면 가까운 항목으로 맞춘다
+              + c + ".dragging .item{cursor:grabbing}"
+              + c + " .media{-webkit-user-drag:none;user-select:none}"
+              + c + ".uncontained .track{padding-inline-end:0;scroll-snap-type:none}" // M3: uncontained 는 일반 스크롤 권장
+              + c + ".centered .item{scroll-snap-align:center}"
+              // full-screen: 여백 0, 항목 간격 16dp, 세로 snap. [미확인] 항목 모서리는 표에 없어 item shape 변수를 그대로 쓴다
+              + c + ".full-screen{height:var(--md-carousel-height,100%)}"
+              + c + ".full-screen .track{flex-direction:column;height:100%;box-sizing:border-box;overflow-x:hidden;overflow-y:auto;padding:0;gap:16px;scroll-padding:0;scroll-snap-type:y mandatory}"
+              + c + ".full-screen .track::after{display:none}"
+              + c + ".full-screen .item{width:100%!important;height:100%;scroll-snap-align:center;scroll-snap-stop:always}"
+              + c + " .track::after{content:'';flex:0 0 1px}"
+              // 항목 모서리 28dp
+              + c + " .item{position:relative;flex:none;height:var(--md-carousel-height,220px);border-radius:var(--md-carousel-item-shape,var(--md-sys-shape-corner-extra-large,28px));overflow:hidden;scroll-snap-align:start;cursor:pointer;"
+              + "background:var(--md-sys-color-surface-container-highest,#e6e0e9);outline:none}"
+              + c + ".hero .item{height:var(--md-carousel-height,280px)}"
+              + c + " .item:focus-visible{box-shadow:inset 0 0 0 3px var(--md-sys-color-secondary,#625b71)}"
+              + c + " .content{position:absolute;inset:0;will-change:transform}"
+              + c + " .media{width:100%;height:100%;object-fit:cover;display:block}"
+              + c + " .label{position:absolute;left:16px;right:16px;bottom:16px;font:500 16px/24px Roboto,system-ui,sans-serif;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}"
+              + c + " .show-all-row{display:flex;justify-content:center;padding:4px}"
+              + c + " .show-all{height:40px;padding:0 12px;border:0;border-radius:var(--md-carousel-show-all-shape,var(--md-sys-shape-corner-full,9999px));background:none;cursor:pointer;font:500 14px/20px Roboto,system-ui,sans-serif;color:var(--md-sys-color-primary,#6750a4)}"
+              + "@media (prefers-reduced-motion: reduce){" + c + " .content{transform:none!important}}";
+        });
     }
 }

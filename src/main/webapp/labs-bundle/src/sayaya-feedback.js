@@ -412,6 +412,12 @@ export class MdToast extends LitElement {
     ['pointerenter', 'focusin'].forEach(t => this.addEventListener(t, this._pause));
     ['pointerleave', 'focusout'].forEach(t => this.addEventListener(t, this._resume));
   }
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    // 밖에서 떼어 내면 자동 닫힘·제거 타이머를 멈춘다. show() 는 스택으로 옮긴 뒤 다시 _arm 하므로 이동에는 영향 없다
+    clearTimeout(this._t); this._t = 0; clearTimeout(this._rm); this._rm = 0;
+    if (this.leaving) { this.open = false; this.leaving = false; }
+  }
   updated(changed) {
     if (changed.has('level')) {
       for (const lv of Object.keys(TOAST_LEVELS)) this.classList.toggle('ui-toast-' + lv, lv === this.level);

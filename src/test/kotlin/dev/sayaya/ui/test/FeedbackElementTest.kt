@@ -8,6 +8,8 @@ import io.kotest.matchers.string.shouldNotContain
 @GwtHtml("feedback.html") // 테스트 서버 루트는 war(src/test/webapp)
 internal class FeedbackElementTest: GwtTestSpec({
     val checks = listOf(
+        "toast 밖에서 떼면 타이머 정지",
+        "button group 떼면 누름 상태 정리",
         "버튼 그룹 모양 전환 transition",
         "버튼 그룹 누름 너비 전환 유지",
         "버튼 그룹 전환 spring(fast spatial) 곡선",
@@ -142,6 +144,11 @@ internal class FeedbackElementTest: GwtTestSpec({
         // Thread.sleep은 Playwright 이벤트를 처리하지 않으므로 waitForTimeout 사용
         page.waitForTimeout(18000.0) // tooltip 터치·수명·가려짐 검사가 8초부터 약 16초까지 순서대로 돈다
         val logs = page.getConsoleLogs().map { it.toString() }
+        // 목록에 등록되지 않은 검사도 실패하면 잡는다(이름 목록만 보면 미등록 실패가 통과로 숨는다)
+        Then("실패한 검사 로그가 없어야 한다(미등록 검사 포함)") {
+            val failed = logs.map { it.toString() }.filter { it.contains("Assertion failed!") }
+            if (failed.isNotEmpty()) throw AssertionError("실패한 검사 로그: $failed")
+        }
         println(logs)
         for (c in checks) {
             Then(c) {

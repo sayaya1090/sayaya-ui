@@ -325,69 +325,68 @@ public final class SearchElementBuilder extends CustomElementBuilder<SearchEleme
     }
 
     private static void injectStyle() {
-        HTMLStyleElement style = newStyle(STYLE_ID);
-        if (style == null) return;
-        String c = "." + CLASS;
-        style.textContent =
-            c + "{position:relative;display:block;--_bg:var(--md-search-container-color,var(--md-sys-color-surface-container-high,#ece6f0))}"
-          // 검색마다 쌓임 맥락을 만들어 열린 검색(스크림 포함)만 형제 위로 올린다 - 다른 검색 바가 스크림 위에 떠 같이 활성화돼 보이지 않게.
-          // 닫을 때는 스크림/목록이 사라지는 전환(250ms)이 끝난 뒤 내려간다.
-          + c + ".docked{z-index:0;transition:z-index 0s linear 250ms}"
-          + c + ".docked.open{z-index:var(--md-search-open-z-index,10);transition-delay:0s}"
-          // 아이콘: 폰트 없이 그려지는 24px SVG(바꿔 끼운 요소도 같은 상자에 놓인다). full-screen 으로 열리면 앞 아이콘이 뒤로 가기로 바뀐다
-          + c + " .icon{display:inline-flex;align-items:center;justify-content:center;flex:none;width:24px;height:24px}"
-          + c + " .icon svg{width:24px;height:24px;fill:currentColor}"
-          + c + " .leading .back-icon{display:none}"
-          + c + ".fullscreen.open .leading .search-icon{display:none}"
-          + c + ".fullscreen.open .leading .back-icon{display:inline-flex}"
-          // Search bar: 56dp, full, surface container high, 앞 아이콘 on surface, 뒤 아이콘 on surface variant
-          + c + " .bar{position:relative;z-index:2;box-sizing:border-box;height:56px;border-radius:var(--md-search-bar-container-shape,var(--md-sys-shape-corner-full,9999px));background:var(--_bg);display:flex;align-items:center;gap:4px;padding:0 4px;"
-          + "margin-inline:var(--md-search-bar-margin,24px);transition:margin 200ms cubic-bezier(0.2,0,0,1)}"
-          + c + ".docked .bar{transition:margin 200ms cubic-bezier(0.2,0,0,1),border-radius 200ms cubic-bezier(0.2,0,0,1)}" // 목록이 생기고 사라질 때 모서리를 부드럽게
-          // M3 Expressive: 포커스하면 바가 넓어진다 — 여백 24dp → 12dp
-          + c + ".docked.open .bar{margin-inline:var(--md-search-bar-focused-margin,12px)}"
-          + c + ".fullscreen.open .bar{margin-inline:0}"
-          // 목록도 바와 같은 여백에서 출발해 같은 곡선으로 넓어진다(열 때 display:none 에서 나타나므로 출발값은 @starting-style)
-          + c + ".docked.open .view{inset-inline:var(--md-search-bar-focused-margin,12px);opacity:1;clip-path:inset(0)}"
-          + "@starting-style{" + c + ".docked.open .view{inset-inline:var(--md-search-bar-margin,24px);opacity:0;clip-path:inset(0 0 100% 0)}}"
-          + c + " .leading," + c + " .clear{flex:none;width:48px;height:48px;border:0;border-radius:var(--md-search-icon-button-shape,var(--md-sys-shape-corner-full,50%));background:none;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}"
-          + c + " .leading{color:var(--md-sys-color-on-surface,#1d1b20)}"
-          + c + " .clear," + c + " .trailing{color:var(--md-sys-color-on-surface-variant,#49454f)}"
-          + c + " .clear[hidden]{display:none}"
-          + c + " .trailing{display:inline-flex;align-items:center;gap:4px}"
-          + c + " .trailing:empty{display:none}"
-          + c + " .input{flex:1;min-width:0;border:0;outline:none;background:none;height:100%;font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface,#1d1b20)}"
-          + c + " .input::placeholder{color:var(--md-sys-color-on-surface-variant,#49454f)}"
-          + c + " .input::-webkit-search-cancel-button{display:none}"
-          + c + " .view{display:none;box-sizing:border-box;background:var(--_bg);overflow:auto}"
-          + c + ".open .view{display:block}"
-          + c + ".docked.open.empty .view{display:none;transition:none}" // 걸러진 제안이 없으면 빈 목록 띠를 남기지 않는다
-          + c + " .option{display:flex;align-items:center;gap:16px;min-height:56px;padding:0 16px;cursor:pointer;font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface,#1d1b20)}"
-          + c + " .option .icon{color:var(--md-sys-color-on-surface-variant,#49454f)}"
-          // 항목: 이름(body-large) + 보조 문구(body-medium 14/20, on surface variant) - Compose ListItem 의 headline/supporting 구성
-          + c + " .option .text{display:flex;flex-direction:column;min-width:0;padding:8px 0}"
-          + c + " .option .headline," + c + " .option .supporting{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}"
-          + c + " .option .supporting{font:400 14px/20px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f)}"
-          + c + " .option[aria-selected=true]," + c + " .option:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface,#1d1b20) 8%,transparent)}"
-          + c + ".divided.open .view{border-top:1px solid var(--md-sys-color-outline,#79747e)}" // SearchView DividerColor outline
-          // Docked: 열리면 바 위 모서리 28dp(extra large) + 목록 아래 모서리 28dp, 본문은 스크림
-          + c + " .scrim{display:none}"
-          + c + ".docked .scrim{position:fixed;inset:0;z-index:1;background:var(--md-sys-color-scrim,#000);opacity:0;transition:opacity 200ms linear,display 200ms allow-discrete}"
-          + c + ".docked.open .scrim{display:block;opacity:.32}"
-          + "@starting-style{" + c + ".docked.open .scrim{opacity:0}}"
-          + c + ".docked.open.empty .bar{border-radius:var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px))}" // 목록이 비면 하단 모서리도 상단처럼 둥글게
-          + c + ".docked.open:not(.empty) .bar{border-radius:var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) 0 0}"
-          + c + ".docked .view{position:absolute;z-index:2;inset-inline:var(--md-search-bar-margin,24px);opacity:0;clip-path:inset(0 0 100% 0);transition:inset-inline-start 200ms cubic-bezier(0.2,0,0,1),inset-inline-end 200ms cubic-bezier(0.2,0,0,1),opacity 150ms linear,clip-path 250ms cubic-bezier(0.2,0,0,1),display 250ms allow-discrete;top:56px;max-height:min(480px,70vh);border-radius:0 0 var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px));padding-bottom:8px}"
-          // Full-screen: 화면 전체, 모서리 없음, 헤더 72dp
-          + c + ".fullscreen.open{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;background:var(--_bg)}"
-          + c + ".fullscreen.open .bar{height:72px;border-radius:var(--md-search-view-full-screen-shape,var(--md-sys-shape-corner-none,0px));flex:none}"
-          + c + ".fullscreen.open .view{flex:1}"
-          + c + ".fullscreen{transition:opacity 200ms linear}"
-          + "@starting-style{" + c + ".fullscreen.open{opacity:0}}"
-          // [M3 외] inline: 목록을 바 아래 흐름 안에 두고 스크림을 쓰지 않는다(다이얼로그 안 명령 팔레트)
-          + c + ".inline .scrim{display:none!important}"
-          + c + ".inline.open .view{position:static;clip-path:none;opacity:1;max-height:var(--md-search-inline-max-height,min(480px,70vh))}"
-          + "@media (prefers-reduced-motion:reduce){" + c + "," + c + " *{transition:none!important}}";
-        DomGlobal.document.head.appendChild(style);
+        injectStyle(STYLE_ID, () -> {
+            String c = "." + CLASS;
+            return
+                c + "{position:relative;display:block;--_bg:var(--md-search-container-color,var(--md-sys-color-surface-container-high,#ece6f0))}"
+              // 검색마다 쌓임 맥락을 만들어 열린 검색(스크림 포함)만 형제 위로 올린다 - 다른 검색 바가 스크림 위에 떠 같이 활성화돼 보이지 않게.
+              // 닫을 때는 스크림/목록이 사라지는 전환(250ms)이 끝난 뒤 내려간다.
+              + c + ".docked{z-index:0;transition:z-index 0s linear 250ms}"
+              + c + ".docked.open{z-index:var(--md-search-open-z-index,10);transition-delay:0s}"
+              // 아이콘: 폰트 없이 그려지는 24px SVG(바꿔 끼운 요소도 같은 상자에 놓인다). full-screen 으로 열리면 앞 아이콘이 뒤로 가기로 바뀐다
+              + c + " .icon{display:inline-flex;align-items:center;justify-content:center;flex:none;width:24px;height:24px}"
+              + c + " .icon svg{width:24px;height:24px;fill:currentColor}"
+              + c + " .leading .back-icon{display:none}"
+              + c + ".fullscreen.open .leading .search-icon{display:none}"
+              + c + ".fullscreen.open .leading .back-icon{display:inline-flex}"
+              // Search bar: 56dp, full, surface container high, 앞 아이콘 on surface, 뒤 아이콘 on surface variant
+              + c + " .bar{position:relative;z-index:2;box-sizing:border-box;height:56px;border-radius:var(--md-search-bar-container-shape,var(--md-sys-shape-corner-full,9999px));background:var(--_bg);display:flex;align-items:center;gap:4px;padding:0 4px;"
+              + "margin-inline:var(--md-search-bar-margin,24px);transition:margin 200ms cubic-bezier(0.2,0,0,1)}"
+              + c + ".docked .bar{transition:margin 200ms cubic-bezier(0.2,0,0,1),border-radius 200ms cubic-bezier(0.2,0,0,1)}" // 목록이 생기고 사라질 때 모서리를 부드럽게
+              // M3 Expressive: 포커스하면 바가 넓어진다 — 여백 24dp → 12dp
+              + c + ".docked.open .bar{margin-inline:var(--md-search-bar-focused-margin,12px)}"
+              + c + ".fullscreen.open .bar{margin-inline:0}"
+              // 목록도 바와 같은 여백에서 출발해 같은 곡선으로 넓어진다(열 때 display:none 에서 나타나므로 출발값은 @starting-style)
+              + c + ".docked.open .view{inset-inline:var(--md-search-bar-focused-margin,12px);opacity:1;clip-path:inset(0)}"
+              + "@starting-style{" + c + ".docked.open .view{inset-inline:var(--md-search-bar-margin,24px);opacity:0;clip-path:inset(0 0 100% 0)}}"
+              + c + " .leading," + c + " .clear{flex:none;width:48px;height:48px;border:0;border-radius:var(--md-search-icon-button-shape,var(--md-sys-shape-corner-full,50%));background:none;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}"
+              + c + " .leading{color:var(--md-sys-color-on-surface,#1d1b20)}"
+              + c + " .clear," + c + " .trailing{color:var(--md-sys-color-on-surface-variant,#49454f)}"
+              + c + " .clear[hidden]{display:none}"
+              + c + " .trailing{display:inline-flex;align-items:center;gap:4px}"
+              + c + " .trailing:empty{display:none}"
+              + c + " .input{flex:1;min-width:0;border:0;outline:none;background:none;height:100%;font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface,#1d1b20)}"
+              + c + " .input::placeholder{color:var(--md-sys-color-on-surface-variant,#49454f)}"
+              + c + " .input::-webkit-search-cancel-button{display:none}"
+              + c + " .view{display:none;box-sizing:border-box;background:var(--_bg);overflow:auto}"
+              + c + ".open .view{display:block}"
+              + c + ".docked.open.empty .view{display:none;transition:none}" // 걸러진 제안이 없으면 빈 목록 띠를 남기지 않는다
+              + c + " .option{display:flex;align-items:center;gap:16px;min-height:56px;padding:0 16px;cursor:pointer;font:400 16px/24px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface,#1d1b20)}"
+              + c + " .option .icon{color:var(--md-sys-color-on-surface-variant,#49454f)}"
+              // 항목: 이름(body-large) + 보조 문구(body-medium 14/20, on surface variant) - Compose ListItem 의 headline/supporting 구성
+              + c + " .option .text{display:flex;flex-direction:column;min-width:0;padding:8px 0}"
+              + c + " .option .headline," + c + " .option .supporting{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}"
+              + c + " .option .supporting{font:400 14px/20px Roboto,system-ui,sans-serif;color:var(--md-sys-color-on-surface-variant,#49454f)}"
+              + c + " .option[aria-selected=true]," + c + " .option:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface,#1d1b20) 8%,transparent)}"
+              + c + ".divided.open .view{border-top:1px solid var(--md-sys-color-outline,#79747e)}" // SearchView DividerColor outline
+              // Docked: 열리면 바 위 모서리 28dp(extra large) + 목록 아래 모서리 28dp, 본문은 스크림
+              + c + " .scrim{display:none}"
+              + c + ".docked .scrim{position:fixed;inset:0;z-index:1;background:var(--md-sys-color-scrim,#000);opacity:0;transition:opacity 200ms linear,display 200ms allow-discrete}"
+              + c + ".docked.open .scrim{display:block;opacity:.32}"
+              + "@starting-style{" + c + ".docked.open .scrim{opacity:0}}"
+              + c + ".docked.open.empty .bar{border-radius:var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px))}" // 목록이 비면 하단 모서리도 상단처럼 둥글게
+              + c + ".docked.open:not(.empty) .bar{border-radius:var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) 0 0}"
+              + c + ".docked .view{position:absolute;z-index:2;inset-inline:var(--md-search-bar-margin,24px);opacity:0;clip-path:inset(0 0 100% 0);transition:inset-inline-start 200ms cubic-bezier(0.2,0,0,1),inset-inline-end 200ms cubic-bezier(0.2,0,0,1),opacity 150ms linear,clip-path 250ms cubic-bezier(0.2,0,0,1),display 250ms allow-discrete;top:56px;max-height:min(480px,70vh);border-radius:0 0 var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px)) var(--md-search-view-docked-shape,var(--md-sys-shape-corner-extra-large,28px));padding-bottom:8px}"
+              // Full-screen: 화면 전체, 모서리 없음, 헤더 72dp
+              + c + ".fullscreen.open{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;background:var(--_bg)}"
+              + c + ".fullscreen.open .bar{height:72px;border-radius:var(--md-search-view-full-screen-shape,var(--md-sys-shape-corner-none,0px));flex:none}"
+              + c + ".fullscreen.open .view{flex:1}"
+              + c + ".fullscreen{transition:opacity 200ms linear}"
+              + "@starting-style{" + c + ".fullscreen.open{opacity:0}}"
+              // [M3 외] inline: 목록을 바 아래 흐름 안에 두고 스크림을 쓰지 않는다(다이얼로그 안 명령 팔레트)
+              + c + ".inline .scrim{display:none!important}"
+              + c + ".inline.open .view{position:static;clip-path:none;opacity:1;max-height:var(--md-search-inline-max-height,min(480px,70vh))}"
+              + "@media (prefers-reduced-motion:reduce){" + c + "," + c + " *{transition:none!important}}";
+        });
     }
 }

@@ -14,7 +14,6 @@ public class CenteredSliderComponentsTest {
     private static long w(Element e) { return Math.round(e.getBoundingClientRect().width); }
     private static long h(Element e) { return Math.round(e.getBoundingClientRect().height); }
     private static long left(Element e, Element base) { return Math.round(e.getBoundingClientRect().left - base.getBoundingClientRect().left); }
-    private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
 
     public static void test() {
         printSectionHeader("M3 Centered slider");

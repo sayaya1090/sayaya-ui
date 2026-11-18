@@ -12,7 +12,6 @@ import static org.jboss.elemento.Elements.div;
 public class FabMenuComponentsTest {
     private static long w(Element e) { return Math.round(e.getBoundingClientRect().width); }
     private static long h(Element e) { return Math.round(e.getBoundingClientRect().height); }
-    private static HTMLElement q(HTMLElement root, String sel) { return (HTMLElement) root.querySelector(sel); }
 
     public static void test() {
         printSectionHeader("M3 FAB menu");

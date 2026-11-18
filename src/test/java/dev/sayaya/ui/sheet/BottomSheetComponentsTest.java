@@ -15,8 +15,6 @@ import static org.jboss.elemento.Elements.div;
 
 /** M3 bottom sheet: 토큰(md-comp-sheet-bottom)·스펙 수치 + 열기/닫기/끌기/포커스. 메시지 접두어 "bs: ". */
 public class BottomSheetComponentsTest {
-    private static ShadowRoot root(HTMLElement host) { return Js.uncheckedCast(Js.asPropertyMap(host).get("shadowRoot")); }
-    private static HTMLElement inner(HTMLElement host, String sel) { ShadowRoot r = root(host); return r == null ? null : Js.uncheckedCast(r.querySelector(sel)); }
     private static String css(HTMLElement host, String sel, String prop) { var e = inner(host, sel); return e == null ? "" : cs(e).getPropertyValue(prop); }
     private static long w(HTMLElement e) { return e == null ? -1 : Math.round(e.getBoundingClientRect().width); }
     private static long h(HTMLElement e) { return e == null ? -1 : Math.round(e.getBoundingClientRect().height); }
@@ -59,7 +57,7 @@ public class BottomSheetComponentsTest {
         var probe = div().element(); body().add(probe);
 
         later(1500, () -> {
-            assertTrue("bs: bottom-sheet 업그레이드", root(modal) != null);
+            assertTrue("bs: bottom-sheet 업그레이드", shadow(modal) != null);
             if (!isAutomated()) return; // 시트를 자동으로 열지 않는다. 데모 버튼으로 확인
             probe.style.setProperty("color", "var(--md-sys-color-surface-container-low, #f7f2fa)");
             String containerLow = cs(probe).getPropertyValue("color");
@@ -86,7 +84,7 @@ public class BottomSheetComponentsTest {
                 assertEquals("bs: 스크림 불투명도 0.32", "0.32", css(modal, ".scrim", "opacity"));
                 assertEquals("bs: modal role dialog", "dialog", c.getAttribute("role"));
                 assertTrue("bs: modal 처음 높이는 화면의 50% 이하", r.height <= vh * 0.5 + 1);
-                Object active = Js.asPropertyMap(root(modal)).get("activeElement");
+                Object active = Js.asPropertyMap(shadow(modal)).get("activeElement");
                 assertTrue("bs: 열면 드래그 핸들로 포커스", active != null && ((Element) Js.uncheckedCast(active)).classList.contains("handle-area"));
                 inner(modal, ".handle-area").click();
                 later(400, () -> {

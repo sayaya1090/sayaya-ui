@@ -27,7 +27,6 @@ import static org.jboss.elemento.Elements.div;
 
 /** 지역화: 영어 기본 문구 + 덮어쓰기, Intl 기반 locale 표기, RTL. 메시지 접두어 "i18: ". */
 public class I18nComponentsTest {
-    private static HTMLElement q(Element root, String sel) { return (HTMLElement) root.querySelector(sel); }
     private static HTMLElement sr(Element host, String sel) {
         ShadowRoot r = Js.uncheckedCast(Js.asPropertyMap(host).get("shadowRoot"));
         return r == null ? null : Js.uncheckedCast(r.querySelector(sel));

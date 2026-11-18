@@ -101,7 +101,11 @@ export class MdTopAppBar extends LitElement {
       if (this.autoScroll) { window.addEventListener('scroll', this._onScroll, {passive: true}); this._onScroll(); }
     }
   }
-  connectedCallback() { super.connectedCallback(); this._checkSub(); }
+  connectedCallback() {
+    super.connectedCallback(); this._checkSub();
+    // 떼었다 다시 붙여도 auto-scroll 이 계속 동작하도록 리스너를 다시 단다(disconnect 에서 떼므로)
+    if (this.autoScroll && this.hasUpdated) { window.removeEventListener('scroll', this._onScroll); window.addEventListener('scroll', this._onScroll, {passive: true}); this._onScroll(); }
+  }
   disconnectedCallback() { super.disconnectedCallback(); window.removeEventListener('scroll', this._onScroll); }
   _checkSub() { const has = !!this.querySelector(':scope > [slot="subtitle"], :scope > [slot="expanded-subtitle"]'); this._sub = has; this.toggleAttribute('has-subtitle', has); }
   render() {
