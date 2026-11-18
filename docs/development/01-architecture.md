@@ -6,23 +6,23 @@ sayaya-ui 는 **Java 빌더 계층**과 **JS 커스텀 엘리먼트 계층** 두
 
 ```mermaid
 flowchart TB
-  app[GWT 앱 코드]
-  subgraph jar[dev.sayaya:ui jar — Java]
-    elements[dev.sayaya.ui.elements\n빌더·헬퍼]
-    ifaces[dev.sayaya.ui.elements.interfaces\n빌더 특성]
-    dom[dev.sayaya.ui.dom\n@JsType 바인딩]
+  app["GWT 앱 코드"]
+  subgraph jar["dev.sayaya:ui jar — Java"]
+    elements["dev.sayaya.ui.elements<br/>빌더·헬퍼"]
+    ifaces["dev.sayaya.ui.elements.interfaces<br/>빌더 특성"]
+    dom["dev.sayaya.ui.dom<br/>@JsType 바인딩"]
   end
-  subgraph js[JS — jar 에 없음, 번들로 따로 로드]
-    mw[@material/web all.js]
-    labs[labs.bundle.js\nlabs + sayaya-*.js]
+  subgraph js["JS — jar 에 없음, 번들로 따로 로드"]
+    mw["@material/web all.js"]
+    labs["labs.bundle.js<br/>labs + sayaya-*.js"]
   end
-  browser[(브라우저 customElements)]
+  browser[("브라우저 customElements")]
   app --> elements
   elements --> ifaces
   elements --> dom
-  elements -->|createElement 태그 이름| browser
-  mw -->|define md-*| browser
-  labs -->|define md-* / md-gb-*| browser
+  elements -->|"createElement 태그 이름"| browser
+  mw -->|"define md-*"| browser
+  labs -->|"define md-* / md-gb-*"| browser
 ```
 
 - jar 에는 JS 가 없습니다. 앱은 Material Web 과 labs 번들(또는 Release 첨부 번들)을 따로 실어야 합니다.

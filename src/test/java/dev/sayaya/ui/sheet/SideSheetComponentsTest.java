@@ -86,7 +86,14 @@ public class SideSheetComponentsTest {
             assertTrue("ss: 액션 위 구분선 표시", !"none".equals(cs(a).getPropertyValue("box-shadow")));
             assertEquals("ss: 액션 위 패딩 16px", "16px", cs(a).getPropertyValue("padding-top"));
             assertEquals("ss: 액션 아래 패딩 24px", "24px", cs(a).getPropertyValue("padding-bottom"));
-            assertEquals("ss: 액션 왼쪽 정렬", "flex-start", cs(a).getPropertyValue("justify-content"));
+            { // 왼쪽 정렬: 첫 액션이 왼쪽 패딩 위치에서 시작하고, 오른쪽 남는 공간이 더 크다(계산값 키워드는 Chromium 버전마다 다르게 보고됨)
+                var ar = a.getBoundingClientRect(); var fr = firstAction.getBoundingClientRect();
+                double padL = Double.parseDouble(cs(a).getPropertyValue("padding-left").replace("px", ""));
+                double padR = Double.parseDouble(cs(a).getPropertyValue("padding-right").replace("px", ""));
+                var last = (HTMLElement) std.querySelectorAll("[slot='actions']").item(std.querySelectorAll("[slot='actions']").length - 1);
+                double leftGap = fr.left - ar.left - padL, rightGap = ar.right - padR - last.getBoundingClientRect().right;
+                assertTrue("ss: 액션 왼쪽 정렬", Math.abs(leftGap) <= 1 && rightGap > leftGap + 1);
+            }
             assertEquals("ss: 본문 가로 스크롤 없음", "hidden", css(std, ".content", "overflow-x"));
             assertEquals("ss: 본문 세로 스크롤", "auto", css(std, ".content", "overflow-y"));
             assertEquals("ss: 최대 너비 400px", 400, (int) w(inner(wide, ".container")));

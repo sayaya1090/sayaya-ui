@@ -13,11 +13,11 @@
 | 항목 | 버전 |
 |---|---|
 | Kotlin JVM 플러그인 | 2.4.21 |
-| `dev.sayaya.gwt` 플러그인 | 2.3.0 (GWT `gwtVersion = "2.13.1"`, `strict = true`) |
+| `dev.sayaya.gwt` 플러그인 | 2.4.0 (GWT `gwtVersion = "2.13.1"`, `strict = true`) |
 | `com.vanniktech.maven.publish` | 0.37.0 |
 | `org.jboss.elemento:elemento-core` | 2.5.14 (전이: elemental2 1.4.0) |
 | `org.projectlombok:lombok` | 1.18.48 |
-| `dev.sayaya:gwt-test`(테스트) | 2.3.0 |
+| `dev.sayaya:gwt-test`(테스트) | 2.4.0 |
 | `@material/web`(npm) | `^2.5.0` |
 | `rollup` / `@rollup/plugin-node-resolve` / `@rollup/plugin-terser` | `^4.64.7` / `^16.0.3` / `^1.0.0` |
 
@@ -27,13 +27,13 @@
 
 ```mermaid
 flowchart LR
-  install[installLabsBundleDeps\nnpm install] --> labs[buildLabsBundle\nnpm run build]
-  install --> sa[buildStandaloneBundle\nnpm run build:standalone]
-  install --> fb[buildFeedbackBundle\nnpm run build:feedback]
-  install --> nav[buildNavigationBundle\nnpm run build:navigation]
-  labs --> copyL[copyLabsBundleToTest]
-  fb --> copyF[copyFeedbackBundleToTest]
-  nav --> copyN[copyNavigationBundleToTest]
+  install["installLabsBundleDeps<br/>npm install"] --> labs["buildLabsBundle<br/>npm run build"]
+  install --> sa["buildStandaloneBundle<br/>npm run build:standalone"]
+  install --> fb["buildFeedbackBundle<br/>npm run build:feedback"]
+  install --> nav["buildNavigationBundle<br/>npm run build:navigation"]
+  labs --> copyL["copyLabsBundleToTest"]
+  fb --> copyF["copyFeedbackBundleToTest"]
+  nav --> copyN["copyNavigationBundleToTest"]
   labs --> gwtCompile
   labs --> jar
   copyL --> gwtGenerateTestHtml

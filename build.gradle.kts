@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "2.4.21"
-    id("dev.sayaya.gwt") version "2.3.0"
+    id("dev.sayaya.gwt") version "2.4.0"
     signing
     id("maven-publish")
     id("com.vanniktech.maven.publish") version "0.37.0"
@@ -26,7 +26,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.48")
     // jsinterop-base 1.2.0(elemental2 1.4.0 전이) jar 의 소스가 @CanIgnoreReturnValue 를 써서 javadoc 이 이 애너테이션을 필요로 한다. 소비자에게는 전이되지 않게 compileOnly
     compileOnly("com.google.errorprone:error_prone_annotations:2.53.0")
-    testImplementation("dev.sayaya:gwt-test:2.3.0")
+    testImplementation("dev.sayaya:gwt-test:2.4.0")
 }
 // labs-bundle 에서 npm 을 실행하는 Exec 공통 설정. Windows 는 cmd /c, 그 밖은 sh -c(셸의 PATH 로 npm 을 찾는다)
 val labsBundleDir = file("src/main/webapp/labs-bundle")

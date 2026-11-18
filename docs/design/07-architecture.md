@@ -4,22 +4,22 @@
 
 ```mermaid
 flowchart TB
-  subgraph java[Java: dev.sayaya.ui]
-    elements[elements\n빌더·헬퍼]
-    interfaces[elements.interfaces\n빌더 특성]
-    dom[dom\nJsType 바인딩]
+  subgraph java["Java: dev.sayaya.ui"]
+    elements["elements<br/>빌더·헬퍼"]
+    interfaces["elements.interfaces<br/>빌더 특성"]
+    dom["dom<br/>JsType 바인딩"]
   end
-  subgraph js[JS: src/main/webapp/labs-bundle/src]
-    index[index.js\nlabs 번들 진입점]
-    nav[sayaya-navigation.js\napp bar·rail]
-    navbar[sayaya-navbar.js\nnavigation bar]
-    fb[sayaya-feedback.js\ntooltip·snackbar·toast]
-    bg[sayaya-button-group.js]
-    sheet[sayaya-sheet.js\nside·bottom sheet]
-    stand[sayaya-navigation-standalone.js]
+  subgraph js["JS: src/main/webapp/labs-bundle/src"]
+    index["index.js<br/>labs 번들 진입점"]
+    nav["sayaya-navigation.js<br/>app bar·rail"]
+    navbar["sayaya-navbar.js<br/>navigation bar"]
+    fb["sayaya-feedback.js<br/>tooltip·snackbar·toast"]
+    bg["sayaya-button-group.js"]
+    sheet["sayaya-sheet.js<br/>side·bottom sheet"]
+    stand["sayaya-navigation-standalone.js"]
   end
-  mw[(@material/web)]
-  elemento[(elemento / elemental2)]
+  mw[("@material/web")]
+  elemento[("elemento / elemental2")]
   elements --> interfaces
   elements --> dom
   elements --> elemento
@@ -46,16 +46,16 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-  dev[유지보수자] -->|push main| gh[(GitHub)]
-  gh -->|test.yaml| ci1[CI: gradle test]
-  gh -->|deploy-test-webapp.yml| pages[(GitHub Pages 데모)]
-  dev -->|push tag v*| gh
-  gh -->|publish.yaml| ci2[CI: build·publish·bundles]
-  ci2 --> pkg[(GitHub Packages)]
-  ci2 --> central[(Central Portal → Maven Central)]
-  ci2 --> rel[(GitHub Release 첨부물)]
-  pkg & central --> app[GWT 앱 빌드]
-  rel --> browser[브라우저]
+  dev["유지보수자"] -->|"push main"| gh[("GitHub")]
+  gh -->|"test.yaml"| ci1["CI: gradle test"]
+  gh -->|"deploy-test-webapp.yml"| pages[("GitHub Pages 데모")]
+  dev -->|"push tag v*"| gh
+  gh -->|"publish.yaml"| ci2["CI: build·publish·bundles"]
+  ci2 --> pkg[("GitHub Packages")]
+  ci2 --> central[("Central Portal → Maven Central")]
+  ci2 --> rel[("GitHub Release 첨부물")]
+  pkg & central --> app["GWT 앱 빌드"]
+  rel --> browser["브라우저"]
   app --> browser
 ```
 

@@ -4,13 +4,13 @@
 
 ```mermaid
 flowchart TD
-  q1{Material Web 이나 labs 에\n해당 요소가 있나?}
-  q1 -->|예| q2{M3 최신 가이드에서\n권장하는 변형인가?}
-  q2 -->|예| A[A. Material Web 감싸기]
-  q2 -->|아니오, 예: baseline nav bar| q3
-  q1 -->|아니오| q3{shadow DOM·자체 이벤트가\n필요한가?}
-  q3 -->|예| B[B. Lit 엘리먼트 직접 구현 + 빌더]
-  q3 -->|아니오| C[C. CustomElementBuilder 하위 elemento 빌더]
+  q1{"Material Web 이나 labs 에<br/>해당 요소가 있나?"}
+  q1 -->|"예"| q2{"M3 최신 가이드에서<br/>권장하는 변형인가?"}
+  q2 -->|"예"| A["A. Material Web 감싸기"]
+  q2 -->|"아니오, 예: baseline nav bar"| q3
+  q1 -->|"아니오"| q3{"shadow DOM·자체 이벤트가<br/>필요한가?"}
+  q3 -->|"예"| B["B. Lit 엘리먼트 직접 구현 + 빌더"]
+  q3 -->|"아니오"| C["C. CustomElementBuilder 하위 elemento 빌더"]
 ```
 
 ## 공통 순서

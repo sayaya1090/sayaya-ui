@@ -167,7 +167,12 @@ public class ToolbarComponentsTest {
             assertTrue("tb: 기본 배치는 가운데 정렬(양쪽 여백 같음)", Math.abs(leftGap - rightGap) <= 1 && leftGap >= 16);
             assertEquals("tb: Center 정렬 간격 8px", "8px", cs(center).getPropertyValue("column-gap"));
             assertEquals("tb: Center 정렬 가운데", "center", cs(center).getPropertyValue("justify-content"));
-            assertEquals("tb: Start 정렬", "flex-start", cs(start).getPropertyValue("justify-content"));
+            { // 앞쪽 정렬: 끝 여백이 앞 여백보다 크다(계산값 키워드는 Chromium 버전마다 다르게 보고됨)
+                var sr = start.getBoundingClientRect();
+                double lead = ((HTMLElement) start.firstElementChild).getBoundingClientRect().left - sr.left;
+                double tail = sr.right - ((HTMLElement) start.lastElementChild).getBoundingClientRect().right;
+                assertTrue("tb: Start 정렬", tail > lead + 1);
+            }
             assertEquals("tb: Start 첫 항목은 앞 여백 16px", 16, (int) Math.round(((HTMLElement) start.firstElementChild).getBoundingClientRect().left - start.getBoundingClientRect().left));
             assertEquals("tb: Edges 정렬", "space-between", cs(edges).getPropertyValue("justify-content"));
             assertEquals("tb: Edges 마지막 항목은 끝 여백 16px", 16, (int) Math.round(edges.getBoundingClientRect().right - ((HTMLElement) edges.lastElementChild).getBoundingClientRect().right));
