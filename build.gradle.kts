@@ -21,7 +21,7 @@ group = "dev.sayaya"
 version = "2.5.0.8"
 
 dependencies {
-    implementation("org.jboss.elemento:elemento-core:2.5.9")
+    implementation("org.jboss.elemento:elemento-core:2.5.14")
     implementation("org.projectlombok:lombok:1.18.48")
     annotationProcessor("org.projectlombok:lombok:1.18.48")
     testImplementation("dev.sayaya:gwt-test:2.3.0")
@@ -39,10 +39,12 @@ tasks {
             commandLine("sh", "-c", "npm install")
         }
 
-        // node_modules가 이미 있으면 skip
-        onlyIf {
-            !file("src/main/webapp/labs-bundle/node_modules").exists()
-        }
+        // package.json 이 마지막 설치 때와 같으면 skip. node_modules 가 있어도 package.json 이 바뀌었으면 다시 설치한다
+        // (전에는 node_modules 가 있기만 하면 건너뛰어 로컬에 오래된 @material/web·rollup 이 남았다)
+        val packageJson = file("src/main/webapp/labs-bundle/package.json")
+        val installedMarker = file("src/main/webapp/labs-bundle/node_modules/.sayaya-installed-package.json")
+        onlyIf { !installedMarker.exists() || installedMarker.readText() != packageJson.readText() }
+        doLast { installedMarker.writeText(packageJson.readText()) }
     }
 
     // Labs bundle 빌드 태스크
